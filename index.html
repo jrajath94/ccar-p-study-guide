@@ -1124,6 +1124,8 @@ footer p{text-align:left}
 .qb-node.result{border-color:#3fb96b}
 
 /* ---------- Print / PDF: light-paper theme ---------- */
+/* This file is inlined by pipeline/build_pdf.py AFTER the canonical ds.css,
+   so every rule here wins over the screen design when Chromium prints. */
 @media print {
   :root {
     --bg: #ffffff;
@@ -1143,20 +1145,63 @@ footer p{text-align:left}
   #ds-sidebar-root,
   #ds-hamburger,
   #ds-progress,
+  #ds-overlay,
+  .ds-side-search,
+  .ds-done-wrap,
+  .ds-skip,
   .ds-site-header,
   .ds-site-footer,
   .ds-crumb,
   .ds-copy-btn { display: none !important; }
   #ds-content { padding: 0; }
   .ds-content-inner { max-width: none; }
-  a { color: var(--link); text-decoration: underline; }
-  .unit, .banner, .exam-ask, .board, .trapbox, .nums, .callout,
-  .takeaway, .def, .diagram-walkthrough, .qb-q {
+
+  /* --- Justified body text with hyphenation: even spacing, no rivers --- */
+  main#ds-content p,
+  main#ds-content li,
+  main#ds-content td,
+  main#ds-content th,
+  main#ds-content blockquote p,
+  main#ds-content figcaption,
+  .pq-answer p {
+    text-align: justify;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-justify: inter-word;
+    hyphenate-limit-chars: 6 3 2;
+    hyphenate-limit-lines: 2;
+  }
+
+  /* --- Widow / orphan control --- */
+  p, li, td, th, blockquote, figcaption {
+    widows: 3;
+    orphans: 3;
+  }
+  h1, h2, h3, h4, h5 {
+    break-inside: avoid;
+    break-after: avoid;
+  }
+
+  /* --- Keep blocks intact across page breaks --- */
+  pre, table, .table-wrap, figure,
+  .unit, .banner, .hero, .exam-ask, .board, .trapbox, .trap, .warn,
+  .nums, .callout, .takeaway, .diagram-walkthrough, .qb-q, .qb-strategy,
+  .qb-flow, .constraint-block, .facts, .askbox, .examstrip, .exam-strip,
+  .onboard, .toc, details.pq {
     break-inside: avoid;
   }
-  h2 { break-after: avoid; }
-  pre, table { break-inside: avoid; }
+
+  /* --- Links stay visible and clickable in print --- */
+  a { color: var(--link); text-decoration: underline; }
+
+  /* --- Undo dark-mode leftovers that would print as ink blocks --- */
+  tbody tr:nth-child(odd)  { background: #f2f2f0; }
+  tbody tr:nth-child(even) { background: #ffffff; }
+  .def { color: var(--text); }
+  .ds-nav-link:hover { background: none; color: var(--text); }
+
   img { max-width: 100%; }
+
   @page {
     size: A4;
     margin: 16mm 14mm 18mm 14mm;
@@ -1166,7 +1211,7 @@ footer p{text-align:left}
 </style>
 </head>
 <body>
-<header class="ds-site-header"><a class="ds-brand" href="index.html"><span class="b-full">CCAR-P Study Guide</span><span class="b-short">CCAR-P</span></a><input type="checkbox" id="ds-navcheck" class="ds-visually-hidden" tabindex="-1" aria-hidden="true"><label class="ds-navburger" for="ds-navcheck" aria-label="Toggle volume menu"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></label><nav class="ds-sitenav" aria-label="Volumes"><ul><li><a href="index.html" aria-current="page">Home</a></li><li><a href="01-solution-design-architecture.html">D1 · Design</a></li><li><a href="02-models-prompting-context.html">D2 · Models</a></li><li><a href="03-integration.html">D3 · Integration</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Eval</a></li><li><a href="05-governance-safety-risk.html">D5 · Safety</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Comms</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Dev</a></li><li><a href="08-question-bank.html">Questions</a></li><li><a href="09-system-design-guide.html">Designs</a></li><li><a href="crash-course.html">Crash</a></li></ul></nav><nav class="ds-headerpn" aria-label="Previous and next volume"><span class="ds-pn-empty" aria-hidden="true"></span><a class="ds-pn" rel="next" href="01-solution-design-architecture.html"><span class="pn-word">Next</span> <span aria-hidden="true">&#8250;</span></a></nav></header>
+<header class="ds-site-header"><a class="ds-brand" href="index.html"><span class="b-full">CCAR-P Study Guide</span><span class="b-short">CCAR-P</span></a><input type="checkbox" id="ds-navcheck" class="ds-visually-hidden" tabindex="-1" aria-hidden="true"><label class="ds-navburger" for="ds-navcheck" aria-label="Toggle volume menu"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></label><nav class="ds-sitenav" aria-label="Volumes"><ul><li><a href="index.html" aria-current="page">Home</a></li><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Dev</a></li><li><a href="01-solution-design-architecture.html">D1 · Design</a></li><li><a href="02-models-prompting-context.html">D2 · Models</a></li><li><a href="03-integration.html">D3 · Integration</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Eval</a></li><li><a href="05-governance-safety-risk.html">D5 · Safety</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Comms</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Dev</a></li><li><a href="08-question-bank.html">Questions</a></li><li><a href="09-system-design-guide.html">Designs</a></li><li><a href="crash-course.html">Crash</a></li></ul></nav><nav class="ds-headerpn" aria-label="Previous and next volume"><span class="ds-pn-empty" aria-hidden="true"></span><a class="ds-pn" rel="next" href="prereq-claude-fundamentals.html"><span class="pn-word">Next</span> <span aria-hidden="true">&#8250;</span></a></nav></header>
 <div class="ds-shell">
 <div id="ds-sidebar-root"></div>
 <main id="ds-content">
@@ -1185,6 +1230,9 @@ footer p{text-align:left}
 <div class="fact"><b>720 / 1000</b><span>Pass mark</span></div>
 <div class="fact"><b>$175</b><span>Fee</span></div>
 </div>
+
+<h2>Prerequisites</h2>
+<a class="vol" href="prereq-claude-fundamentals.html"><div class="row"><h3>Prereq. Claude Developer Fundamentals</h3><span class="w">start here</span></div><p>Read this first if the Claude API is new to you: keys, Messages, multi-turn, sampling, tool use, thinking, caching, batches, embeddings, the model lineup, MCP, Claude Code, streaming, rate limits, errors, evals, safety, prompt engineering, and a capstone that wires it all into one production app. The exam assumes you already know this half of the story.</p></a>
 
 <h2>Domain volumes</h2>
 <a class="vol" href="01-solution-design-architecture.html"><div class="row"><h3>1. Solution Design &amp; Architecture</h3><span class="w">17%</span></div><p>Business problem to Claude solution, end-to-end architectures, workflow vs agentic patterns, multi-agent orchestration, decomposition, business value pillars and SLAs.</p></a>
@@ -1268,7 +1316,7 @@ footer p{text-align:left}
 
 </main>
 </div>
-<footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
 <script>
 /* ==========================================================================
    DS — Canonical Design System behavior (shared across study-guide tracks)
