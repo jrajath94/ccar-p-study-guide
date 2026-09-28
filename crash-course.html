@@ -1124,6 +1124,8 @@ footer p{text-align:left}
 .qb-node.result{border-color:#3fb96b}
 
 /* ---------- Print / PDF: light-paper theme ---------- */
+/* This file is inlined by pipeline/build_pdf.py AFTER the canonical ds.css,
+   so every rule here wins over the screen design when Chromium prints. */
 @media print {
   :root {
     --bg: #ffffff;
@@ -1143,20 +1145,63 @@ footer p{text-align:left}
   #ds-sidebar-root,
   #ds-hamburger,
   #ds-progress,
+  #ds-overlay,
+  .ds-side-search,
+  .ds-done-wrap,
+  .ds-skip,
   .ds-site-header,
   .ds-site-footer,
   .ds-crumb,
   .ds-copy-btn { display: none !important; }
   #ds-content { padding: 0; }
   .ds-content-inner { max-width: none; }
-  a { color: var(--link); text-decoration: underline; }
-  .unit, .banner, .exam-ask, .board, .trapbox, .nums, .callout,
-  .takeaway, .def, .diagram-walkthrough, .qb-q {
+
+  /* --- Justified body text with hyphenation: even spacing, no rivers --- */
+  main#ds-content p,
+  main#ds-content li,
+  main#ds-content td,
+  main#ds-content th,
+  main#ds-content blockquote p,
+  main#ds-content figcaption,
+  .pq-answer p {
+    text-align: justify;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-justify: inter-word;
+    hyphenate-limit-chars: 6 3 2;
+    hyphenate-limit-lines: 2;
+  }
+
+  /* --- Widow / orphan control --- */
+  p, li, td, th, blockquote, figcaption {
+    widows: 3;
+    orphans: 3;
+  }
+  h1, h2, h3, h4, h5 {
+    break-inside: avoid;
+    break-after: avoid;
+  }
+
+  /* --- Keep blocks intact across page breaks --- */
+  pre, table, .table-wrap, figure,
+  .unit, .banner, .hero, .exam-ask, .board, .trapbox, .trap, .warn,
+  .nums, .callout, .takeaway, .diagram-walkthrough, .qb-q, .qb-strategy,
+  .qb-flow, .constraint-block, .facts, .askbox, .examstrip, .exam-strip,
+  .onboard, .toc, details.pq {
     break-inside: avoid;
   }
-  h2 { break-after: avoid; }
-  pre, table { break-inside: avoid; }
+
+  /* --- Links stay visible and clickable in print --- */
+  a { color: var(--link); text-decoration: underline; }
+
+  /* --- Undo dark-mode leftovers that would print as ink blocks --- */
+  tbody tr:nth-child(odd)  { background: #f2f2f0; }
+  tbody tr:nth-child(even) { background: #ffffff; }
+  .def { color: var(--text); }
+  .ds-nav-link:hover { background: none; color: var(--text); }
+
   img { max-width: 100%; }
+
   @page {
     size: A4;
     margin: 16mm 14mm 18mm 14mm;
@@ -1166,7 +1211,7 @@ footer p{text-align:left}
 </style>
 </head>
 <body>
-<header class="ds-site-header"><a class="ds-brand" href="index.html"><span class="b-full">CCAR-P Study Guide</span><span class="b-short">CCAR-P</span></a><input type="checkbox" id="ds-navcheck" class="ds-visually-hidden" tabindex="-1" aria-hidden="true"><label class="ds-navburger" for="ds-navcheck" aria-label="Toggle volume menu"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></label><nav class="ds-sitenav" aria-label="Volumes"><ul><li><a href="index.html">Home</a></li><li><a href="01-solution-design-architecture.html">D1 · Design</a></li><li><a href="02-models-prompting-context.html">D2 · Models</a></li><li><a href="03-integration.html">D3 · Integration</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Eval</a></li><li><a href="05-governance-safety-risk.html">D5 · Safety</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Comms</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Dev</a></li><li><a href="08-question-bank.html">Questions</a></li><li><a href="09-system-design-guide.html">Designs</a></li><li><a href="crash-course.html" aria-current="page">Crash</a></li></ul></nav><nav class="ds-headerpn" aria-label="Previous and next volume"><a class="ds-pn" rel="prev" href="09-system-design-guide.html"><span aria-hidden="true">&#8249;</span> <span class="pn-word">Prev</span></a><span class="ds-pn-empty" aria-hidden="true"></span></nav></header>
+<header class="ds-site-header"><a class="ds-brand" href="index.html"><span class="b-full">CCAR-P Study Guide</span><span class="b-short">CCAR-P</span></a><input type="checkbox" id="ds-navcheck" class="ds-visually-hidden" tabindex="-1" aria-hidden="true"><label class="ds-navburger" for="ds-navcheck" aria-label="Toggle volume menu"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></label><nav class="ds-sitenav" aria-label="Volumes"><ul><li><a href="index.html">Home</a></li><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Dev</a></li><li><a href="01-solution-design-architecture.html">D1 · Design</a></li><li><a href="02-models-prompting-context.html">D2 · Models</a></li><li><a href="03-integration.html">D3 · Integration</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Eval</a></li><li><a href="05-governance-safety-risk.html">D5 · Safety</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Comms</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Dev</a></li><li><a href="08-question-bank.html">Questions</a></li><li><a href="09-system-design-guide.html">Designs</a></li><li><a href="crash-course.html" aria-current="page">Crash</a></li></ul></nav><nav class="ds-headerpn" aria-label="Previous and next volume"><a class="ds-pn" rel="prev" href="09-system-design-guide.html"><span aria-hidden="true">&#8249;</span> <span class="pn-word">Prev</span></a><span class="ds-pn-empty" aria-hidden="true"></span></nav></header>
 <div class="ds-shell">
 <div id="ds-sidebar-root"></div>
 <main id="ds-content">
@@ -1175,11 +1220,12 @@ footer p{text-align:left}
 <section class="unit" id=""><h2>How to use this crash course</h2>
 <p>Read it in domain order: D3, D1, D4, D5, D6, D2, D7. That is exam-weight order, heaviest first. Each domain sheet has three parts: the facts in one screen, the "if the stem says X, pick Y" decision rules, and the traps that domain sets. Then come the must-memorize numbers, the 25 trap patterns, and 25 rapid-fire questions. The pre-exam checklist closes the volume.</p>
 <p>This is a judgment exam, not a trivia exam. The questions are long scenario stems. Several options are technically true. The credited answer is the one that best satisfies every stated constraint at once. When you are stuck, name the constraint out loud: cost ceiling, latency budget, compliance rule, existing footprint. The answer that respects all of them wins.</p>
+<p>Each domain sheet is a ladder. Rungs 1-2 give you the facts and the decision rules in one screen. Rung 3 adds the granular layer: exact numbers, limits, and worked specifics the exam tests. The top rung is the trap list: name every trap cold before you move on.</p>
 <div class="exam-ask"><div class="lbl">Exam-day protocol</div><p>Read the question line first, then the scenario. The question line tells you what to extract. Budget just under 2 minutes per item: 63 items in 120 minutes. Flag anything that eats 3 minutes and move on. Use the final 10 minutes for flagged items only, and change an answer only when you can name the error. On multiple-response items, judge each option alone: every selection must survive on its own, because there is no partial credit. About a quarter of the exam is multiple-response. One wrong pick sinks the whole item.</p></div></section>
 
 <section class="unit" id=""><h2>D3 · Integration (19%, about 12 items)</h2>
 <p>The heaviest domain. Expect a dozen questions on how Claude systems connect to the world.</p>
-<h3>The facts in one screen</h3>
+<h3>Rungs 1-2: the facts in one screen</h3>
 <p><strong>Pick the integration mechanism by reuse and independence.</strong> Three mechanisms, three tells. MCP (Model Context Protocol) when one capability must be reused across many surfaces: three product teams needing the same knowledge-search tool is the textbook tell. Direct API or CLI when it is one application, one surface, full control, no reuse need; wrapping a one-off in a protocol layer adds maintenance with no benefit. Agent-to-agent when two systems must reason and fail independently, with distinct responsibility domains.</p>
 <p><strong>Capability bloat is the exam's favorite D3 diagnosis.</strong> Signs: tool counts far beyond the task, overlapping tool descriptions where two tools plausibly handle one request, broad write permissions granted "just in case", tools that never appear in invocation logs but ship in every request. The fix is always scoping: minimal tool sets per responsibility, oversized agents split into scoped subagents, least privilege on every credential.</p>
 <p><strong>Progressive discovery beats monolithic context at scale.</strong> Load tool definitions, schemas, and reference data on demand as the agent narrows in. Front-loading everything into every request costs tokens, dilutes attention, and lowers tool-selection accuracy. Monolithic context is acceptable only for small, stable toolsets.</p>
@@ -1223,6 +1269,11 @@ footer p{text-align:left}
 </tbody>
 </table></div>
 
+<h3>Rung 3: the granular layer (numbers and limits)</h3>
+<p><strong>Chunking, matched to data shape.</strong> Prose manuals: fixed 512 tokens with 50 overlap (predictable cost and latency). Support tickets: one ticket = one chunk (never split the problem from its fix). API references: one endpoint = one chunk. Contracts with cross-references: section-aware hierarchical (child chunks for precision, parent chunks for the referenced context). Code: function/class level with file-path metadata.</p>
+<p><strong>Retrieval is two stages.</strong> Stage one casts a wide net: dense vector search plus BM25 keyword search in parallel (dense finds "factory reset procedure" for a "how do I reset" query; BM25 finds the exact error code <code>ERR_0x4F2A</code>), merged, top 40 to 100. Metadata filters run first and can remove 90% of the corpus before similarity runs. Stage two reranks the top 40 down to 5 with a cross-encoder: typically +10 to 20 points of faithfulness for a few hundred milliseconds. That is the best quality-per-millisecond trade in the pipeline.</p>
+<p><strong>Transport fork.</strong> stdio: local subprocess on one machine, single user (Claude Code on a laptop). Streamable HTTP: production, many users, TLS, OAuth, load-balanced. SSE: deprecated legacy path. Remote, multi-user, or production in the stem means Streamable HTTP; single laptop means stdio.</p>
+<p><strong>MCP auth.</strong> MCP standardizes how OAuth tokens flow, not whether auth happens. The server still authenticates every caller. Delegated OAuth 2.1: scoped tokens per user, validated on every tool call, per-user instant revocation. A token with <code>*:*</code> scope is a finding, not a shortcut.</p>
 <h3>Tool errors: the instructive-error rule</h3>
 <p>When a tool fails, the error message must say what went wrong and what Claude should try next. A generic "Tool execution failed" message produces two failure modes: the agent retries the identical call until it hits the turn limit, or it escalates to a human without trying alternatives. The fix is in the tool, not the prompt: specific error text that names the problem and the next step.</p>
 <pre><code class="language-python">import anthropic
@@ -1282,12 +1333,12 @@ def lookup_order(order_id):
   agent has two bad options: retry the same call (burns turns)
   or escalate (bothers a human for a solvable problem).
 </code></pre>
-<h3>D3 traps</h3>
+<h3>Top rung: D3 traps. Name them cold</h3>
 <p>Mega-agent is the trap: an option that piles tools and permissions onto one agent when the scenario shows bloat. Context-stuffing appears here too: "give the agent every schema" as a fix for bad tool selection. Single-framework shows up in auth questions: one shared account for every jurisdiction and user type.</p></section>
 
 <section class="unit" id=""><h2>D1 · Solution Design &amp; Architecture (17%, about 11 items)</h2>
 <p>Pattern selection is the most tested judgment on the exam.</p>
-<h3>The facts in one screen</h3>
+<h3>Rungs 1-2: the facts in one screen</h3>
 <p><strong>Three patterns, one governing principle: start with the simplest pattern that meets the requirement.</strong> Augmented LLM is a single model call enriched with retrieval, tools, or memory. Pick it when one well-scoped call solves the task: lowest cost, lowest latency. Workflow is multiple model calls in a fixed, developer-defined sequence. Pick it when steps are known in advance and predictability or auditability matters: fixed steps give deterministic, traceable behavior that compliance teams can sign off. Agentic is an open-ended loop where the model chooses its own tools and steps. Pick it only when the solution path cannot be enumerated up front and exploration is required. You accept its cost and latency variance only then.</p>
 <p><strong>A complete architecture has four parts: input, processing, output, and a feedback loop.</strong> An answer that omits the feedback loop (evals, user signals, monitoring feeding back into design) describes an incomplete system, and the exam notices.</p>
 <p><strong>Decompose multi-agent systems only when the decomposition is real.</strong> Independent subtasks that can run in parallel justify an orchestrator with workers. A narrow single-domain task belongs to one agent. Decompose by capability (research, analysis, writing) or by data domain (per region, per product line). Sequential handoff when outputs chain; parallel fan-out when subtasks are independent, merged by the orchestrator in a synthesis step. Orchestration lives outside any single agent: the coordinator owns assignment, merging, and failure isolation.</p>
@@ -1343,6 +1394,10 @@ def lookup_order(order_id):
 </tbody>
 </table></div>
 
+<h3>Rung 3: the granular layer (numbers and limits)</h3>
+<p><strong>The trilemma decision procedure.</strong> Read the constraints, rank them, find the binding one. "p95 under 2 seconds" pins you near latency; "95% accuracy on contracts" pins you near quality; "$0.01 per request" pins you near cost. Pick the cheapest tier that satisfies the binding constraint. Then cheat the triangle with architecture: cache stable prefixes, route the easy majority to the fast tier and escalate only the hard slice, batch everything without a latency requirement (Batch API is ~50% off). Output discipline matters: output tokens cost ~5x input, so one-sentence answers and JSON instead of prose cut the most expensive tokens first.</p>
+<p><strong>Multi-agent triggers.</strong> One agent reading 50 sources sequentially fills its context with raw articles and gets worse as the run goes on. The fix: orchestrator-workers for independent parallel research (each worker gets its own context with 5 articles and one narrow job), then a sequential verify step, then evaluator-optimizer for the writing (draft, critique against a rubric, revise once). Context isolation is the named quality mechanism: 150,000 raw tokens compress to ~15,000 tokens of structured summaries. Match independence to topology: independent parallel = orchestrator-workers; needs judging = evaluator-optimizer; output chains = sequential pipeline; recursive decomposition = hierarchy. Mesh for independent tasks is the coordination-overhead trap.</p>
+<p><strong>Routing math.</strong> At 50,000 queries a day with the fast tier nailing 85%: triage on the cheap tier, escalate only the hard 15%. Upgrading everything pays flagship prices for already-solved traffic.</p>
 <h3>Routing: the pattern behind "routing beats a single model at scale"</h3>
 <pre><code class="language-python">import anthropic
 
@@ -1401,12 +1456,12 @@ def answer(query: str) -&gt; str:
   Data in: raw query. What happens: 1-word classification, then
   tier selection. Data out: answer at the lowest sufficient cost.
 </code></pre>
-<h3>D1 traps</h3>
+<h3>Top rung: D1 traps. Name them cold</h3>
 <p>Agentic-by-default: any option that adds an autonomous loop where a workflow or single call suffices. Flagship-everywhere: upgrading all traffic to the top tier when routing solves it. Skip-discovery: an architecture answer that jumps to design with no success metrics or constraints named.</p></section>
 
 <section class="unit" id=""><h2>D4 · Evaluation, Testing &amp; Optimization (16%, about 10 items)</h2>
 <p>Diagnosis questions: given symptoms, name the failure and the fix.</p>
-<h3>The facts in one screen</h3>
+<h3>Rungs 1-2: the facts in one screen</h3>
 <p><strong>Match the symptom to the failure before touching anything.</strong> Wrong documents retrieved means a retrieval failure: fix chunking, embeddings, or query construction, and consider re-ranking. Right documents but wrong or invented answers means a generation failure: check grounding, prompts, or the model tier. Fast tier failing only on hard slices means a tier mismatch: route, do not upgrade everything. Judge scores drifting from human perception means judge miscalibration: sample, compare against human review, recalibrate the rubric.</p>
 <p><strong>Design eval sets like production, then maintain them.</strong> Held-out (never used for tuning), shaped like real traffic, refreshed as traffic drifts, scored per slice. An eval set frozen at launch measures the past: the score stays high because the test stayed easy. Tuning prompts on the test set is cheating yourself; the exam marks it wrong every time.</p>
 <p><strong>Divide grading labor by what each grader is good at.</strong> Deterministic checks (does the JSON parse, do the fields match the schema) go to code. Fuzzy quality judgments at scale go to an LLM judge, calibrated against sampled human review. Final calls on high-stakes or ambiguous cases go to humans. When judge scores and human perception diverge, the rubric no longer matches human standards: recalibrate.</p>
@@ -1470,12 +1525,17 @@ def answer(query: str) -&gt; str:
 </tbody>
 </table></div>
 
-<h3>D4 traps</h3>
+<h3>Rung 3: the granular layer (numbers and limits)</h3>
+<p><strong>Golden sets.</strong> 200 to 500 real, held-out cases with known-good answers, versioned in git, covering every document type and the hard query shapes (multi-hop, ambiguous, unanswerable). Built from production inputs, refreshed as traffic drifts. Fewer than 100 and noise dominates: a 3-point swing might be two lucky cases.</p>
+<p><strong>CI gate rules, concrete.</strong> Accuracy floor (e.g. 90% faithfulness). Per-segment: no document type, tool, or category may drop more than ~2 points from the previous run, even if the overall score holds. Latency ceiling (p95 under the SLA). Cost ceiling (mean tokens per task within budget). Safety: a dedicated adversarial slice passes at 100%, binary, never averaged. The gate posts a score diff as a PR comment and blocks merge on any red rule.</p>
+<p><strong>Judge calibration.</strong> An LLM judge without a rubric and human-agreement calibration is an opinion with a score attached. Rubric with named criteria and point values ("2 points: cites the correct section; 1 point: correct but uncited; 0: contradicts the reference"). Calibrate: humans score 100 outputs, judge scores the same 100, measure agreement (trust needs roughly 85%+). Know the biases: judges favor longer answers, confident tone, and their own model family's style.</p>
+<p><strong>Monitoring in production.</strong> Sample ~5% of live traffic, score nightly, track the trend: a slow 1-point-per-week decay is data drift, invisible without the trend line. Alert on judge-score drops, refusal-rate spikes, tool-error spikes, p95 breaching SLA, cost-per-task jumps. Every production failure the golden set missed becomes a new golden case.</p>
+<h3>Top rung: D4 traps. Name them cold</h3>
 <p>Aggregate-metric: the single overall accuracy number hiding a per-slice failure. Context-stuffing: "retrieve more chunks" as a quality fix. Prompt-guarantee: tuning the prompt to fix a retrieval or tier problem.</p></section>
 
 <section class="unit" id=""><h2>D5 · Governance, Safety &amp; Risk Management (14%, about 9 items)</h2>
 <p>Defense in depth, human placement, and matching the framework to the jurisdiction.</p>
-<h3>The facts in one screen</h3>
+<h3>Rungs 1-2: the facts in one screen</h3>
 <p><strong>Five guardrail layers, in order, each catching what the others miss.</strong> Input filtering scans the request before it reaches the model: injection detectors, PII redaction, jailbreak patterns, rate limits. Classifier gates score input and output with a small fast model: toxicity, self-harm, disallowed advice; probabilistic, so you set a threshold. Policy engines are deterministic rules evaluated like code: block SSN patterns, refuse deny-list topics, require approval before writes; no prompt can negotiate with them. Output filtering scans the response: PII and secret leaks, hallucinations checked against retrieved sources, toxicity re-screen, structured-output validation. Tool-use controls govern agents: least-privilege scopes, argument allow-lists, human confirmation before irreversible actions, sandboxed code execution.</p>
 <p><strong>Attack in the request means input-side controls. Failure in the response means output-side controls.</strong> An input filter cannot catch a hallucination; an output filter cannot stop an injection. Compliance and safety enforcement come from permissions, validation, and layers, never from prompt text alone: "tune the system prompt to be safe" is the prompt-guarantee trap.</p>
 <p><strong>Place humans by risk, sample the rest.</strong> Human review is required before irreversible or regulated decisions reach anyone: loan approvals, medical guidance, money movement, data sent outside the company. Routine low-risk steps get sampled review, not review of everything: reviewing every internal draft is the all-or-nothing HITL trap in the other direction. Sentiment and self-reported model confidence are not triggers for human review.</p>
@@ -1540,12 +1600,16 @@ def answer(query: str) -&gt; str:
 </tbody>
 </table></div>
 
-<h3>D5 traps</h3>
+<h3>Rung 3: the granular layer (numbers and limits)</h3>
+<p><strong>HITL tiers, exact.</strong> Read-only: no approval, just log. Reversible writes (file a ticket, update status): no approval, but show what was done and offer undo. Destructive or sensitive (reset password, restart production, delete data, touch another employee's records): explicit human approval with the full action previewed; approvals expire (~5 minutes); timeout defaults to <strong>deny</strong>, never to allow. Irreversible or regulated (terminate an account, wipe a device): approval plus a second factor, a different human or a manager role. The agent proposes; it never executes alone.</p>
+<p><strong>Zero Data Retention, precisely.</strong> ZDR is a contract covering the vendor's API: the provider stores none of your request or response data after serving it. It does not cover your laptop: local transcripts, shell history, and your own logs may still hold pasted secrets. A leaked credential gets rotated even under ZDR, and you add a PreToolUse hook that blocks secret-shaped input before it reaches the model. Rule stands regardless of contract: reference secrets by name, never by value.</p>
+<p><strong>Fairness is measured, not prompted.</strong> "Be fair" in the system prompt is the prompt-guarantee trap. The credited answer: per-slice evaluation across demographic groups, with the slices named and the gaps quantified. Sentiment and self-reported model confidence are not triggers for human review; irreversible impact is.</p>
+<h3>Top rung: D5 traps. Name them cold</h3>
 <p>Prompt-guarantee: a system prompt offered as a compliance or safety control. All-or-nothing HITL: humans on everything or humans on nothing. Single-framework: one framework named for data that needs two, or the wrong framework for the jurisdiction.</p></section>
 
 <section class="unit" id=""><h2>D6 · Stakeholder Communication &amp; Lifecycle (14%, about 9 items)</h2>
 <p>The exam spends real weight on work that never touches code. Technically strong candidates lose points here.</p>
-<h3>The facts in one screen</h3>
+<h3>Rungs 1-2: the facts in one screen</h3>
 <p><strong>Never design before discovery.</strong> Structured discovery fills five buckets before any architecture is drawn. Success metrics: numbers with dates. Constraints: latency caps, cost ceilings, compliance rules. Data reality: what data exists, who owns it, how fresh it is. Risk tolerance: what a wrong answer costs, which sets the human review budget. Decision rights: named people who sign off. A scenario that jumps to design with none of these is the skip-discovery trap. Stakeholders describe solutions, not problems: "we want RAG" is a solution; "analysts cannot find the right policy document" is a problem. Dig for the problem.</p>
 <p><strong>The lifecycle has six phases: discover, design, build, hand off, monitor, iterate.</strong> Then the loop turns again. The steering wheel for the whole loop is the eval set: every iteration is judged by measured results, not opinions. Handoff needs runbooks and baselines, or operations inherits a black box.</p>
 <p><strong>Write SLAs for probabilistic systems with error budgets, not deterministic promises.</strong> "99.9% correct" is a lie for a model; "95% of responses meet the quality bar, measured weekly on the held-out set, with rollback if we miss two weeks running" is a commitment you can keep. Convert model behavior into commitments the business can plan around.</p>
@@ -1589,12 +1653,17 @@ def answer(query: str) -&gt; str:
 </tbody>
 </table></div>
 
-<h3>D6 traps</h3>
+<h3>Rung 3: the granular layer (numbers and limits)</h3>
+<p><strong>The five discovery buckets, verbatim-ready.</strong> Success metrics: numbers with dates ("analysts find the right policy in under 2 minutes, measured by next quarter"). Constraints: latency caps, cost ceilings, compliance rules. Data reality: what data exists, who owns it, how fresh it is. Risk tolerance: what a wrong answer costs, which sets the human review budget. Decision rights: named people who sign off. A scenario with none of these is skip-discovery, even if the architecture looks beautiful.</p>
+<p><strong>SLA anatomy for probabilistic systems.</strong> Four pieces: the quality bar ("95% of responses meet the rubric"), the measurement ("scored weekly on the held-out set"), the consequence ("rollback if we miss two weeks running"), and the error budget (how many misses the quarter tolerates). Never "99.9% correct."</p>
+<p><strong>ADR anatomy.</strong> Context (what was true when we decided), options considered (at least two, with the rejected ones named), the decision, and the consequences. Version controlled with the project. A code comment captures what, rarely why-not-alternatives; a recorded meeting is unsearchable and unversioned.</p>
+<p><strong>Trade-off communication.</strong> Frame every recommendation by the binding constraint: "Option A meets the latency budget but costs 3x; Option B meets the budget but needs sampled review on edge cases." The feasibility verdict must include "no": recommending against the build, with the constraint it would break, is a complete answer.</p>
+<h3>Top rung: D6 traps. Name them cold</h3>
 <p>Skip-discovery: designing from a wish list. Deterministic-correctness promises: "the model will always" anything. The ADR question is nearly verbatim on the exam: learn its phrasing.</p></section>
 
 <section class="unit" id=""><h2>D2 · Claude Models, Prompting &amp; Context Engineering (13%, about 8 items)</h2>
 <p>Tier judgment, caching mechanics, and prompt structure.</p>
-<h3>The facts in one screen</h3>
+<h3>Rungs 1-2: the facts in one screen</h3>
 <p><strong>Reason by tier, not by model name.</strong> Top capability tier (Opus class): hardest reasoning, long-horizon agentic work, where failure is expensive and volume is low. Balanced tier (Sonnet class): the production default for most enterprise workloads. Fast tier (Haiku class): lowest cost and latency, for high-volume well-bounded tasks like classification, routing, extraction. Three rules. Default to the balanced tier and move on evidence: upgrade when evals show reasoning failures, downgrade when the cheap tier holds accuracy. Routing beats a single model at scale. Latency-sensitive user paths get the fast tier plus streaming, while bulk work goes to the Batch API.</p>
 <p><strong>Prompting techniques by task shape.</strong> Zero-shot (instructions only) for simple, unambiguous tasks. Few-shot with 2 to 4 worked examples to teach format and edge-case judgment; include a correct rejection example so the model learns what to leave alone. Chain-of-thought for multi-step logic, at the price of output tokens and latency. System prompt order: role first, explicit testable criteria next, boundary statements, then output format. "Flag SQL injection and authentication bypass" is testable; "be careful" is not.</p>
 <p><strong>Prompt caching pays off when a long, stable prefix is reused across many calls within the cache lifetime.</strong> Agent loops, high-traffic endpoints sharing one system prompt, repeated Q&amp;A over the same documents. It breaks on any prefix change from that point forward. The three classic cache-breaking mistakes, all tested: a timestamp or user ID placed early in the system prompt, reordered tool definitions between calls, shuffled document order. Structure prompts stable-first, variable-last, with per-request content after the cache breakpoint. It does not pay off for infrequent calls (the cache expires between them) or prompts below the minimum cacheable length.</p>
@@ -1707,12 +1776,16 @@ def ask(per_request: str) -&gt; str:
 </tbody>
 </table></div>
 
-<h3>D2 traps</h3>
+<h3>Rung 3: the granular layer (numbers and limits)</h3>
+<p><strong>Breakpoint ordering.</strong> Stable-first, variable-last, one breakpoint per stability tier. [1] system prompt + persona + global rules (almost never changes). [2] tool definitions + few-shot examples (changes on deploy). [3] retrieved documents or conversation summary (changes per session). Then the user's current message with no cache (changes every turn). Tool definitions are ideal cache citizens: long, identical across turns, and exactly what capability bloat makes expensive. Never put timestamps, request IDs, or user-specific data inside the cached prefix. With 4 breakpoints max, a fifth explicit breakpoint returns a 400 error.</p>
+<p><strong>The break-even math.</strong> Write = 1.25x base input (a 25% premium paid once). Read = 0.1x (90% off the cached portion). First write repaid after the very first cache hit. When the bet loses: traffic slower than the TTL (1 request per hour vs a 5-minute TTL) means every request pays the write premium and never gets a read: 25% MORE than no caching. The 1-hour TTL option keeps entries alive longer but its write costs ~2x base input: only wins when reuse is spread thin across the hour. Reuse interval must be comfortably shorter than the TTL, and the prefix must clear the model-specific minimum (512 / 1024 / 2048 / 4096 tokens).</p>
+<p><strong>Model tier pricing.</strong> Fable 5.1 $10/$50 per million in/out: hardest reasoning, long-horizon agentic work, last resort. Opus 5.5 $4/$20: sustained agentic coding and knowledge work. Sonnet 5 $2/$10: the balanced production default. Haiku 4.5 $1/$5: high-volume, well-bounded tasks (classification, extraction, routing, subagent workers). Ratios to memorize: output costs exactly 5x input on every tier; each tier costs roughly 1.7x to 5x the one below. Uniform tiering is the expensive distractor.</p>
+<h3>Top rung: D2 traps. Name them cold</h3>
 <p>Flagship-everywhere: top tier for traffic the fast tier already handles. Cache-breaker blindness: any fix that ignores the volatile prefix. Vague criteria: untestable instructions presented as a solution.</p></section>
 
 <section class="unit" id=""><h2>D7 · Developer Productivity &amp; Enablement (7%, about 4 items)</h2>
 <p>Small domain, mechanical questions. Team behavior lives in version-controlled project config.</p>
-<h3>The facts in one screen</h3>
+<h3>Rungs 1-2: the facts in one screen</h3>
 <p><strong>Put team-wide behavior in committed project configuration.</strong> Shared MCP servers, coding standards, review conventions: they live in the project's version-controlled config (committed CLAUDE.md, project-scoped MCP config with secrets in environment variables), not in each engineer's personal config, not in a wiki nobody's tooling reads. Depending on every individual to comply forever is not a control.</p>
 <p><strong>Enforcement and guidance live in different layers.</strong> Managed settings enforce: permission deny rules, blocked tools, sandbox requirements. The client enforces them regardless of what the model decides. Managed CLAUDE.md guides: coding standards, compliance reminders, behavioral prose. An enterprise scenario asking how to prevent an action across every machine wants managed settings. One asking how to standardize behavior wants the managed CLAUDE.md. Putting a hard requirement in the soft layer (or prose standards in the enforcement layer) is the trap.</p>
 <p><strong>Least privilege in shared and CI environments.</strong> Shared checkouts and CI runners get the minimum tool set and the minimum permissions that do the job. Raw secrets never appear in committed files.</p>
@@ -1751,7 +1824,13 @@ def ask(per_request: str) -&gt; str:
 </tbody>
 </table></div>
 
-<h3>D7 traps</h3>
+<h3>Rung 3: the granular layer (numbers and limits)</h3>
+<p><strong>Three settings layers, one rule: lower layers cannot be overridden by higher ones.</strong> Managed (enterprise) settings: the org's non-overridable policy (deny rules, blocked tools). Project settings: checked into the repo, team convention (shared MCP servers, project hooks). User settings: personal defaults. Permissions merge across layers with deny-first: a managed deny on <code>git push --force</code> survives any local edit. Compliance or "cannot be overridden" in the stem means managed.</p>
+<p><strong>Allow / ask / deny.</strong> Allow: run silently. Ask: pause for human approval. Deny: block and log. Ask is a speed bump, not a control: developers under deadline click through prompts, so ask slows accidents without preventing them. Deny is the only hard control. When the scenario demands a guarantee ("must never", "compliance requires"), ask is the trap and deny is the answer.</p>
+<p><strong>Hooks.</strong> PreToolUse hooks inspect every tool call before execution and can veto it: secret-shaped input never reaches the model, destructive patterns get blocked regardless of what the prompt says. PostToolUse hooks can log or transform results. Hooks are deterministic code, so unlike prompt rules they cannot be talked around.</p>
+<p><strong>Debugging production systems.</strong> Traces are the core dump: system prompt, every message, every tool_use with exact input, every tool_result, stop_reason per step, token counts, latencies, one correlation ID per session. Debug order: stop reasons first (cut-off behavior), then tool_use/tool_result pairs (wrong actions), then tool schema change history (intermittent wrong-tool calls = schema drift). Reproducing a bug requires frozen replay with canned tool results: re-running the prompt alone proves nothing, because temperature, model version, schemas, and tool results are all inputs.</p>
+<p><strong>Runbooks.</strong> Mitigate first, diagnose second, harden third. Spend spike at 2am: kill the sessions and enforce an iteration cap, then read the traces; the hardening change (iteration caps, idempotent tools, spend limits) is the lasting fix. A runbook is time-buying; the fix is the code change.</p>
+<h3>Top rung: D7 traps. Name them cold</h3>
 <p>Personal-config trap: team standards placed where only one person sees them. Layer confusion: enforcement in the guidance layer or guidance in the enforcement layer.</p></section>
 
 <section class="unit" id=""><h2>Must-memorize numbers</h2>
@@ -1796,8 +1875,20 @@ def ask(per_request: str) -&gt; str:
 <td>Remaining four domains</td>
 </tr>
 <tr>
+<td>Cache write 1.25x base input, cache read 0.1x; 5-min default TTL, 1-hour TTL at ~2x write</td>
+<td>Cache economics (see D2 rung 3 for the break-even math)</td>
+</tr>
+<tr>
+<td>Min cacheable: 512 (Fable 5.1, Opus 5.5), 1024 (Sonnet 5), 4096 (Haiku 4.5)</td>
+<td>Below this, caching silently does nothing</td>
+</tr>
+<tr>
+<td>4 breakpoints max; a fifth explicit breakpoint returns a 400 error</td>
+<td>Breakpoint budget</td>
+</tr>
+<tr>
 <td>Fable 5.1: $10 in / $50 out, 1M context, 128K max output</td>
-<td>Top reasoning tier</td>
+<td>Top reasoning tier, last resort</td>
 </tr>
 <tr>
 <td>Opus 5.5: $4 in / $20 out, 1M context, 128K max output</td>
@@ -1812,24 +1903,20 @@ def ask(per_request: str) -&gt; str:
 <td>Fast, high-volume bounded tasks</td>
 </tr>
 <tr>
-<td>5-minute cache TTL (default), 1-hour at 2x base input</td>
-<td>Cache lifetimes</td>
-</tr>
-<tr>
-<td>Cache write 1.25x base input, cache read 0.1x</td>
-<td>Cache economics</td>
-</tr>
-<tr>
-<td>Min cacheable: 512 (Fable 5.1, Opus 5.5), 1024 (Sonnet 5), 4096 (Haiku 4.5)</td>
-<td>Below this, caching silently does nothing</td>
-</tr>
-<tr>
-<td>4 breakpoints max</td>
-<td>A fifth explicit breakpoint returns a 400 error</td>
+<td>Output costs exactly 5x input on every tier</td>
+<td>The ratio never moves</td>
 </tr>
 <tr>
 <td>2 to 4</td>
 <td>Few-shot example count</td>
+</tr>
+<tr>
+<td>200 to 500</td>
+<td>Golden-set case count</td>
+</tr>
+<tr>
+<td>~2 points</td>
+<td>Per-segment regression limit in CI gates</td>
 </tr>
 <tr>
 <td>1 year</td>
@@ -2087,7 +2174,7 @@ def ask(per_request: str) -&gt; str:
 
 </main>
 </div>
-<footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html" aria-current="page">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html" aria-current="page">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
 <script>
 /* ==========================================================================
    DS — Canonical Design System behavior (shared across study-guide tracks)
