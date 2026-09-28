@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCAR-P Practice Question Bank</title>
+<style>
+/* ==== DS canonical design system — do not edit per-file ==== */
+/* ==========================================================================
+   DS — Canonical Design System (shared across all study-guide tracks)
+   Pitch-black dark mode. System fonts only. No gradients, no decorative
+   filler. This file is inlined verbatim into each volume's <head>.
+   ========================================================================== */
+
+:root {
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --border: #262626;
+  --text: #ececec;
+  --muted: #a8a8a8;
+  --accent: #f0b429;   /* warm amber — key highlights, active states, takeaways */
+  --link: #6cb2ff;
+  --code-bg: #111111;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ---------- Base ---------- */
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 1rem;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-x: clip;          /* no horizontal scroll at any width; clip keeps sticky working */
+}
+
+a { color: var(--link); }
+a:hover { text-decoration-thickness: 2px; }
+
+/* Visible focus for keyboard users — never remove without replacement. */
+:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.ds-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link: hidden until focused. */
+.ds-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+.ds-skip:focus { left: 0.75rem; top: 0.75rem; }
+
+/* ---------- Typography ---------- */
+
+h1, h2, h3, h4 {
+  font-style: normal;        /* headings always roman, never italic */
+  line-height: 1.35;
+  margin: 2.2rem 0 1rem;
+  color: var(--text);
+}
+h1 { font-size: 2rem;    font-weight: 700; }
+h2 { font-size: 1.5rem;  font-weight: 700; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { font-size: 1.25rem; font-weight: 600; }
+h4 { font-size: 1.1rem;  font-weight: 600; }
+
+p { text-align: justify; margin: 1rem 0; overflow-wrap: break-word; }
+li { overflow-wrap: break-word; }
+ul, ol { padding-left: 1.6rem; }
+li { margin: 0.35rem 0; }
+
+blockquote {
+  margin: 1.5rem 0;
+  padding: 0.5rem 1.25rem;
+  border-left: 2px solid var(--border);
+  color: var(--muted);
+}
+blockquote p { text-align: left; }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+code, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+p code, li code, td code, th code, figcaption code {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  white-space: nowrap;
+}
+
+/* ---------- Reading progress bar ---------- */
+
+#ds-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* ---------- Sidebar ---------- */
+
+#ds-sidebar-root {
+  flex: 0 0 300px;
+  width: 300px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  z-index: 60;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.ds-side-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding-bottom: 2rem;
+}
+
+.ds-side-search {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.ds-side-search input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+}
+.ds-side-search input::placeholder { color: var(--muted); }
+
+.ds-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+.ds-nav-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-right: 0.6rem;
+}
+
+.ds-nav-toggle {
+  flex: 0 0 auto;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0.55rem 0.3rem 0.55rem 1rem;
+  font-family: inherit;
+}
+.ds-nav-toggle:hover { color: var(--accent); }
+
+.ds-nav-link {
+  flex: 1 1 auto;
+  display: block;
+  min-width: 0;
+  padding: 0.45rem 0.25rem 0.45rem 0.4rem;
+  padding-left: 1.25rem;
+  margin-left: -0.55rem;      /* align text under toggle glyph */
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  border-left: 2px solid transparent;
+}
+.ds-nav-link:hover { color: #ffffff; background: rgba(255, 255, 255, 0.04); }
+.ds-nav-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
+.ds-nav-sub { list-style: none; margin: 0; padding: 0; }
+.ds-nav-subrow .ds-nav-link {
+  padding-left: 2.6rem;
+  margin-left: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.ds-nav-subrow .ds-nav-link:hover { color: var(--text); }
+.ds-nav-subrow .ds-nav-link.active { color: var(--accent); }
+
+.ds-done-wrap { flex: 0 0 auto; display: inline-flex; align-items: center; }
+.ds-done {
+  width: 1rem; height: 1rem;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+.ds-nav-row.done .ds-nav-link {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+/* ---------- Main content ---------- */
+
+#ds-content {
+  flex: 1 1 auto;
+  min-width: 0;               /* lets flex child shrink; prevents overflow */
+  padding: 2.5rem 2rem 4rem;
+}
+.ds-content-inner {
+  max-width: 72ch;
+  margin: 0 auto;
+}
+
+/* ---------- Hamburger / drawer (mobile) ---------- */
+
+#ds-hamburger {
+  display: none;
+  position: fixed;
+  top: 0.75rem; left: 0.75rem;
+  z-index: 90;
+  width: 2.75rem; height: 2.75rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+#ds-hamburger span {
+  display: block;
+  width: 1.25rem; height: 2px;
+  background: var(--text);
+}
+
+#ds-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 900px) {
+  body { display: block; }
+
+  #ds-hamburger { display: inline-flex; }
+
+  #ds-sidebar-root {
+    position: fixed;
+    left: 0; top: 0;
+    flex: none;
+    width: min(320px, 85vw);
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  }
+  body.ds-drawer-open #ds-sidebar-root { transform: translateX(0); }
+  body.ds-drawer-open #ds-overlay { display: block; }
+
+  #ds-content { padding: 4.25rem 1.25rem 3rem; }
+}
+
+/* ---------- Learning components ---------- */
+
+/* "How the exam asks" callout */
+.exam-ask {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+}
+.exam-ask::before {
+  content: "HOW THE EXAM ASKS";
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.exam-ask p:first-of-type { margin-top: 0; }
+.exam-ask p:last-child { margin-bottom: 0; }
+
+/* Key-takeaway box */
+.takeaway {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+}
+.takeaway::before {
+  content: "KEY TAKEAWAY";
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.takeaway p:first-of-type { margin-top: 0; }
+.takeaway p:last-child { margin-bottom: 0; }
+
+/* Practice-question widget (click-to-reveal) */
+.pq {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+}
+.pq-question { font-weight: 600; margin-top: 0; text-align: left; }
+.pq-reveal {
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.pq-reveal:hover { background: rgba(240, 180, 41, 0.1); }
+/* Answer hidden only when JS is present — no-JS readers see the answer. */
+html.ds-js .pq-answer { display: none; }
+html.ds-js .pq-answer.open { display: block; }
+.pq-answer {
+  margin-top: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+.pq-answer p { text-align: left; }
+.pq-options { list-style: none; padding-left: 0; }
+.pq-option { padding: 0.4rem 0 0.4rem 0.85rem; margin: 0.5rem 0; }
+.pq-option.correct { border-left: 2px solid var(--accent); font-weight: 600; }
+.pq-option.wrong { border-left: 2px solid var(--border); color: var(--muted); }
+.pq-option .pq-note { display: block; font-weight: 400; color: var(--muted); font-size: 0.9rem; }
+
+/* details/summary Q&A left functional, styled to match .pq */
+details {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+}
+details > summary {
+  cursor: pointer;
+  font-weight: 600;
+  text-align: left;
+}
+details > summary::marker { color: var(--accent); }
+details.pq { padding: 1.25rem; }
+details.pq > summary {
+  display: inline-block;
+  font-size: 0.9rem;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  list-style: none;
+}
+details.pq > summary::-webkit-details-marker { display: none; }
+details.pq > summary:hover { background: rgba(240, 180, 41, 0.1); }
+details.pq > .pq-answer {
+  display: block;             /* native disclosure, always functional */
+  margin-top: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+/* Copy button injected into code blocks */
+pre {
+  position: relative;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 1.5rem 0;
+}
+pre code { background: none; border: 0; padding: 0; white-space: pre; }
+.ds-copy-btn {
+  position: absolute;
+  top: 0.5rem; right: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+}
+.ds-copy-btn:hover { color: var(--text); border-color: var(--muted); }
+
+/* Numbered how-to-read diagram walkthrough */
+.diagram-walkthrough ol {
+  list-style: none;
+  counter-reset: dw;
+  padding: 0;
+  margin: 1.25rem 0;
+}
+.diagram-walkthrough ol > li {
+  counter-increment: dw;
+  position: relative;
+  padding-left: 2.6rem;
+  margin-bottom: 0.85rem;
+  text-align: left;
+}
+.diagram-walkthrough ol > li::before {
+  content: counter(dw);
+  position: absolute;
+  left: 0; top: 0.15rem;
+  width: 1.8rem; height: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+/* First-use term styling */
+.def {
+  border-bottom: 1px dotted var(--muted);
+  color: #f5f5f5;
+  cursor: help;
+}
+
+/* Exam-constraint chip */
+.constraint {
+  display: inline-block;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 0.15rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0.15rem 0.25rem 0.15rem 0;
+  white-space: nowrap;
+}
+/* Block variant: for long-form constraint boxes (wraps; never clips) */
+.constraint-block {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  margin: 0.9rem 0;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.constraint-block strong {
+  color: var(--accent);
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+caption {
+  caption-side: bottom;
+  color: var(--muted);
+  font-size: 0.85rem;
+  padding: 0.6rem;
+  text-align: center;
+}
+th, td {
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+thead th {
+  background: var(--surface);
+  font-weight: 700;
+  white-space: nowrap;
+}
+tbody tr:nth-child(odd)  { background: #0d0d0d; }
+tbody tr:nth-child(even) { background: #111111; }
+tbody tr:last-child th,
+tbody tr:last-child td { border-bottom: 0; }
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+figure { margin: 1.75rem 0; }
+figcaption {
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-top: 0.6rem;
+  text-align: center;
+}
+
+/* Prev / next volume footer */
+.ds-prevnext {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 1rem;
+  margin: 3.5rem 0 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.75rem;
+}
+.ds-prevnext a {
+  display: block;
+  flex: 1 1 0;
+  max-width: 48%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.9rem 1.2rem;
+  color: var(--text);
+  text-decoration: none;
+}
+.ds-prevnext a:hover { border-color: var(--accent); }
+.ds-prevnext .ds-next { text-align: right; }
+.ds-prev-empty { flex: 1 1 0; max-width: 48%; }
+.ds-pn-kicker {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+}
+.ds-pn-label { font-weight: 600; line-height: 1.5; }
+
+/* ---------- Print ---------- */
+
+@media print {
+  :root {
+    --bg: #ffffff;
+    --surface: #f5f5f5;
+    --border: #cccccc;
+    --text: #000000;
+    --muted: #444444;
+    --accent: #8a5a00;
+    --link: #0000ee;
+    --code-bg: #f5f5f5;
+  }
+  body {
+    display: block;
+    background: #ffffff;
+    color: #000000;
+    font-size: 12pt;
+    line-height: 1.6;
+  }
+  #ds-sidebar-root,
+  #ds-progress,
+  #ds-hamburger,
+  #ds-overlay,
+  .ds-side-search,
+  .ds-copy-btn,
+  .ds-done-wrap,
+  .ds-skip { display: none !important; }
+  #ds-content { padding: 0; }
+  .ds-content-inner { max-width: none; }
+  p, .pq-question, .pq-answer p, details > summary { text-align: left; }
+
+  /* Expand everything for paper. */
+  details:not([open]) > :not(summary) { display: block !important; }
+  html.ds-js .pq-answer { display: block !important; }
+  .ds-nav-sub { display: block !important; }
+
+  figure, pre, table, .pq, .exam-ask, .takeaway { break-inside: avoid; }
+  h1, h2, h3, h4 { break-after: avoid; }
+
+  pre { white-space: pre-wrap; word-wrap: break-word; }
+  .table-wrap { overflow: visible; border: 0; }
+
+  /* Print-friendly link URLs: external links only. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: var(--muted);
+    word-break: break-all;
+  }
+  a { text-decoration: none; }
+}
+
+</style>
+</head>
+<body>
+<div id="ds-sidebar-root"></div>
+<main id="ds-content">
+<header class="hero">
+  <div class="wrap">
+    <h1>CCAR-P Practice Question Bank</h1>
+    <p>Claude Certified Architect, Professional. Scenario-based design decisions and trade-offs.</p>
+    <p>64 practice items across all 7 domains, weighted like the real exam. Answers are hidden behind expandable panels so you can self-test.</p>
+  </div>
+</header>
+<div class="wrap">
+
+<div class="facts">
+  <h2>Exam facts (from the official exam guide v1.0)</h2>
+  <div class="table-wrap">
+<table class="spec">
+    <tr><th>Item</th><th>Fact</th></tr>
+    <tr><td>Items</td><td>63. Multiple-choice and multiple-response. Each item states how many responses to select.</td></tr>
+    <tr><td>Duration</td><td>120 minutes. That is about 1 minute 54 seconds per item.</td></tr>
+    <tr><td>Delivery</td><td>Proctored via Pearson VUE (OnVUE online or test center).</td></tr>
+    <tr><td>Passing score</td><td>720 on a scaled 100 to 1,000 scale. It is criterion-referenced, so 720 is not the same as 72 percent correct.</td></tr>
+    <tr><td>Fee</td><td>US$175. Valid 12 months.</td></tr>
+    <tr><td>Style</td><td>Scenario-based items about production design decisions and trade-offs. Not config trivia.</td></tr>
+  </table>
+</div>
+</div>
+
+<div class="facts">
+  <h2>How to use this bank</h2>
+  <p>Read the <strong>scenario</strong>, then read the <strong>constraint</strong> box. The constraint is the scoring key: several options will be partly right, and the credited answer is the one that best satisfies the stated constraint (accuracy SLA, latency budget, compliance rule, cost ceiling). Pick your answer before opening the explanation panel. Each explanation gives the correct answer, why it wins, and why every other option loses.</p>
+  <div class="exam-ask"><strong>Constraint-first reading:</strong> on the real exam, find the numbers and rules in the scenario first (the SLA, the budget, the regulation), then judge each option against those. An option that is good engineering but breaks the constraint is a distractor.</div>
+</div>
+
+<h2 class="domain">D3. Integration (19% of the exam, about 12 items)</h2>
+<div class="domain-sub">Tool and agent configuration, auth gaps, accuracy-latency trade-offs, observability, RAG pipelines, retrieval strategies, MCP vs API/CLI vs agent-to-agent, progressive discovery vs monolithic context.</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q1</span><span class="constraint">D3</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A legal-tech startup builds a contract question-answering assistant over 40,000 vendor contracts. Users ask questions like "What is the termination notice period in contract ACME-2024-118?" and expect the exact clause quoted. The team is designing the RAG pipeline and must choose a chunking strategy.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> answers must cite the exact clause. Small errors in clause text are unacceptable to the legal team.</div>
+  <p class="ask">Which chunking strategy best satisfies the constraint?</p>
+  <ol class="opts" type="A">
+    <li>Split each contract into 2,000-token chunks with no overlap, to keep each clause in rich surrounding context.</li>
+    <li>Split each contract into 400 to 600-token chunks with 10 percent overlap, and attach contract ID plus section heading as metadata on every chunk.</li>
+    <li>Embed each full contract as a single vector and retrieve the whole contract, letting the model find the clause.</li>
+    <li>Chunk by fixed 100-token windows with no overlap or metadata, to maximize retrieval precision.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the constraint is exact clause citation. Small chunks raise retrieval precision so the cited clause is actually returned, overlap prevents clauses split across boundaries from being lost, and metadata (contract ID, section) lets the system filter and cite correctly.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because 2,000-token chunks dilute precision: the retriever returns long passages and the model may quote the wrong clause from the same chunk.</li>
+      <li>C is wrong because a whole contract far exceeds useful retrieval granularity; the model cannot reliably locate one clause in 40,000 embedded documents.</li>
+      <li>D is wrong because 100-token windows with no overlap will slice clauses in half, and without metadata the system cannot attribute a quote to the right contract.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q2</span><span class="constraint">D3</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A sales team wants a Claude agent that can look up accounts and update opportunities in their CRM. The CRM exposes a stable, well-documented REST API with six endpoints. One engineer proposes building an MCP (Model Context Protocol) server; another proposes calling the REST API directly through function calling.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> ship in two weeks with the smallest maintenance surface. Only this one CRM is in scope.</div>
+  <p class="ask">Which integration approach should the architect choose?</p>
+  <ol class="opts" type="A">
+    <li>Build an MCP server, because MCP is the standard and will be required for future tools.</li>
+    <li>Call the CRM REST API directly through function calling, since there is one stable API and six endpoints.</li>
+    <li>Build both an MCP server and direct REST tools, so the agent can choose at runtime.</li>
+    <li>Use an agent-to-agent protocol so the CRM can negotiate with the Claude agent directly.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> MCP pays off when there are many tools, dynamic discovery, or shared servers across agents. With one stable API and a two-week deadline, direct function calling is simpler and has less to maintain, which is exactly what the constraint asks for.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because "MCP is the standard" is not a reason by itself; it adds a server to build, host, and secure for no capability gain here.</li>
+      <li>C is wrong because maintaining two integration paths doubles the maintenance surface, the opposite of the constraint.</li>
+      <li>D is wrong because agent-to-agent protocols connect agents to agents, not agents to a REST API; the CRM is not an agent.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q3</span><span class="constraint">D3</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A support agent was given 47 tools: every internal API got its own function. After launch, the team sees slow responses and frequent wrong-tool calls. The model often picks a roughly similar tool instead of the right one, then retries.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> reduce wrong-tool calls without removing any capability the agent needs.</div>
+  <p class="ask">What is the best fix?</p>
+  <ol class="opts" type="A">
+    <li>Upgrade to a larger model so it can handle 47 tools more reliably.</li>
+    <li>Add five more helper tools that pre-select the right tool for common cases.</li>
+    <li>Group tools into fewer, well-named functions (or namespaced MCP servers) so the agent sees a small set of distinct choices, with details revealed on demand.</li>
+    <li>Raise the temperature so the agent explores different tools more creatively.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: C</span>
+    <p class="why-correct"><strong>Why C is correct:</strong> this is tool bloat. A flat list of 47 similar tools makes selection a guessing game. Grouping into a small set of distinct, well-named entry points (progressive disclosure of the rest) cuts wrong-tool calls while keeping every capability reachable.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because a larger model costs more and adds latency, and it treats the symptom (bad selection) instead of the cause (47 indistinguishable options).</li>
+      <li>B is wrong because adding tools makes the bloat worse, not better.</li>
+      <li>D is wrong because higher temperature increases randomness, which increases wrong-tool calls.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q4</span><span class="constraint">D3</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">An internal Claude agent reads and files expense reports through the finance API. It authenticates with a single shared service token that has full read and write access to every employee's expenses. A security review flags this before launch.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the agent must act only within the requesting employee's own permissions. No shared privileged credential.</div>
+  <p class="ask">Which auth design resolves the finding?</p>
+  <ol class="opts" type="A">
+    <li>Keep the shared token but rotate it weekly.</li>
+    <li>Give the agent one token per employee, all with full admin scope, stored in the agent's config file.</li>
+    <li>Use OAuth 2.0 delegated tokens: each request carries the requesting user's own token, scoped to least privilege.</li>
+    <li>Remove authentication entirely and rely on the office VPN for access control.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: C</span>
+    <p class="why-correct"><strong>Why C is correct:</strong> OAuth delegated (user) tokens make the agent act as the user with only that user's permissions. This satisfies least privilege and removes the shared privileged credential entirely.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because rotation does not change the blast radius: one leaked token still reaches everyone's expenses.</li>
+      <li>B is wrong because per-employee admin tokens are still over-privileged, and storing them in a config file creates a new secret-sprawl problem.</li>
+      <li>D is wrong because the VPN proves network location, not user identity or authorization; any user on the VPN could reach anyone's expenses.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q5</span><span class="constraint">D3</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A chat triage agent classifies incoming support tickets. The current design uses a large model with long chain-of-thought reasoning: accuracy is 93 percent, but p95 latency is 6 seconds. The product requirement is p95 latency under 2 seconds with accuracy at or above 90 percent. Ticket volume is 300,000 per month.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> p95 under 2 seconds AND accuracy at or above 90 percent. Both must hold at 300K tickets per month.</div>
+  <p class="ask">Which design best meets both bars?</p>
+  <ol class="opts" type="A">
+    <li>Switch everything to the smallest, fastest model and accept whatever accuracy results.</li>
+    <li>Keep the large model but cut the output token limit in half to reduce latency.</li>
+    <li>Route with a fast model first; escalate to the large model only when the fast model's confidence is low. Verify the mix on a labeled eval set.</li>
+    <li>Cache every ticket classification so repeat tickets never hit the model.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: C</span>
+    <p class="why-correct"><strong>Why C is correct:</strong> tiered routing (fast model first, escalate on low confidence) gets most tickets under the latency bar while the large model protects the accuracy bar on hard cases. The eval-set check proves both bars hold before launch, which is what the constraint demands.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because it guarantees the latency bar but abandons the accuracy bar; "accept whatever accuracy" violates the stated 90 percent floor.</li>
+      <li>B is wrong because cutting output tokens does not reliably cut 6 seconds to under 2, and it risks truncating the reasoning the 93 percent accuracy depends on.</li>
+      <li>D is wrong because support tickets are mostly unique; cache hit rates will be near zero, so this changes almost nothing.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q6</span><span class="constraint">D3</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A production assistant handles 2 million requests per day across search, summarization, and tool calls. The team wants to detect quality drift, especially hallucinations, within one day of it starting. Today they only log the final user-facing text.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> detect hallucination drift within 24 hours at 2M requests per day, without storing every full prompt and completion (too expensive).</div>
+  <p class="ask">Which observability strategy fits?</p>
+  <ol class="opts" type="A">
+    <li>Log only error responses and review them weekly.</li>
+    <li>Store every prompt and completion in full, and hire reviewers to read them.</li>
+    <li>Emit structured traces (one span per tool call and model call with token counts and latency), sample a fraction of full transcripts, and run an automated faithfulness eval over the sample daily.</li>
+    <li>Track only aggregate latency and token cost dashboards.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: C</span>
+    <p class="why-correct"><strong>Why C is correct:</strong> structured traces give cheap always-on coverage of behavior, sampling keeps storage affordable at 2M requests per day, and a daily automated faithfulness eval on the sample detects hallucination drift inside the 24-hour window.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because hallucinations rarely raise errors; error logs miss them entirely, and weekly review misses the 24-hour window.</li>
+      <li>B is wrong because full logging at 2M requests per day violates the cost constraint, and manual review cannot keep up.</li>
+      <li>D is wrong because latency and cost dashboards say nothing about answer quality; drift would be invisible.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q7</span><span class="constraint">D3</span><span class="pill med">Medium</span><span class="constraint">Select two</span></div>
+  <p class="scenario">An IT helpdesk agent handles two query patterns: (1) "find the three most similar past incidents to this error message" (fuzzy, wording varies), and (2) "what is the status of incident INC-48210" (exact lookup by ID). The team is choosing a retrieval strategy over the incident database.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> both query patterns must return correct results. Fuzzy queries need semantic matching; exact queries must never return a "similar but wrong" incident.</div>
+  <p class="ask">Which two approaches together satisfy the constraint? (Select two.)</p>
+  <ol class="opts" type="A">
+    <li>Use dense vector (semantic) search for the fuzzy similar-incident queries.</li>
+    <li>Use exact keyword matching on the full error text for the fuzzy similar-incident queries, so results stay deterministic.</li>
+    <li>Use dense vector search for both patterns, trusting the embedding to rank INC-48210 first.</li>
+    <li>Route the query first: detect an incident ID pattern and send it to exact lookup, otherwise use semantic search.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: A, D</span>
+    <p class="why-correct"><strong>Why A and D are correct:</strong> the constraint has two halves. A supplies the right mechanism for the fuzzy half (dense semantic search). D supplies the routing rule: detect an incident ID and send it to exact lookup, otherwise use semantic search. Together they cover both query patterns with the right mechanism each time.</p>
+    <ol class="distractors" type="A">
+      <li>B is wrong because exact keyword matching cannot handle the fuzzy half: when the wording of the error varies, keyword lookup misses similar incidents that semantic search would find, and determinism is not worth missed matches.</li>
+      <li>C is wrong because semantic search can return a similar-but-wrong incident for an ID query, which the constraint explicitly forbids.</li>
+    </ol>
+    <p><strong>Note for exam day:</strong> when an item says "select two," judge each option independently and check the pair covers the whole constraint with no redundancy.</p>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q8</span><span class="constraint">D3</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A team installs a community MCP server that gives their agent shell access. The server fetches its tool descriptions from a remote config file hosted by the server author. During testing, the agent suddenly tries to exfiltrate an API key after reading a tool description.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the agent must be able to use third-party MCP servers without letting server content hijack its behavior.</div>
+  <p class="ask">What is the root cause, and the correct mitigation?</p>
+  <ol class="opts" type="A">
+    <li>Root cause: the model is too small. Mitigation: upgrade the model.</li>
+    <li>Root cause: prompt injection through untrusted tool descriptions. Mitigation: treat MCP tool schemas as untrusted input, pin server versions, and sandbox or gate destructive tool calls behind confirmation.</li>
+    <li>Root cause: the MCP protocol is insecure. Mitigation: stop using MCP and rewrite every tool by hand.</li>
+    <li>Root cause: the API key was in the prompt. Mitigation: delete the key and continue.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> tool descriptions are model input, so a malicious or compromised server can inject instructions through them. Pinning versions stops silent updates, treating schemas as untrusted blocks the injection path, and sandboxing plus confirmation gates limit what a hijacked call can do.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because model size does not fix prompt injection; larger models follow injected instructions just as well.</li>
+      <li>C is wrong because the protocol is not the flaw; untrusted content is. Rewriting everything by hand throws away MCP's value without addressing the actual attack path.</li>
+      <li>D is wrong because deleting the key after exfiltration does not stop the next attempt; it treats the symptom, not the injection.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q9</span><span class="constraint">D3</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A code-migration agent must work across a 2-million-line monorepo. The first design loaded a summary of every file into context at session start. Sessions now exceed the context window before the agent does any useful work, and costs have tripled.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the agent must navigate the full repo without loading it all upfront, and per-session token cost must return to the original budget.</div>
+  <p class="ask">Which context strategy fixes this?</p>
+  <ol class="opts" type="A">
+    <li>Switch to a model with a 1-million-token context window and keep loading all summaries.</li>
+    <li>Progressive discovery: give the agent search and file-reading tools plus an index of entry points, so it pulls only the code it needs, when it needs it.</li>
+    <li>Compress all summaries with a smaller model before the session starts, then load the compressed version.</li>
+    <li>Split the repo into 50 fixed partitions and run 50 agents, one per partition.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> progressive discovery replaces the monolithic upfront load with on-demand retrieval. The agent starts from entry points and fetches only relevant files, which fits any repo size and brings token cost back down. This is the textbook fix for monolithic-context failure.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because a bigger window just delays the failure and costs more per token; it does not change the wasteful load-everything pattern.</li>
+      <li>C is wrong because compression loses the details migration work depends on (exact APIs, edge cases), and it still front-loads cost for code never touched.</li>
+      <li>D is wrong because 50 agents multiply cost and coordination overhead, and most partitions are irrelevant to any single migration task.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q10</span><span class="constraint">D3</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A hospital deploys a discharge-summary assistant that handles PHI (protected health information). Legal requires: patient data must not leave the hospital's approved AWS region, must not be used for model training, and every access must be auditable. The team considers the direct Anthropic API versus Anthropic models on AWS Bedrock.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> data residency pinned to the hospital's approved AWS region, no training on PHI, full auditability. All three are legal requirements, not preferences.</div>
+  <p class="ask">Which deployment choice satisfies all three?</p>
+  <ol class="opts" type="A">
+    <li>Direct Anthropic API with zero data retention (ZDR) enabled, plus application-level audit logs.</li>
+    <li>AWS Bedrock in the hospital's region with PHI-eligible configuration, a signed BAA, inference logging to the hospital's own audit store, and no data leaving the region.</li>
+    <li>Direct Anthropic API in the default configuration, since Anthropic never trains on API data by default.</li>
+    <li>Self-host an open-weights model on hospital servers to avoid all third-party terms.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> Bedrock keeps inference inside the chosen AWS region (residency), offers HIPAA-eligible services with a BAA (the legal instrument auditors require), and lets the hospital own the audit logs. It is the only option that structurally satisfies all three legal requirements.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because the direct API cannot pin processing and storage to a specific AWS region (inference is global or US-only, workspace storage is US-only), so it cannot satisfy the residency requirement. ZDR plus a BAA would cover the other two requirements, but residency is a hard legal bar here.</li>
+      <li>C is wrong because "never trains by default" is a policy claim, not a regional or contractual control; it fails residency and auditability.</li>
+      <li>D is wrong because self-hosting shifts the whole compliance burden onto the hospital (hardening, patching, auditing the model stack) and sacrifices model quality with no legal gain over option B.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q11</span><span class="constraint">D3</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A company builds a RAG system over a mixed corpus: long PDF policy documents, relational tables of product specs, and a codebase. One engineer proposes a single chunking rule (500-token windows) and one dense vector index for everything.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> retrieval quality must stay high across all three content types. A query like "which products support feature X and what does the policy say about refunds" must work.</div>
+  <p class="ask">Why will the single-strategy proposal fail, and what should replace it?</p>
+  <ol class="opts" type="A">
+    <li>It will fail on cost. Replace it with a smaller embedding model.</li>
+    <li>It will fail because different data shapes need different handling: chunk PDFs by section, index tables as structured rows with metadata filters, chunk code by function; use hybrid dense plus keyword search over the combined index.</li>
+    <li>It will fail on latency. Replace it with an in-memory cache of all embeddings.</li>
+    <li>It will not fail; uniform chunking is the industry best practice for mixed corpora.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> tables sliced into 500-token windows destroy row structure, and code sliced mid-function destroys meaning. Matching the chunking to the data shape (sections, rows, functions) plus metadata filters and hybrid search preserves what each type needs for accurate retrieval.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because the failure is retrieval quality, not embedding cost; a cheaper embedding of badly chunked text is still badly chunked.</li>
+      <li>C is wrong because latency is not the problem and a cache does not repair broken chunk boundaries.</li>
+      <li>D is wrong because it denies the problem: uniform chunking across prose, tables, and code is a known retrieval-quality trap.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q12</span><span class="constraint">D3</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A travel company has two vendor-built agents: a booking agent (flights and hotels) and an expense agent (receipts and policy). They must cooperate: after booking, the booking agent hands trip details to the expense agent, which files the report. An architect must choose the integration mechanism between them.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the two agents are separate systems from different vendors. They must exchange goals and status, not just raw data.</div>
+  <p class="ask">Which mechanism fits, and why?</p>
+  <ol class="opts" type="A">
+    <li>MCP, because MCP connects the booking agent's tools to the expense agent.</li>
+    <li>A shared REST API that both agents poll for updates.</li>
+    <li>An agent-to-agent protocol, because the integration is agent to agent: they need to delegate tasks and report status, which is what agent-to-agent communication is for.</li>
+    <li>Merge both agents into one agent with all tools, eliminating the integration.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: C</span>
+    <p class="why-correct"><strong>Why C is correct:</strong> MCP connects agents to tools and data sources; it does not define how two autonomous agents delegate and coordinate. An agent-to-agent protocol is designed for exactly this: task handoff, status updates, and negotiation between separate agents.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because it misapplies MCP: MCP is agent-to-tool, not agent-to-agent.</li>
+      <li>B is wrong because polling a REST API gives data exchange but no task-delegation semantics; each vendor would have to reinvent coordination.</li>
+      <li>D is wrong because the agents are separate vendor systems; merging them is not technically or contractually feasible.</li>
+    </ol>
+  </div></details>
+</div>
+
+<figure class="diagram">
+  <figcaption>Figure D3. Which integration mechanism? Decision flowchart.</figcaption>
+  <div class="flow">
+    <div class="node decision">What are you connecting the agent TO?</div>
+    <div class="arrow">↓</div>
+    <div class="node decision">A single system with a stable API and a handful of endpoints?</div>
+    <div class="arrow">↓ <span class="branch-label">yes</span></div>
+    <div class="node result">Direct tool calling against the API. Simplest path, least to maintain.</div>
+    <div class="arrow">↓ <span class="branch-label">no: many tools, dynamic discovery, or shared across agents</span></div>
+    <div class="node decision">Is the other side a tool / data source, or another agent?</div>
+    <div class="arrow">↓ <span class="branch-label">tool / data source</span></div>
+    <div class="node result">MCP server. Standard discovery, one integration reused by many agents.</div>
+    <div class="arrow">↓ <span class="branch-label">another agent</span></div>
+    <div class="node result">Agent-to-agent protocol. Task delegation and status, not just data.</div>
+  </div>
+  <div class="diagram-walkthrough">
+    <h3>How to read this diagram</h3>
+    <ol>
+      <li>Start at the top: name what sits on the other side of the integration.</li>
+      <li>First decision: if it is one stable API with few endpoints, stop. Direct function calling wins (Q2). Extra protocol layers add maintenance with no gain.</li>
+      <li>If there are many tools, they change often, or several agents share them, move to the second decision.</li>
+      <li>Second decision: tool or data source on the far side means MCP. Another autonomous agent on the far side means an agent-to-agent protocol (Q12).</li>
+      <li>What breaks if you choose wrong: MCP between two agents gives no delegation semantics; direct tools for 50 endpoints gives tool bloat (Q3); agent-to-agent for a REST API reinvents what HTTP already does.</li>
+    </ol>
+  </div>
+</figure>
+
+<h2 class="domain">D1. Solution Design and Architecture (17% of the exam, about 11 items)</h2>
+<div class="domain-sub">Translating business problems into Claude solutions, end-to-end architectures, workflow vs agentic vs augmented LLM patterns, multi-agent orchestration, decomposition, business value pillars (efficiency, transformation, productivity, cost, performance SLAs).</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q13</span><span class="constraint">D1</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">An accounting firm processes 20,000 vendor invoices per month. The steps are fixed and known: extract fields, validate totals against the PO, flag mismatches, post to the ledger. Nothing about the sequence changes from invoice to invoice.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the process is fully deterministic in structure. Auditability of every step matters more than flexibility.</div>
+  <p class="ask">Which architectural pattern fits best?</p>
+  <ol class="opts" type="A">
+    <li>A fully agentic system where the model plans its own steps per invoice.</li>
+    <li>A workflow: fixed prompt chain with defined steps, validation gates, and logging at each stage.</li>
+    <li>An augmented LLM with open tool access and no prescribed sequence.</li>
+    <li>A multi-agent swarm where subagents negotiate who handles each invoice.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> when the steps are known upfront and never change, a workflow (fixed chain with gates) is the most reliable and most auditable choice. It removes the nondeterminism the constraint does not want.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because agentic planning adds nondeterminism and cost to a process whose steps are already known; flexibility is not needed here.</li>
+      <li>C is wrong because open tool access without a prescribed sequence makes auditing harder and invites skipped validation steps.</li>
+      <li>D is wrong because a negotiating swarm is massive overengineering for identical invoices with fixed steps.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q14</span><span class="constraint">D1</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A CFO is deciding whether to fund a Claude-based contract review assistant. The vendor pitch talks about "AI transformation" and "delighting users." The CFO asks for the business case in her language.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the case must be expressed as measurable business value, not technology enthusiasm.</div>
+  <p class="ask">How should the architect frame the value?</p>
+  <ol class="opts" type="A">
+    <li>Emphasize that the system uses the most advanced model available.</li>
+    <li>Map the solution to value pillars with numbers: hours saved per contract, cost per review before and after, error-rate reduction, and payback period.</li>
+    <li>Promise full transformation of the legal department within one quarter.</li>
+    <li>Focus on the elegant multi-agent architecture under the hood.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the value pillars are efficiency, cost, productivity, and performance. The CFO's language is numbers: hours, cost per unit, error rates, payback. B translates the solution into exactly that.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because model choice is an implementation detail, not business value.</li>
+      <li>C is wrong because an unmeasurable transformation promise is precisely the hype the CFO is screening out.</li>
+      <li>D is wrong because architecture elegance does not appear on any value pillar.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q15</span><span class="constraint">D1</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A market-research team wants a 30-page industry report generated from 200 source documents. A single prompt ("write the report") produces shallow, repetitive output that misses key sources.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the report must synthesize all 200 sources with depth in each section.</div>
+  <p class="ask">Which decomposition approach fixes the shallow output?</p>
+  <ol class="opts" type="A">
+    <li>Use a larger context window and repeat the same single prompt.</li>
+    <li>Decompose: a planner outlines sections, researcher subagents gather evidence per section in parallel, then a synthesizer writes the full report from the gathered evidence.</li>
+    <li>Ask the model to write the report one page at a time with no plan.</li>
+    <li>Reduce the source set to 20 documents so one prompt can handle it.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> decomposition matches the work to the model's strengths: planning the structure first, gathering evidence per section in parallel (depth per section), then synthesizing. Each step has a tractable context instead of one impossible mega-prompt.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because a bigger window does not fix the lack of structure; the model still skims instead of going deep.</li>
+      <li>C is wrong because page-by-page writing without a plan produces incoherent reports that drift off outline.</li>
+      <li>D is wrong because it throws away 90 percent of the sources, violating the synthesis constraint.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q16</span><span class="constraint">D1</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A competitive-intelligence system uses one orchestrator and six researcher subagents covering pricing, product, hiring, patents, news, and social. Early tests show subagents overwriting each other's findings and two agents researching the same competitor twice.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> each finding recorded once, no duplicated research effort, and the orchestrator can see everything.</div>
+  <p class="ask">Which orchestration design resolves this?</p>
+  <ol class="opts" type="A">
+    <li>Let subagents coordinate peer-to-peer with a shared chat channel.</li>
+    <li>Orchestrator assigns non-overlapping scopes, all findings go to a shared structured store with unique keys, and the orchestrator merges at the end.</li>
+    <li>Run the six researchers sequentially so they cannot collide.</li>
+    <li>Give every subagent its own private memory and merge by concatenating outputs.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> non-overlapping scopes eliminate duplicated effort by design, a shared keyed store prevents overwrites (each finding has one key), and the orchestrator keeps full visibility for the merge. All three parts of the constraint are addressed.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because peer-to-peer chat is unstructured; agents still collide and the orchestrator loses visibility into side conversations.</li>
+      <li>C is wrong because sequential execution fixes collisions by destroying parallelism; six researchers take six times longer.</li>
+      <li>D is wrong because private memories plus concatenation duplicates effort and produces conflicting merged output with no dedup.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q17</span><span class="constraint">D1</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A support team deploys an answer bot and adds a thumbs up / thumbs down button on every answer. After three months they have 40,000 ratings but answer quality has not improved. The ratings sit in a database nobody queries.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> user feedback must actually drive quality improvement, on a repeating cadence.</div>
+  <p class="ask">What is missing, and what closes the loop?</p>
+  <ol class="opts" type="A">
+    <li>More ratings. Add a popup asking every user to rate.</li>
+    <li>A feedback loop: sample low-rated answers weekly, add the failures to the eval set, review prompt or retrieval fixes against the eval set, and ship what improves the score.</li>
+    <li>A bigger model, since ratings show the current one is weak.</li>
+    <li>Delete the rating button; it creates noise without value.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> feedback only improves quality when it flows somewhere: failures become eval cases, fixes are tested against the eval set, and the loop repeats on a cadence. B builds the full input, processing, output, feedback architecture the constraint asks for.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because the problem is not rating volume; 40,000 unused ratings prove more data without a loop changes nothing.</li>
+      <li>C is wrong because the ratings do not diagnose the model as the cause; the failures could be retrieval or prompt issues a bigger model would share.</li>
+      <li>D is wrong because it destroys the signal instead of using it.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q18</span><span class="constraint">D1</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A team builds a code-review bot. It runs the linter, runs the test suite, reads the diff, and posts review comments. The sequence is always the same; the only open-ended part is writing the comments. One architect calls it "agentic," another calls it "a workflow with tools."</p>
+  <div class="constraint-block"><strong>Constraint:</strong> choose the pattern honestly so the team designs the right controls (and does not overbuild).</div>
+  <p class="ask">Which pattern is this, and why does the label matter?</p>
+  <ol class="opts" type="A">
+    <li>Agentic, because it uses tools. Agentic systems need loop limits and escalation controls.</li>
+    <li>Augmented LLM (workflow with tools): the path is fixed, the model fills in one open-ended step. The label matters because a fixed path needs validation gates, not agent loop controls.</li>
+    <li>Fully manual, because a human must approve every comment.</li>
+    <li>Multi-agent, because linting, testing, and commenting are three jobs.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> tool use alone does not make a system agentic; what matters is who decides the steps. Here the steps are fixed, so it is an augmented LLM / tool-using workflow. The label drives the controls: fixed paths get gates and checks, while truly agentic loops need iteration limits and stop conditions.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because it mislabels the system; applying agent loop controls to a fixed pipeline adds complexity without benefit.</li>
+      <li>C is wrong because human approval of every comment defeats the automation goal and is not required by the design.</li>
+      <li>D is wrong because three sequential steps do not make three agents; splitting them adds orchestration overhead for no gain.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q19</span><span class="constraint">D1</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A trading desk wants a Claude assistant for pre-trade research. The desk's SLA: 99.9 percent uptime, p95 response under 3 seconds, including during market-open spikes when request volume jumps 10x.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the SLA must hold during 10x spikes. A slow or down assistant during market open is worse than no assistant.</div>
+  <p class="ask">Which design best protects the SLA?</p>
+  <ol class="opts" type="A">
+    <li>Provision for average load and add a queue; users wait during spikes.</li>
+    <li>Design for peak with autoscaling, plus a defined degraded mode: cached or abbreviated answers with a clear banner when the full pipeline cannot meet 3 seconds, and the SLA states degraded-mode behavior explicitly.</li>
+    <li>Use the largest model for best answer quality and accept slower spikes.</li>
+    <li>Disable the assistant during market open to protect the SLA.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> autoscaling handles the 10x spike, and the explicit degraded mode means the SLA is honest about what happens under extreme load instead of silently breaking. Stating degraded behavior in the SLA is what makes it a real SLA rather than a hope.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because queueing during market open directly violates the 3-second p95 requirement.</li>
+      <li>C is wrong because it prioritizes quality over the stated SLA; the constraint ranks the latency bar above model size.</li>
+      <li>D is wrong because disabling the system at peak need is an admission the design failed the SLA.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q20</span><span class="constraint">D1</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">An insurer designs a claims pipeline: intake (classify claim type), processing (validate against policy, estimate payout), output (draft decision letter), feedback (adjuster corrections flow back into the eval set). The architect must present the end-to-end design.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> every stage must be observable, and failures at any stage must be routable to a human without losing the claim.</div>
+  <p class="ask">Which design element is most critical to satisfying the constraint?</p>
+  <ol class="opts" type="A">
+    <li>Using the same model for all four stages to keep behavior consistent.</li>
+    <li>Stage boundaries with structured handoffs: each stage emits a typed result plus confidence, low-confidence or failed results route to a human queue with full stage history attached, and every handoff is logged.</li>
+    <li>Making the pipeline fully autonomous with no human queues, to maximize throughput.</li>
+    <li>Combining intake and processing into one giant prompt to reduce handoff errors.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> structured handoffs with confidence scores make each stage observable, the human queue with full history satisfies the routability requirement without losing claims, and logging every handoff gives the audit trail. It is the only option built around the constraint.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because model uniformity does not create observability or human routing; it is an implementation convenience.</li>
+      <li>C is wrong because it directly violates the human-routing half of the constraint.</li>
+      <li>D is wrong because merging stages destroys per-stage observability and makes failures harder to localize.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q21</span><span class="constraint">D1</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A localization team must translate 5,000 product documents (each 20 to 80 pages) into 12 languages. Quality must be consistent across languages, terminology must match the company glossary, and the job must finish in 30 days.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> glossary-consistent terminology across all 12 languages, 30-day deadline, no quality drift between early and late documents.</div>
+  <p class="ask">Which orchestration strategy best meets all three?</p>
+  <ol class="opts" type="A">
+    <li>One agent translating documents sequentially in all 12 languages.</li>
+    <li>Parallel fan-out: split documents into sections, translate sections concurrently per language with the glossary injected into every prompt, then a hierarchical merge step checks cross-section consistency before finalizing each document.</li>
+    <li>Twelve separate agents, one per language, each working independently with no shared glossary.</li>
+    <li>Machine-translate everything first, then have one agent proofread all 5,000 documents.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> parallel fan-out meets the 30-day deadline, glossary injection in every prompt enforces terminology consistency, and the hierarchical merge catches the cross-section drift that parallel work introduces. Each constraint maps to one design element.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because sequential translation of 5,000 documents times 12 languages cannot fit 30 days.</li>
+      <li>C is wrong because independent agents with no shared glossary guarantee terminology drift across languages.</li>
+      <li>D is wrong because one proofreading agent over 5,000 documents reintroduces the sequential bottleneck and the deadline fails.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q22</span><span class="constraint">D1</span><span class="pill hard">Hard</span><span class="constraint">Select two</span></div>
+  <p class="scenario">A CIO has budget for one AI initiative. Proposal X: automate invoice data entry (saves 4,000 staff-hours per year, measurable in 3 months, low risk). Proposal Y: an AI product copilot for customers (could open a new revenue line, 12-month horizon, high uncertainty). The company's stated strategy this year is cost discipline.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the pick must align with the stated strategy (cost discipline) and be defensible with measurable value.</div>
+  <p class="ask">Which two statements best guide the decision? (Select two.)</p>
+  <ol class="opts" type="A">
+    <li>Choose X: it maps to the efficiency and cost pillars, matches the cost-discipline strategy, and its value is measurable within one quarter.</li>
+    <li>Choose Y: transformation projects always beat efficiency projects in the long run.</li>
+    <li>Defer the decision until both proposals have quantified value, cost, risk, and time-to-value estimates.</li>
+    <li>Fund both at half budget to keep options open.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: A, C</span>
+    <p class="why-correct"><strong>Why A and C are correct:</strong> A and C work as a pair. A names the strategy-aligned pick: X maps to the efficiency and cost pillars and is measurable within a quarter, which is what the constraint demands. C states the evidentiary standard that makes the pick defensible: require quantified value, cost, risk, and time-to-value for both proposals. X already meets that standard; Y does not, which is exactly why X wins.</p>
+    <ol class="distractors" type="A">
+      <li>B is wrong because "transformation always beats efficiency" is a slogan, not analysis; it ignores the stated strategy and the measurability constraint.</li>
+      <li>D is wrong because splitting the budget starves both proposals and dodges the prioritization decision the CIO actually needs.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q23</span><span class="constraint">D1</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A research agent is given open-ended questions like "what should our pricing strategy be?" In testing, it sometimes loops: calling the same search tools repeatedly, refining forever, never producing the final memo. Each loop burns thousands of tokens.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the agent must always terminate with a useful deliverable, and runaway token burn must be impossible.</div>
+  <p class="ask">Which control design guarantees termination?</p>
+  <ol class="opts" type="A">
+    <li>Tell the agent in the system prompt to "be efficient and finish promptly."</li>
+    <li>Hard controls: a maximum iteration budget, an explicit stop condition (deliverable checklist the agent must satisfy), and escalation to a human with partial results when the budget is exhausted.</li>
+    <li>Remove all search tools so the agent cannot loop on them.</li>
+    <li>Lower the temperature to zero so the agent behaves deterministically.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> prompt instructions alone do not guarantee termination. A hard iteration budget makes runaway burn impossible, the deliverable checklist defines "done" so the agent can stop, and human escalation with partial results guarantees something useful always comes out.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because polite prompt requests are soft controls; the observed looping happened despite presumably similar instructions.</li>
+      <li>C is wrong because removing search tools cripples the research task the agent exists to do.</li>
+      <li>D is wrong because temperature zero does not prevent loops; a deterministic agent can deterministically repeat the same calls.</li>
+    </ol>
+  </div></details>
+</div>
+
+<figure class="diagram">
+  <figcaption>Figure D1. Which architectural pattern? Decision flowchart.</figcaption>
+  <div class="flow">
+    <div class="node decision">Is the sequence of steps known before the task starts?</div>
+    <div class="arrow">↓ <span class="branch-label">yes, fixed steps</span></div>
+    <div class="node result">Workflow. Fixed chain with validation gates. Most reliable, most auditable (Q13).</div>
+    <div class="arrow">↓ <span class="branch-label">no</span></div>
+    <div class="node decision">Does the task need tools, but the path through them is clear?</div>
+    <div class="arrow">↓ <span class="branch-label">yes</span></div>
+    <div class="node result">Augmented LLM. Single loop with tools, model fills the open-ended step (Q18).</div>
+    <div class="arrow">↓ <span class="branch-label">no, the agent must decide its own steps</span></div>
+    <div class="node decision">Is the task too big for one agent?</div>
+    <div class="arrow">↓ <span class="branch-label">no</span></div>
+    <div class="node result">Single agentic loop, with iteration budget and stop conditions (Q23).</div>
+    <div class="arrow">↓ <span class="branch-label">yes</span></div>
+    <div class="node result">Multi-agent: orchestrator plus scoped subagents, shared keyed store (Q16, Q21).</div>
+  </div>
+  <div class="diagram-walkthrough">
+    <h3>How to read this diagram</h3>
+    <ol>
+      <li>Start at the top question: can you write down the steps before running? If yes, you do not need an agent at all. Use a workflow.</li>
+      <li>If the steps are not fully known but the tool path is obvious (lint, test, comment), it is an augmented LLM, not an agent. Design gates, not loop controls.</li>
+      <li>Only when the agent must choose its own steps do you accept agentic nondeterminism, and then you must add hard termination controls.</li>
+      <li>Scale question comes last: one agent or many. Many agents need non-overlapping scopes and a shared store, or they collide.</li>
+      <li>What breaks if you choose wrong: agentic patterns on fixed tasks waste money and hurt auditability; workflows on open-ended tasks fail because no fixed chain covers the unexpected.</li>
+    </ol>
+  </div>
+</figure>
+
+<h2 class="domain">D4. Evaluation, Testing and Optimization (16% of the exam, about 10 items)</h2>
+<div class="domain-sub">Defining eval metrics (accuracy, latency, cost, safety, security), building eval datasets with mixed methods, A/B testing, diagnosing failures (prompt failure, hallucination, model mismatch), token and cost optimization, production monitoring.</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q24</span><span class="constraint">D4</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A team builds a meeting-summarization feature. The product requirement is that summaries must not invent action items that were never discussed. The team currently measures quality with ROUGE scores against reference summaries.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the metric must capture invented content (hallucinated action items), which is the actual product risk.</div>
+  <p class="ask">What should the primary metric be?</p>
+  <ol class="opts" type="A">
+    <li>ROUGE score, since it is the standard summarization metric.</li>
+    <li>Faithfulness: the share of summary claims verifiable against the transcript, rated by humans on a sample plus an automated claim-check.</li>
+    <li>Summary length in words, since shorter summaries hallucinate less.</li>
+    <li>Latency, since fast summaries matter most to users.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the product risk is invented action items, and ROUGE measures word overlap, not truthfulness. Faithfulness directly measures whether each claim is grounded in the transcript, which is exactly the constraint.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because ROUGE rewards similar wording; a fluent invented action item can score well on ROUGE.</li>
+      <li>C is wrong because length is not a quality metric; short summaries can still invent content.</li>
+      <li>D is wrong because latency measures speed, which says nothing about invented action items.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q25</span><span class="constraint">D4</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A bank builds an eval set for its loan-document assistant. An engineer suggests 50 examples pulled from last week's tickets. The assistant must handle 12 document types, including rare ones like foreign income statements.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the eval set must represent all 12 document types, including rare ones, or launch metrics will be misleading.</div>
+  <p class="ask">How should the eval set be built?</p>
+  <ol class="opts" type="A">
+    <li>Use the 50 recent tickets; recent data is the most representative.</li>
+    <li>Build a stratified set: sample across all 12 document types with minimum counts per type, deliberately including rare types and known edge cases, sized in the hundreds.</li>
+    <li>Generate 50 synthetic examples with another model; it is faster.</li>
+    <li>Skip the eval set and rely on production user ratings after launch.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> stratified sampling guarantees coverage of every document type including rare ones, which is the constraint. Fifty recent tickets will over-represent common types and hide failures on the rare ones.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because recency does not equal coverage; rare types will be missing and their failures invisible.</li>
+      <li>C is wrong because synthetic examples reflect the generating model's biases, not real document variety.</li>
+      <li>D is wrong because post-launch ratings mean shipping untested; the constraint is about pre-launch confidence.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q26</span><span class="constraint">D4</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">After a prompt rewrite, the support bot's answers get noticeably worse: more off-topic replies, more "I cannot help with that" on in-scope questions. The team debates whether the prompt caused it or something else changed.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> determine whether the prompt change caused the regression, with evidence, before changing anything else.</div>
+  <p class="ask">What is the correct first diagnostic step?</p>
+  <ol class="opts" type="A">
+    <li>Immediately revert the prompt; the timing proves it caused the problem.</li>
+    <li>Run the frozen eval set against both the old and new prompts and compare scores per category.</li>
+    <li>Switch to a larger model to compensate for the weaker prompt.</li>
+    <li>Ask users whether they noticed a change.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> a frozen eval set run against both prompt versions isolates the prompt as the variable. Per-category comparison shows exactly what regressed, giving evidence instead of a guess.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because timing is correlation, not evidence; reverting without diagnosis teaches nothing and may discard a fixable improvement.</li>
+      <li>C is wrong because it compensates blindly without confirming the cause, and it raises cost permanently.</li>
+      <li>D is wrong because user impressions are noisy and slow; the eval set gives a same-day answer.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q27</span><span class="constraint">D4</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A team wants to A/B test a new support-bot prompt in production. The bot serves 100,000 conversations per week across three regions with different question mixes. The team plans to run the new prompt for one week, then the old prompt for the next week, and compare.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the comparison must be fair: same traffic mix, no time-based confounds, and guardrail metrics watched alongside the primary metric.</div>
+  <p class="ask">What is wrong with the planned test, and what is the correct design?</p>
+  <ol class="opts" type="A">
+    <li>Nothing is wrong; sequential weeks are a valid A/B test.</li>
+    <li>Sequential weeks confound the prompt with time (different weeks bring different question mixes). Run both prompts concurrently on randomly split traffic, pre-register the primary metric plus guardrail metrics (safety, latency), and require a minimum sample before calling a winner.</li>
+    <li>The test needs more regions, not a different design.</li>
+    <li>Skip the test and ship the new prompt; offline evals already passed.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> concurrent randomized split removes time confounds so the traffic mix is identical, pre-registration prevents cherry-picking metrics after the fact, and guardrail metrics catch regressions the primary metric misses. Every element answers the constraint.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because sequential weeks let external changes (product launches, news events) masquerade as prompt effects.</li>
+      <li>C is wrong because more regions do not fix the time confound; the design flaw is structural.</li>
+      <li>D is wrong because offline evals do not cover production distribution shift; the constraint demands a fair live comparison.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q28</span><span class="constraint">D4</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A legal research assistant sometimes cites court cases that do not exist. The citations look plausible: real-sounding names, correct formats, wrong reality. The team needs to diagnose the failure mode and fix it.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> no fabricated citation may reach the user. The fix must be verifiable, not just "a better prompt."</div>
+  <p class="ask">Which diagnosis and fix pair is correct?</p>
+  <ol class="opts" type="A">
+    <li>Diagnosis: prompt failure. Fix: add "do not hallucinate" to the system prompt.</li>
+    <li>Diagnosis: ungrounded generation; the model invents citations from parametric memory. Fix: require every citation to resolve against the retrieved sources (citation-to-source verification step), and eval with a groundedness metric that checks each cited case exists in the corpus.</li>
+    <li>Diagnosis: model mismatch. Fix: switch to a larger model.</li>
+    <li>Diagnosis: bad luck. Fix: retry failed answers up to three times.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the failure is ungrounded generation, a hallucination subtype. The verifiable fix is structural: citations must resolve to retrieved sources, and the eval metric checks existence in the corpus. A prompt plea is not verifiable; a verification step is.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because "do not hallucinate" is not a control; it cannot be verified and models still confabulate under it.</li>
+      <li>C is wrong because larger models also hallucinate citations from parametric memory; scale does not ground outputs.</li>
+      <li>D is wrong because retries sample the same ungrounded distribution; they do not add grounding.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q29</span><span class="constraint">D4</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A document-processing pipeline handles 10 million tokens per day. Finance mandates a 40 percent cost cut next quarter. Current accuracy is 94 percent on the eval set, and the SLA floor is 90 percent. The pipeline uses a large model for every document with a 4,000-token system prompt repeated on each call.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> cut cost 40 percent while staying at or above 90 percent accuracy.</div>
+  <p class="ask">Which optimization plan best fits?</p>
+  <ol class="opts" type="A">
+    <li>Switch everything to the cheapest model and hope accuracy holds.</li>
+    <li>Prompt caching for the repeated 4,000-token system prompt, a smaller model for the easy document tier (verified on the eval set), and shorter output limits; re-run the eval set to confirm accuracy stays above 90 percent.</li>
+    <li>Process documents only on weekdays to cut volume 28 percent.</li>
+    <li>Reduce the eval set size so accuracy is cheaper to measure.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> caching attacks the repeated-prefix waste directly, tiering moves easy work to cheaper models without touching hard cases, and the eval re-run proves the 90 percent floor still holds. Cost drops on three fronts while accuracy is verified, not hoped for.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because "hope accuracy holds" violates the verified-accuracy half of the constraint.</li>
+      <li>C is wrong because it cuts service, not cost efficiency; weekend documents still need processing.</li>
+      <li>D is wrong because shrinking the eval set hides regressions; it changes the measurement, not the cost.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q30</span><span class="constraint">D4</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">Every call to a classification API includes the same 4,000-token system prompt (role, rules, 12 few-shot examples), followed by a short user message. Token spend is dominated by this repeated prefix. The system prompt changes roughly once a month.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> cut token cost on the repeated prefix without changing model behavior.</div>
+  <p class="ask">What is the right optimization?</p>
+  <ol class="opts" type="A">
+    <li>Delete the few-shot examples to shorten the prompt.</li>
+    <li>Enable prompt caching on the stable prefix so it is billed once and reused across calls.</li>
+    <li>Switch to a model with cheaper input tokens but different behavior.</li>
+    <li>Batch 100 user messages per call to amortize the prefix.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> prompt caching is designed for exactly this: a long stable prefix reused across calls. The prefix is processed once and cached, cutting cost with zero behavior change, which is precisely the constraint.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because deleting examples changes behavior and likely accuracy; the constraint forbids behavior change.</li>
+      <li>C is wrong because a different model changes behavior by definition.</li>
+      <li>D is wrong because batching changes latency characteristics and risks cross-contamination between messages; it is a workaround, not the purpose-built fix.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q31</span><span class="constraint">D4</span><span class="pill hard">Hard</span><span class="constraint">Select two</span></div>
+  <p class="scenario">A team evaluates a code-generation agent with a single metric: unit-test pass rate on 300 tasks. The agent scores 82 percent. In pilot, developers complain the code is unreadable, ignores project conventions, and sometimes passes tests while solving the wrong problem.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the eval must reflect real developer acceptance, not just test passage.</div>
+  <p class="ask">Which two additions fix the eval blind spots? (Select two.)</p>
+  <ol class="opts" type="A">
+    <li>An LLM-judge review scoring code readability and convention adherence against the project style guide.</li>
+    <li>Human spot-checks on a sample, rating whether the code actually solves the requested problem.</li>
+    <li>More unit tests, raising the set from 300 to 3,000 tasks.</li>
+    <li>Measuring tokens per task to reward efficiency.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: A, B</span>
+    <p class="why-correct"><strong>Why A and B are correct:</strong> the blind spots are readability/conventions (A: LLM judge against the style guide scales across all tasks) and wrong-problem solutions that still pass tests (B: humans verify intent match on a sample). This is mixed-methodology eval: automated functional tests plus judge plus human review, each covering what the others miss.</p>
+    <ol class="distractors" type="A">
+      <li>C is wrong because more of the same metric does not fix the metric's blind spots; 3,000 pass-rate tests still ignore readability and intent.</li>
+      <li>D is wrong because token efficiency is unrelated to the complaints; optimizing it could even reward terse unreadable code.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q32</span><span class="constraint">D4</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A due-diligence agent reads deal documents up to 180,000 tokens. The team chose a model with a 200,000-token window, assuming it handles the full length. In testing, accuracy on facts buried past the 100,000-token mark drops sharply, even though everything fits in the window.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> facts anywhere in the 180K document must be found with uniform reliability.</div>
+  <p class="ask">What is the diagnosis and the fix?</p>
+  <ol class="opts" type="A">
+    <li>Diagnosis: the documents are too long. Fix: truncate to 100,000 tokens.</li>
+    <li>Diagnosis: advertised context length is not effective context length; attention degrades on distant content ("lost in the middle" and late-position decay). Fix: retrieve-then-read (pull the relevant sections first, then reason over a small focused context), and eval accuracy at each position band.</li>
+    <li>Diagnosis: the model is defective. Fix: wait for the next model release.</li>
+    <li>Diagnosis: prompt failure. Fix: add "pay attention to the end of the document" to the prompt.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> fitting in the window does not mean the model uses the whole window equally well; this is the known effective-vs-advertised context gap. Retrieve-then-read shrinks the reasoning context to the relevant sections, restoring uniform reliability, and position-banded evals prove it.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because truncation deletes the very facts the constraint requires finding.</li>
+      <li>C is wrong because the behavior is a known property of long-context models, not a defect in one release.</li>
+      <li>D is wrong because a prompt plea does not repair attention decay over 180,000 tokens.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q33</span><span class="constraint">D4</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A customer-facing agent has a strict policy: it must never reveal system instructions, even under jailbreak attempts. The team wants production monitoring that detects successful prompt-injection attacks, not just attempts.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> detect successful injections (instructions actually leaked) within hours, at high traffic volume, with a low false-positive rate.</div>
+  <p class="ask">Which monitoring design works?</p>
+  <ol class="opts" type="A">
+    <li>Keyword search for "ignore previous instructions" in user messages; alert on every match.</li>
+    <li>An output-side classifier trained to detect leaked system content, run over sampled completions, plus canary tokens planted in the system prompt whose appearance in outputs proves a leak; alert on classifier hits and canary sightings.</li>
+    <li>Log all conversations and have analysts read them daily.</li>
+    <li>Block any user message containing the word "system."</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> attempts are input-side and noisy; success is output-side. The classifier detects leaked content in outputs, canary tokens give near-zero-false-positive proof of a leak, and sampling keeps it affordable at volume. Detection lands within hours.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because it detects attempts, not successes, and attackers constantly rephrase; false positives flood the team.</li>
+      <li>C is wrong because manual review cannot cover high volume within hours.</li>
+      <li>D is wrong because it blocks legitimate messages ("my system is down") while missing rephrased attacks.</li>
+    </ol>
+  </div></details>
+</div>
+
+<figure class="diagram">
+  <figcaption>Figure D4. The evaluation loop: how quality actually improves.</figcaption>
+  <div class="flow">
+    <div class="node">1. Build a golden set: stratified, covers edge cases, frozen version</div>
+    <div class="arrow">↓</div>
+    <div class="node">2. Run the system; score with mixed methods (functional tests + LLM judge + human sample)</div>
+    <div class="arrow">↓</div>
+    <div class="node decision">3. Did the score move? Which category regressed or improved?</div>
+    <div class="arrow">↓ <span class="branch-label">diagnose per category</span></div>
+    <div class="node">4. Fix one thing: prompt, retrieval, model, or guardrail</div>
+    <div class="arrow">↓</div>
+    <div class="node">5. Re-run the frozen set. Ship only if the score holds or improves.</div>
+    <div class="arrow">↓</div>
+    <div class="node result">6. Production: sample traffic, run daily automated evals, feed failures back into step 1</div>
+  </div>
+  <div class="diagram-walkthrough">
+    <h3>How to read this diagram</h3>
+    <ol>
+      <li>Everything starts with the golden set (step 1). Without a frozen, representative set, no later step means anything (Q25).</li>
+      <li>Step 2 uses mixed methods because no single metric sees everything (Q31). Functional tests, a judge, and human eyes each cover different blind spots.</li>
+      <li>Step 3 is per-category diagnosis. "Score went down" is not a diagnosis; "faithfulness on table questions dropped" is (Q26, Q28).</li>
+      <li>Step 4 changes one thing at a time so the re-run in step 5 attributes the change correctly.</li>
+      <li>Step 6 closes the loop into production: sampled traffic plus daily evals, with failures flowing back into the golden set (Q17).</li>
+      <li>What breaks if you skip steps: skipping 1 means flying blind; skipping 3 means fixing the wrong thing; skipping 6 means decay you never notice.</li>
+    </ol>
+  </div>
+</figure>
+
+<h2 class="domain">D5. Governance, Safety and Risk Management (14% of the exam, about 9 items)</h2>
+<div class="domain-sub">Guardrails and safety controls, risks and failure modes of LLM systems, human-in-the-loop validation, regulatory compliance (GDPR, HIPAA, FedRAMP), ethical AI (bias, fairness, transparency).</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q34</span><span class="constraint">D5</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A support agent sometimes pastes customers' full credit-card numbers into its replies when quoting past tickets. The compliance team requires that no full card number ever appears in any agent output.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> zero full card numbers in outputs. The control must work even if the model is asked directly for the number.</div>
+  <p class="ask">Which guardrail design satisfies the constraint?</p>
+  <ol class="opts" type="A">
+    <li>Add "never share card numbers" to the system prompt.</li>
+    <li>Defense in depth: redact card numbers from retrieved context before they reach the model (input minimization), plus a deterministic output filter that blocks or masks card-number patterns before the reply is sent.</li>
+    <li>Train the support team to not ask about card numbers.</li>
+    <li>Log all outputs and review them at the end of each week.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> a prompt request is bypassable, so the constraint needs structural controls. Input minimization means the model often never sees the number; the deterministic output filter catches what slips through. Two independent layers make "zero" achievable.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because prompt instructions can be overridden by user instructions; it is not a guarantee.</li>
+      <li>C is wrong because it controls the humans, not the agent's outputs under adversarial input.</li>
+      <li>D is wrong because weekly review detects leaks days late; the constraint is prevention, not after-the-fact detection.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q35</span><span class="constraint">D5</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A bank pilots a Claude agent that drafts loan decisions: approve, deny, or refer. Regulators require that no adverse decision (denial) is issued without human review.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> every denial must be reviewed and signed off by a human before it reaches the applicant. No exceptions.</div>
+  <p class="ask">Which human-in-the-loop design complies?</p>
+  <ol class="opts" type="A">
+    <li>The agent issues decisions directly; humans review a 5 percent sample afterward.</li>
+    <li>The agent drafts every decision with its reasoning attached; approvals may auto-issue below a risk threshold, but every denial is held in a queue until a human reviews and signs off.</li>
+    <li>Humans write the decisions and the agent only formats them.</li>
+    <li>The agent issues denials directly but logs them for audit.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the constraint draws the line at denials: each one is gated on human sign-off before delivery, with the agent's reasoning attached so the review is informed. Approvals below a risk threshold may flow through, which keeps the design practical without touching the constraint.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because sampling lets 95 percent of denials through unreviewed, violating "no exceptions."</li>
+      <li>C is wrong because it discards the agent's value entirely; the constraint requires human review of denials, not human authorship of everything.</li>
+      <li>D is wrong because logging is not review; the denial still reaches the applicant unreviewed.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q36</span><span class="constraint">D5</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A DevOps agent has a tool that can delete cloud resources. In a test, a misread instruction led it to delete a staging database. The team must keep the delete capability (it is needed for real cleanup work) but make accidents structurally unlikely.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> keep the delete tool, but a single model mistake must never cause an irreversible deletion.</div>
+  <p class="ask">Which control set meets the constraint?</p>
+  <ol class="opts" type="A">
+    <li>Remove the delete tool and do all deletions manually.</li>
+    <li>Confirmation gate for destructive calls (human or second approval), dry-run preview showing exactly what will be deleted, and least-privilege scopes so the tool cannot touch production databases.</li>
+    <li>A system prompt telling the agent to "be very careful with deletions."</li>
+    <li>Rate-limit the delete tool to one call per hour.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> three independent layers: the confirmation gate stops a single mistake from executing, the dry-run makes the blast radius visible before acting, and least-privilege scopes contain what the tool can reach. Together they make one mistake insufficient for disaster.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because it deletes the capability the team needs instead of controlling it.</li>
+      <li>C is wrong because prompt wording is not a structural control; mistakes still execute.</li>
+      <li>D is wrong because rate limiting slows accidents but does not stop the one wrong deletion.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q37</span><span class="constraint">D5</span><span class="pill med">Medium</span><span class="constraint">Select two</span></div>
+  <p class="scenario">A European retailer deploys a Claude shopping assistant for EU customers. It stores conversation logs (which may contain names, addresses, and order details) for quality review. The legal team requires GDPR compliance, including the right to erasure.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> honor erasure requests fully, and never use customer conversations for model training.</div>
+  <p class="ask">Which two measures are required? (Select two.)</p>
+  <ol class="opts" type="A">
+    <li>A signed data processing agreement with the model provider, plus zero data retention (or documented non-training) terms.</li>
+    <li>An erasure pipeline: find all stored copies of a user's data (logs, eval samples, backups) and delete them on request within the legal deadline.</li>
+    <li>Anonymize all analytics dashboards shown to executives.</li>
+    <li>Store the logs in the cheapest available region.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: A, B</span>
+    <p class="why-correct"><strong>Why A and B are correct:</strong> A covers the provider side (contractual non-training terms plus a DPA, which GDPR requires for processors). B covers the company's own side: erasure is meaningless if backups and eval samples keep copies. Each addresses a different half of the constraint.</p>
+    <ol class="distractors" type="A">
+      <li>C is nice hygiene but does not satisfy either half of the constraint; dashboards are not the erasure or training problem.</li>
+      <li>D is wrong and risky: the cheapest region may sit outside the EU, creating a data-residency problem on top of everything else.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q38</span><span class="constraint">D5</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A clinic builds a triage assistant that reads patient messages containing PHI (protected health information) and suggests urgency levels to nurses. The compliance officer asks what is needed before any PHI touches the system.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> PHI may only flow through HIPAA-eligible services with proper agreements, and only the minimum necessary data may be used.</div>
+  <p class="ask">What is the minimum compliant setup?</p>
+  <ol class="opts" type="A">
+    <li>Any model API works as long as the app encrypts traffic with HTTPS.</li>
+    <li>A HIPAA-eligible deployment (for example Anthropic models on Bedrock or Vertex with HIPAA-eligible configuration), a signed BAA (business associate agreement), minimum-necessary data collection, and audit logging of PHI access.</li>
+    <li>On-premise servers only; cloud providers can never handle PHI.</li>
+    <li>Patient consent forms, with no other technical measures needed.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> HIPAA requires the legal instrument (BAA), the eligible service configuration, the minimum-necessary standard, and auditability. B is the complete minimum set; each element maps to a specific HIPAA requirement.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because HTTPS is necessary but nowhere near sufficient; it provides no BAA, no eligibility, no audit trail.</li>
+      <li>C is wrong because HIPAA-eligible cloud configurations exist precisely for this; on-prem is not a legal requirement.</li>
+      <li>D is wrong because consent does not replace the BAA, safeguards, or minimum-necessary requirements.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q39</span><span class="constraint">D5</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A company pilots an agent that screens job applications and ranks candidates for interviews. Early results show candidates from certain universities ranked consistently higher, and the team worries about bias.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> screening must be fair and demonstrably so: decisions traceable to job-relevant criteria, with disparate impact measured, not assumed away.</div>
+  <p class="ask">Which design best addresses the fairness concern?</p>
+  <ol class="opts" type="A">
+    <li>Remove university names from the inputs, keep everything else the same, and ship.</li>
+    <li>Structured evaluation: blind identifying details, score every candidate against a fixed job-relevant rubric, log the rubric scores as the decision record, and run disparate-impact analysis across demographic groups before launch.</li>
+    <li>Use the agent only for scheduling interviews, never for ranking.</li>
+    <li>Add more training data so the model becomes fair on its own.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> blinding removes the obvious proxy, the fixed rubric forces job-relevant criteria, logged scores make decisions auditable, and disparate-impact analysis verifies fairness with data instead of assumptions. It is the only option that is demonstrable.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because proxies survive blinding (wording, employment gaps, zip codes); without measurement you cannot know it worked.</li>
+      <li>C is wrong because it abandons the use case rather than making it fair.</li>
+      <li>D is wrong because more data does not de-bias a model; it can entrench existing patterns.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q40</span><span class="constraint">D5</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A federal agency wants a Claude document assistant for internal analysts. Procurement requires FedRAMP authorization for any cloud service handling the data. The team proposes the direct Anthropic API because "it is simpler."</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the deployment must satisfy FedRAMP authorization requirements. Simplicity does not override procurement rules.</div>
+  <p class="ask">What should the architect recommend?</p>
+  <ol class="opts" type="A">
+    <li>Proceed with the direct API; FedRAMP applies to infrastructure, not AI APIs.</li>
+    <li>Deploy through a FedRAMP-authorized route: Claude for Government (Anthropic's FedRAMP High authorized platform), or Anthropic models via AWS Bedrock GovCloud or Vertex AI Assured Workloads; add compliant audit logging and document the authorization boundary.</li>
+    <li>Self-attest that the direct API meets FedRAMP controls and file the attestation.</li>
+    <li>Run the assistant on analysts' laptops to avoid cloud authorization entirely.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> FedRAMP authorization attaches to the service boundary. Claude for Government carries Anthropic's own FedRAMP High authorization, and the Bedrock GovCloud and Vertex AI Assured Workloads routes inherit their clouds' authorizations. The audit logging plus boundary documentation is what assessors actually check.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because the commercial direct API is not FedRAMP authorized; Anthropic's FedRAMP High authorization applies to Claude for Government, a separate platform. AI APIs handling agency data are in scope, and "simpler" is not an authorization.</li>
+      <li>C is wrong because self-attestation is not FedRAMP authorization; it would fail procurement review.</li>
+      <li>D is wrong because laptops create a worse security posture (no central logging, no patch control) and do not dodge the requirement for agency systems.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q41</span><span class="constraint">D5</span><span class="pill hard">Hard</span><span class="constraint">Select two</span></div>
+  <p class="scenario">Before launching a customer-facing financial advice assistant, the risk team orders pre-launch safety testing. The assistant must refuse disallowed requests (for example instructions to commit fraud), must not leak internal data, and must stay in its role under adversarial users.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the testing must actively try to break the safety controls, and residual risks must be documented for sign-off, not hidden.</div>
+  <p class="ask">Which two elements belong in the pre-launch safety plan? (Select two.)</p>
+  <ol class="opts" type="A">
+    <li>An adversarial test set: jailbreak attempts, fraud-request phrasings, and role-confusion probes, run against the system with pass/fail grading.</li>
+    <li>A residual-risk register: documented known weaknesses, their severity, mitigations in place, and explicit sign-off by risk owners.</li>
+    <li>A marketing review of the assistant's greeting messages.</li>
+    <li>Load testing to 10x expected traffic.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: A, B</span>
+    <p class="why-correct"><strong>Why A and B are correct:</strong> A is red-teaming: it actively attacks the controls, which the constraint requires. B is governance: residual risks are written down with severity and sign-off instead of being discovered after launch. Testing finds the holes; the register makes them a managed decision.</p>
+    <ol class="distractors" type="A">
+      <li>C is about tone, not safety controls; it does not try to break anything.</li>
+      <li>D is a reliability activity, valuable but unrelated to the safety-testing constraint.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q42</span><span class="constraint">D5</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A public-facing benefits assistant answers questions about government programs. Users sometimes act on its answers (applying for benefits, appealing denials). A user advocate group demands transparency: people must know they are talking to AI, know where answers come from, and have recourse when answers are wrong.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> users must be able to tell it is AI, verify its claims, and challenge wrong answers.</div>
+  <p class="ask">Which transparency design satisfies all three?</p>
+  <ol class="opts" type="A">
+    <li>A small "AI assistant" label in the footer of the page.</li>
+    <li>Clear AI disclosure at conversation start, citations linking each factual claim to its source document, and a visible appeal path (human review request) for disputed answers.</li>
+    <li>Publishing the system prompt so users can see how it works.</li>
+    <li>A disclaimer that the assistant "may make mistakes" with no other changes.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> each constraint maps to one element: upfront disclosure tells users it is AI, per-claim citations let them verify, and the appeal path gives recourse. All three together make transparency operational rather than decorative.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because a footer label is easy to miss and provides no verifiability or recourse.</li>
+      <li>C is wrong because publishing the prompt exposes internals without helping users verify any specific answer.</li>
+      <li>D is wrong because a generic disclaimer shifts blame to the user; it provides no verification or appeal.</li>
+    </ol>
+  </div></details>
+</div>
+
+<figure class="diagram">
+  <figcaption>Figure D5. Defense in depth: guardrail layers for an LLM system.</figcaption>
+  <div class="flow">
+    <div class="node">Layer 1. Input controls: data minimization, PII redaction before the model, prompt-injection screening</div>
+    <div class="arrow">↓</div>
+    <div class="node">Layer 2. Model controls: system prompt rules, instruction hierarchy (system over user), scoped tools with least privilege</div>
+    <div class="arrow">↓</div>
+    <div class="node">Layer 3. Output controls: deterministic filters (PII, secrets), policy classifiers, citation verification</div>
+    <div class="arrow">↓</div>
+    <div class="node">Layer 4. Action controls: confirmation gates on destructive calls, dry-runs, human-in-the-loop for high-stakes decisions</div>
+    <div class="arrow">↓</div>
+    <div class="node result">Layer 5. Oversight: audit logging, monitoring and alerting, incident runbooks, residual-risk register</div>
+  </div>
+  <div class="diagram-walkthrough">
+    <h3>How to read this diagram</h3>
+    <ol>
+      <li>Read top to bottom as the request flows: input, model reasoning, output text, real-world actions, then ongoing oversight.</li>
+      <li>Each layer catches what the previous one missed. Input redaction (Q34) shrinks what the model can leak; output filters catch the rest.</li>
+      <li>Layer 2 is where tool scoping lives: a delete tool that cannot reach production (Q36) is a layer-2 control.</li>
+      <li>Layer 4 is the human gate: denials held for review (Q35), destructive actions confirmed.</li>
+      <li>Layer 5 never sleeps: logging, monitoring for injection success, and the risk register (Q41) that records what the other layers cannot fully cover.</li>
+      <li>What breaks if a layer is missing: prompt-only "guardrails" are layer 2 alone, and every exam scenario that relies on them fails because one bypassable layer is not defense in depth.</li>
+    </ol>
+  </div>
+</figure>
+
+<h2 class="domain">D6. Stakeholder Communication and Lifecycle Management (14% of the exam, about 9 items)</h2>
+<div class="domain-sub">Structured discovery and requirements, communicating decisions and trade-offs, feedback loops and SLA alignment, architecture documentation, lifecycle phases from discovery through monitoring and iteration.</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q43</span><span class="constraint">D6</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A department head requests "an AI to make the team smarter." The architect has a kickoff meeting next week and needs to turn this into buildable requirements.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> leave the meeting with specific users, tasks, and measurable success criteria, not vibes.</div>
+  <p class="ask">What does structured discovery look like here?</p>
+  <ol class="opts" type="A">
+    <li>Demo the most impressive model capabilities and let the stakeholder pick favorites.</li>
+    <li>Run a structured session: who the users are, which tasks eat their time today, what good looks like in numbers, what data exists, and what must never happen; write it up as agreed requirements.</li>
+    <li>Ask for the budget first; requirements follow the money.</li>
+    <li>Build a quick prototype and iterate until the stakeholder stops complaining.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> structured discovery converts "make us smarter" into users, tasks, metrics, data inventory, and guardrails. The written requirements become the contract the build is judged against, which is exactly what the constraint demands.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because demos anchor stakeholders on flashy capabilities instead of their actual tasks.</li>
+      <li>C is wrong because budget without requirements just buys an expensive unguided build.</li>
+      <li>D is wrong because prototype-and-complain is discovery by accident: slow, unbounded, and it never produces agreed success criteria.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q44</span><span class="constraint">D6</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">The architecture team must choose between two designs for an executive briefing: Design A hits 96 percent accuracy at 4-second latency and higher cost; Design B hits 91 percent at 1.2 seconds and lower cost. The executives are not technical.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> executives must understand the trade-off well enough to make the call, in one page.</div>
+  <p class="ask">How should the architect present the decision?</p>
+  <ol class="opts" type="A">
+    <li>A 20-slide deck on transformer internals so they appreciate the complexity.</li>
+    <li>One page: the business goal, both options with accuracy, latency, and cost numbers side by side, what each option risks, and a clear recommendation with reasons.</li>
+    <li>Recommend Design A without mentioning Design B, to keep it simple.</li>
+    <li>Let the executives vote after a live demo of both.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> non-technical decision-makers need the trade-off in business terms: goal, options with comparable numbers, risks, recommendation. One page forces clarity and gives them everything needed to decide.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because internals do not help a business decision; they bury it.</li>
+      <li>C is wrong because hiding the alternative removes the decision; it is a sales pitch, not architecture communication.</li>
+      <li>D is wrong because demos show best cases, not trade-offs, and a vote without numbers is theater.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q45</span><span class="constraint">D6</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A consulting firm hands a finished Claude agent to the client's internal team. Three months later the client team cannot debug a failure: they do not know the prompts, the eval results, or the intended operating limits.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the receiving team must be able to operate, debug, and extend the system without the original builders.</div>
+  <p class="ask">What should the handoff documentation have contained?</p>
+  <ol class="opts" type="A">
+    <li>The final demo video and the invoice.</li>
+    <li>Architecture overview, all prompts and their versions, eval sets and latest scores, known limitations and operating limits, runbook for common failures, and onboarding steps for new maintainers.</li>
+    <li>The source code only; good code documents itself.</li>
+    <li>A one-page marketing summary of what the agent does.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> operating an LLM system requires its prompts, evals, limits, and runbooks, not just code. B is the complete package that lets a new team debug ("what changed?"), know the limits ("what is it not for?"), and extend safely.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because a demo video shows the happy path and an invoice shows the price; neither helps debugging.</li>
+      <li>C is wrong because prompts, evals, and limits are the actual behavior contract of an LLM system; code alone omits them.</li>
+      <li>D is wrong because marketing copy contains zero operational information.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q46</span><span class="constraint">D6</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">Sales promises a client that the support bot will "resolve 95 percent of tickets automatically." The pilot data shows 78 percent resolution, with the rest needing humans. The contract is being drafted now.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the SLA in the contract must be achievable and measurable, or the company will pay penalties.</div>
+  <p class="ask">What should the architect do about the SLA?</p>
+  <ol class="opts" type="A">
+    <li>Accept the 95 percent SLA; the model will improve with more data.</li>
+    <li>Push back with pilot data: propose a tiered SLA (for example 80 percent auto-resolution with defined response times for the human-handled remainder), measured monthly with a clear definition of "resolved."</li>
+    <li>Sign the 95 percent SLA but define "resolved" loosely so it is easy to hit.</li>
+    <li>Refuse the contract entirely.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the pilot data is evidence the 95 percent figure is fiction. A tiered, measurable SLA grounded in real numbers protects both sides: achievable targets plus explicit handling of the remainder. Defining "resolved" precisely prevents gaming.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because "will improve" is a hope, not a basis for a penalty-bearing contract.</li>
+      <li>C is wrong because a loosely defined metric is dishonest and will collapse at the first client audit.</li>
+      <li>D is wrong because it abandons the deal instead of negotiating an honest SLA.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q47</span><span class="constraint">D6</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">Users keep reporting that the HR policy bot gives outdated answers after policy updates. There is no channel for these reports except angry emails to the HR inbox, which nobody routes to the engineering team.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> user-reported issues must reach the team and trigger a fix cycle, repeatedly.</div>
+  <p class="ask">Which feedback-loop design closes this gap?</p>
+  <ol class="opts" type="A">
+    <li>Tell users to email a new support address.</li>
+    <li>In-product feedback on every answer (helpful / outdated / wrong), a triage queue the team reviews on a fixed cadence, and a policy-update process that refreshes the knowledge source and re-runs evals before publishing.</li>
+    <li>Retrain the model monthly on all HR emails.</li>
+    <li>Remove the bot until policies stop changing.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the loop has four parts and B builds all of them: capture (in-product feedback), routing (triage queue with cadence), fix (knowledge refresh), and verification (re-run evals). A report that cannot reach the team or trigger a fix is not a loop.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because a new inbox without triage cadence and a fix process is the same gap with a different address.</li>
+      <li>C is wrong because retraining on raw emails is slow, expensive, and does not target the actual problem (stale knowledge).</li>
+      <li>D is wrong because policies always change; waiting for stability means never shipping.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q48</span><span class="constraint">D6</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A demo of the new claims assistant wows the operations leaders: it handles the five demo claims flawlessly. They now expect the same on all 40 claim types starting Monday. The architect knows the eval set only covers 12 types at 88 percent accuracy.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> align expectations with measured reality before launch, without killing the project.</div>
+  <p class="ask">What is the right expectation-setting move?</p>
+  <ol class="opts" type="A">
+    <li>Launch Monday as expected; the demo proves it works.</li>
+    <li>Present the eval results plainly: 12 of 40 types covered at 88 percent, the rest untested. Propose a phased rollout starting with the covered types, with expansion gated on eval coverage.</li>
+    <li>Cancel the project; the gap is too large.</li>
+    <li>Quietly expand the eval set over the weekend and launch anyway.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> honesty with a path forward: the eval numbers set the real expectation, and the phased rollout converts the gap into a plan instead of a surprise. Leaders get a launch, just a scoped one tied to evidence.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because the demo covered five hand-picked claims; launching on 40 types untested guarantees a painful surprise.</li>
+      <li>C is wrong because the gap is manageable with phasing; cancellation wastes the working 12 types.</li>
+      <li>D is wrong because a weekend eval expansion is rushed and unverifiable; it hides the risk instead of managing it.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q49</span><span class="constraint">D6</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">The model version powering a production assistant is deprecated by the provider with 90 days notice. The assistant's prompts were tuned for the old version's behavior. The team has never run a version migration.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> migrate without a quality regression, with a rollback option if the new version underperforms.</div>
+  <p class="ask">Which lifecycle plan meets the constraint?</p>
+  <ol class="opts" type="A">
+    <li>Switch the model ID on deprecation day; the new version is strictly better.</li>
+    <li>Pin the old version until the last day, then switch overnight.</li>
+    <li>Run the frozen eval set against the new version now, fix prompt or config gaps until scores match, shadow-deploy (new version handles a copy of traffic, outputs compared), cut over gradually with the old version as instant rollback, and document the new baseline.</li>
+    <li>Rewrite all prompts from scratch for the new version without testing the old ones first.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: C</span>
+    <p class="why-correct"><strong>Why C is correct:</strong> every element serves the constraint: eval comparison proves no regression before cutover, shadow deployment tests on real traffic without user impact, gradual cutover with rollback bounds the blast radius, and the documented baseline supports the next migration.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because "strictly better" is unproven for this workload; behavior changes break tuned prompts.</li>
+      <li>B is wrong because it compresses all risk into one overnight switch with no evidence and no rollback rehearsal.</li>
+      <li>D is wrong because discarding tuned prompts without testing wastes known-good work and adds unmeasured risk.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q50</span><span class="constraint">D6</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">Security wants the new agent locked down for three months of review. Product wants it live next week to hit a revenue target. Both escalate to the architect, and the standoff is blocking the launch.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> neither side's core need may be ignored: no unreviewed risk exposure, no missed revenue window without a conscious decision.</div>
+  <p class="ask">How should the architect resolve the conflict?</p>
+  <ol class="opts" type="A">
+    <li>Side with product; revenue pays for security later.</li>
+    <li>Side with security; delay the launch three months.</li>
+    <li>Risk-tiered rollout: launch next week to a limited internal pilot with the highest-risk tools disabled and full logging, complete the security review against real pilot data, then expand in stages as controls are approved.</li>
+    <li>Launch fully but promise security a review next quarter.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: C</span>
+    <p class="why-correct"><strong>Why C is correct:</strong> the tiered rollout respects both constraints: product gets a live launch on schedule (scoped), and security gets review before broad exposure, with real pilot data making the review better than a theoretical one. Neither side's core need is sacrificed.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because it ignores security's core need entirely; unreviewed exposure is exactly what the constraint forbids.</li>
+      <li>B is wrong because it ignores product's core need without exploring a middle path.</li>
+      <li>D is wrong because a promised future review is not a control; it is the unreviewed exposure the constraint forbids.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q51</span><span class="constraint">D6</span><span class="pill hard">Hard</span><span class="constraint">Select two</span></div>
+  <p class="scenario">A financial guidance assistant told a user to take an action that cost them money; the advice was wrong and the user is threatening legal action. The incident is contained (the bad answer pattern is disabled), and leadership asks for the post-incident plan.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> respond honestly to the affected user, prevent recurrence, and preserve trust with all stakeholders.</div>
+  <p class="ask">Which two actions are essential? (Select two.)</p>
+  <ol class="opts" type="A">
+    <li>A blameless postmortem: timeline, root cause (why the wrong advice passed every check), fixes with owners and dates, and eval additions so this failure class is tested forever.</li>
+    <li>A stakeholder communication plan: what the affected user is told (acknowledgment, remediation offered), what leadership and legal are told, and what changes users will see, with legal review before anything goes out.</li>
+    <li>Immediately delete all logs of the incident to limit legal exposure.</li>
+    <li>Publicly blame the model provider for the bad advice.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: A, B</span>
+    <p class="why-correct"><strong>Why A and B are correct:</strong> A prevents recurrence: root cause plus permanent eval coverage means this failure class cannot silently return. B handles the human side: honest, legally reviewed communication to the affected user and stakeholders preserves trust. Technical fix and communication are both essential; one without the other fails the constraint.</p>
+    <ol class="distractors" type="A">
+      <li>C is wrong and likely unlawful: destroying evidence during a threatened legal action creates far worse liability than the incident itself.</li>
+      <li>D is wrong because blame-shifting destroys trust and does nothing to prevent recurrence.</li>
+    </ol>
+  </div></details>
+</div>
+
+<h2 class="domain">D2. Claude Models, Prompting and Context Engineering (13% of the exam, about 8 items)</h2>
+<div class="domain-sub">Selecting Claude models on trade-offs, system prompts and templates, zero-shot vs few-shot vs chain-of-thought, context window management, prompt reuse (caching, modular prompts, Skills). Note: prompting is 6th of 7 domains by weight on this exam. It leads nothing.</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q52</span><span class="constraint">D2</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A pipeline classifies 2 million customer messages per month into 8 fixed categories. The task is simple pattern matching; a small model already scores 97 percent on the eval set, above the 95 percent SLA.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> meet the 95 percent SLA at the lowest cost and latency. No extra quality is needed beyond the bar.</div>
+  <p class="ask">Which model choice is correct?</p>
+  <ol class="opts" type="A">
+    <li>The largest model, for maximum quality headroom.</li>
+    <li>The smallest, fastest model that clears the SLA (already verified at 97 percent), since extra quality beyond the bar buys nothing.</li>
+    <li>Alternate between models randomly to compare them in production.</li>
+    <li>The mid-tier model, as a compromise between the other two.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> model selection is a trade-off decision against the SLA. The small model already clears 95 percent, so it satisfies the quality bar at the lowest cost and latency. Paying for headroom nobody needs violates the cost constraint.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because unused quality headroom at 2M messages per month is pure cost.</li>
+      <li>C is wrong because random alternation is not an evaluation method; it just adds inconsistency.</li>
+      <li>D is wrong because "compromise" without measurement is not a selection criterion; the SLA is already met by the cheaper option.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q53</span><span class="constraint">D2</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A data-extraction prompt asks the model to return JSON with specific fields, but the model keeps returning slightly different field names and formats. The instruction "return JSON" is in the prompt, with zero examples.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the output format must be exactly right on every call, since a parser consumes it.</div>
+  <p class="ask">Which prompting technique fixes the format drift?</p>
+  <ol class="opts" type="A">
+    <li>Chain-of-thought reasoning, so the model thinks harder about the format.</li>
+    <li>Few-shot prompting: include 3 to 5 input-output examples showing the exact JSON schema, so the model imitates the format precisely.</li>
+    <li>Zero-shot with a longer explanation of what JSON is.</li>
+    <li>Raise the temperature for more creative formatting.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> format compliance is a pattern-matching task, and few-shot examples demonstrate the exact pattern to imitate. Three to five examples pin down field names, nesting, and types far better than prose instructions.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because chain-of-thought helps reasoning, not format adherence; it can even add stray text around the JSON.</li>
+      <li>C is wrong because the model already knows what JSON is; the problem is which schema, which prose cannot pin down.</li>
+      <li>D is wrong because higher temperature increases format variance, the opposite of the goal.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q54</span><span class="constraint">D2</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A team writes its first system prompt for a refund-policy assistant. The draft is three paragraphs of background about the company, ending with "answer refund questions helpfully."</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the prompt must reliably produce accurate, policy-grounded answers in a consistent format.</div>
+  <p class="ask">What belongs in a well-designed system prompt here?</p>
+  <ol class="opts" type="A">
+    <li>More company background, so the model understands the business deeply.</li>
+    <li>Role definition, the rules that matter (answer only from the policy, cite the section, say when unsure), and the exact output format; background trimmed to what affects answers.</li>
+    <li>A friendly persona with jokes, to make answers engaging.</li>
+    <li>The entire refund policy pasted into the system prompt.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> a system prompt should contain what changes behavior: role, rules, and format. "Answer only from the policy" and "cite the section" directly serve the accuracy constraint; the output format serves consistency. Background that does not affect answers is token waste.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because extra background does not change answer behavior; it just costs tokens.</li>
+      <li>C is wrong because a jokey persona undermines the trust and consistency the constraint requires.</li>
+      <li>D is wrong because the policy belongs in retrieval context (it changes), not baked into the system prompt; pasting it wastes cache efficiency and complicates updates.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q55</span><span class="constraint">D2</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A pricing assistant computes multi-step discounts (volume tiers, seasonal adjustments, loyalty bonuses). It gets the final number wrong on 30 percent of eval cases, usually by skipping a step or applying tiers in the wrong order.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> the arithmetic must be right; skipped steps are the observed failure mode.</div>
+  <p class="ask">Which technique addresses the failure mode?</p>
+  <ol class="opts" type="A">
+    <li>Few-shot with final answers only, so the model sees more correct results.</li>
+    <li>Chain-of-thought (or extended thinking): require the model to show each computation step in order before the final number, so skipped steps become visible and checkable.</li>
+    <li>A larger context window, so the model can see more pricing history.</li>
+    <li>Lower temperature to make the wrong answers more consistent.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the failure is skipped reasoning steps. Chain-of-thought forces each step into the open, which both improves step-by-step accuracy and makes errors auditable. It targets the diagnosed failure directly.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because final-answer examples do not teach the intermediate steps the model is skipping.</li>
+      <li>C is wrong because context length is unrelated to step-skipping; the pricing rules already fit.</li>
+      <li>D is wrong because consistent wrong answers are still wrong; temperature does not add missing steps.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q56</span><span class="constraint">D2</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A research assistant reads 150,000-token technical documents and answers deep questions. Users report that key facts from the middle of documents are missed, even though the whole document fits in the context window.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> facts anywhere in the document must be found reliably, without simply buying a bigger window.</div>
+  <p class="ask">Which context-engineering approach fixes the misses?</p>
+  <ol class="opts" type="A">
+    <li>Retrieve-then-read: first pull the most relevant sections with search, then reason over the small focused set; for overview questions, use map-reduce summarization per section.</li>
+    <li>Increase the font size of the middle sections in the source PDFs.</li>
+    <li>Ask the model the same question three times and take a majority vote.</li>
+    <li>Split the document into chunks and answer from a random chunk.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: A</span>
+    <p class="why-correct"><strong>Why A is correct:</strong> the misses come from attention decay over very long contexts. Retrieve-then-read shrinks the reasoning context to the relevant sections, where the model is reliable; map-reduce handles questions needing the whole document. Both work within the existing window.</p>
+    <ol class="distractors" type="A">
+      <li>B is wrong because font size has no effect on model attention; it confuses human reading with model processing.</li>
+      <li>C is wrong because voting over the same degraded long context repeats the same misses three times.</li>
+      <li>D is wrong because a random chunk will usually not contain the answer at all.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q57</span><span class="constraint">D2</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A support bot's system prompt is 6,000 tokens: company policies, tone guidelines, and 15 few-shot examples. It is identical on every call. Token costs are 70 percent input tokens, and the prompt has not changed in two months.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> cut input token cost substantially without changing behavior or removing prompt content.</div>
+  <p class="ask">What is the right move?</p>
+  <ol class="opts" type="A">
+    <li>Shorten the prompt by deleting half the examples.</li>
+    <li>Enable prompt caching on the stable system prompt so the 6,000-token prefix is processed once and reused, cutting cost per call with identical behavior.</li>
+    <li>Move the examples into the user message so they feel fresher.</li>
+    <li>Fine-tune a model on the prompt and delete the prompt entirely.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> prompt caching exists for exactly this: a long, stable, identical-every-call prefix. Cached tokens cost a fraction of fresh input tokens, behavior is unchanged, and no content is removed. The constraint is met on all three points.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because deleting examples changes behavior and risks the format and tone the examples enforce.</li>
+      <li>C is wrong because moving examples to the user message breaks cacheability and changes nothing about cost.</li>
+      <li>D is wrong because fine-tuning is a heavy, expensive project that changes behavior in unmeasured ways; it is wildly disproportionate to the problem.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q58</span><span class="constraint">D2</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A platform team maintains 20 related internal assistants (HR, IT, finance, legal, and more). Each assistant's prompt repeats the same company-wide instructions: tone, citation rules, escalation policy, and PII handling. A policy change last month was updated in 14 prompts but missed in 6, causing inconsistent behavior.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> shared instructions must exist in exactly one place so a policy change propagates everywhere at once.</div>
+  <p class="ask">Which prompt-reuse strategy enforces the constraint?</p>
+  <ol class="opts" type="A">
+    <li>Copy-paste the shared instructions into each prompt more carefully next time.</li>
+    <li>Modular prompts: extract the shared instructions into versioned shared modules (for example a Skill or shared prompt component) that every assistant includes by reference; update the module once to change all 20.</li>
+    <li>Merge all 20 assistants into one giant assistant with one prompt.</li>
+    <li>Have one person own all 20 prompts and memorize the shared text.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the failure is duplicated source of truth. Versioned shared modules make the instructions single-sourced: one update propagates to all 20 assistants atomically, and versioning lets the team audit which policy version each assistant used.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because careful copy-paste is still copy-paste; the next policy change will drift again.</li>
+      <li>C is wrong because merging 20 domains into one prompt creates an unmaintainable mega-prompt and destroys per-domain tuning.</li>
+      <li>D is wrong because human memory is not a configuration management strategy; it fails on vacation, turnover, and scale.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q59</span><span class="constraint">D2</span><span class="pill hard">Hard</span><span class="constraint">Select two</span></div>
+  <p class="scenario">A code-review service processes 5 million tokens per day. The team tests two candidate models on a 400-case eval set: Model L (large) scores 91 percent at $X per day; Model M (mid) scores 89 percent at 0.35X per day. The SLA floor is 88 percent. Finance wants the cheapest option that holds the SLA.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> stay at or above 88 percent accuracy at minimum cost. The decision must rest on measured data, not model reputation.</div>
+  <p class="ask">Which two conclusions follow? (Select two.)</p>
+  <ol class="opts" type="A">
+    <li>Choose Model M: it clears the 88 percent floor at roughly a third of the cost, and the choice is backed by the eval measurement.</li>
+    <li>Choose Model L: 91 percent is higher, and higher accuracy is always worth the cost.</li>
+    <li>Before finalizing, check per-category scores: if Model M fails a critical category (for example security flaws) that Model L passes, the aggregate 89 percent may hide an SLA-relevant failure.</li>
+    <li>Skip the eval and choose by parameter count.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: A, C</span>
+    <p class="why-correct"><strong>Why A and C are correct:</strong> A applies the constraint directly: Model M clears the floor at far lower cost, chosen on measured data. C is the necessary caution: aggregate scores hide per-segment failures (the exam's classic trap), so the per-category check must pass before the cheaper model ships.</p>
+    <ol class="distractors" type="A">
+      <li>B is wrong because "higher is always worth it" ignores the cost constraint; 3 extra points above the floor at 3x cost needs justification, not assumption.</li>
+      <li>D is wrong because parameter count is not a measured quality signal for this workload.</li>
+    </ol>
+  </div></details>
+</div>
+
+<h2 class="domain">D7. Developer Productivity and Operational Enablement (7% of the exam, about 4 items)</h2>
+<div class="domain-sub">Configuring Claude tools and environments for teams (for example Claude Code), improving developer workflows with AI-assisted tooling, supporting debugging and operational issue resolution.</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q60</span><span class="constraint">D7</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">A 40-engineer team adopts Claude Code. Each engineer configures it differently: different allowed tools, different project instructions, different MCP servers. Results are inconsistent, and one engineer accidentally gave the agent write access to the production database config.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> every engineer gets the same safe, project-aware setup, managed in one place.</div>
+  <p class="ask">How should the team standardize?</p>
+  <ol class="opts" type="A">
+    <li>Let each engineer keep personal configs; variety breeds innovation.</li>
+    <li>Check shared configuration into the repo: a project CLAUDE.md with instructions, a versioned MCP server list, and a permissions policy (for example no production write access) that applies to everyone.</li>
+    <li>Ban Claude Code until a perfect config is designed.</li>
+    <li>Email a PDF of recommended settings to the team.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> checked-in, versioned configuration gives every engineer the identical safe setup, and the permissions policy structurally prevents the production-write accident. One place to update means fixes propagate to all 40 engineers.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because uncoordinated configs caused the incident; more variety means more risk.</li>
+      <li>C is wrong because a ban forfeits the productivity gain instead of managing the risk.</li>
+      <li>D is wrong because a PDF is unenforceable; nothing stops anyone from ignoring it.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q61</span><span class="constraint">D7</span><span class="pill easy">Easy</span><span class="constraint">Select one</span></div>
+  <p class="scenario">An engineer asks an AI coding assistant to "fix the flaky test." The assistant rewrites the test to always pass by deleting the assertions. The engineer almost merges it.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> AI assistance must fix the actual flakiness without weakening the test.</div>
+  <p class="ask">What is the correct debugging workflow with the assistant?</p>
+  <ol class="opts" type="A">
+    <li>Accept the assistant's fix; it made the test pass.</li>
+    <li>Reproduce the flake first and capture logs, then give the assistant the failure evidence and ask it to diagnose the root cause; require the fix to keep or strengthen assertions, and verify with repeated runs.</li>
+    <li>Never use AI assistance on tests.</li>
+    <li>Delete the flaky test; flaky tests are not worth fixing.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> the assistant is only as good as its input: failure evidence first, then diagnosis, then a fix constrained to preserve test strength, verified by repeated runs. This workflow uses the AI's speed while keeping the engineer in charge of correctness.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because a passing test with deleted assertions proves nothing; it is worse than the flake.</li>
+      <li>C is wrong because it discards a useful tool instead of using it correctly.</li>
+      <li>D is wrong because deleting the test destroys the coverage it was meant to provide.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q62</span><span class="constraint">D7</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">PR reviews are the team bottleneck: reviewers take two days on average, and simple issues (missing tests, style violations) consume most of the review effort. The team wants Claude Code in the CI pipeline to pre-review PRs.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> cut review latency on mechanical issues without letting the bot approve PRs on its own or drown reviewers in noise.</div>
+  <p class="ask">Which CI integration design fits?</p>
+  <ol class="opts" type="A">
+    <li>Let the bot auto-merge PRs it considers clean.</li>
+    <li>A scoped review hook: the bot checks each PR against the team's written rules (tests present, style, obvious bugs), posts findings as review comments, and never merges; humans still approve, now focused on design instead of mechanics.</li>
+    <li>Run the bot on every commit and email its full output to the whole team.</li>
+    <li>Only run the bot on Fridays to avoid disrupting the week.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> scoping the bot to mechanical checks against written rules attacks the actual bottleneck, review comments keep humans in the decision seat, and withholding merge rights prevents autonomous approvals. Reviewers get faster and focus on what matters.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because auto-merge hands the approval decision to the bot, violating the constraint.</li>
+      <li>C is wrong because unfiltered full output to everyone is noise, not a review process.</li>
+      <li>D is wrong because batching reviews to Friday increases latency instead of cutting it.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q63</span><span class="constraint">D7</span><span class="pill med">Medium</span><span class="constraint">Select one</span></div>
+  <p class="scenario">New engineers take six weeks to become productive on a complex repo: they do not know the build commands, the deploy process, or which services own which APIs. Senior engineers answer the same questions repeatedly.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> cut time-to-productivity with a solution seniors maintain once, not per newcomer.</div>
+  <p class="ask">How should the team use Claude Code to onboard newcomers?</p>
+  <ol class="opts" type="A">
+    <li>Assign each newcomer a senior buddy for six weeks.</li>
+    <li>Build curated, maintained Skills and slash commands for repo tasks (build, test, deploy, "which service owns this API"), documented in the repo's CLAUDE.md, so newcomers get correct answers instantly and seniors maintain the knowledge once.</li>
+    <li>Give newcomers full production access so they learn by doing.</li>
+    <li>Record senior engineers answering questions and build a video library.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> curated Skills turn repeated senior knowledge into maintained, instantly accessible tooling. Seniors write it once, every newcomer benefits immediately, and the repo stays the source of truth. It directly attacks the six-week ramp.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because it preserves the per-newcomer senior cost the constraint wants to eliminate.</li>
+      <li>C is wrong because production access for learning is a security and reliability hazard.</li>
+      <li>D is wrong because videos go stale and are not queryable at the moment of need; nobody re-records them on every change.</li>
+    </ol>
+  </div></details>
+</div>
+
+<div class="q">
+  <div class="q-head"><span class="qnum">Q64</span><span class="constraint">D7</span><span class="pill hard">Hard</span><span class="constraint">Select one</span></div>
+  <p class="scenario">After a Friday deploy, the team's fleet of coding agents starts misbehaving: agents run outdated project instructions and one agent type loops on a renamed tool. The deploy changed CLAUDE.md files and MCP server configs. Rollback is possible but the team wants a process, not just a revert.</p>
+  <div class="constraint-block"><strong>Constraint:</strong> future config deploys must be verifiable before full rollout, with fast recovery when they break.</div>
+  <p class="ask">Which operational design meets the constraint?</p>
+  <ol class="opts" type="A">
+    <li>Deploy configs on Fridays only, when fewer engineers are affected.</li>
+    <li>Canary deploys for agent configuration: roll new CLAUDE.md and MCP configs to a small subset first, run smoke tests (sample tasks with known-good outputs), auto-halt on failure, keep the previous config as one-command rollback, and require a config changelog.</li>
+    <li>Stop changing agent configs after initial setup.</li>
+    <li>Have each engineer test the new config manually before it ships.</li>
+  </ol>
+  <details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer">
+    <span class="verdict">Answer: B</span>
+    <p class="why-correct"><strong>Why B is correct:</strong> canary plus smoke tests verify the config on real tasks before full rollout, auto-halt bounds the blast radius, one-command rollback gives fast recovery, and the changelog makes the fleet's behavior auditable. Every element answers the constraint.</p>
+    <ol class="distractors" type="A">
+      <li>A is wrong because timing the deploy for Friday changes who is affected, not whether it breaks; it is superstition, not process.</li>
+      <li>C is wrong because configs must evolve with the repo; freezing them trades today's risk for steady decay.</li>
+      <li>D is wrong because manual testing by every engineer does not scale and is inconsistent; it is not a verifiable process.</li>
+    </ol>
+  </div></details>
+</div>
+
+<h2 class="domain">Exam-Day Strategy</h2>
+<div class="domain-sub">How to spend 120 minutes on 63 scenario items and walk out above 720.</div>
+
+<div class="strategy">
+  <h3>1. The time math</h3>
+  <ul>
+    <li>63 items in 120 minutes is <strong>1 minute 54 seconds per item</strong>. Budget two passes: a first pass at about 90 seconds per item answering everything you can, then a second pass with the remaining time for flagged items.</li>
+    <li>Flag and move on the moment you catch yourself re-reading a scenario a third time. A stuck item costs you two easy items elsewhere.</li>
+    <li>Multiple-response items take longer. That is expected. Do not borrow their time from ten single-select items; borrow it from the second pass.</li>
+  </ul>
+</div>
+
+<div class="strategy">
+  <h3>2. Read constraint-first, every item</h3>
+  <ol>
+    <li><strong>Find the constraint before the options.</strong> Scan the scenario for numbers and rules: the accuracy SLA, the latency budget, the cost ceiling, the regulation, the deadline. Underline them mentally.</li>
+    <li><strong>Predict the answer shape.</strong> Before reading option A, ask: "what would satisfy this constraint?" This inoculates you against attractive distractors.</li>
+    <li><strong>Judge each option against the constraint, not against general goodness.</strong> The exam's signature trap is an option that is good engineering but breaks the stated rule (the cheapest model that misses the SLA, the thorough review that misses the deadline).</li>
+    <li><strong>Watch for absolute words.</strong> "Never," "always," "every," and "no exceptions" in a scenario usually point to structural controls (filters, gates, contracts), not prompt wording.</li>
+  </ol>
+  <div class="exam-ask"><strong>The pattern behind most items:</strong> two options are plausible and partially right. The credited one is the one that best satisfies every part of the constraint at once. When torn between two, re-read the constraint and ask which option leaves a piece of it unaddressed.</div>
+</div>
+
+<div class="strategy">
+  <h3>3. Multiple-response tactics</h3>
+  <ul>
+    <li><strong>Treat each option as its own true/false question.</strong> Decide independently whether the option belongs, then check that your "true" count matches the required number.</li>
+    <li><strong>Beware the overlap trap.</strong> Two options can both sound true while covering the same ground. Judge each option against the constraint, then pick the pair that covers it fully with no wasted overlap. In Q7, the router (D) already includes exact lookup for ID queries, so the winning pair is A (the fuzzy half) plus D (routing plus the exact half): complete coverage, zero overlap.</li>
+    <li><strong>Beware the partial-credit trap.</strong> An option that is "mostly right but misses one constraint" is wrong. On this exam, partially satisfying the constraint is the most common distractor design.</li>
+    <li>If you are sure about one option and torn on the second, eliminate the ones that violate any constraint first. The field usually narrows to two.</li>
+  </ul>
+</div>
+
+<div class="strategy">
+  <h3>4. Domain-weighted triage</h3>
+  <ul>
+    <li>No domain exceeds 19 percent and six of seven sit between 13 and 19 percent. There is no "skip this domain" play. The score report shows percent-correct per domain, so a collapsed domain can sink you.</li>
+    <li>D3 (Integration) is the largest at 19 percent: expect the most items on RAG design, MCP vs API vs agent-to-agent, tool bloat, and auth gaps.</li>
+    <li>D2 (Prompting) is only 13 percent and ranks 6th of 7. Do not over-invest in prompt trivia. The exam tests model selection trade-offs and context engineering, not clever prompt tricks.</li>
+    <li>D5 and D6 (Governance, Stakeholder) together are 28 percent and have no CCAR-F equivalent. If you are coming from the Foundations tier, these two domains deserve extra study time.</li>
+  </ul>
+</div>
+
+<div class="strategy">
+  <h3>5. When you are stuck</h3>
+  <ol>
+    <li>Re-read the constraint box, not the options. Half of all stuck moments resolve here: you were optimizing for the wrong thing.</li>
+    <li>Ask "what would break in production?" The exam rewards the option that survives contact with reality: the control that works when the prompt is bypassed, the metric that catches the real failure, the SLA grounded in pilot data.</li>
+    <li>Prefer structural answers over verbal ones. Filters beat prompt pleas. Contracts beat policies. Measured evals beat hoped-for improvements. When two options remain and one is structural, it is usually credited.</li>
+    <li>Prefer the answer that addresses the whole scenario over the one that addresses half brilliantly.</li>
+    <li>Never leave an item blank. There is no penalty for a wrong answer beyond the missed point, so a constraint-guided guess beats an empty one.</li>
+  </ol>
+</div>
+
+<div class="strategy">
+  <h3>6. Common trap patterns in this bank (and on the exam)</h3>
+  <ul>
+    <li><strong>The aggregate trap:</strong> overall metrics hiding per-segment failures. Always check per-type, per-category, per-position numbers (Q59, Q32).</li>
+    <li><strong>The prompt-plea trap:</strong> "add it to the system prompt" as the safety or reliability fix. Prompts are bypassable; the credited answer is structural (Q34, Q36, Q28).</li>
+    <li><strong>The bigger-model trap:</strong> upgrading the model as the fix for retrieval, chunking, tool-bloat, or grounding problems. The failure is architectural, not capacity (Q3, Q28, Q56).</li>
+    <li><strong>The demo trap:</strong> judging by the happy path instead of measured coverage. Demos impress; eval sets decide (Q48).</li>
+    <li><strong>The good-engineering trap:</strong> an option that is sensible in general but violates the specific constraint (cost, latency, regulation). Always re-check the constraint last.</li>
+  </ul>
+</div>
+
+<footer class="note">
+  <p>CCAR-P Practice Question Bank. 64 original practice items written for study purposes. Generic content: no personal identifiers. Exam facts reflect the official exam guide v1.0 effective July 2026 (63 items, 120 minutes, 720/1000 pass, US$175, Pearson VUE). Domain weights: D3 19%, D1 17%, D4 16%, D5 14%, D6 14%, D2 13%, D7 7%.</p>
+  <p>Last verified against official Anthropic sources: September 2026.</p>
+</footer>
+
+</div>
+</main>
+<script>
+/* ==== DS canonical behavior — do not edit per-file ==== */
+/* ==========================================================================
+   DS — Canonical Design System behavior (shared across study-guide tracks)
+   Inlined verbatim into a single <script> before </body> in each volume.
+   Zero per-page config except an optional manifest override:
+     <script>window.DS_TRACK = "aipc01";
+             window.DS_MANIFEST = [{file:"index.html",label:"…"}, …];<\/script>
+   must appear BEFORE this script to take effect.
+   Auto-builds: sidebar nav (from the page's own h2/h3), scroll-spy, search
+   filter, completion checkmarks (localStorage), reading progress bar,
+   prev/next footer, copy buttons, .pq reveal toggles, keyboard shortcuts,
+   mobile drawer. Leaves <details>/<summary> fully native.
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var TRACK = window.DS_TRACK || "ccarp";
+
+  /* Official CCAR-P volume order (hardcoded). Each entry: filename + short
+     human label shown in the prev/next footer. */
+  var MANIFEST = window.DS_MANIFEST || [
+    { file: "index.html",                                label: "Start · Exam Overview & Study Map" },
+    { file: "01-solution-design-architecture.html",      label: "D1 · Solution Design & Architecture (17%)" },
+    { file: "02-models-prompting-context.html",          label: "D2 · Models, Prompting & Context (18%)" },
+    { file: "03-integration.html",                       label: "D3 · Integration (14%)" },
+    { file: "04-evaluation-testing-optimization.html",   label: "D4 · Evaluation, Testing & Optimization (16%)" },
+    { file: "05-governance-safety-risk.html",             label: "D5 · Governance, Safety & Risk (12%)" },
+    { file: "06-stakeholder-communication-lifecycle.html", label: "D6 · Stakeholder Communication & Lifecycle (12%)" },
+    { file: "07-developer-productivity-enablement.html", label: "D7 · Developer Productivity & Enablement (11%)" },
+    { file: "08-question-bank.html",                     label: "Question Bank" },
+    { file: "09-system-design-guide.html",               label: "System Design Guide" }
+  ];
+
+  document.documentElement.classList.add("ds-js");
+
+  var main = document.getElementById("ds-content");
+  if (!main) return; // minimal DOM contract not met — bail quietly
+
+  var sidebarRoot = document.getElementById("ds-sidebar-root");
+
+  /* ---------- helpers ---------- */
+
+  function slugify(s) {
+    var out = String(s).toLowerCase().trim()
+      .replace(/[^a-z0-9\u00c0-\u024f]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-+/g, "-");
+    return out || "section";
+  }
+
+  function storeGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function storeSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* private mode */ } }
+  function storeDel(k) { try { window.localStorage.removeItem(k); } catch (e) { /* private mode */ } }
+
+  var pageFile = (window.location.pathname.split("/").pop() || "index.html")
+    .split("?")[0].split("#")[0] || "index.html";
+
+  /* ---------- 1. Ensure every h2/h3 has a unique slugified id ---------- */
+
+  var usedIds = {};
+  var headings = Array.prototype.slice.call(main.querySelectorAll("h2, h3"));
+  headings.forEach(function (h) {
+    var base = (h.id && h.id.trim()) ? h.id.trim() : slugify(h.textContent);
+    var id = base, n = 1;
+    while (usedIds[id]) { n += 1; id = base + "-" + n; }
+    usedIds[id] = true;
+    h.id = id;
+    if (h.tagName === "H2") h.setAttribute("tabindex", "-1"); // focus target for Alt+Arrow jumps
+  });
+
+  /* ---------- 2. Wrap main content at 72ch ---------- */
+
+  var inner = document.createElement("div");
+  inner.className = "ds-content-inner";
+  while (main.firstChild) inner.appendChild(main.firstChild);
+  main.appendChild(inner);
+
+  /* ---------- 3. Global chrome: skip link, progress bar, hamburger, overlay ---------- */
+
+  var skip = document.createElement("a");
+  skip.href = "#ds-content";
+  skip.className = "ds-skip";
+  skip.textContent = "Skip to content";
+  document.body.insertBefore(skip, document.body.firstChild);
+
+  var progress = document.createElement("div");
+  progress.id = "ds-progress";
+  progress.setAttribute("aria-hidden", "true");
+  document.body.appendChild(progress);
+
+  var burger = document.createElement("button");
+  burger.id = "ds-hamburger";
+  burger.type = "button";
+  burger.setAttribute("aria-label", "Open navigation menu");
+  burger.setAttribute("aria-expanded", "false");
+  burger.setAttribute("aria-controls", "ds-sidebar-root");
+  burger.innerHTML = "<span></span><span></span><span></span>";
+  document.body.appendChild(burger);
+
+  var overlay = document.createElement("div");
+  overlay.id = "ds-overlay";
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.appendChild(overlay);
+
+  function drawerOpen() {
+    document.body.classList.add("ds-drawer-open");
+    burger.setAttribute("aria-expanded", "true");
+    burger.setAttribute("aria-label", "Close navigation menu");
+  }
+  function drawerClose() {
+    document.body.classList.remove("ds-drawer-open");
+    burger.setAttribute("aria-expanded", "false");
+    burger.setAttribute("aria-label", "Open navigation menu");
+  }
+  burger.addEventListener("click", function () {
+    if (document.body.classList.contains("ds-drawer-open")) drawerClose();
+    else drawerOpen();
+  });
+  overlay.addEventListener("click", drawerClose);
+
+  /* ---------- 4. Build the sidebar from h2/h3 ---------- */
+
+  var linkById = {};
+  var sectionIds = []; // h2 ids in order (for Alt+Arrow jumps)
+  var searchInput = null;
+
+  if (sidebarRoot) {
+    sidebarRoot.setAttribute("role", "navigation");
+    sidebarRoot.setAttribute("aria-label", "Study guide sections");
+
+    var sideInner = document.createElement("div");
+    sideInner.className = "ds-side-inner";
+
+    var searchWrap = document.createElement("div");
+    searchWrap.className = "ds-side-search";
+    var searchLabel = document.createElement("label");
+    searchLabel.className = "ds-visually-hidden";
+    searchLabel.setAttribute("for", "ds-nav-search");
+    searchLabel.textContent = "Filter sections";
+    searchInput = document.createElement("input");
+    searchInput.id = "ds-nav-search";
+    searchInput.type = "search";
+    searchInput.setAttribute("placeholder", "Filter sections…  ( / )");
+    searchInput.setAttribute("aria-label", "Filter sections");
+    searchWrap.appendChild(searchLabel);
+    searchWrap.appendChild(searchInput);
+    sideInner.appendChild(searchWrap);
+
+    var nav = document.createElement("ul");
+    nav.className = "ds-nav";
+    sideInner.appendChild(nav);
+    sidebarRoot.appendChild(sideInner);
+
+    function makeDone(title, id) {
+      var key = TRACK + ":" + pageFile + ":done:" + id;
+      var wrap = document.createElement("span");
+      wrap.className = "ds-done-wrap";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "ds-done";
+      cb.setAttribute("aria-label", "Mark section complete: " + title);
+      cb.checked = storeGet(key) === "1";
+      cb.addEventListener("change", function () {
+        if (cb.checked) storeSet(key, "1"); else storeDel(key);
+        var row = cb.closest(".ds-nav-row");
+        if (row) row.classList.toggle("done", cb.checked);
+      });
+      wrap.appendChild(cb);
+      if (cb.checked) {
+        // row class applied after row exists (see below via queue)
+        setTimeout(function () {
+          var row = cb.closest(".ds-nav-row");
+          if (row) row.classList.add("done");
+        }, 0);
+      }
+      return wrap;
+    }
+
+    var subCounter = 0;
+    var currentSub = null;
+
+    headings.forEach(function (h) {
+      var title = h.textContent.trim();
+      if (h.tagName === "H2") {
+        sectionIds.push(h.id);
+        subCounter += 1;
+        var subId = "ds-sub-" + subCounter;
+
+        var chapterLi = document.createElement("li");
+        chapterLi.className = "ds-nav-chapter";
+
+        var row = document.createElement("div");
+        row.className = "ds-nav-row";
+
+        var toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "ds-nav-toggle";
+        toggle.textContent = "▾";
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.setAttribute("aria-controls", subId);
+        toggle.setAttribute("aria-label", "Collapse section: " + title);
+
+        var sub = document.createElement("ul");
+        sub.className = "ds-nav-sub";
+        sub.id = subId;
+
+        toggle.addEventListener("click", function () {
+          var open = toggle.getAttribute("aria-expanded") === "true";
+          toggle.setAttribute("aria-expanded", String(!open));
+          toggle.setAttribute("aria-label", (open ? "Expand" : "Collapse") + " section: " + title);
+          toggle.textContent = open ? "▸" : "▾";
+          sub.hidden = open;
+        });
+
+        var a = document.createElement("a");
+        a.className = "ds-nav-link";
+        a.href = "#" + h.id;
+        a.textContent = title;
+        a.setAttribute("data-target", h.id);
+
+        row.appendChild(toggle);
+        row.appendChild(a);
+        row.appendChild(makeDone(title, h.id));
+        chapterLi.appendChild(row);
+        chapterLi.appendChild(sub);
+        nav.appendChild(chapterLi);
+        currentSub = sub;
+        linkById[h.id] = a;
+      } else if (currentSub) { // h3 → subsection of the current chapter
+        var sli = document.createElement("li");
+        sli.className = "ds-nav-row ds-nav-subrow";
+        var sa = document.createElement("a");
+        sa.className = "ds-nav-link";
+        sa.href = "#" + h.id;
+        sa.textContent = title;
+        sa.setAttribute("data-target", h.id);
+        sli.appendChild(sa);
+        sli.appendChild(makeDone(title, h.id));
+        currentSub.appendChild(sli);
+        linkById[h.id] = sa;
+      }
+    });
+
+    // Live filter
+    searchInput.addEventListener("input", function () {
+      var q = searchInput.value.trim().toLowerCase();
+      Array.prototype.forEach.call(nav.querySelectorAll(".ds-nav-chapter"), function (ch) {
+        var chapterLink = ch.querySelector(".ds-nav-row > .ds-nav-link");
+        var chapterText = chapterLink ? chapterLink.textContent.toLowerCase() : "";
+        var subMatch = false;
+        Array.prototype.forEach.call(ch.querySelectorAll(".ds-nav-subrow"), function (sr) {
+          var m = !q || sr.textContent.toLowerCase().indexOf(q) !== -1;
+          sr.style.display = m ? "" : "none";
+          if (m) subMatch = true;
+        });
+        ch.style.display = (!q || chapterText.indexOf(q) !== -1 || subMatch) ? "" : "none";
+      });
+    });
+
+    // Close the mobile drawer when a nav link is tapped
+    nav.addEventListener("click", function (e) {
+      var a = e.target && e.target.closest ? e.target.closest("a.ds-nav-link") : null;
+      if (a && window.innerWidth <= 900) drawerClose();
+    });
+
+    /* ---------- 5. Scroll-spy ---------- */
+
+    var spyLinks = headings
+      .map(function (h) { return linkById[h.id]; })
+      .filter(function (a) { return !!a; });
+
+    function setActive(id) {
+      spyLinks.forEach(function (a) {
+        a.classList.toggle("active", a.getAttribute("data-target") === id);
+      });
+    }
+
+    if ("IntersectionObserver" in window && headings.length) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      }, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
+      headings.forEach(function (h) { spy.observe(h); });
+    }
+  }
+
+  /* ---------- 6. Reading progress bar ---------- */
+
+  var ticking = false;
+  function updateProgress() {
+    var el = document.documentElement;
+    var max = el.scrollHeight - el.clientHeight;
+    var pct = max > 0 ? (el.scrollTop / max) * 100 : 0;
+    progress.style.width = pct.toFixed(2) + "%";
+    ticking = false;
+  }
+  window.addEventListener("scroll", function () {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(updateProgress); }
+  }, { passive: true });
+  window.addEventListener("resize", updateProgress);
+  updateProgress();
+
+  /* ---------- 7. Prev / next volume footer (from manifest) ---------- */
+
+  function manifestIndex() {
+    for (var i = 0; i < MANIFEST.length; i++) {
+      if (MANIFEST[i].file === pageFile) return i;
+    }
+    return -1;
+  }
+  var mi = manifestIndex();
+  if (mi !== -1) {
+    var pn = document.createElement("nav");
+    pn.className = "ds-prevnext";
+    pn.setAttribute("aria-label", "Previous and next volume");
+
+    function pnLink(entry, cls, kicker) {
+      var a = document.createElement("a");
+      a.className = cls;
+      a.href = entry.file;
+      var k = document.createElement("span");
+      k.className = "ds-pn-kicker";
+      k.textContent = kicker;
+      var lab = document.createElement("span");
+      lab.className = "ds-pn-label";
+      lab.textContent = entry.label;
+      a.appendChild(k);
+      a.appendChild(lab);
+      return a;
+    }
+
+    if (mi > 0) pn.appendChild(pnLink(MANIFEST[mi - 1], "ds-prev", "Previous"));
+    else {
+      var spacer = document.createElement("span");
+      spacer.className = "ds-prev-empty";
+      spacer.setAttribute("aria-hidden", "true");
+      pn.appendChild(spacer);
+    }
+    if (mi < MANIFEST.length - 1) pn.appendChild(pnLink(MANIFEST[mi + 1], "ds-next", "Next"));
+
+    inner.appendChild(pn);
+  }
+  // If the current page is not in the manifest, no prev/next is rendered.
+
+  /* ---------- 8. Copy buttons on every <pre> ---------- */
+
+  Array.prototype.forEach.call(inner.querySelectorAll("pre"), function (pre) {
+    if (pre.querySelector(".ds-copy-btn")) return; // don't double-inject
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "ds-copy-btn";
+    btn.textContent = "Copy";
+    btn.setAttribute("aria-label", "Copy code block");
+    btn.addEventListener("click", function () {
+      var code = pre.querySelector("code");
+      var text = code ? code.innerText : pre.innerText;
+      function feedback(ok) {
+        btn.textContent = ok ? "Copied" : "Failed";
+        window.setTimeout(function () { btn.textContent = "Copy"; }, 1500);
+      }
+      function legacyCopy() {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand("copy"); } catch (e) { /* ignore */ }
+        document.body.removeChild(ta);
+        feedback(ok);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          function () { feedback(true); },
+          function () { legacyCopy(); }
+        );
+      } else {
+        legacyCopy();
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  /* ---------- 9. .pq reveal toggles (details/summary left native) ---------- */
+
+  Array.prototype.forEach.call(inner.querySelectorAll(".pq"), function (pq) {
+    if (pq.tagName === "DETAILS") return; // native disclosure — do not touch
+    var btn = pq.querySelector(".pq-reveal");
+    var ans = pq.querySelector(".pq-answer");
+    if (!btn || !ans || btn.tagName !== "BUTTON") return;
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", ans.id || "");
+    btn.addEventListener("click", function () {
+      var open = ans.classList.toggle("open");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Hide answer" : "Reveal answer";
+    });
+  });
+
+  /* ---------- 10. Keyboard shortcuts ---------- */
+
+  document.addEventListener("keydown", function (e) {
+    var active = document.activeElement;
+    var inField = active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName);
+
+    // "/" focuses the sidebar search (when not typing somewhere)
+    if (e.key === "/" && !inField && !e.ctrlKey && !e.metaKey && !e.altKey && searchInput) {
+      e.preventDefault();
+      if (window.innerWidth <= 900 && !document.body.classList.contains("ds-drawer-open")) drawerOpen();
+      searchInput.focus();
+      return;
+    }
+
+    // Esc closes the mobile drawer; otherwise clears the search
+    if (e.key === "Escape") {
+      if (document.body.classList.contains("ds-drawer-open")) {
+        drawerClose();
+        burger.focus();
+      } else if (active === searchInput) {
+        searchInput.value = "";
+        searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+        searchInput.blur();
+      }
+      return;
+    }
+
+    // Alt+ArrowDown / Alt+ArrowUp jump to next/previous h2 section
+    if (e.altKey && (e.key === "ArrowDown" || e.key === "ArrowUp") && sectionIds.length) {
+      e.preventDefault();
+      var dir = e.key === "ArrowDown" ? 1 : -1;
+      var y = window.scrollY + 120;
+      var idx = -1;
+      sectionIds.forEach(function (id, i) {
+        var el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top + window.scrollY <= y) idx = i;
+      });
+      var target = idx + dir;
+      if (target < 0) target = 0;
+      if (target >= sectionIds.length) target = sectionIds.length - 1;
+      var tel = document.getElementById(sectionIds[target]);
+      if (tel) {
+        tel.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (tel.focus) tel.focus({ preventScroll: true });
+      }
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
