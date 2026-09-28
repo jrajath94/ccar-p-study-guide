@@ -1124,6 +1124,8 @@ footer p{text-align:left}
 .qb-node.result{border-color:#3fb96b}
 
 /* ---------- Print / PDF: light-paper theme ---------- */
+/* This file is inlined by pipeline/build_pdf.py AFTER the canonical ds.css,
+   so every rule here wins over the screen design when Chromium prints. */
 @media print {
   :root {
     --bg: #ffffff;
@@ -1143,20 +1145,63 @@ footer p{text-align:left}
   #ds-sidebar-root,
   #ds-hamburger,
   #ds-progress,
+  #ds-overlay,
+  .ds-side-search,
+  .ds-done-wrap,
+  .ds-skip,
   .ds-site-header,
   .ds-site-footer,
   .ds-crumb,
   .ds-copy-btn { display: none !important; }
   #ds-content { padding: 0; }
   .ds-content-inner { max-width: none; }
-  a { color: var(--link); text-decoration: underline; }
-  .unit, .banner, .exam-ask, .board, .trapbox, .nums, .callout,
-  .takeaway, .def, .diagram-walkthrough, .qb-q {
+
+  /* --- Justified body text with hyphenation: even spacing, no rivers --- */
+  main#ds-content p,
+  main#ds-content li,
+  main#ds-content td,
+  main#ds-content th,
+  main#ds-content blockquote p,
+  main#ds-content figcaption,
+  .pq-answer p {
+    text-align: justify;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-justify: inter-word;
+    hyphenate-limit-chars: 6 3 2;
+    hyphenate-limit-lines: 2;
+  }
+
+  /* --- Widow / orphan control --- */
+  p, li, td, th, blockquote, figcaption {
+    widows: 3;
+    orphans: 3;
+  }
+  h1, h2, h3, h4, h5 {
+    break-inside: avoid;
+    break-after: avoid;
+  }
+
+  /* --- Keep blocks intact across page breaks --- */
+  pre, table, .table-wrap, figure,
+  .unit, .banner, .hero, .exam-ask, .board, .trapbox, .trap, .warn,
+  .nums, .callout, .takeaway, .diagram-walkthrough, .qb-q, .qb-strategy,
+  .qb-flow, .constraint-block, .facts, .askbox, .examstrip, .exam-strip,
+  .onboard, .toc, details.pq {
     break-inside: avoid;
   }
-  h2 { break-after: avoid; }
-  pre, table { break-inside: avoid; }
+
+  /* --- Links stay visible and clickable in print --- */
+  a { color: var(--link); text-decoration: underline; }
+
+  /* --- Undo dark-mode leftovers that would print as ink blocks --- */
+  tbody tr:nth-child(odd)  { background: #f2f2f0; }
+  tbody tr:nth-child(even) { background: #ffffff; }
+  .def { color: var(--text); }
+  .ds-nav-link:hover { background: none; color: var(--text); }
+
   img { max-width: 100%; }
+
   @page {
     size: A4;
     margin: 16mm 14mm 18mm 14mm;
@@ -1166,7 +1211,7 @@ footer p{text-align:left}
 </style>
 </head>
 <body>
-<header class="ds-site-header"><a class="ds-brand" href="index.html"><span class="b-full">CCAR-P Study Guide</span><span class="b-short">CCAR-P</span></a><input type="checkbox" id="ds-navcheck" class="ds-visually-hidden" tabindex="-1" aria-hidden="true"><label class="ds-navburger" for="ds-navcheck" aria-label="Toggle volume menu"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></label><nav class="ds-sitenav" aria-label="Volumes"><ul><li><a href="index.html">Home</a></li><li><a href="01-solution-design-architecture.html">D1 · Design</a></li><li><a href="02-models-prompting-context.html">D2 · Models</a></li><li><a href="03-integration.html">D3 · Integration</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Eval</a></li><li><a href="05-governance-safety-risk.html">D5 · Safety</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Comms</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Dev</a></li><li><a href="08-question-bank.html" aria-current="page">Questions</a></li><li><a href="09-system-design-guide.html">Designs</a></li><li><a href="crash-course.html">Crash</a></li></ul></nav><nav class="ds-headerpn" aria-label="Previous and next volume"><a class="ds-pn" rel="prev" href="07-developer-productivity-enablement.html"><span aria-hidden="true">&#8249;</span> <span class="pn-word">Prev</span></a><a class="ds-pn" rel="next" href="09-system-design-guide.html"><span class="pn-word">Next</span> <span aria-hidden="true">&#8250;</span></a></nav></header>
+<header class="ds-site-header"><a class="ds-brand" href="index.html"><span class="b-full">CCAR-P Study Guide</span><span class="b-short">CCAR-P</span></a><input type="checkbox" id="ds-navcheck" class="ds-visually-hidden" tabindex="-1" aria-hidden="true"><label class="ds-navburger" for="ds-navcheck" aria-label="Toggle volume menu"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></label><nav class="ds-sitenav" aria-label="Volumes"><ul><li><a href="index.html">Home</a></li><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Dev</a></li><li><a href="01-solution-design-architecture.html">D1 · Design</a></li><li><a href="02-models-prompting-context.html">D2 · Models</a></li><li><a href="03-integration.html">D3 · Integration</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Eval</a></li><li><a href="05-governance-safety-risk.html">D5 · Safety</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Comms</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Dev</a></li><li><a href="08-question-bank.html" aria-current="page">Questions</a></li><li><a href="09-system-design-guide.html">Designs</a></li><li><a href="crash-course.html">Crash</a></li></ul></nav><nav class="ds-headerpn" aria-label="Previous and next volume"><a class="ds-pn" rel="prev" href="07-developer-productivity-enablement.html"><span aria-hidden="true">&#8249;</span> <span class="pn-word">Prev</span></a><a class="ds-pn" rel="next" href="09-system-design-guide.html"><span class="pn-word">Next</span> <span aria-hidden="true">&#8250;</span></a></nav></header>
 <div class="ds-shell">
 <div id="ds-sidebar-root"></div>
 <main id="ds-content">
@@ -1209,9 +1254,7 @@ footer p{text-align:left}
 </table></div>
 
 <h2>How to use this bank</h2>
-<p>Read the <strong>scenario</strong>, then read the <strong>constraint</strong> box. The constraint is the scoring key: several options will be partly right, and the credited answer is the one that best satisfies the stated constraint (accuracy SLA, latency budget, compliance rule, cost ceiling). Pick your answer before opening the explanation panel. Each explanation gives the correct answer, why it wins, and why every other option loses.</p>
-<div class="exam-ask"><div class="lbl">Constraint-first reading:</div><p>on the real exam, find the numbers and rules in the scenario first (the SLA, the budget, the regulation), then judge each option against those. An option that is good engineering but breaks the constraint is a distractor.</p></div>
-
+<p>Read the <strong>scenario</strong>, then read the <strong>constraint</strong> box. The constraint is the scoring key: several options will be partly right, and the credited answer is the one that best satisfies the stated constraint (accuracy SLA, latency budget, compliance rule, cost ceiling). Find the numbers and rules in the scenario first, then judge each option against them. An option that is good engineering but breaks the constraint is a distractor. Pick your answer before opening the explanation panel. Each explanation gives the correct answer, why it wins, and why every other option loses.</p>
 <h2>D3. Integration (19% of the exam, about 12 items)</h2>
 <p>Tool and agent configuration, auth gaps, accuracy-latency trade-offs, observability, RAG pipelines, retrieval strategies, MCP vs API/CLI vs agent-to-agent, progressive discovery vs monolithic context.</p>
 <div class="qb-q"><div class="qb-head"><span class="qb-num">Q1</span><span class="constraint">D3</span><span class="qb-pill easy">Easy</span><span class="constraint">Select one</span></div><div class="qb-scenario">A legal-tech startup builds a contract question-answering assistant over 40,000 vendor contracts. Users ask questions like "What is the termination notice period in contract ACME-2024-118?" and expect the exact clause quoted. The team is designing the RAG pipeline and must choose a chunking strategy.</div><div class="constraint-block"><strong>Constraint:</strong> answers must cite the exact clause. Small errors in clause text are unacceptable to the legal team.</div><div class="qb-ask">Which chunking strategy best satisfies the constraint?</div><ol class="qb-opts" type="A"><li>Split each contract into 2,000-token chunks with no overlap, to keep each clause in rich surrounding context.</li><li>Split each contract into 400 to 600-token chunks with 10 percent overlap, and attach contract ID plus section heading as metadata on every chunk.</li><li>Embed each full contract as a single vector and retrieve the whole contract, letting the model find the clause.</li><li>Chunk by fixed 100-token windows with no overlap or metadata, to maximize retrieval precision.</li></ol><details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer"><span class="qb-verdict">Answer: B</span><p class="qb-why"><strong>Why B is correct:</strong> the constraint is exact clause citation. Small chunks raise retrieval precision so the cited clause is actually returned, overlap prevents clauses split across boundaries from being lost, and metadata (contract ID, section) lets the system filter and cite correctly.</p><ol class="qb-distractors" type="A"><li>A is wrong because 2,000-token chunks dilute precision: the retriever returns long passages and the model may quote the wrong clause from the same chunk.</li><li>C is wrong because a whole contract far exceeds useful retrieval granularity; the model cannot reliably locate one clause in 40,000 embedded documents.</li><li>D is wrong because 100-token windows with no overlap will slice clauses in half, and without metadata the system cannot attribute a quote to the right contract.</li></ol></div></details></div>
@@ -1651,7 +1694,7 @@ Last verified against official Anthropic sources: September 2026.</p></footer>
 
 </main>
 </div>
-<footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html" aria-current="page">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html" aria-current="page">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
 <script>
 /* ==========================================================================
    DS — Canonical Design System behavior (shared across study-guide tracks)
