@@ -1,0 +1,4 @@
+CCAR-P print-design pass complete (Sept 28, 2026).
+PDF: ccar-p-study-guide.pdf (380 pages, Charis SIL embedded, justified, cover + TOC + running headers).
+Written by main agent: the CCAR print worker reported completion and the PDF verifies.
+Downstream editors (prereq coordinator final phase) may now edit crash-course.html and rebuild the combined PDF.
