@@ -33,5 +33,3 @@ Scenario-based design decisions and trade-offs, not config trivia. Multiple-resp
 ## Note
 
 Pricing and product details change. Verify model pricing and feature availability against https://docs.anthropic.com before exam day; illustrative figures are marked in the volumes.
-
-Generic learning material. No personal data.
