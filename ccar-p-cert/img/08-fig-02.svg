@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 340" role="img" aria-label="Constraint-first method: read scenario, find constraint, predict answer shape, judge each option against the constraint">
+  <style>
+    text { font-family: "Charis SIL", Georgia, serif; fill: #ececec; }
+    .small { font-size: 14px; fill: #a8a8a8; }
+    .lbl { font-size: 17px; font-weight: bold; }
+  </style>
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="bold">The constraint-first method</text>
+  <!-- steps -->
+  <g>
+    <rect x="20" y="60" width="170" height="90" rx="8" fill="#141414" stroke="#6cb2ff" stroke-width="1.5"/>
+    <text x="105" y="92" text-anchor="middle" class="lbl">1. Scenario</text>
+    <text x="105" y="114" text-anchor="middle" class="small">read the story</text>
+    <rect x="230" y="60" width="170" height="90" rx="8" fill="#141414" stroke="#f0b429" stroke-width="2.5"/>
+    <text x="315" y="92" text-anchor="middle" class="lbl">2. Constraint</text>
+    <text x="315" y="114" text-anchor="middle" class="small">numbers and rules:</text>
+    <text x="315" y="132" text-anchor="middle" class="small">SLA, budget, law</text>
+    <rect x="440" y="60" width="170" height="90" rx="8" fill="#141414" stroke="#6cb2ff" stroke-width="1.5"/>
+    <text x="525" y="92" text-anchor="middle" class="lbl">3. Predict</text>
+    <text x="525" y="114" text-anchor="middle" class="small">what shape would</text>
+    <text x="525" y="132" text-anchor="middle" class="small">satisfy it?</text>
+    <rect x="650" y="60" width="150" height="90" rx="8" fill="#141414" stroke="#6cb2ff" stroke-width="1.5"/>
+    <text x="725" y="92" text-anchor="middle" class="lbl">4. Judge</text>
+    <text x="725" y="114" text-anchor="middle" class="small">each option vs</text>
+    <text x="725" y="132" text-anchor="middle" class="small">the constraint</text>
+  </g>
+  <!-- arrows -->
+  <polygon points="222,105 210,97 210,113" fill="#a8a8a8"/>
+  <polygon points="432,105 420,97 420,113" fill="#a8a8a8"/>
+  <polygon points="642,105 630,97 630,113" fill="#a8a8a8"/>
+  <!-- rule boxes -->
+  <rect x="20" y="180" width="780" height="130" rx="8" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+  <text x="45" y="212" font-size="16" font-weight="bold" fill="#f0b429">Rules that decide most items</text>
+  <text x="45" y="240" class="small">Good engineering that breaks the constraint is a distractor. Pick the credited answer before opening the explanation.</text>
+  <text x="45" y="266" class="small">Prefer structural answers over verbal ones: filters beat prompt pleas, contracts beat policies, measured evals beat hopes.</text>
+  <text x="45" y="292" class="small">When torn between two options, re-read the constraint: the credited one leaves no part of it unaddressed.</text>
+</svg>
