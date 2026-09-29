@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 400" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+  <text x="340" y="32" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">Stable first, variable last: the cache breakpoint anatomy</text>
+  <g font-size="13.5">
+    <rect x="60" y="60" width="560" height="58" rx="8" fill="#d1fae5" stroke="#047857" stroke-width="1.5"/>
+    <text x="340" y="82" text-anchor="middle" font-weight="bold" fill="#064e3b">[1] system prompt + persona + global rules</text>
+    <text x="340" y="102" text-anchor="middle" fill="#475569">almost never changes</text>
+    <text x="36" y="97" font-size="12" fill="#047857">breakpoint</text>
+    <rect x="60" y="130" width="560" height="58" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="340" y="152" text-anchor="middle" font-weight="bold" fill="#1e40af">[2] tool definitions + few-shot examples</text>
+    <text x="340" y="172" text-anchor="middle" fill="#475569">changes on deploy</text>
+    <text x="36" y="167" font-size="12" fill="#1d4ed8">breakpoint</text>
+    <rect x="60" y="200" width="560" height="58" rx="8" fill="#e0e7ff" stroke="#4338ca" stroke-width="1.5"/>
+    <text x="340" y="222" text-anchor="middle" font-weight="bold" fill="#312e81">[3] retrieved documents or conversation summary</text>
+    <text x="340" y="242" text-anchor="middle" fill="#475569">changes per session</text>
+    <text x="36" y="237" font-size="12" fill="#4338ca">breakpoint</text>
+    <rect x="60" y="270" width="560" height="58" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+    <text x="340" y="292" text-anchor="middle" font-weight="bold" fill="#7f1d1d">the user's current message: no cache</text>
+    <text x="340" y="312" text-anchor="middle" fill="#475569">changes every turn</text>
+  </g>
+  <rect x="60" y="342" width="560" height="44" rx="8" fill="#f1f5f9" stroke="#64748b"/>
+  <text x="340" y="369" text-anchor="middle" font-size="13.5" fill="#475569">Never put timestamps, request IDs, or user data inside the cached prefix. Max 4 breakpoints.</text>
+</svg>
