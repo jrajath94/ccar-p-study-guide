@@ -1210,6 +1210,28 @@ footer p{text-align:left}
 
 </style>
 <style>
+/* Phase-2 (bridging + equation display). Additive, page-local. Does not
+   touch the experience layer or the design-system styles. */
+.u-bridge{margin:1.1rem 0 1.4rem;padding:.7rem 1.1rem;background:var(--surface);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;font-size:.96rem}
+.u-next{margin:1.6rem 0 0;padding-top:.9rem;border-top:1px solid var(--border);color:var(--muted);font-size:.95rem}
+.u-next strong{color:var(--accent)}
+.u-goto{margin:2.2rem 0;padding:1.1rem 1.3rem;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;background:var(--surface)}
+.u-goto .lbl{font-weight:700;display:block;margin-bottom:.4rem;color:var(--accent);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase}
+.eq{display:block;text-align:center;font-size:1.12rem;margin:.9rem 0;padding:.7rem .4rem;background:rgba(127,127,127,.06);border-radius:6px}
+.eq-where{font-size:.9rem;color:var(--muted);margin:.4rem 0 .2rem}
+.eq-worked{margin-top:.8rem}
+</style>
+<style>
+/* Phase-2 additions: bridge paragraphs and display math.
+   Additive only. Placed before the experience-layer block, which it does not modify. */
+.display-eq{overflow-x:auto;padding:.1rem 0}
+.chapter-bridge,.topic-bridge,.ch-bridge,.ch-bridge-inline{color:var(--muted)}
+.next-chapter{margin-top:1.8rem;color:var(--muted)}
+.next-chapter strong{color:inherit}
+.callout.math .eq{text-align:center;font-size:1.12em;margin:.6rem 0}
+.callout.math .eq-where{color:var(--muted);font-size:.93em}
+</style>
+<style>
 /* Hallmark · pre-emit critique: P5 H4 E5 S4 R5 V5
  * ==========================================================================
  * Experience layer for study volumes — ADDITIVE ONLY.
@@ -1353,11 +1375,75 @@ html.xp-js .xp-reveal.xp-in {
 </ol>
 <p>Read every D6 item constraint-first: who are the stakeholders, what did they actually agree to, what is being measured, and who owns it. The distractor almost always sounds technically clever but ignores one of those four.</p></section>
 
-<section class="unit" id=""><h2>Unit 1. Structured discovery and requirement gathering</h2>
+<section class="unit" id=""><h2>Unit 1. Who the stakeholders are</h2>
+<p class="lede">Every project has people who can change its fate. Name them before you design anything.</p>
+
+<h3>What it is</h3>
+<p><strong>Rung 1: the one-paragraph version.</strong> A <strong>stakeholder</strong> is anyone who can affect the project or is affected by it: the person who funds it, the person who uses it, the person who can block it, the person who inherits it at 3am. Six types show up in almost every AI engagement. The <strong>executive sponsor</strong> funds the work and can kill it; they care about cost, risk, and business outcome. The <strong>product owner</strong> defines what "done" means day to day; they care about shipped value and the backlog. <strong>End users</strong> live with the system daily; they care about speed, accuracy, and whether it respects their workflow. <strong>Legal and compliance</strong> guard against lawsuits and regulatory trouble; they care about risk, data handling, and audit trails. The <strong>engineering team</strong> builds and operates the system; they care about feasibility, clarity of requirements, and on-call load. <strong>IT and support</strong> (helpdesk, security) inherit the operational tail; they care about access control, monitoring, and not getting surprised.</p>
+<p>In plain terms: before you choose a model or draw an architecture, write down these six names. Every later unit in this volume is a conversation with one or more of them. Discovery interviews them. Decision memos persuade them. SLAs are promises to them. Handoff transfers ownership among them.</p>
+<pre><code class="language-text">six stakeholders, six currencies:
+sponsor: money + risk | product owner: shipped value | users: speed + accuracy
+legal: auditability | engineers: feasibility | IT/support: operability
+</code></pre>
+<h3>How it works under the hood: the map</h3>
+<p><strong>Rung 2: one level deeper.</strong> You cannot give all six equal time, so you sort them on two axes. <strong>Influence</strong> is how much power they have over the project: can they fund it, block it, or kill it? <strong>Interest</strong> is how much they care day to day: do they live in the system or just sign the checks? The combination puts each stakeholder in one quadrant, and the quadrant decides your cadence with them:</p>
+<p><figure><img src="img/d6-stakeholder-map.svg" alt="Stakeholder map: influence versus interest grid with four plotted stakeholders in four quadrants" title="The stakeholder map: the quadrant decides how much of your week each person gets."><figcaption>The stakeholder map: the quadrant decides how much of your week each person gets.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
+<ol>
+<li>Horizontal axis is interest in the project, vertical axis is influence over it.</li>
+<li>Top right is manage closely: the executive sponsor, weekly contact.</li>
+<li>Top left is keep satisfied: legal and compliance, consulted on risk, not drowned in detail.</li>
+<li>Bottom right is keep informed: end users, demos and updates. Bottom left is monitor: helpdesk, light touch.</li>
+</ol>
+<p><strong>Each part, and what breaks without it</strong></p></div>
+
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it does</th>
+<th>Why it exists</th>
+<th>If you remove it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Manage closely</strong></td>
+<td>High influence, high interest</td>
+<td>They can fund or kill the project</td>
+<td>The sponsor is surprised at the worst moment</td>
+</tr>
+<tr>
+<td><strong>Keep satisfied</strong></td>
+<td>High influence, low interest</td>
+<td>They can block on risk grounds</td>
+<td>Compliance vetoes at go-live</td>
+</tr>
+<tr>
+<td><strong>Keep informed</strong></td>
+<td>Low influence, high interest</td>
+<td>They live with the system daily</td>
+<td>Users reject a system they never saw</td>
+</tr>
+<tr>
+<td><strong>Monitor</strong></td>
+<td>Low influence, low interest</td>
+<td>Cheap to keep in the loop</td>
+<td>Small issues become surprises</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Rung 3: placing a real project on the map.</strong> Take the contract review assistant you will meet in Unit 2. The general counsel sits top-left (high influence over go-live, low day-to-day interest: keep satisfied, consult on risk, never drown in detail). The head of legal ops sits top-right (owns the eval set and the rollout: manage closely, weekly contact). The 12 lawyers sit bottom-right (they use it every day: keep informed with demos and updates). The IT helpdesk sits bottom-left (monitor: light touch, but looped in before launch so the first ticket is not a surprise). Plot every stakeholder once, at kickoff, and re-plot when the project changes shape.</p>
+<div class="exam-ask"><p><span class="cl">How they will ask this</span></p>
+<p><strong>Scenario shape:</strong> two weeks before go-live, the compliance officer blocks the rollout, and the case notes that nobody consulted them during the project. Or the executive sponsor is surprised by the monthly bill. <strong>The trap:</strong> a technical fix, like more training data, a better model, or more user training. None of those address a stakeholder who was never plotted. A second trap: treating every stakeholder the same, giving the helpdesk the same weekly deep dive as the sponsor. <strong>The tell:</strong> the right answer names the stakeholder's quadrant (influence versus interest), puts the blocker in the keep-satisfied quadrant (high influence, low interest), and prescribes the missing cadence: consult early, consult on risk, never drown in detail.</p></div>
+<p class="u-next"><strong>Next:</strong> structured discovery and requirement gathering, turning stakeholder talk into written, measurable requirements.</p>
+</section>
+<section class="unit" id=""><h2>Unit 2. Structured discovery and requirement gathering</h2>
 <p class="lede">Discovery is the interview before the design. Structured means you run it from a fixed checklist, not from vibes.</p>
 
 <h3>What it is</h3>
-<p><strong>Rung 1: the one-paragraph version.</strong> Structured discovery is a planned series of conversations and document reviews that happens before any architecture is drawn. Requirement gathering is the output: a written, signed set of measurable requirements. "Structured" is the key word. An unstructured kickoff meeting produces a wish list. A structured discovery produces numbers, constraints, and named decision makers. In plain terms: discovery is the phase where the architect learns the business problem, the constraints, and the data reality. A requirement is a single testable statement of what the system must do, like "extract the termination clause with at least 95% precision". Gathering is the disciplined process of turning conversations into those statements and getting stakeholders to sign them. Most failed AI projects do not fail on model quality. They fail because the team built the wrong thing, or built the right thing against the wrong definition of done. Discovery is the cheapest phase to fix a misunderstanding: every week you delay it multiplies the cost of being wrong. One more reason, specific to this exam: stakeholders describe solutions, not problems. "We want RAG" is a solution. "Our analysts cannot find the right policy document and each search takes 20 minutes" is a problem. The architect's job in discovery is to refuse the premature solution and dig for the problem underneath.</p>
+<p><strong>Rung 1: the one-paragraph version.</strong> Structured discovery is a planned series of conversations and document reviews that happens before any architecture is drawn. Requirement gathering is the output: a written, signed set of measurable requirements. "Structured" is the key word. An unstructured kickoff meeting produces a wish list. A structured discovery produces numbers, constraints, and named decision makers.</p>
+<p>In plain terms: discovery is the phase where the architect learns the business problem, the constraints, and the data reality. A requirement is a single testable statement of what the system must do, like "extract the termination clause with at least 95% precision" (precision: the fraction of extracted items that are actually correct). Gathering is the disciplined process of turning conversations into those statements and getting stakeholders to sign them. Most failed AI projects do not fail on model quality. They fail because the team built the wrong thing, or built the right thing against the wrong definition of done. Discovery is the cheapest phase to fix a misunderstanding: every week you delay it multiplies the cost of being wrong. One more reason, specific to this exam: stakeholders describe solutions, not problems. "We want RAG" is a solution. "Our analysts cannot find the right policy document and each search takes 20 minutes" is a problem. The architect's job in discovery is to refuse the premature solution and dig for the problem underneath.</p>
 <pre><code class="language-text">5 buckets (60-min sessions) --&gt; ONE signed requirements document --&gt; architecture begins
   success metrics | constraints | data reality | risk tolerance | decision rights
 </code></pre>
@@ -1376,7 +1462,6 @@ html.xp-js .xp-reveal.xp-in {
 
 <h3>Worked example: contract review assistant</h3>
 <p><strong>Rung 3: the full climb.</strong> A legal team asks for "AI to speed up contract review." Discovery surfaces this:</p>
-<p>A legal team asks for "AI to speed up contract review." Discovery surfaces this:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -1403,16 +1488,16 @@ html.xp-js .xp-reveal.xp-in {
 </tr>
 <tr>
 <td>Decision rights</td>
-<td>The general counsel signs off on go-live. The head of legal ops owns the eval set.</td>
+<td>The general counsel signs off on go-live. The head of legal ops owns the eval set (the fixed collection of test cases with known right answers used to measure the system).</td>
 </tr>
 </tbody>
 </table></div>
 
-<p>Those notes become signed requirements: extract 5 clause types with at least 95% precision each, p95 latency under 30 seconds, cost at most $0.40 per contract, every output routed through the lawyer check queue, deployment inside the company network. Notice how each requirement traces back to one bucket.</p>
+<p>Those notes become signed requirements: extract 5 clause types with at least 95% precision each, p95 latency (the latency that 95% of requests beat; only 5% are slower) under 30 seconds, cost at most $0.40 per contract, every output routed through the lawyer check queue, deployment inside the company network. Notice how each requirement traces back to one bucket.</p>
 <div class="exam-ask"><p><span class="cl">How they will ask this</span></p>
 <p><strong>Scenario shape:</strong> a stakeholder request with no numbers: "our support team needs AI help, make it great." Four options: start with model selection, start with RAG design, run structured discovery workshops, or build a prototype immediately. <strong>The trap:</strong> the prototype option feels fast and the model-selection option feels expert. Both skip the step that makes the rest work. A second trap: "discovery means asking stakeholders what they want." Stakeholders describe what they want in terms of solutions ("use the biggest model", "add a chatbot"). If you write those down as requirements, you become an order taker and you own the failure when the solution misses. Discovery means asking what problem they have, what it costs them today, and what "fixed" looks like in numbers. Then you choose the solution. <strong>The tell:</strong> look for the option that elicits success metrics and constraints before committing to any architecture.</p></div>
 
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU3MCIgdmlld0JveD0iMCAwIDExMjAgNTcwIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU3MCIgZmlsbD0iI0ZGRkZGRiIvPjxkZWZzPjxtYXJrZXIgaWQ9ImFoIiBtYXJrZXJXaWR0aD0iMTAiIG1hcmtlckhlaWdodD0iMTAiIHJlZlg9IjgiIHJlZlk9IjMiIG9yaWVudD0iYXV0byI+PHBhdGggZD0iTTAsMCBMOCwzIEwwLDYgWiIgZmlsbD0iIzE2M0Q3QSIvPjwvbWFya2VyPjwvZGVmcz48cmVjdCB4PSIyMCIgeT0iMTgiIHdpZHRoPSIzNDAiIGhlaWdodD0iODQiIHJ4PSIxMCIgZmlsbD0iI0VBRjBGQSIgc3Ryb2tlPSIjMUY1RkJGIiBzdHJva2Utd2lkdGg9IjEuNSIvPjx0ZXh0IHg9IjE5MCIgeT0iNTIiIGZvbnQtc2l6ZT0iMTciIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPlN1Y2Nlc3MgbWV0cmljczwvdGV4dD48dGV4dCB4PSIxOTAiIHk9Ijc4IiBmb250LXNpemU9IjEzIiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5ob3cgd2UgbWVhc3VyZSBhIHdpbjwvdGV4dD48bGluZSB4MT0iMzYwIiB5MT0iNjAiIHgyPSI2MDAiIHkyPSIyNzAiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHJlY3QgeD0iMjAiIHk9IjEyMiIgd2lkdGg9IjM0MCIgaGVpZ2h0PSI4NCIgcng9IjEwIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMS41Ii8+PHRleHQgeD0iMTkwIiB5PSIxNTYiIGZvbnQtc2l6ZT0iMTciIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkNvbnN0cmFpbnRzPC90ZXh0Pjx0ZXh0IHg9IjE5MCIgeT0iMTgyIiBmb250LXNpemU9IjEzIiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5sYXRlbmN5LCBidWRnZXQsIHJ1bGVzPC90ZXh0PjxsaW5lIHgxPSIzNjAiIHkxPSIxNjQiIHgyPSI2MDAiIHkyPSIyNzAiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHJlY3QgeD0iMjAiIHk9IjIyNiIgd2lkdGg9IjM0MCIgaGVpZ2h0PSI4NCIgcng9IjEwIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMS41Ii8+PHRleHQgeD0iMTkwIiB5PSIyNjAiIGZvbnQtc2l6ZT0iMTciIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkRhdGEgcmVhbGl0eTwvdGV4dD48dGV4dCB4PSIxOTAiIHk9IjI4NiIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+d2hhdCBkYXRhIHJlYWxseSBleGlzdHM8L3RleHQ+PGxpbmUgeDE9IjM2MCIgeTE9IjI2OCIgeDI9IjYwMCIgeTI9IjI3MCIgc3Ryb2tlPSIjMTYzRDdBIiBzdHJva2Utd2lkdGg9IjIuNSIgbWFya2VyLWVuZD0idXJsKCNhaCkiLz48cmVjdCB4PSIyMCIgeT0iMzMwIiB3aWR0aD0iMzQwIiBoZWlnaHQ9Ijg0IiByeD0iMTAiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSIxOTAiIHk9IjM2NCIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+UmlzayB0b2xlcmFuY2U8L3RleHQ+PHRleHQgeD0iMTkwIiB5PSIzOTAiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPmNvc3Qgb2YgYmVpbmcgd3Jvbmc8L3RleHQ+PGxpbmUgeDE9IjM2MCIgeTE9IjM3MiIgeDI9IjYwMCIgeTI9IjI3MCIgc3Ryb2tlPSIjMTYzRDdBIiBzdHJva2Utd2lkdGg9IjIuNSIgbWFya2VyLWVuZD0idXJsKCNhaCkiLz48cmVjdCB4PSIyMCIgeT0iNDM0IiB3aWR0aD0iMzQwIiBoZWlnaHQ9Ijg0IiByeD0iMTAiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSIxOTAiIHk9IjQ2OCIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+RGVjaXNpb24gcmlnaHRzPC90ZXh0Pjx0ZXh0IHg9IjE5MCIgeT0iNDk0IiBmb250LXNpemU9IjEzIiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj53aG8gc2lnbnMgb2ZmPC90ZXh0PjxsaW5lIHgxPSIzNjAiIHkxPSI0NzYiIHgyPSI2MDAiIHkyPSIyNzAiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHJlY3QgeD0iNjAwIiB5PSIxMzAiIHdpZHRoPSI1MDAiIGhlaWdodD0iMzAwIiByeD0iMTAiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSI4NTAiIHk9IjE2OCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzE2M0Q3QSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+U2lnbmVkIHJlcXVpcmVtZW50cyBkb2M8L3RleHQ+PHJlY3QgeD0iNjI0IiB5PSIxOTYiIHdpZHRoPSI0NTIiIGhlaWdodD0iNDYiIHJ4PSI4IiBmaWxsPSIjRUZGMEVBIiBzdHJva2U9IiNFM0UwRDgiLz48dGV4dCB4PSI2NDAiIHk9IjIyNSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LXdlaWdodD0iNDAwIj5UYXJnZXRzOiB0aGUgbnVtYmVycyB0aGF0IGRlZmluZSBkb25lPC90ZXh0PjxyZWN0IHg9IjYyNCIgeT0iMjUyIiB3aWR0aD0iNDUyIiBoZWlnaHQ9IjQ2IiByeD0iOCIgZmlsbD0iI0VGRjBFQSIgc3Ryb2tlPSIjRTNFMEQ4Ii8+PHRleHQgeD0iNjQwIiB5PSIyODEiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjQwMCI+QnVkZ2V0czogY29zdCBhbmQgbGF0ZW5jeSBjYXBzPC90ZXh0PjxyZWN0IHg9IjYyNCIgeT0iMzA4IiB3aWR0aD0iNDUyIiBoZWlnaHQ9IjQ2IiByeD0iOCIgZmlsbD0iI0VGRjBFQSIgc3Ryb2tlPSIjRTNFMEQ4Ii8+PHRleHQgeD0iNjQwIiB5PSIzMzciIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjQwMCI+RGF0YSBtYXA6IHNvdXJjZXMsIG93bmVycywgZnJlc2huZXNzPC90ZXh0PjxyZWN0IHg9IjYyNCIgeT0iMzY0IiB3aWR0aD0iNDUyIiBoZWlnaHQ9IjQ2IiByeD0iOCIgZmlsbD0iI0VGRjBFQSIgc3Ryb2tlPSIjRTNFMEQ4Ii8+PHRleHQgeD0iNjQwIiB5PSIzOTMiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjQwMCI+UmlzayByZWdpc3RlcjogZmFpbHVyZSBtb2Rlcywgd2hvIHJldmlld3M8L3RleHQ+PHRleHQgeD0iNTYwIiB5PSI1NDUiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPkZpdmUgYnVja2V0cyBpbi4gT25lIHNpZ25lZCBkb2N1bWVudCBvdXQuIE5vIGFyY2hpdGVjdHVyZSB0YWxrIHVudGlsIHRoaXMgZXhpc3RzLjwvdGV4dD48L3N2Zz4=" alt="Discovery funnel: five elicitation buckets converging into one signed requirements document" title="Structured discovery: five buckets in, one signed requirements document out."><figcaption>Structured discovery: five buckets in, one signed requirements document out.</figcaption></figure></p>
+<p><figure><img src="img/d6-discovery-funnel.svg" alt="Discovery funnel: five elicitation buckets converging into one signed requirements document" title="Structured discovery: five buckets in, one signed requirements document out."><figcaption>Structured discovery: five buckets in, one signed requirements document out.</figcaption></figure></p>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
 <ol>
 <li>Start with the five buckets on the left: success metrics, constraints, data reality, risk tolerance, decision rights.</li>
@@ -1466,7 +1551,7 @@ html.xp-js .xp-reveal.xp-in {
 </tbody>
 </table></div>
 
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjUzNSIgdmlld0JveD0iMCAwIDExMjAgNTM1IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjUzNSIgZmlsbD0iI0ZGRkZGRiIvPjxkZWZzPjxtYXJrZXIgaWQ9ImFoIiBtYXJrZXJXaWR0aD0iMTAiIG1hcmtlckhlaWdodD0iMTAiIHJlZlg9IjgiIHJlZlk9IjMiIG9yaWVudD0iYXV0byI+PHBhdGggZD0iTTAsMCBMOCwzIEwwLDYgWiIgZmlsbD0iIzE2M0Q3QSIvPjwvbWFya2VyPjwvZGVmcz48dGV4dCB4PSIyNTAiIHk9IjQwIiBmb250LXNpemU9IjE3IiBmaWxsPSIjQTE1QzA3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5CdXNpbmVzcyBsYW5ndWFnZTwvdGV4dD48dGV4dCB4PSI4NzAiIHk9IjQwIiBmb250LXNpemU9IjE3IiBmaWxsPSIjMUY1RkJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5UZWNobmljYWwgcmVxdWlyZW1lbnQ8L3RleHQ+PHJlY3QgeD0iMjAiIHk9IjcwIiB3aWR0aD0iNDYwIiBoZWlnaHQ9IjgyIiByeD0iMTAiIGZpbGw9IiNGRkY2RTYiIHN0cm9rZT0iI0ExNUMwNyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSIyNTAiIHk9IjExOCIgZm9udC1zaXplPSIxNSIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+TGF3eWVycyB0YWtlIDQ1IG1pbiBwZXIgY29udHJhY3Q8L3RleHQ+PHJlY3QgeD0iNjQwIiB5PSI3MCIgd2lkdGg9IjQ2MCIgaGVpZ2h0PSI4MiIgcng9IjEwIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMS41Ii8+PHRleHQgeD0iODcwIiB5PSIxMTgiIGZvbnQtc2l6ZT0iMTUiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPnA5NSBleHRyYWN0aW9uIHRpbWUgdW5kZXIgMzAgczwvdGV4dD48bGluZSB4MT0iNDkwIiB5MT0iMTExIiB4Mj0iNjMwIiB5Mj0iMTExIiBzdHJva2U9IiMxNjNEN0EiIHN0cm9rZS13aWR0aD0iMi41IiBtYXJrZXItZW5kPSJ1cmwoI2FoKSIvPjxyZWN0IHg9IjIwIiB5PSIxNzUiIHdpZHRoPSI0NjAiIGhlaWdodD0iODIiIHJ4PSIxMCIgZmlsbD0iI0ZGRjZFNiIgc3Ryb2tlPSIjQTE1QzA3IiBzdHJva2Utd2lkdGg9IjEuNSIvPjx0ZXh0IHg9IjI1MCIgeT0iMjIzIiBmb250LXNpemU9IjE1IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5DbGF1c2UgWCBtdXN0IGJlIHJpZ2h0PC90ZXh0PjxyZWN0IHg9IjY0MCIgeT0iMTc1IiB3aWR0aD0iNDYwIiBoZWlnaHQ9IjgyIiByeD0iMTAiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSI4NzAiIHk9IjIyMyIgZm9udC1zaXplPSIxNSIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+YXQgbGVhc3QgOTUlIHByZWNpc2lvbiwgNSBjbGF1c2UgdHlwZXM8L3RleHQ+PGxpbmUgeDE9IjQ5MCIgeTE9IjIxNiIgeDI9IjYzMCIgeTI9IjIxNiIgc3Ryb2tlPSIjMTYzRDdBIiBzdHJva2Utd2lkdGg9IjIuNSIgbWFya2VyLWVuZD0idXJsKCNhaCkiLz48cmVjdCB4PSIyMCIgeT0iMjgwIiB3aWR0aD0iNDYwIiBoZWlnaHQ9IjgyIiByeD0iMTAiIGZpbGw9IiNGRkY2RTYiIHN0cm9rZT0iI0ExNUMwNyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSIyNTAiIHk9IjMyOCIgZm9udC1zaXplPSIxNSIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+V2UgY2Fubm90IG92ZXJzcGVuZDwvdGV4dD48cmVjdCB4PSI2NDAiIHk9IjI4MCIgd2lkdGg9IjQ2MCIgaGVpZ2h0PSI4MiIgcng9IjEwIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMS41Ii8+PHRleHQgeD0iODcwIiB5PSIzMjgiIGZvbnQtc2l6ZT0iMTUiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPmF0IG1vc3QgJDAuNDAgcGVyIGNvbnRyYWN0PC90ZXh0PjxsaW5lIHgxPSI0OTAiIHkxPSIzMjEiIHgyPSI2MzAiIHkyPSIzMjEiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHJlY3QgeD0iMjAiIHk9IjM4NSIgd2lkdGg9IjQ2MCIgaGVpZ2h0PSI4MiIgcng9IjEwIiBmaWxsPSIjRkZGNkU2IiBzdHJva2U9IiNBMTVDMDciIHN0cm9rZS13aWR0aD0iMS41Ii8+PHRleHQgeD0iMjUwIiB5PSI0MzMiIGZvbnQtc2l6ZT0iMTUiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPkxlZ2FsIG93bnMgdGhlIGZpbmFsIGNhbGw8L3RleHQ+PHJlY3QgeD0iNjQwIiB5PSIzODUiIHdpZHRoPSI0NjAiIGhlaWdodD0iODIiIHJ4PSIxMCIgZmlsbD0iI0VBRjBGQSIgc3Ryb2tlPSIjMUY1RkJGIiBzdHJva2Utd2lkdGg9IjEuNSIvPjx0ZXh0IHg9Ijg3MCIgeT0iNDMzIiBmb250LXNpemU9IjE1IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5odW1hbiByZXZpZXcgcXVldWUgZm9yIGxvdyBjb25maWRlbmNlPC90ZXh0PjxsaW5lIHgxPSI0OTAiIHkxPSI0MjYiIHgyPSI2MzAiIHkyPSI0MjYiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHRleHQgeD0iNTYwIiB5PSI1MTAiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPlRyYW5zbGF0aW9uIGlzIHRoZSBhcmNoaXRlY3QncyBjb3JlIG1vdmU6IGV2ZXJ5IGJ1c2luZXNzIHNlbnRlbmNlIGJlY29tZXMgYSBtZWFzdXJhYmxlIHJlcXVpcmVtZW50LjwvdGV4dD48L3N2Zz4=" alt="Translation map: four business statements on the left each converted to a measurable technical requirement on the right" title="The architect&#x27;s core move: every business sentence becomes a measurable requirement."><figcaption>The architect&#x27;s core move: every business sentence becomes a measurable requirement.</figcaption></figure></p>
+<p><figure><img src="img/d6-translation-map.svg" alt="Translation map: four business statements on the left each converted to a measurable technical requirement on the right" title="The architect&#x27;s core move: every business sentence becomes a measurable requirement."><figcaption>The architect&#x27;s core move: every business sentence becomes a measurable requirement.</figcaption></figure></p>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
 <ol>
 <li>Read a business statement on the left, in the stakeholder's own words.</li>
@@ -1511,13 +1596,15 @@ html.xp-js .xp-reveal.xp-in {
 <td>Expectations drift silently</td>
 </tr>
 </tbody>
-</table></div></section>
+</table></div>
+<p class="u-next"><strong>Next:</strong> communicating architectural decisions and trade-offs, defending choices to people who do not read code.</p></section>
 
-<section class="unit" id=""><h2>Unit 2. Communicating architectural decisions and trade-offs</h2>
+<section class="unit" id=""><h2>Unit 3. Communicating architectural decisions and trade-offs</h2>
 <p class="lede">The architect's job is not to pick the best technology. It is to make the trade-offs visible so the business can choose knowingly.</p>
 
 <h3>What it is</h3>
-<p><strong>Rung 1: the one-paragraph version.</strong> Communicating a decision means presenting it in terms the stakeholder can judge. A non-technical executive cannot judge "we will use a reranker over the top 50 chunks." They can judge "Option A costs three times more per request but halves the error rate, which saves an estimated $40,000 a month in rework." In plain terms: a trade-off is a choice where improving one dimension costs you another: accuracy, latency, and cost are the classic three. Communicating it means laying out two or three real options side by side, in business terms, with your recommendation and the one fact that would change your mind. Two failure modes live here. The first is the black box decision: the architect picks a model, the stakeholder nods, and six months later the bill arrives and nobody remembers agreeing to it. The second is the detail dump: the architect explains chunking strategies for twenty minutes while the executive quietly stops listening, then approves something they do not understand. Both end with misaligned expectations, and misaligned expectations are what D6 is testing. There is also a risk argument. If you present one option, you own all the risk of that choice. If you present three options with honest trade-offs and the stakeholder picks, the risk is shared and documented. That is not politics. That is good engineering.</p>
+<p><strong>Rung 1: the one-paragraph version.</strong> Communicating a decision means presenting it in terms the stakeholder can judge. A non-technical executive cannot judge "we will use a reranker over the top 50 chunks." They can judge "Option A costs three times more per request but halves the error rate, which saves an estimated $40,000 a month in rework."</p>
+<p>In plain terms: a trade-off is a choice where improving one dimension costs you another: accuracy, latency, and cost are the classic three. Communicating it means laying out two or three real options side by side, in business terms, with your recommendation and the one fact that would change your mind. Two failure modes live here. The first is the black box decision: the architect picks a model, the stakeholder nods, and six months later the bill arrives and nobody remembers agreeing to it. The second is the detail dump: the architect explains chunking strategies for twenty minutes while the executive quietly stops listening, then approves something they do not understand. Both end with misaligned expectations, and misaligned expectations are what D6 is testing. There is also a risk argument. If you present one option, you own all the risk of that choice. If you present three options with honest trade-offs and the stakeholder picks, the risk is shared and documented. That is not politics. That is good engineering.</p>
 <pre><code class="language-text">        accuracy (top)
            /\
           /  \
@@ -1537,7 +1624,6 @@ html.xp-js .xp-reveal.xp-in {
 <p>The accuracy-latency-cost triangle is the mental model behind every such memo. You can push hard toward any one corner, but the other two pull back. A frontier model buys accuracy with money and time. A small fast model buys speed and cost with accuracy. There is no corner that wins all three, and anyone selling one is selling something else.</p>
 <h3>Worked example with concrete numbers</h3>
 <p><strong>Rung 3: the full climb.</strong> Ticket classification, 500,000 tickets per month, each about 800 input tokens and 50 output tokens. Illustrative pricing, rounded for the math:</p>
-<p>Ticket classification, 500,000 tickets per month, each about 800 input tokens and 50 output tokens. Illustrative pricing, rounded for the math:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -1573,12 +1659,17 @@ html.xp-js .xp-reveal.xp-in {
 </tbody>
 </table></div>
 
-<p>Now translate for the stakeholder: "Option A is the most accurate but costs $9,000 a month and keeps customers waiting 9 seconds. Option C is nearly free and instant, but 12% of tickets get misrouted and each misroute costs about $6 in agent rework, which is roughly $36,000 a month at our volume. I recommend B: it fits the budget, answers in 3 seconds, and the 6% it misses are caught by the confidence-threshold review queue. Revisit if volume passes 2 million tickets a month, because then A's accuracy starts paying for itself."</p>
+<p>Now translate for the stakeholder: "Option A is the most accurate but costs $9,000 a month and keeps customers waiting 9 seconds. Option C is nearly free and instant, but 12% of tickets get misrouted and each misroute costs about $6 in agent rework, which is roughly $36,000 a month at our volume.</p>
+<div class="callout math"><span class="callout-h">Formula: misroute cost</span>
+<p class="eq">misroute_cost = tickets &times; misroute_rate &times; cost_per_misroute</p>
+<p class="eq-where">where: <strong>tickets</strong>, tickets per month; <strong>misroute_rate</strong>, fraction routed wrong; <strong>cost_per_misroute</strong>, dollars of agent rework each.</p>
+<p class="eq-worked"><strong>Worked example (Option C above).</strong> 500,000 &times; 12% &times; $6 = $36,000 a month in rework. The cheap, instant option is the most expensive one once the error rate is priced in. That is the arithmetic behind the recommendation for Option B: fit the budget, answer in 3 seconds, and let the confidence-threshold review queue catch the 6% it misses.</p></div>
+<p>I recommend B: it fits the budget, answers in 3 seconds, and the 6% it misses are caught by the confidence-threshold review queue (confidence: the model's own score for how sure it is). Revisit if volume passes 2 million tickets a month, because then A's accuracy starts paying for itself."</p>
 <p>Notice what happened: the recommendation is one paragraph, every number traces to the table, and the tripwire names the exact condition for revisiting. That is the whole skill.</p>
 <div class="exam-ask"><p><span class="cl">How they will ask this</span></p>
 <p><strong>Scenario shape:</strong> an executive asks "which model should we use for the support assistant?" and the case gives you cost, latency, and accuracy numbers for two tiers. <strong>The trap:</strong> an option that picks the most accurate model "because quality matters most," with no mention of the budget or latency constraint from the case. A second trap: answering with a bare technology pick ("use the frontier model") or drowning the stakeholder in mechanism detail, or presenting one option as the only path. Also: "good communication means more technical detail." More detail helps engineers; it hurts decision makers. The executive does not need to know what a reranker is; they need to know what each option costs, how fast it answers, how often it is wrong, and what you recommend. Detail that does not change the decision is noise. And presenting your favorite option alone "to keep it simple" removes the stakeholder's ability to judge and hands you all the risk. <strong>The tell:</strong> the right answer names the trade-off in the stakeholder's currency (cost per resolved ticket, wait time, error cost), recommends one option, and states what would change the call.</p></div>
 
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU3MCIgdmlld0JveD0iMCAwIDExMjAgNTcwIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU3MCIgZmlsbD0iI0ZGRkZGRiIvPjxkZWZzPjxtYXJrZXIgaWQ9ImFoIiBtYXJrZXJXaWR0aD0iMTAiIG1hcmtlckhlaWdodD0iMTAiIHJlZlg9IjgiIHJlZlk9IjMiIG9yaWVudD0iYXV0byI+PHBhdGggZD0iTTAsMCBMOCwzIEwwLDYgWiIgZmlsbD0iIzE2M0Q3QSIvPjwvbWFya2VyPjwvZGVmcz48cG9seWdvbiBwb2ludHM9IjU2MCw3MCAxNzAsNDcwIDk1MCw0NzAiIGZpbGw9IiNGMUY0RkEiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iNTYwIiB5PSI0NSIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzE2M0Q3QSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+QUNDVVJBQ1k8L3RleHQ+PHRleHQgeD0iMTIwIiB5PSI1MDUiIGZvbnQtc2l6ZT0iMTciIGZpbGw9IiMxNjNEN0EiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkxBVEVOQ1k8L3RleHQ+PHRleHQgeD0iMTAwMCIgeT0iNTA1IiBmb250LXNpemU9IjE3IiBmaWxsPSIjMTYzRDdBIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5DT1NUPC90ZXh0PjxjaXJjbGUgY3g9IjU2MCIgY3k9IjE2NSIgcj0iMTQiIGZpbGw9IiMxRjVGQkYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iNTYwIiB5PSIxNDEiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkE6IGZyb250aWVyIG1vZGVsPC90ZXh0PjxjaXJjbGUgY3g9IjUyMCIgY3k9IjMzMCIgcj0iMTQiIGZpbGw9IiMwRTdDN0IiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iNTIwIiB5PSIzMDYiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkI6IGJhbGFuY2VkPC90ZXh0PjxjaXJjbGUgY3g9Ijc0NSIgY3k9IjQxNSIgcj0iMTQiIGZpbGw9IiNBMTVDMDciIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iNzQ1IiB5PSIzOTEiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkM6IGNoZWFwIGFuZCBmYXN0PC90ZXh0Pjx0ZXh0IHg9IjU2MCIgeT0iNTQ1IiBmb250LXNpemU9IjE0IiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5QdXNoIGhhcmQgdG93YXJkIG9uZSBjb3JuZXIgYW5kIHRoZSBvdGhlciB0d28gcHVsbCBiYWNrLiBUaGVyZSBpcyBubyBjb3JuZXIgdGhhdCB3aW5zIGFsbCB0aHJlZS48L3RleHQ+PC9zdmc+" alt="Trade-off triangle with accuracy, latency, and cost at the corners and three plotted options A, B, and C" title="The accuracy-latency-cost triangle: push toward one corner, the other two pull back."><figcaption>The accuracy-latency-cost triangle: push toward one corner, the other two pull back.</figcaption></figure></p>
+<p><figure><img src="img/d6-tradeoff-triangle.svg" alt="Trade-off triangle with accuracy, latency, and cost at the corners and three plotted options A, B, and C" title="The accuracy-latency-cost triangle: push toward one corner, the other two pull back."><figcaption>The accuracy-latency-cost triangle: push toward one corner, the other two pull back.</figcaption></figure></p>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
 <ol>
 <li>Read the three corners: accuracy at the top, latency and cost at the base.</li>
@@ -1625,7 +1716,7 @@ html.xp-js .xp-reveal.xp-in {
 </tbody>
 </table></div>
 
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjQyNSIgdmlld0JveD0iMCAwIDExMjAgNDI1IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjQyNSIgZmlsbD0iI0ZGRkZGRiIvPjxkZWZzPjxtYXJrZXIgaWQ9ImFoIiBtYXJrZXJXaWR0aD0iMTAiIG1hcmtlckhlaWdodD0iMTAiIHJlZlg9IjgiIHJlZlk9IjMiIG9yaWVudD0iYXV0byI+PHBhdGggZD0iTTAsMCBMOCwzIEwwLDYgWiIgZmlsbD0iIzE2M0Q3QSIvPjwvbWFya2VyPjwvZGVmcz48cmVjdCB4PSIyMCIgeT0iNDAiIHdpZHRoPSIyNTIiIGhlaWdodD0iMTIwIiByeD0iMTAiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSIxNDYiIHk9Ijg4IiBmb250LXNpemU9IjE2IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj4xLiBEZWNpc2lvbjwvdGV4dD48dGV4dCB4PSIxNDYiIHk9IjExOCIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+b25lIHNlbnRlbmNlPC90ZXh0PjxsaW5lIHgxPSIyNzIiIHkxPSIxMDAiIHgyPSIyOTIiIHkyPSIxMDAiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHJlY3QgeD0iMjkyIiB5PSI0MCIgd2lkdGg9IjI1MiIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIgZmlsbD0iI0VBRjBGQSIgc3Ryb2tlPSIjMUY1RkJGIiBzdHJva2Utd2lkdGg9IjEuNSIvPjx0ZXh0IHg9IjQxOCIgeT0iODgiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPjIuIE9wdGlvbnM8L3RleHQ+PHRleHQgeD0iNDE4IiB5PSIxMTgiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPnR3byBvciB0aHJlZTwvdGV4dD48bGluZSB4MT0iNTQ0IiB5MT0iMTAwIiB4Mj0iNTY0IiB5Mj0iMTAwIiBzdHJva2U9IiMxNjNEN0EiIHN0cm9rZS13aWR0aD0iMi41IiBtYXJrZXItZW5kPSJ1cmwoI2FoKSIvPjxyZWN0IHg9IjU2NCIgeT0iNDAiIHdpZHRoPSIyNTIiIGhlaWdodD0iMTIwIiByeD0iMTAiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSI2OTAiIHk9Ijg4IiBmb250LXNpemU9IjE2IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj4zLiBSZWNvbW1lbmRhdGlvbjwvdGV4dD48dGV4dCB4PSI2OTAiIHk9IjExOCIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+eW91ciBwaWNrLCB3aXRoIHJlYXNvbnM8L3RleHQ+PGxpbmUgeDE9IjgxNiIgeTE9IjEwMCIgeDI9IjgzNiIgeTI9IjEwMCIgc3Ryb2tlPSIjMTYzRDdBIiBzdHJva2Utd2lkdGg9IjIuNSIgbWFya2VyLWVuZD0idXJsKCNhaCkiLz48cmVjdCB4PSI4MzYiIHk9IjQwIiB3aWR0aD0iMjUyIiBoZWlnaHQ9IjEyMCIgcng9IjEwIiBmaWxsPSIjRkZGNkU2IiBzdHJva2U9IiNBMTVDMDciIHN0cm9rZS13aWR0aD0iMS41Ii8+PHRleHQgeD0iOTYyIiB5PSI4OCIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+NC4gVHJpcHdpcmU8L3RleHQ+PHRleHQgeD0iOTYyIiB5PSIxMTgiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPndoYXQgd291bGQgY2hhbmdlIGl0PC90ZXh0PjxyZWN0IHg9IjIwIiB5PSIyMTAiIHdpZHRoPSIxMDgwIiBoZWlnaHQ9IjE1MCIgcng9IjEwIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiMxNjNEN0EiIHN0cm9rZS13aWR0aD0iMS41Ii8+PHRleHQgeD0iNTYwIiB5PSIyNDQiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMxNjNEN0EiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPlRoZSBvbmUgdGFibGUgdGhlIHN0YWtlaG9sZGVyIGNhbiByZWFkPC90ZXh0Pjx0ZXh0IHg9IjE0MCIgeT0iMjgyIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5PcHRpb248L3RleHQ+PHRleHQgeD0iMzQ4IiB5PSIyODIiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkNvc3QgcGVyIDFrPC90ZXh0Pjx0ZXh0IHg9IjU1NiIgeT0iMjgyIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5wOTUgbGF0ZW5jeTwvdGV4dD48dGV4dCB4PSI3NjQiIHk9IjI4MiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+QWNjdXJhY3k8L3RleHQ+PHRleHQgeD0iOTcyIiB5PSIyODIiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPlJpc2s8L3RleHQ+PGxpbmUgeDE9IjQwIiB5MT0iMjk2IiB4Mj0iMTA4MCIgeTI9IjI5NiIgc3Ryb2tlPSIjRTNFMEQ4IiBzdHJva2Utd2lkdGg9IjEuNSIvPjx0ZXh0IHg9IjE0MCIgeT0iMzIyIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5BOiBmcm9udGllcjwvdGV4dD48dGV4dCB4PSIzNDgiIHk9IjMyMiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+JDE4PC90ZXh0Pjx0ZXh0IHg9IjU1NiIgeT0iMzIyIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj45IHM8L3RleHQ+PHRleHQgeD0iNzY0IiB5PSIzMjIiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPjk3JTwvdGV4dD48dGV4dCB4PSI5NzIiIHk9IjMyMiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+bG93PC90ZXh0Pjx0ZXh0IHg9IjE0MCIgeT0iMzUyIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5COiBiYWxhbmNlZDwvdGV4dD48dGV4dCB4PSIzNDgiIHk9IjM1MiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+JDQ8L3RleHQ+PHRleHQgeD0iNTU2IiB5PSIzNTIiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPjMgczwvdGV4dD48dGV4dCB4PSI3NjQiIHk9IjM1MiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+OTQlPC90ZXh0Pjx0ZXh0IHg9Ijk3MiIgeT0iMzUyIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5tZWRpdW08L3RleHQ+PHRleHQgeD0iNTYwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPk5vbi10ZWNobmljYWwgc3Rha2Vob2xkZXJzIGp1ZGdlIHJvd3MgdGhleSB1bmRlcnN0YW5kOiBtb25leSwgc3BlZWQsIGNvcnJlY3RuZXNzLCByaXNrLjwvdGV4dD48L3N2Zz4=" alt="Decision memo structure: four steps flowing into a stakeholder-readable comparison table" title="The decision memo: four steps, one table the stakeholder can actually read."><figcaption>The decision memo: four steps, one table the stakeholder can actually read.</figcaption></figure></p>
+<p><figure><img src="img/d6-decision-memo.svg" alt="Decision memo structure: four steps flowing into a stakeholder-readable comparison table" title="The decision memo: four steps, one table the stakeholder can actually read."><figcaption>The decision memo: four steps, one table the stakeholder can actually read.</figcaption></figure></p>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
 <ol>
 <li>Step 1 names the decision in one sentence.</li>
@@ -1677,225 +1768,15 @@ html.xp-js .xp-reveal.xp-in {
 <td>Mechanism detail they cannot judge</td>
 </tr>
 </tbody>
-</table></div></section>
-
-<section class="unit" id=""><h2>Unit 3. Feedback loops, expectation alignment, and SLAs</h2>
-<p class="lede">A promise you cannot measure is a wish. This unit is about writing honest, measurable promises for systems that are sometimes wrong.</p>
-
-<h3>What it is</h3>
-<p><strong>Rung 1: the one-paragraph version.</strong> An <strong>SLA (service level agreement)</strong> is a contract about performance: what level the system will hit, over what time window, and what happens if it misses. Two companion terms: an <strong>SLI (service level indicator)</strong> is the thing you actually measure (for example, the fraction of successful requests), and an <strong>SLO (service level objective)</strong> is the target you set for it (for example, 99.9%). The SLA is the contract that references the SLO and adds the remedy. A <strong>feedback loop</strong> is a scheduled checkpoint where stakeholders see real performance data and adjust expectations or plans: weekly eval reviews with the product owner, monthly business reviews with executives. The loop is what keeps the SLA honest after signing day. In plain terms, expectation alignment means the stakeholder's mental model of the system matches reality, on purpose and in writing. For AI systems the hardest part of that is probabilistic honesty: saying plainly, in the contract, that the system will sometimes be wrong, how often, and what happens then.</p>
-<pre><code class="language-text">AVAILABILITY SLA: &quot;is it up?&quot;    ||    QUALITY SLA: &quot;is it right?&quot;
-measured by uptime monitors      ||    measured by humans grading samples
-99.9% =&gt; ~43 min downtime/month  ||    95% =&gt; 50 wrong per 1,000 graded
-     (one never covers the other)
-</code></pre>
-<h3>Why SLAs mean something different for LLM apps</h3>
-<p><strong>Rung 2: one level deeper.</strong> Traditional software is deterministic: the same input always produces the same output. If the code is correct and the server is up, the answer is right. So one SLA, "the service responds correctly 99.9% of the time," covers everything.</p>
-<p>An LLM is probabilistic: the same input can produce different outputs on different runs, and even a healthy, fast system gives wrong answers at some rate. That splits the promise in two:</p>
-<ul>
-<li><strong>Availability SLA: "is it up?"</strong> The fraction of requests that get a successful response. Measured by uptime monitors. A 99.9% availability SLA over a 30-day month allows about 43 minutes of downtime. This says nothing about whether the answers were good.</li>
-<li><strong>Quality SLA: "is it right?"</strong> The fraction of outputs that meet the quality bar. Measured by grading a sample of real outputs, usually by humans against a rubric, on a cadence like weekly. Example: "at least 95% of 1,000 weekly sampled outputs pass review."</li>
-</ul>
-<p>You need both, written separately, measured separately. An availability SLA never covers quality. This is the single most tested idea in D6.</p>
-<h3>How it works under the hood</h3>
-<p><strong>Rung 3: the full climb.</strong> Start with the availability SLA, then the quality SLA (the unfamiliar one), then the contract language and the feedback cadence.</p>
-<p><strong>Designing the availability SLA.</strong> Pick the SLI (successful responses divided by total requests), the window (usually 30 days), and the target. The target sets the error budget: the amount of failure you are allowed before consequences kick in.</p>
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Availability target</th>
-<th>Allowed downtime per 30 days</th>
-<th>What it means in practice</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>99%</td>
-<td>7 hours 12 min</td>
-<td>One bad afternoon a month is fine.</td>
-</tr>
-<tr>
-<td>99.9%</td>
-<td>43 min</td>
-<td>Tight but achievable with one region and retries.</td>
-</tr>
-<tr>
-<td>99.99%</td>
-<td>4 min 19 s</td>
-<td>Needs multi-region failover and serious engineering.</td>
-</tr>
-</tbody>
 </table></div>
-
-<p>Each extra nine roughly multiplies the engineering cost. Never promise 99.99% because it sounds good. Promise the target your architecture can actually hold, then write the remedy: service credits, a postmortem within 48 hours, a reliability sprint if the budget burns two months running.</p>
-<p><strong>Designing the quality SLA.</strong> This is the unfamiliar one, so go slowly:</p>
-<ol>
-<li><strong>Define the SLI.</strong> "Fraction of sampled outputs graded correct by two independent reviewers against the clause rubric." Note the three choices hidden in that sentence: sampling (you cannot grade everything), graders (humans, not vibes), rubric (written criteria, not gut feel).</li>
-<li><strong>Set the SLO as a number with a window.</strong> "At least 95% correct per weekly sample of 1,000 outputs." The window matters: a bad day should not breach a monthly promise, and a bad month should not hide inside a quarterly average.</li>
-<li><strong>Name the measurement cost.</strong> Grading 1,000 outputs a week at 2 minutes each is about 33 reviewer hours. Put that labor in the budget during discovery (Unit 1), not as a surprise later.</li>
-<li><strong>Write the remedy.</strong> "Two consecutive weeks below 93% triggers a quality review: pause feature work, diagnose the failing segment, and report to the product owner." A quality SLA without a remedy is a poster.</li>
-</ol>
-<p><strong>Probabilistic honesty, contractually.</strong> "The model is sometimes wrong" becomes contract language in three clauses. The acceptable wrong rate (the quality SLO). The safety net (which outputs get human review before they matter, for example everything below a confidence threshold plus a random 5% sample). The drift clause (what happens when the measured rate degrades). Never let a stakeholder leave the room believing the system is always right. Correct that belief in the meeting, in writing, before signatures.</p>
-<p><strong>The feedback loop cadence.</strong> Match the loop to the stakeholder's quadrant (see the map below):</p>
-<ul>
-<li>Weekly: eval dashboard review with the product owner and the eval owner. Fifteen minutes. Red metrics get a named investigator.</li>
-<li>Monthly: business review with the executive sponsor. Cost, quality trend, and one upcoming decision.</li>
-<li>Quarterly: architecture revisit. New model releases, cost drift, and whether the original trade-offs still hold.</li>
-<li>Always: demo on real data early, by week two or three. Nothing aligns expectations faster than watching the system handle the stakeholder's own messy inputs.</li>
-</ul>
-<h3>Worked example: the support assistant SLA</h3>
-<p><strong>Rung 4: seeing it in one contract.</strong> Availability: 99.9% monthly, measured by the API gateway's 5xx rate. Error budget: 43 minutes. Remedy: 10% service credit per additional 43 minutes, postmortem within 48 hours.</p>
-<p>Quality: at least 94% of weekly sampled responses graded "correct and safe" by reviewers, sample size 800. Two weeks below 92% triggers the quality review: feature work pauses, the failing segment (say, refund-policy questions) gets a dedicated fix, results reported to the product owner. Review labor: 800 outputs times 90 seconds is 20 reviewer hours per week, budgeted and staffed.</p>
-<p>Notice the shape: every promise has a number, a window, a measurement method, and a remedy. If any of those four is missing, it is not an SLA.</p>
-<div class="exam-ask"><p><span class="cl">How they will ask this</span></p>
-<p><strong>Scenario shape:</strong> a stakeholder demands 100% accuracy in the contract, or a vendor's 99.9% uptime SLA is presented as proof the answers are reliable. Sometimes paired: "select two" items where one correct move is the quality SLA and the other is the human review safety net. <strong>The traps:</strong> accepting the 100%, or accepting the uptime number as covering correctness, or proposing an SLA with no measurement method. "Our availability SLA is 99.9%, so quality is covered" is the classic confusion: availability measures whether the system answered, not whether the answer was right. A system can be up 100% of the month and wrong 20% of the time. The correct move is to add the separate quality SLA with its own measurement plan. "Promising 100% accuracy to close the deal" feels helpful in the meeting and is poison in the contract. No probabilistic system hits 100% on real data. The professional move is to refuse the number kindly and replace it. Say it like this: "we cannot promise 100%." Then: "we can promise at least 95% measured weekly, with human review on every low-confidence output, and a written remedy if we miss two weeks running." Stakeholders respect the honesty, and you can actually deliver it. <strong>The tell:</strong> look for the answer that splits the promise in two (availability and quality), attaches a measurement plan and a remedy to each, and names who does the grading.</p></div>
-
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjQ3NSIgdmlld0JveD0iMCAwIDExMjAgNDc1IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjQ3NSIgZmlsbD0iI0ZGRkZGRiIvPjx0ZXh0IHg9IjYwIiB5PSI1MCIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzFGNUZCRiIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LXdlaWdodD0iNjAwIj5BdmFpbGFiaWxpdHkgU0xBOiA5OS45JSAoaXMgaXQgdXA/KTwvdGV4dD48cmVjdCB4PSI2MCIgeT0iNzAiIHdpZHRoPSIxMDAwIiBoZWlnaHQ9IjQ0IiByeD0iOCIgZmlsbD0iI0VBRjBGQSIgc3Ryb2tlPSIjMUY1RkJGIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxyZWN0IHg9IjYwIiB5PSI3MCIgd2lkdGg9IjQiIGhlaWdodD0iNDQiIHJ4PSIyIiBmaWxsPSIjQzAzOTJCIi8+PHRleHQgeD0iNTYwIiB5PSIxNDUiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPkRvd250aW1lIGJ1ZGdldDogNDMgbWludXRlcyBwZXIgbW9udGguIEFmdGVyIHRoYXQsIHRoZSBTTEEgaXMgYnJlYWNoZWQuPC90ZXh0Pjx0ZXh0IHg9IjYwIiB5PSIyMDAiIGZvbnQtc2l6ZT0iMTciIGZpbGw9IiNBMTVDMDciIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjYwMCI+UXVhbGl0eSBTTEE6IDk1JSBjb3JyZWN0IChpcyBpdCByaWdodD8pPC90ZXh0PjxyZWN0IHg9IjYwIiB5PSIyMjAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI0NCIgcng9IjYiIGZpbGw9IiMyRjdEMzIiLz48cmVjdCB4PSIxMTAiIHk9IjIyMCIgd2lkdGg9IjQyIiBoZWlnaHQ9IjQ0IiByeD0iNiIgZmlsbD0iIzJGN0QzMiIvPjxyZWN0IHg9IjE2MCIgeT0iMjIwIiB3aWR0aD0iNDIiIGhlaWdodD0iNDQiIHJ4PSI2IiBmaWxsPSIjMkY3RDMyIi8+PHJlY3QgeD0iMjEwIiB5PSIyMjAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI0NCIgcng9IjYiIGZpbGw9IiMyRjdEMzIiLz48cmVjdCB4PSIyNjAiIHk9IjIyMCIgd2lkdGg9IjQyIiBoZWlnaHQ9IjQ0IiByeD0iNiIgZmlsbD0iIzJGN0QzMiIvPjxyZWN0IHg9IjMxMCIgeT0iMjIwIiB3aWR0aD0iNDIiIGhlaWdodD0iNDQiIHJ4PSI2IiBmaWxsPSIjMkY3RDMyIi8+PHJlY3QgeD0iMzYwIiB5PSIyMjAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI0NCIgcng9IjYiIGZpbGw9IiMyRjdEMzIiLz48cmVjdCB4PSI0MTAiIHk9IjIyMCIgd2lkdGg9IjQyIiBoZWlnaHQ9IjQ0IiByeD0iNiIgZmlsbD0iIzJGN0QzMiIvPjxyZWN0IHg9IjQ2MCIgeT0iMjIwIiB3aWR0aD0iNDIiIGhlaWdodD0iNDQiIHJ4PSI2IiBmaWxsPSIjMkY3RDMyIi8+PHJlY3QgeD0iNTEwIiB5PSIyMjAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI0NCIgcng9IjYiIGZpbGw9IiMyRjdEMzIiLz48cmVjdCB4PSI1NjAiIHk9IjIyMCIgd2lkdGg9IjQyIiBoZWlnaHQ9IjQ0IiByeD0iNiIgZmlsbD0iIzJGN0QzMiIvPjxyZWN0IHg9IjYxMCIgeT0iMjIwIiB3aWR0aD0iNDIiIGhlaWdodD0iNDQiIHJ4PSI2IiBmaWxsPSIjMkY3RDMyIi8+PHJlY3QgeD0iNjYwIiB5PSIyMjAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI0NCIgcng9IjYiIGZpbGw9IiMyRjdEMzIiLz48cmVjdCB4PSI3MTAiIHk9IjIyMCIgd2lkdGg9IjQyIiBoZWlnaHQ9IjQ0IiByeD0iNiIgZmlsbD0iIzJGN0QzMiIvPjxyZWN0IHg9Ijc2MCIgeT0iMjIwIiB3aWR0aD0iNDIiIGhlaWdodD0iNDQiIHJ4PSI2IiBmaWxsPSIjMkY3RDMyIi8+PHJlY3QgeD0iODEwIiB5PSIyMjAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI0NCIgcng9IjYiIGZpbGw9IiMyRjdEMzIiLz48cmVjdCB4PSI4NjAiIHk9IjIyMCIgd2lkdGg9IjQyIiBoZWlnaHQ9IjQ0IiByeD0iNiIgZmlsbD0iIzJGN0QzMiIvPjxyZWN0IHg9IjkxMCIgeT0iMjIwIiB3aWR0aD0iNDIiIGhlaWdodD0iNDQiIHJ4PSI2IiBmaWxsPSIjMkY3RDMyIi8+PHJlY3QgeD0iOTYwIiB5PSIyMjAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI0NCIgcng9IjYiIGZpbGw9IiMyRjdEMzIiLz48cmVjdCB4PSIxMDEwIiB5PSIyMjAiIHdpZHRoPSI0MiIgaGVpZ2h0PSI0NCIgcng9IjYiIGZpbGw9IiNDMDM5MkIiLz48dGV4dCB4PSI1NjAiIHk9IjI5NSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+MSwwMDAgc2FtcGxlZCBvdXRwdXRzIHBlciB3ZWVrLiBBdCBtb3N0IDUwIG1heSBiZSB3cm9uZy4gT25lIHJlZCBjZWxsID0gNTAgd3Jvbmcgb3V0cHV0cy48L3RleHQ+PHJlY3QgeD0iNjAiIHk9IjMzMCIgd2lkdGg9IjEwMDAiIGhlaWdodD0iMTIwIiByeD0iMTAiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSI1NjAiIHk9IjM2NiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzE2M0Q3QSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+VGhlIGNvbnRyYWN0IG5lZWRzIGJvdGgsIG1lYXN1cmVkIHNlcGFyYXRlbHk8L3RleHQ+PHRleHQgeD0iNTYwIiB5PSI0MDAiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPkF2YWlsYWJpbGl0eSBpcyBtZWFzdXJlZCBieSB1cHRpbWUgbW9uaXRvcnMuIFF1YWxpdHkgaXMgbWVhc3VyZWQgYnkgaHVtYW4tZ3JhZGVkIGV2YWwgc2FtcGxlcy48L3RleHQ+PHRleHQgeD0iNTYwIiB5PSI0MjgiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPkFuIGF2YWlsYWJpbGl0eSBTTEEgbmV2ZXIgY292ZXJzIHF1YWxpdHkuIFByb21pc2Ugb25seSB3aGF0IHlvdSBtZWFzdXJlLjwvdGV4dD48L3N2Zz4=" alt="Two SLA tracks: a 99.9% availability bar with a 43-minute downtime budget, and a 95% quality bar showing 50 allowed wrong outputs per 1,000" title="Two SLAs, measured separately: availability asks &#x27;is it up&#x27;, quality asks &#x27;is it right&#x27;."><figcaption>Two SLAs, measured separately: availability asks &#x27;is it up&#x27;, quality asks &#x27;is it right&#x27;.</figcaption></figure></p>
-<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
-<ol>
-<li>Top track: the availability SLA. The bar is one month; the red tip is the 43-minute downtime budget.</li>
-<li>Read the caption: after 43 minutes down, the SLA is breached. Monitors measure this.</li>
-<li>Bottom track: the quality SLA. Twenty cells stand for 1,000 graded outputs; one red cell is the 50 allowed wrong.</li>
-<li>Read the bottom box: the two promises need different metrics, different measurement, different owners.</li>
-</ol>
-<p><strong>Each part, and what breaks without it</strong></p></div>
-
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Part</th>
-<th>What it does</th>
-<th>Why it exists</th>
-<th>If you remove it</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Availability SLA</strong></td>
-<td>Fraction of successful responses</td>
-<td>Proves the service answers</td>
-<td>Downtime with no contract or remedy</td>
-</tr>
-<tr>
-<td><strong>Downtime budget</strong></td>
-<td>43 min per month at 99.9%</td>
-<td>Makes the target concrete</td>
-<td>A percentage nobody can picture</td>
-</tr>
-<tr>
-<td><strong>Quality SLA</strong></td>
-<td>Fraction of outputs graded correct</td>
-<td>Proves the answers are good</td>
-<td>A fast, up, confidently wrong system</td>
-</tr>
-<tr>
-<td><strong>Human grading</strong></td>
-<td>Sampled outputs vs a rubric</td>
-<td>The only honest quality metric</td>
-<td>Vibes-based quality claims</td>
-</tr>
-</tbody>
-</table></div>
-
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjQ5NSIgdmlld0JveD0iMCAwIDExMjAgNDk1IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjQ5NSIgZmlsbD0iI0ZGRkZGRiIvPjxsaW5lIHgxPSI4MCIgeTE9IjQwIiB4Mj0iODAiIHkyPSI0MDAiIHN0cm9rZT0iIzI0MjkyRiIgc3Ryb2tlLXdpZHRoPSIyIi8+PGxpbmUgeDE9IjgwIiB5MT0iNDAwIiB4Mj0iMTA2MCIgeTI9IjQwMCIgc3Ryb2tlPSIjMjQyOTJGIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI2MCIgeT0iNjAiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJlbmQiIGZvbnQtd2VpZ2h0PSI0MDAiPjEwMCU8L3RleHQ+PHRleHQgeD0iNjAiIHk9IjQwMCIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9ImVuZCIgZm9udC13ZWlnaHQ9IjQwMCI+MCU8L3RleHQ+PGxpbmUgeDE9IjgwIiB5MT0iMzI4IiB4Mj0iMTA2MCIgeTI9IjMyOCIgc3Ryb2tlPSIjQzAzOTJCIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1kYXNoYXJyYXk9IjgsNiIvPjx0ZXh0IHg9IjEwNTAiIHk9IjMxOCIgZm9udC1zaXplPSIxMyIgZmlsbD0iI0MwMzkyQiIgdGV4dC1hbmNob3I9ImVuZCIgZm9udC13ZWlnaHQ9IjYwMCI+MjAlOiBmcmVlemUgZmVhdHVyZXM8L3RleHQ+PHBvbHlsaW5lIHBvaW50cz0iODAsNjAgMjQwLDExMCA0MDAsMTUwIDU2MCwyMTAgNzIwLDMwMCA4ODAsMzQ1IDEwNjAsMzUyIiBmaWxsPSJub25lIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMy41Ii8+PGNpcmNsZSBjeD0iODAiIGN5PSI2MCIgcj0iNiIgZmlsbD0iIzFGNUZCRiIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSIyNDAiIGN5PSIxMTAiIHI9IjYiIGZpbGw9IiMxRjVGQkYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iNDAwIiBjeT0iMTUwIiByPSI2IiBmaWxsPSIjMUY1RkJGIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMiIvPjxjaXJjbGUgY3g9IjU2MCIgY3k9IjIxMCIgcj0iNiIgZmlsbD0iIzFGNUZCRiIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSI3MjAiIGN5PSIzMDAiIHI9IjYiIGZpbGw9IiMxRjVGQkYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyIi8+PGNpcmNsZSBjeD0iODgwIiBjeT0iMzQ1IiByPSI2IiBmaWxsPSIjMUY1RkJGIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMiIvPjxjaXJjbGUgY3g9IjEwNjAiIGN5PSIzNTIiIHI9IjYiIGZpbGw9IiMxRjVGQkYiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iODAiIHk9IjQyNSIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+RGF5IDE8L3RleHQ+PHRleHQgeD0iNDA2IiB5PSI0MjUiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPkRheSAxMDwvdGV4dD48dGV4dCB4PSI3MzMiIHk9IjQyNSIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+RGF5IDIwPC90ZXh0Pjx0ZXh0IHg9IjEwNjAiIHk9IjQyNSIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+RGF5IDMwPC90ZXh0Pjx0ZXh0IHg9IjgwIiB5PSIyNSIgZm9udC1zaXplPSIxNSIgZmlsbD0iIzE2M0Q3QSIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LXdlaWdodD0iNjAwIj5FcnJvciBidWRnZXQgcmVtYWluaW5nPC90ZXh0Pjx0ZXh0IHg9IjU2MCIgeT0iNDcwIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5CdXJuIHRoZSBidWRnZXQgdG9vIGZhc3QgYW5kIHRoZSB0ZWFtIHN0b3BzIHNoaXBwaW5nIGZlYXR1cmVzIHVudGlsIHJlbGlhYmlsaXR5IHJlY292ZXJzLjwvdGV4dD48L3N2Zz4=" alt="Error budget burn-down chart over 30 days with a dashed 20% line marked freeze features" title="Error budget burn: spend the budget too fast and feature work stops until reliability recovers."><figcaption>Error budget burn: spend the budget too fast and feature work stops until reliability recovers.</figcaption></figure></p>
-<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
-<ol>
-<li>The vertical axis is budget remaining, from 100% at the top to 0% at the bottom.</li>
-<li>The blue line burns downward as incidents consume the budget across the month.</li>
-<li>The dashed red line at 20% is the policy tripwire.</li>
-<li>Crossing it freezes feature work: the team fixes reliability until the budget recovers.</li>
-</ol>
-<p><strong>Each part, and what breaks without it</strong></p></div>
-
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Part</th>
-<th>What it does</th>
-<th>Why it exists</th>
-<th>If you remove it</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Budget</strong></td>
-<td>Allowed failure for the window</td>
-<td>Turns reliability into a number</td>
-<td>Arguments about whether things are 'bad enough'</td>
-</tr>
-<tr>
-<td><strong>Burn line</strong></td>
-<td>How fast failure is consumed</td>
-<td>Shows trouble weeks before the budget hits zero</td>
-<td>Surprise breaches at month end</td>
-</tr>
-<tr>
-<td><strong>20% tripwire</strong></td>
-<td>The freeze-features policy</td>
-<td>Protects reliability automatically</td>
-<td>Feature pressure burns the budget to zero</td>
-</tr>
-<tr>
-<td><strong>The freeze</strong></td>
-<td>Stop features, fix reliability</td>
-<td>Prevents death spirals</td>
-<td>Shipping features on a burning system</td>
-</tr>
-</tbody>
-</table></div>
-
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU0NSIgdmlld0JveD0iMCAwIDExMjAgNTQ1IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU0NSIgZmlsbD0iI0ZGRkZGRiIvPjxsaW5lIHgxPSI1NjAiIHkxPSI0MCIgeDI9IjU2MCIgeTI9IjQ0MCIgc3Ryb2tlPSIjNUM2NTcwIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxsaW5lIHgxPSI2MCIgeTE9IjI0MCIgeDI9IjEwNjAiIHkyPSIyNDAiIHN0cm9rZT0iIzVDNjU3MCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSI1NjAiIHk9IjQ3NSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+SW50ZXJlc3QgaW4gdGhlIHByb2plY3QgKGxvdyB0byBoaWdoKTwvdGV4dD48dGV4dCB4PSIzMCIgeT0iMjQwIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIGZvbnQtd2VpZ2h0PSI0MDAiPkluZmx1ZW5jZTwvdGV4dD48cmVjdCB4PSI1OTAiIHk9IjYwIiB3aWR0aD0iNDQwIiBoZWlnaHQ9IjE2MCIgcng9IjEwIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjU1Ii8+PHRleHQgeD0iODEwIiB5PSI4OCIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzFGNUZCRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+TWFuYWdlIGNsb3NlbHk8L3RleHQ+PHJlY3QgeD0iOTAiIHk9IjYwIiB3aWR0aD0iNDQwIiBoZWlnaHQ9IjE2MCIgcng9IjEwIiBmaWxsPSIjRkZGNkU2IiBzdHJva2U9IiNBMTVDMDciIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjU1Ii8+PHRleHQgeD0iMzEwIiB5PSI4OCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI0ExNUMwNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+S2VlcCBzYXRpc2ZpZWQ8L3RleHQ+PHJlY3QgeD0iNTkwIiB5PSIyNjAiIHdpZHRoPSI0NDAiIGhlaWdodD0iMTYwIiByeD0iMTAiIGZpbGw9IiNFRkYwRUEiIHN0cm9rZT0iIzBFN0M3QiIgc3Ryb2tlLXdpZHRoPSIxLjUiIG9wYWNpdHk9IjAuNTUiLz48dGV4dCB4PSI4MTAiIHk9IjI4OCIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzBFN0M3QiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+S2VlcCBpbmZvcm1lZDwvdGV4dD48cmVjdCB4PSI5MCIgeT0iMjYwIiB3aWR0aD0iNDQwIiBoZWlnaHQ9IjE2MCIgcng9IjEwIiBmaWxsPSIjRjRGMkVEIiBzdHJva2U9IiM1QzY1NzAiIHN0cm9rZS13aWR0aD0iMS41IiBvcGFjaXR5PSIwLjU1Ii8+PHRleHQgeD0iMzEwIiB5PSIyODgiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPk1vbml0b3I8L3RleHQ+PGNpcmNsZSBjeD0iODYwIiBjeT0iMTIwIiByPSIxMSIgZmlsbD0iIzFGNUZCRiIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjMiLz48dGV4dCB4PSI4NjAiIHk9IjE1NCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+RXhlYyBzcG9uc29yPC90ZXh0PjxjaXJjbGUgY3g9IjI2MCIgY3k9IjEyMCIgcj0iMTEiIGZpbGw9IiNBMTVDMDciIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIzIi8+PHRleHQgeD0iMjYwIiB5PSIxNTQiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkxlZ2FsIC8gY29tcGxpYW5jZTwvdGV4dD48Y2lyY2xlIGN4PSI4NjAiIGN5PSIzMzAiIHI9IjExIiBmaWxsPSIjMEU3QzdCIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMyIvPjx0ZXh0IHg9Ijg2MCIgeT0iMzY0IiBmb250LXNpemU9IjE0IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5FbmQgdXNlcnM8L3RleHQ+PGNpcmNsZSBjeD0iMjYwIiBjeT0iMzMwIiByPSIxMSIgZmlsbD0iIzVDNjU3MCIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjMiLz48dGV4dCB4PSIyNjAiIHk9IjM2NCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+SVQgaGVscGRlc2s8L3RleHQ+PHRleHQgeD0iNTYwIiB5PSI1MjAiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPlBsb3QgZXZlcnkgc3Rha2Vob2xkZXIgb25jZS4gVGhlIHF1YWRyYW50IGRlY2lkZXMgaG93IG11Y2ggb2YgeW91ciB3ZWVrIHRoZXkgZ2V0LjwvdGV4dD48L3N2Zz4=" alt="Stakeholder map: influence versus interest grid with four plotted stakeholders in four quadrants" title="The stakeholder map: the quadrant decides how much of your week each person gets."><figcaption>The stakeholder map: the quadrant decides how much of your week each person gets.</figcaption></figure></p>
-<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
-<ol>
-<li>Horizontal axis is interest in the project, vertical axis is influence over it.</li>
-<li>Top right is manage closely: the executive sponsor, weekly contact.</li>
-<li>Top left is keep satisfied: legal and compliance, consulted on risk, not drowned in detail.</li>
-<li>Bottom right is keep informed: end users, demos and updates. Bottom left is monitor: helpdesk, light touch.</li>
-</ol>
-<p><strong>Each part, and what breaks without it</strong></p></div>
-
-<div class="table-wrap"><table>
-<thead>
-<tr>
-<th>Part</th>
-<th>What it does</th>
-<th>Why it exists</th>
-<th>If you remove it</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Manage closely</strong></td>
-<td>High influence, high interest</td>
-<td>They can fund or kill the project</td>
-<td>The sponsor is surprised at the worst moment</td>
-</tr>
-<tr>
-<td><strong>Keep satisfied</strong></td>
-<td>High influence, low interest</td>
-<td>They can block on risk grounds</td>
-<td>Compliance vetoes at go-live</td>
-</tr>
-<tr>
-<td><strong>Keep informed</strong></td>
-<td>Low influence, high interest</td>
-<td>They live with the system daily</td>
-<td>Users reject a system they never saw</td>
-</tr>
-<tr>
-<td><strong>Monitor</strong></td>
-<td>Low influence, low interest</td>
-<td>Cheap to keep in the loop</td>
-<td>Small issues become surprises</td>
-</tr>
-</tbody>
-</table></div></section>
+<p class="u-next"><strong>Next:</strong> architecture documentation and implementation guidance, writing the guides a builder can actually build from.</p></section>
 
 <section class="unit" id=""><h2>Unit 4. Architecture documentation and implementation guidance</h2>
 <p class="lede">Teams forget why decisions were made. Documentation is how the architecture survives contact with the future.</p>
 
 <h3>What it is</h3>
-<p><strong>Rung 1: the one-paragraph version.</strong> Architecture documentation has two parts. <strong>Decision records</strong> explain why: the context, the options, the choice, the consequences. <strong>Implementation guidance</strong> explains how: enough detail that an engineering team can build the system without you in the room, but not so much that the documents rot the moment code changes. In plain terms: an <strong>ADR (architecture decision record)</strong> is a short, numbered document that captures one significant decision, in five parts: title, context, decision, consequences, and status. ADRs live with the code, are never deleted, and are superseded (not edited) when the decision changes. A <strong>runbook</strong> is the operational playbook: how to deploy, how to monitor, what to do when each alert fires. Six months after launch, someone will propose "simplifying" the eval pipeline, or swapping the reranker for a cheaper one, or removing the human review queue to cut cost. Without a written record of why those pieces exist, each simplification looks reasonable in isolation and the system's quality dies by a thousand cuts. The ADR is the institutional memory that says "we tried that, here is what happened, here is the number." The second reason is handoff. The architect rarely operates the system long term. Implementation guidance is what makes the handoff real instead of ceremonial: the team inherits not just diagrams but the eval set, the runbook, and the names of who owns what.</p>
+<p><strong>Rung 1: the one-paragraph version.</strong> Architecture documentation has two parts. <strong>Decision records</strong> explain why: the context, the options, the choice, the consequences. <strong>Implementation guidance</strong> explains how: enough detail that an engineering team can build the system without you in the room, but not so much that the documents rot the moment code changes.</p>
+<p>In plain terms: an <strong>ADR (architecture decision record)</strong> is a short, numbered document that captures one significant decision, in five parts: title, context, decision, consequences, and status. ADRs live with the code, are never deleted, and are superseded (not edited) when the decision changes. A <strong>runbook</strong> is the operational playbook: how to deploy, how to monitor, what to do when each alert fires. Six months after launch, someone will propose "simplifying" the eval pipeline, or swapping the reranker for a cheaper one, or removing the human review queue to cut cost. Without a written record of why those pieces exist, each simplification looks reasonable in isolation and the system's quality dies by a thousand cuts. The ADR is the institutional memory that says "we tried that, here is what happened, here is the number." The second reason is handoff. The architect rarely operates the system long term. Implementation guidance is what makes the handoff real instead of ceremonial: the team inherits not just diagrams but the eval set, the runbook, and the names of who owns what.</p>
 <pre><code class="language-text">one decision --&gt; ADR: title | context | decision | consequences | status
 handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt; runbook --&gt; named owners
 </code></pre>
@@ -1905,7 +1786,7 @@ handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt;
 <ol>
 <li><strong>Title:</strong> "ADR-004: Retrieval with reranking instead of long-context stuffing." Numbered in order, so the sequence tells the story.</li>
 <li><strong>Context:</strong> the problem and the forces. "Support articles average 40k tokens. Stuffing full articles into context costs $X per request at Y latency and buries the answer in noise."</li>
-<li><strong>Decision:</strong> what you chose and what you rejected. "We retrieve the top 50 chunks and rerank to 8. We rejected full-context stuffing (too slow, too costly) and fine-tuning (data too thin)."</li>
+<li><strong>Decision:</strong> what you chose and what you rejected. "We retrieve the top 50 chunks and rerank to 8. We rejected full-context stuffing (too slow, too costly) and fine-tuning (data too thin)." A chunk is a piece of a document (a few hundred tokens) stored for retrieval; reranking means scoring the retrieved chunks with a sharper second model and keeping only the best few.</li>
 <li><strong>Consequences:</strong> what gets better and what gets worse, honestly. "Better: 3x cheaper, 4x faster, accuracy up 2 points on the eval set. Worse: new failure mode when the retriever misses; mitigated by the fallback to full-article search on low confidence."</li>
 <li><strong>Status:</strong> proposed, accepted, or superseded. When ADR-011 later replaces this decision, ADR-004 stays in the repo marked superseded, with a pointer. History is never rewritten.</li>
 </ol>
@@ -1921,13 +1802,13 @@ handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt;
 <details class="pq"><summary>You might be wondering: how much documentation is too much?</summary><div class="pq-answer"><p>The test is simple: can a competent engineer who was not in the room make a safe change? If yes, you have enough. ADRs plus the handoff package pass that test at low maintenance cost because each ADR is one page and the eval set is executable truth. A 60-page architecture wiki fails the test: nobody reads it, so nobody trusts it, so it rots. Short, numbered, and next to the code beats long, pretty, and in a wiki.</p></div></details>
 
 <h3>Worked example: ADR-004 with numbers</h3>
-<p><strong>Rung 3: the full climb.</strong> Context: 500,000 support tickets a month, each needing policy context. Two designs on the table. Full-article stuffing: average 40k input tokens per request at an illustrative $3 per million tokens is $0.12 per request, $60,000 a month, p95 latency 14 seconds. Retrieval with rerank: 8 chunks at 500 tokens each plus overhead is about 6k tokens per request, $0.018 per request, $9,000 a month, p95 latency 3 seconds. Eval accuracy: 93% for stuffing, 95% for rerank on the 2,000-case golden set.</p>
+<p><strong>Rung 3: the full climb.</strong> Context: 500,000 support tickets a month, each needing policy context. Two designs on the table. Full-article stuffing: average 40k input tokens per request at an illustrative $3 per million tokens is $0.12 per request, $60,000 a month, p95 latency 14 seconds. Retrieval with rerank: 8 chunks at 500 tokens each plus overhead is about 6k tokens per request, $0.018 per request, $9,000 a month, p95 latency 3 seconds. Eval accuracy: 93% for stuffing, 95% for rerank on the 2,000-case golden set (a golden set: a hand-checked eval set treated as ground truth).</p>
 <p>Decision: retrieval with rerank. Here are the consequences, stated honestly. We save roughly $51,000 a month and answer 4x faster with slightly better accuracy. We accept a new failure mode (retriever misses the right article). We mitigate it with a low-confidence fallback plus a weekly review of fallback cases. Status: accepted, signed by the product owner on the date in the record.</p>
 <p>That ADR is why, a year later, nobody "simplifies" the system back to stuffing. The numbers are in the repo.</p>
 <div class="exam-ask"><p><span class="cl">How they will ask this</span></p>
 <p><strong>Scenario shape:</strong> an engineering team inherited a Claude system six months ago and accuracy has drifted downward. Options include retraining, switching models, writing an ADR for the original choices, or establishing eval ownership with a weekly review. <strong>The traps:</strong> the technical fixes (new model, retraining) feel decisive but address no diagnosed cause. "Documentation means a comprehensive wiki page" is the other classic: comprehensive wikis are where decisions go to be forgotten. The exam's version is a handoff that looks complete on paper (diagrams, wiki links, a walkthrough meeting) but has no eval set, no runbook, and no named eval owner. Quality then drifts silently because nobody owns the thing that would have caught it. <strong>The tell:</strong> the scenario never established who owns quality measurement. The right move restores the missing ownership and measurement first: assign the eval owner, reinstate the review cadence, diagnose the failing segment, then decide. The credited answer always includes the executable eval set and the named owner.</p></div>
 
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU2MCIgdmlld0JveD0iMCAwIDExMjAgNTYwIiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU2MCIgZmlsbD0iI0ZGRkZGRiIvPjxyZWN0IHg9IjYwIiB5PSIzMCIgd2lkdGg9IjY0MCIgaGVpZ2h0PSI0NzAiIHJ4PSIxMCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjMTYzRDdBIiBzdHJva2Utd2lkdGg9IjEuNSIvPjx0ZXh0IHg9IjM4MCIgeT0iNjIiIGZvbnQtc2l6ZT0iMTciIGZpbGw9IiMxNjNEN0EiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkFEUi0wMDQ6IFJldHJpZXZhbCB3aXRoIHJlcmFuazwvdGV4dD48cmVjdCB4PSI4NCIgeT0iODQiIHdpZHRoPSI1OTIiIGhlaWdodD0iNjgiIHJ4PSI4IiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiNFM0UwRDgiLz48dGV4dCB4PSIxMDQiIHk9IjExMiIgZm9udC1zaXplPSIxNSIgZmlsbD0iIzE2M0Q3QSIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LXdlaWdodD0iNjAwIj4xLiBUaXRsZTwvdGV4dD48dGV4dCB4PSIxMDQiIHk9IjEzNiIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LXdlaWdodD0iNDAwIj50aGUgZGVjaXNpb24gaW4gb25lIGxpbmU8L3RleHQ+PHJlY3QgeD0iODQiIHk9IjE2NCIgd2lkdGg9IjU5MiIgaGVpZ2h0PSI2OCIgcng9IjgiIGZpbGw9IiNFRkYwRUEiIHN0cm9rZT0iI0UzRTBEOCIvPjx0ZXh0IHg9IjEwNCIgeT0iMTkyIiBmb250LXNpemU9IjE1IiBmaWxsPSIjMTYzRDdBIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIGZvbnQtd2VpZ2h0PSI2MDAiPjIuIENvbnRleHQ8L3RleHQ+PHRleHQgeD0iMTA0IiB5PSIyMTYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjQwMCI+dGhlIHByb2JsZW0gYW5kIHRoZSBmb3JjZXMgYXQgcGxheTwvdGV4dD48cmVjdCB4PSI4NCIgeT0iMjQ0IiB3aWR0aD0iNTkyIiBoZWlnaHQ9IjY4IiByeD0iOCIgZmlsbD0iI0VBRjBGQSIgc3Ryb2tlPSIjRTNFMEQ4Ii8+PHRleHQgeD0iMTA0IiB5PSIyNzIiIGZvbnQtc2l6ZT0iMTUiIGZpbGw9IiMxNjNEN0EiIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjYwMCI+My4gRGVjaXNpb248L3RleHQ+PHRleHQgeD0iMTA0IiB5PSIyOTYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjQwMCI+d2hhdCB3ZSBjaG9zZSwgYW5kIHRoZSBvcHRpb25zIHdlIHJlamVjdGVkPC90ZXh0PjxyZWN0IHg9Ijg0IiB5PSIzMjQiIHdpZHRoPSI1OTIiIGhlaWdodD0iNjgiIHJ4PSI4IiBmaWxsPSIjRUZGMEVBIiBzdHJva2U9IiNFM0UwRDgiLz48dGV4dCB4PSIxMDQiIHk9IjM1MiIgZm9udC1zaXplPSIxNSIgZmlsbD0iIzE2M0Q3QSIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LXdlaWdodD0iNjAwIj40LiBDb25zZXF1ZW5jZXM8L3RleHQ+PHRleHQgeD0iMTA0IiB5PSIzNzYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjQwMCI+d2hhdCBnZXRzIGJldHRlciwgd2hhdCBnZXRzIHdvcnNlPC90ZXh0PjxyZWN0IHg9Ijg0IiB5PSI0MDQiIHdpZHRoPSI1OTIiIGhlaWdodD0iNjgiIHJ4PSI4IiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiNFM0UwRDgiLz48dGV4dCB4PSIxMDQiIHk9IjQzMiIgZm9udC1zaXplPSIxNSIgZmlsbD0iIzE2M0Q3QSIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LXdlaWdodD0iNjAwIj41LiBTdGF0dXM8L3RleHQ+PHRleHQgeD0iMTA0IiB5PSI0NTYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJzdGFydCIgZm9udC13ZWlnaHQ9IjQwMCI+cHJvcG9zZWQsIGFjY2VwdGVkLCBvciBzdXBlcnNlZGVkPC90ZXh0PjxyZWN0IHg9Ijc0MCIgeT0iMzAiIHdpZHRoPSIzMjAiIGhlaWdodD0iNDcwIiByeD0iMTAiIGZpbGw9IiNGRkY2RTYiIHN0cm9rZT0iI0ExNUMwNyIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSI5MDAiIHk9IjY2IiBmb250LXNpemU9IjE2IiBmaWxsPSIjQTE1QzA3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5UaGUgcnVsZXM8L3RleHQ+PHRleHQgeD0iOTAwIiB5PSIxMDgiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPk51bWJlcmVkLCBpbiBvcmRlcjwvdGV4dD48dGV4dCB4PSI5MDAiIHk9IjEzOCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+U3RvcmVkIHdpdGggdGhlIGNvZGU8L3RleHQ+PHRleHQgeD0iOTAwIiB5PSIxNjgiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPlNob3J0OiBvbmUgcGFnZTwvdGV4dD48dGV4dCB4PSI5MDAiIHk9IjE5OCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+TmV2ZXIgZGVsZXRlZCw8L3RleHQ+PHRleHQgeD0iOTAwIiB5PSIyMjgiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPm9ubHkgc3VwZXJzZWRlZDwvdGV4dD48dGV4dCB4PSI5MDAiIHk9IjI1OCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+V3JpdHRlbiBhdCBkZWNpc2lvbjwvdGV4dD48dGV4dCB4PSI5MDAiIHk9IjI4OCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+dGltZSwgbm90IGxhdGVyPC90ZXh0Pjx0ZXh0IHg9IjU2MCIgeT0iNTM1IiBmb250LXNpemU9IjE0IiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5TaXggbW9udGhzIGxhdGVyLCBub2JvZHkgcmVtZW1iZXJzIHdoeS4gVGhlIEFEUiBkb2VzLjwvdGV4dD48L3N2Zz4=" alt="ADR anatomy: a document with five numbered bands (title, context, decision, consequences, status) and a rules panel" title="ADR anatomy: five short parts that explain one decision forever."><figcaption>ADR anatomy: five short parts that explain one decision forever.</figcaption></figure></p>
+<p><figure><img src="img/d6-adr-anatomy.svg" alt="ADR anatomy: a document with five numbered bands (title, context, decision, consequences, status) and a rules panel" title="ADR anatomy: five short parts that explain one decision forever."><figcaption>ADR anatomy: five short parts that explain one decision forever.</figcaption></figure></p>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
 <ol>
 <li>Band 1 is the title: the decision in one line, with its number.</li>
@@ -1981,7 +1862,7 @@ handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt;
 </tbody>
 </table></div>
 
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjQzNSIgdmlld0JveD0iMCAwIDExMjAgNDM1IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjQzNSIgZmlsbD0iI0ZGRkZGRiIvPjxkZWZzPjxtYXJrZXIgaWQ9ImFoIiBtYXJrZXJXaWR0aD0iMTAiIG1hcmtlckhlaWdodD0iMTAiIHJlZlg9IjgiIHJlZlk9IjMiIG9yaWVudD0iYXV0byI+PHBhdGggZD0iTTAsMCBMOCwzIEwwLDYgWiIgZmlsbD0iIzE2M0Q3QSIvPjwvbWFya2VyPjwvZGVmcz48cmVjdCB4PSIyMCIgeT0iNjAiIHdpZHRoPSIxOTYiIGhlaWdodD0iMTUwIiByeD0iMTAiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSIxMTgiIHk9IjExMiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+QXJjaGl0ZWN0dXJlPC90ZXh0Pjx0ZXh0IHg9IjExOCIgeT0iMTM2IiBmb250LXNpemU9IjE2IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5kaWFncmFtPC90ZXh0Pjx0ZXh0IHg9IjExOCIgeT0iMTgyIiBmb250LXNpemU9IjEzIiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj50aGUgbWFwPC90ZXh0PjxsaW5lIHgxPSIyMTYiIHkxPSIxMzUiIHgyPSIyMzYiIHkyPSIxMzUiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHJlY3QgeD0iMjM2IiB5PSI2MCIgd2lkdGg9IjE5NiIgaGVpZ2h0PSIxNTAiIHJ4PSIxMCIgZmlsbD0iI0VBRjBGQSIgc3Ryb2tlPSIjMUY1RkJGIiBzdHJva2Utd2lkdGg9IjEuNSIvPjx0ZXh0IHg9IjMzNCIgeT0iMTEyIiBmb250LXNpemU9IjE2IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5EZWNpc2lvbjwvdGV4dD48dGV4dCB4PSIzMzQiIHk9IjEzNiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+cmVjb3JkczwvdGV4dD48dGV4dCB4PSIzMzQiIHk9IjE4MiIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+dGhlIHdoeTwvdGV4dD48bGluZSB4MT0iNDMyIiB5MT0iMTM1IiB4Mj0iNDUyIiB5Mj0iMTM1IiBzdHJva2U9IiMxNjNEN0EiIHN0cm9rZS13aWR0aD0iMi41IiBtYXJrZXItZW5kPSJ1cmwoI2FoKSIvPjxyZWN0IHg9IjQ1MiIgeT0iNjAiIHdpZHRoPSIxOTYiIGhlaWdodD0iMTUwIiByeD0iMTAiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSI1NTAiIHk9IjExMiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+RXZhbCBzZXQ8L3RleHQ+PHRleHQgeD0iNTUwIiB5PSIxMzYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPisgcnVubmVyPC90ZXh0Pjx0ZXh0IHg9IjU1MCIgeT0iMTgyIiBmb250LXNpemU9IjEzIiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj50aGUgcHJvb2Y8L3RleHQ+PGxpbmUgeDE9IjY0OCIgeTE9IjEzNSIgeDI9IjY2OCIgeTI9IjEzNSIgc3Ryb2tlPSIjMTYzRDdBIiBzdHJva2Utd2lkdGg9IjIuNSIgbWFya2VyLWVuZD0idXJsKCNhaCkiLz48cmVjdCB4PSI2NjgiIHk9IjYwIiB3aWR0aD0iMTk2IiBoZWlnaHQ9IjE1MCIgcng9IjEwIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMS41Ii8+PHRleHQgeD0iNzY2IiB5PSIxMTIiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPlJ1bmJvb2s8L3RleHQ+PHRleHQgeD0iNzY2IiB5PSIxODIiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPnRoZSBwbGF5Ym9vazwvdGV4dD48bGluZSB4MT0iODY0IiB5MT0iMTM1IiB4Mj0iODg0IiB5Mj0iMTM1IiBzdHJva2U9IiMxNjNEN0EiIHN0cm9rZS13aWR0aD0iMi41IiBtYXJrZXItZW5kPSJ1cmwoI2FoKSIvPjxyZWN0IHg9Ijg4NCIgeT0iNjAiIHdpZHRoPSIxOTYiIGhlaWdodD0iMTUwIiByeD0iMTAiIGZpbGw9IiNFOEYzRTgiIHN0cm9rZT0iIzJGN0QzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48dGV4dCB4PSI5ODIiIHk9IjExMiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzI0MjkyRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+TmFtZWQ8L3RleHQ+PHRleHQgeD0iOTgyIiB5PSIxMzYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiMyNDI5MkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPm93bmVyczwvdGV4dD48dGV4dCB4PSI5ODIiIHk9IjE4MiIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+dGhlIHBlb3BsZTwvdGV4dD48cmVjdCB4PSIyMCIgeT0iMjYwIiB3aWR0aD0iMTA4MCIgaGVpZ2h0PSIxMTAiIHJ4PSIxMCIgZmlsbD0iI0ZERUNFQSIgc3Ryb2tlPSIjQzAzOTJCIiBzdHJva2Utd2lkdGg9IjEuNSIvPjx0ZXh0IHg9IjU2MCIgeT0iMzAwIiBmb250LXNpemU9IjE2IiBmaWxsPSIjQzAzOTJCIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5UaGUgbW9zdCBjb21tb24gaGFuZG9mZiBmYWlsdXJlPC90ZXh0Pjx0ZXh0IHg9IjU2MCIgeT0iMzMyIiBmb250LXNpemU9IjE0IiBmaWxsPSIjMjQyOTJGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5ObyBuYW1lZCBvd25lciBmb3IgdGhlIGV2YWxzLiBUaGUgZXZhbCBzZXQgcm90cywgcXVhbGl0eSBkcmlmdHMsIG5vYm9keSBub3RpY2VzIGZvciBtb250aHMuPC90ZXh0Pjx0ZXh0IHg9IjU2MCIgeT0iNDEwIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5BIGhhbmRvZmYgaXMgbm90IGEgZG9jdW1lbnQgZHVtcC4gSXQgaXMgYSB0cmFuc2ZlciBvZiBvd25lcnNoaXAsIHdpdGggbmFtZXMgYW5kIGRhdGVzLjwvdGV4dD48L3N2Zz4=" alt="Handoff pipeline: five boxes from architecture diagram to named owners, with a red warning strip about missing eval ownership" title="The handoff pipeline: five items, each with a named owner. The red strip names the most common failure."><figcaption>The handoff pipeline: five items, each with a named owner. The red strip names the most common failure.</figcaption></figure></p>
+<p><figure><img src="img/d6-handoff-pipeline.svg" alt="Handoff pipeline: five boxes from architecture diagram to named owners, with a red warning strip about missing eval ownership" title="The handoff pipeline: five items, each with a named owner. The red strip names the most common failure."><figcaption>The handoff pipeline: five items, each with a named owner. The red strip names the most common failure.</figcaption></figure></p>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
 <ol>
 <li>Follow the five boxes left to right: diagram, decision records, eval set with runner, runbook, named owners.</li>
@@ -2032,13 +1913,193 @@ handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt;
 <td>Diffusion of responsibility</td>
 </tr>
 </tbody>
-</table></div></section>
+</table></div>
+<p class="u-next"><strong>Next:</strong> feedback loops, expectation alignment, and SLAs, making promises in numbers both sides sign.</p></section>
 
-<section class="unit" id=""><h2>Unit 5. Lifecycle management: handoff, monitoring, iteration</h2>
+<section class="unit" id=""><h2>Unit 5. Feedback loops, expectation alignment, and SLAs</h2>
+<p class="lede">A promise you cannot measure is a wish. This unit is about writing honest, measurable promises for systems that are sometimes wrong.</p>
+
+<h3>What it is</h3>
+<p><strong>Rung 1: the one-paragraph version.</strong> An <strong>SLA (service level agreement)</strong> is a contract about performance: what level the system will hit, over what time window, and what happens if it misses. Two companion terms: an <strong>SLI (service level indicator)</strong> is the thing you actually measure (for example, the fraction of successful requests), and an <strong>SLO (service level objective)</strong> is the target you set for it (for example, 99.9%).</p>
+<p>The SLA is the contract that references the SLO and adds the remedy. A <strong>feedback loop</strong> is a scheduled checkpoint where stakeholders see real performance data and adjust expectations or plans: weekly eval reviews with the product owner, monthly business reviews with executives. The loop is what keeps the SLA honest after signing day. In plain terms, expectation alignment means the stakeholder's mental model of the system matches reality, on purpose and in writing. For AI systems the hardest part of that is probabilistic honesty: saying plainly, in the contract, that the system will sometimes be wrong, how often, and what happens then.</p>
+<pre><code class="language-text">AVAILABILITY SLA: &quot;is it up?&quot;    ||    QUALITY SLA: &quot;is it right?&quot;
+measured by uptime monitors      ||    measured by humans grading samples
+99.9% =&gt; ~43 min downtime/month  ||    95% =&gt; 50 wrong per 1,000 graded
+     (one never covers the other)
+</code></pre>
+<div class="callout math"><span class="callout-h">Formula: allowed downtime and wrong-output count</span>
+<p class="eq">downtime = (1 &minus; availability) &times; 43,200 min &nbsp;&nbsp; wrong_outputs = (1 &minus; quality_rate) &times; graded</p>
+<p class="eq-where">where: <strong>availability</strong>, the uptime fraction promised; <strong>43,200</strong>, minutes in a 30-day month; <strong>quality_rate</strong>, the fraction of outputs that pass human grading; <strong>graded</strong>, outputs graded per window.</p>
+<p class="eq-worked"><strong>Worked example.</strong> 99.9% availability: (1 &minus; 0.999) &times; 43,200 = 43.2, about 43 minutes of downtime a month. Quality: 95% of 1,000 graded outputs pass, so 50 wrong outputs ship per window. The exam's point, stated in the diagram above: availability never covers quality. One promise is measured by monitors, the other by humans grading samples, and a 99.9% uptime SLA says nothing about the 50 wrong answers.</p></div>
+<p class="u-bridge">The table above sets the vocabulary: availability is measured by monitors, quality by humans. The next question is why the quality half needs a different kind of promise for LLM apps.</p>
+<h3>Why SLAs mean something different for LLM apps</h3>
+<p><strong>Rung 2: one level deeper.</strong> Traditional software is deterministic: the same input always produces the same output. If the code is correct and the server is up, the answer is right. So one SLA, "the service responds correctly 99.9% of the time," covers everything.</p>
+<p>An LLM is probabilistic: the same input can produce different outputs on different runs, and even a healthy, fast system gives wrong answers at some rate. That splits the promise in two:</p>
+<ul>
+<li><strong>Availability SLA: "is it up?"</strong> The fraction of requests that get a successful response. Measured by uptime monitors. A 99.9% availability SLA over a 30-day month allows about 43 minutes of downtime. This says nothing about whether the answers were good.</li>
+<li><strong>Quality SLA: "is it right?"</strong> The fraction of outputs that meet the quality bar. Measured by grading a sample of real outputs, usually by humans against a rubric, on a cadence like weekly. Example: "at least 95% of 1,000 weekly sampled outputs pass review."</li>
+</ul>
+<p>You need both, written separately, measured separately. An availability SLA never covers quality. This is the single most tested idea in D6.</p>
+<h3>How it works under the hood</h3>
+<p><strong>Rung 3: the full climb.</strong> Start with the availability SLA, then the quality SLA (the unfamiliar one), then the contract language and the feedback cadence.</p>
+<p><strong>Designing the availability SLA.</strong> Pick the SLI (successful responses divided by total requests), the window (usually 30 days), and the target. The target sets the error budget: the amount of failure you are allowed before consequences kick in.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Availability target</th>
+<th>Allowed downtime per 30 days</th>
+<th>What it means in practice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>99%</td>
+<td>7 hours 12 min</td>
+<td>One bad afternoon a month is fine.</td>
+</tr>
+<tr>
+<td>99.9%</td>
+<td>43 min</td>
+<td>Tight but achievable with one region and retries.</td>
+</tr>
+<tr>
+<td>99.99%</td>
+<td>4 min 19 s</td>
+<td>Needs multi-region failover and serious engineering.</td>
+</tr>
+</tbody>
+</table></div>
+
+<p>Each extra nine roughly multiplies the engineering cost. Never promise 99.99% because it sounds good. Promise the target your architecture can actually hold, then write the remedy: service credits, a postmortem within 48 hours, a reliability sprint if the budget burns two months running.</p>
+<p><strong>Designing the quality SLA.</strong> This is the unfamiliar one, so go slowly:</p>
+<ol>
+<li><strong>Define the SLI.</strong> "Fraction of sampled outputs graded correct by two independent reviewers against the clause rubric." Note the three choices hidden in that sentence: sampling (you cannot grade everything), graders (humans, not vibes), rubric (written criteria, not gut feel).</li>
+<li><strong>Set the SLO as a number with a window.</strong> "At least 95% correct per weekly sample of 1,000 outputs." The window matters: a bad day should not breach a monthly promise, and a bad month should not hide inside a quarterly average.</li>
+<li><strong>Name the measurement cost.</strong> Grading 1,000 outputs a week at 2 minutes each is about 33 reviewer hours. Put that labor in the budget during discovery (Unit 2), not as a surprise later.</li>
+<li><strong>Write the remedy.</strong> "Two consecutive weeks below 93% triggers a quality review: pause feature work, diagnose the failing segment, and report to the product owner." A quality SLA without a remedy is a poster.</li>
+</ol>
+<p><strong>Probabilistic honesty, contractually.</strong> "The model is sometimes wrong" becomes contract language in three clauses. The acceptable wrong rate (the quality SLO). The safety net (which outputs get human review before they matter, for example everything below a confidence threshold plus a random 5% sample). The drift clause (what happens when the measured rate degrades). Never let a stakeholder leave the room believing the system is always right. Correct that belief in the meeting, in writing, before signatures.</p>
+<p><strong>The feedback loop cadence.</strong> Match the loop to the stakeholder's quadrant (see Unit 1):</p>
+<ul>
+<li>Weekly: eval dashboard review with the product owner and the eval owner. Fifteen minutes. Red metrics get a named investigator.</li>
+<li>Monthly: business review with the executive sponsor. Cost, quality trend, and one upcoming decision.</li>
+<li>Quarterly: architecture revisit. New model releases, cost drift, and whether the original trade-offs still hold.</li>
+<li>Always: demo on real data early, by week two or three. Nothing aligns expectations faster than watching the system handle the stakeholder's own messy inputs.</li>
+</ul>
+<p><figure><img src="img/d6-feedback-cadence.svg" alt="The feedback cadence ladder: Always (demo on real data by week 2 or 3), Weekly (eval dashboard review), Monthly (business review with the sponsor), Quarterly (architecture revisit)" title="The feedback cadence ladder: who hears what, how often."><figcaption>The feedback cadence ladder: who hears what, how often.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Read top to bottom.</strong> The top band is the most frequent loop, the bottom the slowest. Each band names who is in the room, what they see, and what leaves the room. Run all four at once: the fast loops catch cheap surprises, the slow loops decide expensive things.</p><div class="table-wrap"><table><tr><th>Component</th><th>What it is</th><th>Why it matters</th><th>What breaks if it is wrong</th></tr><tr><td>Always: demo on real data</td><td>Working demo by week 2 or 3</td><td>Surprise is cheapest before week 4</td><td>Wrong success metrics discovered at launch</td></tr><tr><td>Weekly: eval dashboard review</td><td>15 minutes with product owner and eval owner</td><td>Red metrics get a named investigator</td><td>Decay hides until users complain</td></tr><tr><td>Monthly: business review</td><td>Cost and quality trend with the sponsor</td><td>Leaves with one decision and named owners</td><td>Budget drift discovered at quarter end</td></tr><tr><td>Quarterly: architecture revisit</td><td>New models, cost drift, trade-off checks</td><td>Decisions and eval sets stay fresh</td><td>The architecture silently goes stale</td></tr></table></div></div>
+<h3>Worked example: the support assistant SLA</h3>
+<p><strong>Rung 4: seeing it in one contract.</strong> Availability: 99.9% monthly, measured by the API gateway's 5xx rate (5xx: server-error responses). Error budget: 43 minutes. Remedy: 10% service credit per additional 43 minutes, postmortem within 48 hours.</p>
+<p>Quality: at least 94% of weekly sampled responses graded "correct and safe" by reviewers, sample size 800. Two weeks below 92% triggers the quality review: feature work pauses, the failing segment (say, refund-policy questions) gets a dedicated fix, results reported to the product owner. Review labor: 800 outputs times 90 seconds is 20 reviewer hours per week, budgeted and staffed.</p>
+<div class="callout math"><span class="callout-h">Formula: grading labor</span>
+<p class="eq">reviewer_hours = outputs &times; seconds_per_output / 3,600</p>
+<p class="eq-where">where: <strong>outputs</strong>, outputs graded per week; <strong>seconds_per_output</strong>, grading time each.</p>
+<p class="eq-worked"><strong>Worked examples.</strong> 800 &times; 90 / 3,600 = 20 reviewer hours per week. 1,000 outputs at 2 minutes each: 1,000 &times; 120 / 3,600 &asymp; 33.3 hours. Name the measurement cost in the budget during discovery (Unit 2), not as a surprise later: quality measurement is staffing, not a line item you wish into existence.</p></div>
+<p>Notice the shape: every promise has a number, a window, a measurement method, and a remedy. If any of those four is missing, it is not an SLA.</p>
+<div class="exam-ask"><p><span class="cl">How they will ask this</span></p>
+<p><strong>Scenario shape:</strong> a stakeholder demands 100% accuracy in the contract, or a vendor's 99.9% uptime SLA is presented as proof the answers are reliable. Sometimes paired: "select two" items where one correct move is the quality SLA and the other is the human review safety net. <strong>The traps:</strong> accepting the 100%, or accepting the uptime number as covering correctness, or proposing an SLA with no measurement method. "Our availability SLA is 99.9%, so quality is covered" is the classic confusion: availability measures whether the system answered, not whether the answer was right. A system can be up 100% of the month and wrong 20% of the time. The correct move is to add the separate quality SLA with its own measurement plan. "Promising 100% accuracy to close the deal" feels helpful in the meeting and is poison in the contract. No probabilistic system hits 100% on real data. The professional move is to refuse the number kindly and replace it. Say it like this: "we cannot promise 100%." Then: "we can promise at least 95% measured weekly, with human review on every low-confidence output, and a written remedy if we miss two weeks running." Stakeholders respect the honesty, and you can actually deliver it. <strong>The tell:</strong> look for the answer that splits the promise in two (availability and quality), attaches a measurement plan and a remedy to each, and names who does the grading.</p></div>
+
+<p><figure><img src="img/d6-two-sla-tracks.svg" alt="Two SLA tracks: a 99.9% availability bar with a 43-minute downtime budget, and a 95% quality bar showing 50 allowed wrong outputs per 1,000" title="Two SLAs, measured separately: availability asks &#x27;is it up&#x27;, quality asks &#x27;is it right&#x27;."><figcaption>Two SLAs, measured separately: availability asks &#x27;is it up&#x27;, quality asks &#x27;is it right&#x27;.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
+<ol>
+<li>Top track: the availability SLA. The bar is one month; the red tip is the 43-minute downtime budget.</li>
+<li>Read the caption: after 43 minutes down, the SLA is breached. Monitors measure this.</li>
+<li>Bottom track: the quality SLA. Twenty cells stand for 1,000 graded outputs; one red cell is the 50 allowed wrong.</li>
+<li>Read the bottom box: the two promises need different metrics, different measurement, different owners.</li>
+</ol>
+<p><strong>Each part, and what breaks without it</strong></p></div>
+
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it does</th>
+<th>Why it exists</th>
+<th>If you remove it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Availability SLA</strong></td>
+<td>Fraction of successful responses</td>
+<td>Proves the service answers</td>
+<td>Downtime with no contract or remedy</td>
+</tr>
+<tr>
+<td><strong>Downtime budget</strong></td>
+<td>43 min per month at 99.9%</td>
+<td>Makes the target concrete</td>
+<td>A percentage nobody can picture</td>
+</tr>
+<tr>
+<td><strong>Quality SLA</strong></td>
+<td>Fraction of outputs graded correct</td>
+<td>Proves the answers are good</td>
+<td>A fast, up, confidently wrong system</td>
+</tr>
+<tr>
+<td><strong>Human grading</strong></td>
+<td>Sampled outputs vs a rubric</td>
+<td>The only honest quality metric</td>
+<td>Vibes-based quality claims</td>
+</tr>
+</tbody>
+</table></div>
+
+<p><figure><img src="img/d6-error-budget.svg" alt="Error budget burn-down chart over 30 days with a dashed 20% line marked freeze features" title="Error budget burn: spend the budget too fast and feature work stops until reliability recovers."><figcaption>Error budget burn: spend the budget too fast and feature work stops until reliability recovers.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
+<ol>
+<li>The vertical axis is budget remaining, from 100% at the top to 0% at the bottom.</li>
+<li>The blue line burns downward as incidents consume the budget across the month.</li>
+<li>The dashed red line at 20% is the policy tripwire.</li>
+<li>Crossing it freezes feature work: the team fixes reliability until the budget recovers.</li>
+</ol>
+<p><strong>Each part, and what breaks without it</strong></p></div>
+
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it does</th>
+<th>Why it exists</th>
+<th>If you remove it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Budget</strong></td>
+<td>Allowed failure for the window</td>
+<td>Turns reliability into a number</td>
+<td>Arguments about whether things are 'bad enough'</td>
+</tr>
+<tr>
+<td><strong>Burn line</strong></td>
+<td>How fast failure is consumed</td>
+<td>Shows trouble weeks before the budget hits zero</td>
+<td>Surprise breaches at month end</td>
+</tr>
+<tr>
+<td><strong>20% tripwire</strong></td>
+<td>The freeze-features policy</td>
+<td>Protects reliability automatically</td>
+<td>Feature pressure burns the budget to zero</td>
+</tr>
+<tr>
+<td><strong>The freeze</strong></td>
+<td>Stop features, fix reliability</td>
+<td>Prevents death spirals</td>
+<td>Shipping features on a burning system</td>
+</tr>
+</tbody>
+</table></div>
+<p class="u-next"><strong>Next:</strong> lifecycle management, handoff, monitoring, and iteration after launch.</p>
+</section>
+<section class="unit" id=""><h2>Unit 6. Lifecycle management: handoff, monitoring, iteration</h2>
 <p class="lede">Handoff is not the end of the project. It is the middle. The system lives or dies on what happens after.</p>
 
 <h3>What it is</h3>
-<p><strong>Rung 1: the one-paragraph version.</strong> The lifecycle has six phases: <strong>discover</strong> (learn the problem), <strong>design</strong> (choose the architecture), <strong>build</strong> (construct it), <strong>hand off</strong> (transfer ownership), <strong>monitor</strong> (watch it in production), <strong>iterate</strong> (improve it). Then the loop turns again. The steering wheel for the whole loop is the eval set from Unit 4: every iteration is judged by measured results, not by opinions about what should work. In plain terms: <strong>monitoring</strong> is the continuous collection of the four production signals: quality (is it still right?), latency (is it still fast?), cost (is it still affordable?), and safety (is anything harmful happening?). <strong>Iteration</strong> is the disciplined cycle of detecting a change in those signals, diagnosing the cause, fixing it, re-evaluating, and shipping. Lifecycle management is owning that cycle on purpose instead of reacting to user complaints. Production systems decay: data formats change, user behavior shifts, a new model version behaves slightly differently. Without a managed loop, the first sign of decay is an angry customer or a surprising bill, and by then the damage is weeks old. With a managed loop, the eval dashboard shows the dip on Tuesday, the owner investigates on Wednesday, and the fix ships before most users notice. The deeper reason: an AI system is never "done" the way a bridge is done. Its environment (data, users, models, costs) keeps moving. Lifecycle management is the admission that launch day is a starting line, written into roles, dashboards, and calendars.</p>
+<p><strong>Rung 1: the one-paragraph version.</strong> The lifecycle has six phases: <strong>discover</strong> (learn the problem), <strong>design</strong> (choose the architecture), <strong>build</strong> (construct it), <strong>hand off</strong> (transfer ownership), <strong>monitor</strong> (watch it in production), <strong>iterate</strong> (improve it). Then the loop turns again. The steering wheel for the whole loop is the eval set from Unit 4: every iteration is judged by measured results, not by opinions about what should work.</p>
+<p>In plain terms: <strong>monitoring</strong> is the continuous collection of the four production signals: quality (is it still right?), latency (is it still fast?), cost (is it still affordable?), and safety (is anything harmful happening?). <strong>Iteration</strong> is the disciplined cycle of detecting a change in those signals, diagnosing the cause, fixing it, re-evaluating, and shipping. Lifecycle management is owning that cycle on purpose instead of reacting to user complaints. Production systems decay: data formats change, user behavior shifts, a new model version behaves slightly differently. Without a managed loop, the first sign of decay is an angry customer or a surprising bill, and by then the damage is weeks old. With a managed loop, the eval dashboard shows the dip on Tuesday, the owner investigates on Wednesday, and the fix ships before most users notice. The deeper reason: an AI system is never "done" the way a bridge is done. Its environment (data, users, models, costs) keeps moving. Lifecycle management is the admission that launch day is a starting line, written into roles, dashboards, and calendars.</p>
 <pre><code class="language-text">        discover --&gt; design --&gt; build
            ^                       |
            |                    hand off
@@ -2097,7 +2158,7 @@ handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt;
 <div class="exam-ask"><p><span class="cl">How they will ask this</span></p>
 <p><strong>Scenario shape:</strong> three months after launch, users report worse answers on a specific topic. Options: switch to the newest model, add more training data, check the eval dashboard and diagnose the failing segment, or roll back to the launch-day prompt. <strong>The traps:</strong> the newest model feels like progress; the rollback feels safe. Both skip diagnosis. "Monitoring means watching uptime and error rates" is the infrastructure-only trap: uptime and error rates are the availability half. For an AI system the dangerous decay is silent: the service is up, the responses are fast, and the answers are slowly getting worse. Quality monitoring (the graded sample) and cost monitoring (spend per request) are what catch the failures that uptime dashboards miss. "When quality drops, switch to a bigger model" is the guess-not-diagnosis trap: a bigger model is a guess, not a diagnosis. Maybe the data changed, maybe the prompt regressed, maybe one segment broke. The professional loop is detect, diagnose the segment, fix narrowly, re-evaluate. Model switching is what you do after diagnosis says the current tier cannot hit the bar, and then you write the ADR for it. <strong>The tell:</strong> the right answer starts with measurement (what do the evals say, which segment moved) and only then chooses a fix. If an option mentions per-segment evals, it is usually the credited one. Also watch for the "handoff is the end" framing: any option that treats go-live as the finish line is wrong.</p></div>
 
-<p><figure><img src="data:application/octet-stream;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU2NSIgdmlld0JveD0iMCAwIDExMjAgNTY1IiBmb250LWZhbWlseT0iLWFwcGxlLXN5c3RlbSxTZWdvZSBVSSxSb2JvdG8sSGVsdmV0aWNhLEFyaWFsLHNhbnMtc2VyaWYiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMTIwIiBoZWlnaHQ9IjU2NSIgZmlsbD0iI0ZGRkZGRiIvPjxkZWZzPjxtYXJrZXIgaWQ9ImFoIiBtYXJrZXJXaWR0aD0iMTAiIG1hcmtlckhlaWdodD0iMTAiIHJlZlg9IjgiIHJlZlk9IjMiIG9yaWVudD0iYXV0byI+PHBhdGggZD0iTTAsMCBMOCwzIEwwLDYgWiIgZmlsbD0iIzE2M0Q3QSIvPjwvbWFya2VyPjwvZGVmcz48Y2lyY2xlIGN4PSI1NjAiIGN5PSI5MCIgcj0iNjIiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iNTYwIiB5PSI4OCIgZm9udC1zaXplPSIxNSIgZmlsbD0iIzE2M0Q3QSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+RGlzY292ZXI8L3RleHQ+PHRleHQgeD0iNTYwIiB5PSIxMTAiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPmFzayBmaXJzdDwvdGV4dD48Y2lyY2xlIGN4PSI3MjQiIGN5PSIxODUiIHI9IjYyIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjcyNCIgeT0iMTgzIiBmb250LXNpemU9IjE1IiBmaWxsPSIjMTYzRDdBIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5EZXNpZ248L3RleHQ+PHRleHQgeD0iNzI0IiB5PSIyMDUiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM1QzY1NzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPmRlY2lkZTwvdGV4dD48Y2lyY2xlIGN4PSI3MjQiIGN5PSIzNzUiIHI9IjYyIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjcyNCIgeT0iMzczIiBmb250LXNpemU9IjE1IiBmaWxsPSIjMTYzRDdBIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5CdWlsZDwvdGV4dD48dGV4dCB4PSI3MjQiIHk9IjM5NSIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+Y29uc3RydWN0PC90ZXh0PjxjaXJjbGUgY3g9IjU2MCIgY3k9IjQ3MCIgcj0iNjIiIGZpbGw9IiNFQUYwRkEiIHN0cm9rZT0iIzFGNUZCRiIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iNTYwIiB5PSI0NjgiIGZvbnQtc2l6ZT0iMTUiIGZpbGw9IiMxNjNEN0EiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI2MDAiPkhhbmQgb2ZmPC90ZXh0Pjx0ZXh0IHg9IjU2MCIgeT0iNDkwIiBmb250LXNpemU9IjEyIiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj50cmFuc2ZlcjwvdGV4dD48Y2lyY2xlIGN4PSIzOTUiIGN5PSIzNzUiIHI9IjYyIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjM5NSIgeT0iMzczIiBmb250LXNpemU9IjE1IiBmaWxsPSIjMTYzRDdBIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5Nb25pdG9yPC90ZXh0Pjx0ZXh0IHg9IjM5NSIgeT0iMzk1IiBmb250LXNpemU9IjEyIiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj53YXRjaDwvdGV4dD48Y2lyY2xlIGN4PSIzOTUiIGN5PSIxODUiIHI9IjYyIiBmaWxsPSIjRUFGMEZBIiBzdHJva2U9IiMxRjVGQkYiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjM5NSIgeT0iMTgzIiBmb250LXNpemU9IjE1IiBmaWxsPSIjMTYzRDdBIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNjAwIj5JdGVyYXRlPC90ZXh0Pjx0ZXh0IHg9IjM5NSIgeT0iMjA1IiBmb250LXNpemU9IjEyIiBmaWxsPSIjNUM2NTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXdlaWdodD0iNDAwIj5pbXByb3ZlPC90ZXh0PjxsaW5lIHgxPSI2MzMiIHkxPSIxMDQiIHgyPSI2NzQiIHkyPSIxMjgiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PGxpbmUgeDE9Ijc0OCIgeTE9IjI1NiIgeDI9Ijc0OCIgeTI9IjMwMyIgc3Ryb2tlPSIjMTYzRDdBIiBzdHJva2Utd2lkdGg9IjIuNSIgbWFya2VyLWVuZD0idXJsKCNhaCkiLz48bGluZSB4MT0iNjc0IiB5MT0iNDMxIiB4Mj0iNjMzIiB5Mj0iNDU1IiBzdHJva2U9IiMxNjNEN0EiIHN0cm9rZS13aWR0aD0iMi41IiBtYXJrZXItZW5kPSJ1cmwoI2FoKSIvPjxsaW5lIHgxPSI0ODYiIHkxPSI0NTUiIHgyPSI0NDUiIHkyPSI0MzEiIHN0cm9rZT0iIzE2M0Q3QSIgc3Ryb2tlLXdpZHRoPSIyLjUiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PGxpbmUgeDE9IjM3MSIgeTE9IjMwMyIgeDI9IjM3MSIgeTI9IjI1NiIgc3Ryb2tlPSIjMTYzRDdBIiBzdHJva2Utd2lkdGg9IjIuNSIgbWFya2VyLWVuZD0idXJsKCNhaCkiLz48bGluZSB4MT0iNDQ1IiB5MT0iMTI4IiB4Mj0iNDg2IiB5Mj0iMTA0IiBzdHJva2U9IiMxNjNEN0EiIHN0cm9rZS13aWR0aD0iMi41IiBtYXJrZXItZW5kPSJ1cmwoI2FoKSIvPjxjaXJjbGUgY3g9IjU2MCIgY3k9IjI4MCIgcj0iNzgiIGZpbGw9IiMxNjNEN0EiLz48dGV4dCB4PSI1NjAiIHk9IjI3NCIgZm9udC1zaXplPSIxNyIgZmlsbD0iI0ZGRkZGRiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjYwMCI+RVZBTFM8L3RleHQ+PHRleHQgeD0iNTYwIiB5PSIyOTgiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiNGRkZGRkYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtd2VpZ2h0PSI0MDAiPnRoZSBzdGVlcmluZyB3aGVlbDwvdGV4dD48dGV4dCB4PSI1NjAiIHk9IjU0MCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzVDNjU3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC13ZWlnaHQ9IjQwMCI+RXZlcnkgbG9vcCB0dXJucyBvbiB0aGUgZXZhbHMuIERyaWZ0IHNob3dzIGluIHRoZSBkYXNoYm9hcmQgZmlyc3QsIG5vdCBpbiB1c2VyIGNvbXBsYWludHMuPC90ZXh0Pjwvc3ZnPg==" alt="Lifecycle loop: six phases arranged in a circle around a central hub labeled evals, the steering wheel" title="The lifecycle loop: six phases turning around the evals at the center."><figcaption>The lifecycle loop: six phases turning around the evals at the center.</figcaption></figure></p>
+<p><figure><img src="img/d6-lifecycle-loop.svg" alt="Lifecycle loop: six phases arranged in a circle around a central hub labeled evals, the steering wheel" title="The lifecycle loop: six phases turning around the evals at the center."><figcaption>The lifecycle loop: six phases turning around the evals at the center.</figcaption></figure></p>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Follow the flow</strong></p>
 <ol>
 <li>Start at the top with Discover and move clockwise: design, build, hand off, monitor, iterate.</li>
@@ -2160,9 +2221,11 @@ handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt;
 <td>Opinions steer instead of data</td>
 </tr>
 </tbody>
-</table></div></section>
+</table></div>
+<p class="u-next"><strong>Next:</strong> the D6 exam tactics, the patterns that turn every D6 scenario into a checkable answer.</p></section>
 
 <section class="unit" id=""><h2>D6 exam tactics</h2>
+<p class="u-bridge">Six units of people-work are behind you: who the stakeholders are, how to discover what they need, how to defend decisions, how to document them, how to promise in numbers, and how to keep the system alive after launch. This section compresses all of it into the tactics that turn D6 scenarios into checkable answers.</p>
 <p class="lede">Five rules that answer most D6 questions.</p>
 
 <ol>
@@ -2174,7 +2237,9 @@ handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt;
 </ol>
 <p class="note">All figures in this volume were constructed from first principles for this study guide (no external image sources applied to these abstract process concepts). Cost and pricing numbers are illustrative, rounded for teaching the math, not quotes.</p>
 
-<p class="note">Last verified against official Anthropic sources: September 2026.</p></section>
+<p class="note">Last verified against official Anthropic sources: September 2026.</p>
+<div class="u-goto"><span class="lbl">Where to go next</span>
+<p>You now own the people side of AI systems: stakeholders, discovery, decision memos, documentation, SLAs, and the lifecycle. The track continues with <a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a>, where the system you shipped becomes the platform other engineers build on.</p></div></section>
 
 </main>
 </div>
