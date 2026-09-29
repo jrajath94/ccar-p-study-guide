@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 360" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+  <text x="340" y="32" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">Enforcement and guidance live in different layers</text>
+  <g font-size="13.5">
+    <rect x="40" y="60" width="380" height="66" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+    <text x="230" y="84" text-anchor="middle" font-weight="bold" fill="#7f1d1d">Managed settings (enterprise)</text>
+    <text x="230" y="106" text-anchor="middle" fill="#475569">deny rules, blocked tools. Enforced by the client.</text>
+    <rect x="40" y="136" width="380" height="66" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="230" y="160" text-anchor="middle" font-weight="bold" fill="#1e40af">Project settings (committed)</text>
+    <text x="230" y="182" text-anchor="middle" fill="#475569">shared MCP servers, hooks, team conventions.</text>
+    <rect x="40" y="212" width="380" height="66" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="230" y="236" text-anchor="middle" font-weight="bold" fill="#1e293b">User settings (personal)</text>
+    <text x="230" y="258" text-anchor="middle" fill="#475569">individual defaults.</text>
+    <text x="230" y="308" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b">Lower layers cannot be overridden by higher ones.</text>
+    <text x="230" y="330" text-anchor="middle" font-size="13" fill="#475569">A managed deny survives any local edit: deny-first merge.</text>
+    <rect x="450" y="60" width="190" height="218" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="545" y="88" text-anchor="middle" font-weight="bold" fill="#78350f">Allow / Ask / Deny</text>
+    <text x="545" y="118" text-anchor="middle" fill="#064e3b">Allow: runs silently</text>
+    <text x="545" y="142" text-anchor="middle" fill="#78350f">Ask: a speed bump,</text>
+    <text x="545" y="160" text-anchor="middle" fill="#78350f">not a control</text>
+    <text x="545" y="190" text-anchor="middle" font-weight="bold" fill="#7f1d1d">Deny: the only</text>
+    <text x="545" y="208" text-anchor="middle" font-weight="bold" fill="#7f1d1d">hard control</text>
+    <text x="545" y="238" text-anchor="middle" font-size="12.5" fill="#475569">"must never" in the stem</text>
+    <text x="545" y="256" text-anchor="middle" font-size="12.5" fill="#475569">means deny, never ask.</text>
+  </g>
+</svg>
