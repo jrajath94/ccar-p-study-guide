@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 330" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+  <text x="340" y="32" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">4xx is your bug, 5xx is theirs</text>
+  <rect x="30" y="60" width="300" height="180" rx="10" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+  <text x="180" y="90" text-anchor="middle" font-size="15" font-weight="bold" fill="#7f1d1d">4xx: your fault</text>
+  <text x="180" y="116" text-anchor="middle" font-size="13.5" fill="#475569">400 bad request &#183; 401 bad key</text>
+  <text x="180" y="136" text-anchor="middle" font-size="13.5" fill="#475569">403 forbidden &#183; 404 not found</text>
+  <text x="180" y="156" text-anchor="middle" font-size="13.5" fill="#475569">413 payload too large</text>
+  <text x="180" y="186" text-anchor="middle" font-size="14" font-weight="bold" fill="#7f1d1d">Fix the request.</text>
+  <text x="180" y="208" text-anchor="middle" font-size="14" fill="#7f1d1d">Do not just retry.</text>
+  <rect x="350" y="60" width="300" height="180" rx="10" fill="#d1fae5" stroke="#047857" stroke-width="1.5"/>
+  <text x="500" y="90" text-anchor="middle" font-size="15" font-weight="bold" fill="#064e3b">5xx + 429: their problem</text>
+  <text x="500" y="116" text-anchor="middle" font-size="13.5" fill="#475569">429 rate limited &#183; 500 error</text>
+  <text x="500" y="136" text-anchor="middle" font-size="13.5" fill="#475569">504 timeout &#183; 529 overloaded</text>
+  <text x="500" y="166" text-anchor="middle" font-size="14" font-weight="bold" fill="#064e3b">Back off and retry.</text>
+  <text x="500" y="188" text-anchor="middle" font-size="14" fill="#064e3b">Honor retry-after.</text>
+  <text x="500" y="210" text-anchor="middle" font-size="13.5" fill="#475569">SDK retries twice by default.</text>
+  <rect x="60" y="260" width="560" height="50" rx="10" fill="#f1f5f9" stroke="#64748b"/>
+  <text x="340" y="290" text-anchor="middle" font-size="13.5" fill="#475569">Retries are safe only when the call is idempotent: repeating it must be harmless.</text>
+</svg>
