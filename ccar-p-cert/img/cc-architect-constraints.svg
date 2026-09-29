@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 360" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+  <text x="340" y="32" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">The architect's job: satisfy every constraint at once</text>
+  <rect x="20" y="60" width="190" height="120" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="115" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">Your request</text>
+  <text x="115" y="112" text-anchor="middle" font-size="13.5" fill="#475569">model choice</text>
+  <text x="115" y="132" text-anchor="middle" font-size="13.5" fill="#475569">instructions (system prompt)</text>
+  <text x="115" y="152" text-anchor="middle" font-size="13.5" fill="#475569">context (docs, history)</text>
+  <text x="115" y="172" text-anchor="middle" font-size="13.5" fill="#475569">tools (MCP, APIs)</text>
+  <text x="222" y="125" font-size="26" fill="#64748b">&#8594;</text>
+  <rect x="250" y="60" width="180" height="120" rx="10" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="340" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">Claude</text>
+  <text x="340" y="112" text-anchor="middle" font-size="13.5" fill="#1e40af">reads the tokens</text>
+  <text x="340" y="132" text-anchor="middle" font-size="13.5" fill="#1e40af">predicts the next token</text>
+  <text x="340" y="152" text-anchor="middle" font-size="13.5" fill="#1e40af">repeats until done</text>
+  <text x="340" y="172" text-anchor="middle" font-size="13.5" fill="#475569">a large language model</text>
+  <text x="442" y="125" font-size="26" fill="#64748b">&#8594;</text>
+  <rect x="470" y="60" width="190" height="120" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="565" y="88" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">The answer</text>
+  <text x="565" y="112" text-anchor="middle" font-size="13.5" fill="#475569">generated text</text>
+  <text x="565" y="132" text-anchor="middle" font-size="13.5" fill="#475569">billed per token</text>
+  <text x="565" y="152" text-anchor="middle" font-size="13.5" fill="#475569">in and out</text>
+  <text x="565" y="172" text-anchor="middle" font-size="13.5" fill="#475569">output costs ~5x input</text>
+  <text x="340" y="222" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">Every scenario names constraints. The credited answer respects all of them.</text>
+  <g font-size="13.5">
+    <rect x="30" y="245" width="140" height="44" rx="22" fill="#fee2e2" stroke="#b91c1c"/>
+    <text x="100" y="272" text-anchor="middle" fill="#7f1d1d">cost ceiling</text>
+    <rect x="190" y="245" width="140" height="44" rx="22" fill="#fef3c7" stroke="#b45309"/>
+    <text x="260" y="272" text-anchor="middle" fill="#78350f">latency budget</text>
+    <rect x="350" y="245" width="140" height="44" rx="22" fill="#d1fae5" stroke="#047857"/>
+    <text x="420" y="272" text-anchor="middle" fill="#064e3b">quality bar</text>
+    <rect x="510" y="245" width="140" height="44" rx="22" fill="#e0e7ff" stroke="#4338ca"/>
+    <text x="580" y="264" text-anchor="middle" fill="#312e81">safety +</text>
+    <text x="580" y="280" text-anchor="middle" fill="#312e81">compliance</text>
+  </g>
+  <text x="340" y="322" text-anchor="middle" font-size="13.5" fill="#475569">This exam tests decisions under constraints, not feature recall.</text>
+  <text x="340" y="342" text-anchor="middle" font-size="13.5" fill="#475569">Several options look technically true; only one fits every constraint.</text>
+</svg>
