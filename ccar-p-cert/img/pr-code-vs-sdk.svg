@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#16a34a"/></marker></defs>
+<rect width="900" height="400" rx="14" fill="#ffffff"/>
+<rect x="1" y="1" width="898" height="398" rx="13" fill="none" stroke="#cbd5e1"/>
+<text x="450.0" y="36" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">Claude Code and the Agent SDK: which one to reach for</text>
+<text x="450.0" y="62" text-anchor="middle" font-size="13" fill="#64748b">Same loop primitives underneath. The question is who operates the agent.</text>
+<rect x="40" y="100" width="400" height="143" rx="10" fill="#dbeafe" stroke="#2563eb"/>
+<text x="240.0" y="132" text-anchor="middle" font-size="15" fill="#1e40af" font-weight="bold">Claude Code: you USE it</text>
+<text x="60" y="162" text-anchor="start" font-size="13" fill="#1e293b">Terminal agent on YOUR codebase</text>
+<text x="60" y="189" text-anchor="start" font-size="13" fill="#1e293b">Edits code, runs shell, reads repo</text>
+<text x="60" y="216" text-anchor="start" font-size="13" fill="#1e293b">Reach for it: your own development</text>
+<rect x="460" y="100" width="400" height="143" rx="10" fill="#ede9fe" stroke="#7c3aed"/>
+<text x="660.0" y="132" text-anchor="middle" font-size="15" fill="#5b21b6" font-weight="bold">Agent SDK: you BUILD with it</text>
+<text x="480" y="162" text-anchor="start" font-size="13" fill="#1e293b">Toolkit for agents in YOUR product</text>
+<text x="480" y="189" text-anchor="start" font-size="13" fill="#1e293b">Python / TypeScript, same loop primitives</text>
+<text x="480" y="216" text-anchor="start" font-size="13" fill="#1e293b">Reach for it: shipping agents to users</text>
+<text x="450" y="340" text-anchor="middle" font-size="13" fill="#64748b">Both honor permissions and guardrails. The safety model does not change, only the operator does.</text>
+</svg>
