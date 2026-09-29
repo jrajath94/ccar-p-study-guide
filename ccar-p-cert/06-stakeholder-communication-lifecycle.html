@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<style>
+/* Validation-assembly: bridge + equation rendering (additive, 2026-09-29). */
+.chapter-bridge,.topic-bridge,.u-bridge{border-left:3px solid #8a8f98;border-left:3px solid color-mix(in srgb,currentColor 40%,transparent);padding:.55rem .9rem;margin:1.1rem 0;background:rgba(128,128,128,.08);border-radius:0 6px 6px 0}
+.next-chapter,.u-next,.u-goto{font-weight:650;margin:1.15rem 0}
+.display-eq,.eq{text-align:center;margin:1.15rem 0;font-size:1.12em;line-height:1.7}
+.eq-where{margin:.1rem 0 1rem 1.25rem;font-size:.93em;opacity:.92}
+.eq-worked{border:1px solid #8a8f98;border:1px solid color-mix(in srgb,currentColor 30%,transparent);border-radius:8px;padding:.7rem 1rem;margin:1rem 0;background:rgba(128,128,128,.06)}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>D6. Stakeholder Communication and Lifecycle Management</title>
 <style>
@@ -1362,7 +1370,7 @@ html.xp-js .xp-reveal.xp-in {
 <main id="ds-content">
 <nav class="ds-crumb" aria-label="Breadcrumb"><ol><li><a href="index.html">Home</a></li><li aria-current="page">D6 · Stakeholder Communication &amp; Lifecycle (14%)</li></ol></nav>
 <div class="banner"><div class="kicker">CCAR-P · Claude Certified Architect: Professional · 63 items · 120 min · pass 720/1000</div><h1>D6. Stakeholder Communication and Lifecycle Management</h1><p>14% of the exam, about 9 questions. This is the architect&#x27;s craft volume: how you learn what to build, how you explain your choices, how you write honest contracts for probabilistic systems, and how you keep the system healthy after handoff.</p><div class="facts"><span>D6 · 14% · about 9 questions</span><span>Discovery, decision, documentation, handoff, monitoring, iteration</span></div></div>
-<section class="unit" id=""><div class="def"><p class="t-title">What this domain really tests</p>
+<section class="unit"><div class="def"><p class="t-title">What this domain really tests</p>
 
 <p>Every other domain asks what you would build. D6 asks how you would run the whole engagement: discovery, decision, documentation, handoff, monitoring, iteration. The questions are scenario-based. You will read a situation with stakeholders, constraints, and a disagreement, and pick the move a senior architect makes.</p></div>
 
@@ -1375,7 +1383,7 @@ html.xp-js .xp-reveal.xp-in {
 </ol>
 <p>Read every D6 item constraint-first: who are the stakeholders, what did they actually agree to, what is being measured, and who owns it. The distractor almost always sounds technically clever but ignores one of those four.</p></section>
 
-<section class="unit" id=""><h2>Unit 1. Who the stakeholders are</h2>
+<section class="unit"><h2>Unit 1. Who the stakeholders are</h2>
 <p class="lede">Every project has people who can change its fate. Name them before you design anything.</p>
 
 <h3>What it is</h3>
@@ -1385,6 +1393,13 @@ html.xp-js .xp-reveal.xp-in {
 sponsor: money + risk | product owner: shipped value | users: speed + accuracy
 legal: auditability | engineers: feasibility | IT/support: operability
 </code></pre>
+<figure><img src="img/06-six-stakeholders.svg" alt="Six cards naming stakeholder types and their concerns" title="Study figure: six stakeholder types and what each cares about."><figcaption>Study figure: six stakeholder types and what each cares about.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Each card names one of the six stakeholder types and what it cares about: the executive sponsor cares about cost, risk, and business outcome; end users about speed, accuracy, and workflow fit.</li>
+<li>Legal and compliance guard against lawsuits; the engineering team cares about feasibility and on-call load; IT and support inherit operations.</li>
+<li>Takeaway: you cannot give all six equal time. The map in the next section decides how much of your week each one gets.</li>
+</ol></div>
+
 <h3>How it works under the hood: the map</h3>
 <p><strong>Rung 2: one level deeper.</strong> You cannot give all six equal time, so you sort them on two axes. <strong>Influence</strong> is how much power they have over the project: can they fund it, block it, or kill it? <strong>Interest</strong> is how much they care day to day: do they live in the system or just sign the checks? The combination puts each stakeholder in one quadrant, and the quadrant decides your cadence with them:</p>
 <p><figure><img src="img/d6-stakeholder-map.svg" alt="Stakeholder map: influence versus interest grid with four plotted stakeholders in four quadrants" title="The stakeholder map: the quadrant decides how much of your week each person gets."><figcaption>The stakeholder map: the quadrant decides how much of your week each person gets.</figcaption></figure></p>
@@ -1438,7 +1453,7 @@ legal: auditability | engineers: feasibility | IT/support: operability
 <p><strong>Scenario shape:</strong> two weeks before go-live, the compliance officer blocks the rollout, and the case notes that nobody consulted them during the project. Or the executive sponsor is surprised by the monthly bill. <strong>The trap:</strong> a technical fix, like more training data, a better model, or more user training. None of those address a stakeholder who was never plotted. A second trap: treating every stakeholder the same, giving the helpdesk the same weekly deep dive as the sponsor. <strong>The tell:</strong> the right answer names the stakeholder's quadrant (influence versus interest), puts the blocker in the keep-satisfied quadrant (high influence, low interest), and prescribes the missing cadence: consult early, consult on risk, never drown in detail.</p></div>
 <p class="u-next"><strong>Next:</strong> structured discovery and requirement gathering, turning stakeholder talk into written, measurable requirements.</p>
 </section>
-<section class="unit" id=""><h2>Unit 2. Structured discovery and requirement gathering</h2>
+<section class="unit"><h2>Unit 2. Structured discovery and requirement gathering</h2>
 <p class="lede">Discovery is the interview before the design. Structured means you run it from a fixed checklist, not from vibes.</p>
 
 <h3>What it is</h3>
@@ -1447,6 +1462,13 @@ legal: auditability | engineers: feasibility | IT/support: operability
 <pre><code class="language-text">5 buckets (60-min sessions) --&gt; ONE signed requirements document --&gt; architecture begins
   success metrics | constraints | data reality | risk tolerance | decision rights
 </code></pre>
+<figure><img src="img/06-discovery-out.svg" alt="Unstructured kickoff versus structured discovery" title="Study figure: discovery turns a wish list into signed, measurable requirements."><figcaption>Study figure: discovery turns a wish list into signed, measurable requirements.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The gray panel is the unstructured kickoff: one big meeting with no agenda that produces a wish list with nothing testable.</li>
+<li>The green panel is structured discovery: planned conversations and document reviews that produce numbers, constraints, and a signed, testable requirement set.</li>
+<li>Takeaway: if the stakeholder cannot name a number, the project is not ready for architecture.</li>
+</ol></div>
+
 <h3>How it works under the hood</h3>
 <p><strong>Rung 2: one level deeper.</strong> Run discovery as short, focused sessions, one per stakeholder type. Sixty minutes each is enough. In each session you fill five buckets:</p>
 <dl class="kv">
@@ -1599,7 +1621,7 @@ legal: auditability | engineers: feasibility | IT/support: operability
 </table></div>
 <p class="u-next"><strong>Next:</strong> communicating architectural decisions and trade-offs, defending choices to people who do not read code.</p></section>
 
-<section class="unit" id=""><h2>Unit 3. Communicating architectural decisions and trade-offs</h2>
+<section class="unit"><h2>Unit 3. Communicating architectural decisions and trade-offs</h2>
 <p class="lede">The architect's job is not to pick the best technology. It is to make the trade-offs visible so the business can choose knowingly.</p>
 
 <h3>What it is</h3>
@@ -1613,6 +1635,13 @@ legal: auditability | engineers: feasibility | IT/support: operability
  latency      cost
   (base corners: push toward one, the other two pull back)
 </code></pre>
+<figure><img src="img/06-business-language.svg" alt="Technical phrasing versus business phrasing plus the trade-off definition" title="Study figure: speak in business terms the stakeholder can judge."><figcaption>Study figure: speak in business terms the stakeholder can judge.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The red panel is what not to say: a reranker over the top 50 chunks means nothing to a non-technical executive. The green panel is the same decision in business terms: costs three times more, halves the error rate, saves rework.</li>
+<li>Below: a trade-off is a choice where improving one dimension costs you another, and the black-box decision is the failure mode to avoid.</li>
+<li>Takeaway: present two or three real options side by side, in business terms, with your recommendation and the one fact that would change your mind.</li>
+</ol></div>
+
 <h3>How it works under the hood: the decision memo</h3>
 <p><strong>Rung 2: one level deeper.</strong> Use the same four-part structure every time:</p>
 <ol>
@@ -1659,11 +1688,11 @@ legal: auditability | engineers: feasibility | IT/support: operability
 </tbody>
 </table></div>
 
-<p>Now translate for the stakeholder: "Option A is the most accurate but costs $9,000 a month and keeps customers waiting 9 seconds. Option C is nearly free and instant, but 12% of tickets get misrouted and each misroute costs about $6 in agent rework, which is roughly $36,000 a month at our volume.</p>
+<p>Now translate for the stakeholder: "Option A is the most accurate but costs $9,000 a month and keeps customers waiting 9 seconds. Option C is nearly free and instant, but 12% of tickets get misrouted and each misroute costs about $6 in agent rework, which is roughly $360,000 a month at our volume.</p>
 <div class="callout math"><span class="callout-h">Formula: misroute cost</span>
 <p class="eq">misroute_cost = tickets &times; misroute_rate &times; cost_per_misroute</p>
 <p class="eq-where">where: <strong>tickets</strong>, tickets per month; <strong>misroute_rate</strong>, fraction routed wrong; <strong>cost_per_misroute</strong>, dollars of agent rework each.</p>
-<p class="eq-worked"><strong>Worked example (Option C above).</strong> 500,000 &times; 12% &times; $6 = $36,000 a month in rework. The cheap, instant option is the most expensive one once the error rate is priced in. That is the arithmetic behind the recommendation for Option B: fit the budget, answer in 3 seconds, and let the confidence-threshold review queue catch the 6% it misses.</p></div>
+<p class="eq-worked"><strong>Worked example (Option C above).</strong> 500,000 &times; 12% &times; $6 = $360,000 a month in rework. The cheap, instant option is the most expensive one once the error rate is priced in. That is the arithmetic behind the recommendation for Option B: fit the budget, answer in 3 seconds, and let the confidence-threshold review queue catch the 6% it misses.</p></div>
 <p>I recommend B: it fits the budget, answers in 3 seconds, and the 6% it misses are caught by the confidence-threshold review queue (confidence: the model's own score for how sure it is). Revisit if volume passes 2 million tickets a month, because then A's accuracy starts paying for itself."</p>
 <p>Notice what happened: the recommendation is one paragraph, every number traces to the table, and the tripwire names the exact condition for revisiting. That is the whole skill.</p>
 <div class="exam-ask"><p><span class="cl">How they will ask this</span></p>
@@ -1771,7 +1800,7 @@ legal: auditability | engineers: feasibility | IT/support: operability
 </table></div>
 <p class="u-next"><strong>Next:</strong> architecture documentation and implementation guidance, writing the guides a builder can actually build from.</p></section>
 
-<section class="unit" id=""><h2>Unit 4. Architecture documentation and implementation guidance</h2>
+<section class="unit"><h2>Unit 4. Architecture documentation and implementation guidance</h2>
 <p class="lede">Teams forget why decisions were made. Documentation is how the architecture survives contact with the future.</p>
 
 <h3>What it is</h3>
@@ -1780,6 +1809,13 @@ legal: auditability | engineers: feasibility | IT/support: operability
 <pre><code class="language-text">one decision --&gt; ADR: title | context | decision | consequences | status
 handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt; runbook --&gt; named owners
 </code></pre>
+<figure><img src="img/06-doc-two-parts.svg" alt="Decision records versus implementation guidance" title="Study figure: documentation has two parts, why and how."><figcaption>Study figure: documentation has two parts, why and how.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The blue panel is decision records: ADRs in five parts, living with the code, never deleted, superseded rather than edited when the decision changes.</li>
+<li>The teal panel is implementation guidance: enough detail to build without you in the room, plus the runbook for deploy, monitor, and alerts.</li>
+<li>Takeaway: the why must survive the people; the how must survive the org chart.</li>
+</ol></div>
+
 <h3>How it works under the hood</h3>
 <p><strong>Rung 2: one level deeper.</strong> The ADR format, the handoff package, and the guidance in between.</p>
 <p><strong>Writing an ADR.</strong> One decision per record, one page, written at decision time, not reconstructed later. The five parts:</p>
@@ -1916,7 +1952,7 @@ handoff package: diagram --&gt; decision records --&gt; eval set + runner --&gt;
 </table></div>
 <p class="u-next"><strong>Next:</strong> feedback loops, expectation alignment, and SLAs, making promises in numbers both sides sign.</p></section>
 
-<section class="unit" id=""><h2>Unit 5. Feedback loops, expectation alignment, and SLAs</h2>
+<section class="unit"><h2>Unit 5. Feedback loops, expectation alignment, and SLAs</h2>
 <p class="lede">A promise you cannot measure is a wish. This unit is about writing honest, measurable promises for systems that are sometimes wrong.</p>
 
 <h3>What it is</h3>
@@ -1932,6 +1968,13 @@ measured by uptime monitors      ||    measured by humans grading samples
 <p class="eq-where">where: <strong>availability</strong>, the uptime fraction promised; <strong>43,200</strong>, minutes in a 30-day month; <strong>quality_rate</strong>, the fraction of outputs that pass human grading; <strong>graded</strong>, outputs graded per window.</p>
 <p class="eq-worked"><strong>Worked example.</strong> 99.9% availability: (1 &minus; 0.999) &times; 43,200 = 43.2, about 43 minutes of downtime a month. Quality: 95% of 1,000 graded outputs pass, so 50 wrong outputs ship per window. The exam's point, stated in the diagram above: availability never covers quality. One promise is measured by monitors, the other by humans grading samples, and a 99.9% uptime SLA says nothing about the 50 wrong answers.</p></div>
 <p class="u-bridge">The table above sets the vocabulary: availability is measured by monitors, quality by humans. The next question is why the quality half needs a different kind of promise for LLM apps.</p>
+<figure><img src="img/06-sla-terms.svg" alt="SLI, SLO, and SLA definitions with the feedback loop" title="Study figure: SLA, SLI, and SLO are three terms, one contract."><figcaption>Study figure: SLA, SLI, and SLO are three terms, one contract.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Follow the arrows: the SLI is the thing you measure, the SLO is the target you set for it, and the SLA is the contract that references the SLO and adds the remedy.</li>
+<li>The amber panel is the feedback loop: weekly eval reviews with the product owner and monthly business reviews with executives.</li>
+<li>Takeaway: the loop is what keeps the SLA honest after signing day.</li>
+</ol></div>
+
 <h3>Why SLAs mean something different for LLM apps</h3>
 <p><strong>Rung 2: one level deeper.</strong> Traditional software is deterministic: the same input always produces the same output. If the code is correct and the server is up, the answer is right. So one SLA, "the service responds correctly 99.9% of the time," covers everything.</p>
 <p>An LLM is probabilistic: the same input can produce different outputs on different runs, and even a healthy, fast system gives wrong answers at some rate. That splits the promise in two:</p>
@@ -1988,6 +2031,13 @@ measured by uptime monitors      ||    measured by humans grading samples
 </ul>
 <p><figure><img src="img/d6-feedback-cadence.svg" alt="The feedback cadence ladder: Always (demo on real data by week 2 or 3), Weekly (eval dashboard review), Monthly (business review with the sponsor), Quarterly (architecture revisit)" title="The feedback cadence ladder: who hears what, how often."><figcaption>The feedback cadence ladder: who hears what, how often.</figcaption></figure></p>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Read top to bottom.</strong> The top band is the most frequent loop, the bottom the slowest. Each band names who is in the room, what they see, and what leaves the room. Run all four at once: the fast loops catch cheap surprises, the slow loops decide expensive things.</p><div class="table-wrap"><table><tr><th>Component</th><th>What it is</th><th>Why it matters</th><th>What breaks if it is wrong</th></tr><tr><td>Always: demo on real data</td><td>Working demo by week 2 or 3</td><td>Surprise is cheapest before week 4</td><td>Wrong success metrics discovered at launch</td></tr><tr><td>Weekly: eval dashboard review</td><td>15 minutes with product owner and eval owner</td><td>Red metrics get a named investigator</td><td>Decay hides until users complain</td></tr><tr><td>Monthly: business review</td><td>Cost and quality trend with the sponsor</td><td>Leaves with one decision and named owners</td><td>Budget drift discovered at quarter end</td></tr><tr><td>Quarterly: architecture revisit</td><td>New models, cost drift, trade-off checks</td><td>Decisions and eval sets stay fresh</td><td>The architecture silently goes stale</td></tr></table></div></div>
+<figure><img src="img/06-availability-targets.svg" alt="Availability targets with allowed downtime and what each means in practice" title="Study figure: pick the availability target your architecture can actually hold."><figcaption>Study figure: pick the availability target your architecture can actually hold.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Each row is one target: 99 percent allows one bad afternoon a month, 99.9 percent allows 43 minutes, 99.99 percent allows 4 minutes 19 seconds and needs multi-region failover.</li>
+<li>The target sets the error budget: the amount of failure allowed before consequences kick in.</li>
+<li>Takeaway: each extra nine roughly multiplies the engineering cost. Never promise 99.99 percent because it sounds good.</li>
+</ol></div>
+
 <h3>Worked example: the support assistant SLA</h3>
 <p><strong>Rung 4: seeing it in one contract.</strong> Availability: 99.9% monthly, measured by the API gateway's 5xx rate (5xx: server-error responses). Error budget: 43 minutes. Remedy: 10% service credit per additional 43 minutes, postmortem within 48 hours.</p>
 <p>Quality: at least 94% of weekly sampled responses graded "correct and safe" by reviewers, sample size 800. Two weeks below 92% triggers the quality review: feature work pauses, the failing segment (say, refund-policy questions) gets a dedicated fix, results reported to the product owner. Review labor: 800 outputs times 90 seconds is 20 reviewer hours per week, budgeted and staffed.</p>
@@ -2094,7 +2144,7 @@ measured by uptime monitors      ||    measured by humans grading samples
 </table></div>
 <p class="u-next"><strong>Next:</strong> lifecycle management, handoff, monitoring, and iteration after launch.</p>
 </section>
-<section class="unit" id=""><h2>Unit 6. Lifecycle management: handoff, monitoring, iteration</h2>
+<section class="unit"><h2>Unit 6. Lifecycle management: handoff, monitoring, iteration</h2>
 <p class="lede">Handoff is not the end of the project. It is the middle. The system lives or dies on what happens after.</p>
 
 <h3>What it is</h3>
@@ -2224,7 +2274,7 @@ measured by uptime monitors      ||    measured by humans grading samples
 </table></div>
 <p class="u-next"><strong>Next:</strong> the D6 exam tactics, the patterns that turn every D6 scenario into a checkable answer.</p></section>
 
-<section class="unit" id=""><h2>D6 exam tactics</h2>
+<section class="unit"><h2>D6 exam tactics</h2>
 <p class="u-bridge">Six units of people-work are behind you: who the stakeholders are, how to discover what they need, how to defend decisions, how to document them, how to promise in numbers, and how to keep the system alive after launch. This section compresses all of it into the tactics that turn D6 scenarios into checkable answers.</p>
 <p class="lede">Five rules that answer most D6 questions.</p>
 
@@ -2243,7 +2293,34 @@ measured by uptime monitors      ||    measured by humans grading samples
 
 </main>
 </div>
-<footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html" aria-current="page">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><figure><img src="img/06-exam-tactics.svg" alt="Five cards with D6 exam tactics" title="Study figure: five rules that answer most D6 questions."><figcaption>Study figure: five rules that answer most D6 questions.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The five rules: constraint-first reading; the skipped step is the answer; split every absolute promise; name the owner; recommend, do not decree.</li>
+<li>Constraint-first reading defeats the trap option, which almost always ignores one stakeholder, one number, or one missing piece.</li>
+<li>Takeaway: the skipped step is the answer. Discovery before architecture, measurement before promises, diagnosis before fixes, ownership before handoff.</li>
+</ol></div>
+
+<h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html" aria-current="page">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<script>
+/* CCAR-P volume order for the auto-generated prev/next footer. Overrides the
+   script's default manifest so the footer follows the same chain as the static
+   header nav: index -> prereq -> D1-D7 -> question bank -> design guide ->
+   crash course. (Plain hyphens only in this comment.) */
+window.DS_MANIFEST = [
+  { file: "index.html",                                label: "Start · Exam Overview & Study Map" },
+  { file: "prereq-claude-fundamentals.html",           label: "Prereq · Claude Developer Fundamentals" },
+  { file: "01-solution-design-architecture.html",      label: "D1 · Solution Design & Architecture (17%)" },
+  { file: "02-models-prompting-context.html",          label: "D2 · Models, Prompting & Context (13%)" },
+  { file: "03-integration.html",                       label: "D3 · Integration (19%)" },
+  { file: "04-evaluation-testing-optimization.html",   label: "D4 · Evaluation, Testing & Optimization (16%)" },
+  { file: "05-governance-safety-risk.html",             label: "D5 · Governance, Safety & Risk (14%)" },
+  { file: "06-stakeholder-communication-lifecycle.html", label: "D6 · Stakeholder Communication & Lifecycle (14%)" },
+  { file: "07-developer-productivity-enablement.html", label: "D7 · Developer Productivity & Enablement (7%)" },
+  { file: "08-question-bank.html",                     label: "Question Bank" },
+  { file: "09-system-design-guide.html",               label: "System Design Guide" },
+  { file: "crash-course.html",                         label: "Crash Course" }
+];
+</script>
 <script>
 /* ==========================================================================
    DS — Canonical Design System behavior (shared across study-guide tracks)
