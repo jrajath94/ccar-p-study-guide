@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<style>
+/* Validation-assembly: bridge + equation rendering (additive, 2026-09-29). */
+.chapter-bridge,.topic-bridge,.u-bridge{border-left:3px solid #8a8f98;border-left:3px solid color-mix(in srgb,currentColor 40%,transparent);padding:.55rem .9rem;margin:1.1rem 0;background:rgba(128,128,128,.08);border-radius:0 6px 6px 0}
+.next-chapter,.u-next,.u-goto{font-weight:650;margin:1.15rem 0}
+.display-eq,.eq{text-align:center;margin:1.15rem 0;font-size:1.12em;line-height:1.7}
+.eq-where{margin:.1rem 0 1rem 1.25rem;font-size:.93em;opacity:.92}
+.eq-worked{border:1px solid #8a8f98;border:1px solid color-mix(in srgb,currentColor 30%,transparent);border-radius:8px;padding:.7rem 1rem;margin:1rem 0;background:rgba(128,128,128,.06)}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>D5: Governance, Safety and Risk Management</title>
 <style>
@@ -1384,12 +1392,19 @@ Exam facts (63 items, 120 min, 720/1000, $175, Pearson VUE) are verified. Vendor
 <li><strong>Data leakage via context.</strong> Sensitive data placed in the prompt (customer records, secrets, private documents) escapes through logs, caches, eval datasets, error messages, or the provider's training pipeline. The leak is rarely the model answering a trick question; it is usually your own plumbing.</li>
 <li><strong>Tool misuse.</strong> An agent calls the wrong tool, calls the right tool with attacker-controlled arguments, or chains tools into an action nobody authorized (read inbox, then forward it to an external address). The model did exactly what the text told it; the authorization design was missing.</li>
 </ul>
-<p><figure><img src="img/d5-failure-modes.jpg" alt="Taxonomy tree with root failure modes and five branches: hallucination, prompt injection, jailbreak, context data leak, tool misuse, each with a simple icon." title="Generated figure: the five failure modes to diagnose from symptoms on the exam."><figcaption>Generated figure: the five failure modes to diagnose from symptoms on the exam.</figcaption></figure></p>
+<figure><img src="img/d5-failure-modes.jpg" alt="Taxonomy tree with root failure modes and five branches: hallucination, prompt injection, jailbreak, context data leak, tool misuse, each with a simple icon." title="Generated figure: the five failure modes to diagnose from symptoms on the exam."><figcaption>Generated figure: the five failure modes to diagnose from symptoms on the exam.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Read the blue root box first: everything on the right is a way an LLM system fails.</li>
 <li>Each branch box names one failure mode with an icon hinting at its nature (question bubble for hallucination, cracked shield for injection, open lock for jailbreak, database arrow for data leak, wrench for tool misuse).</li>
 <li>Use it as a diagnostic checklist: given a scenario, walk the five branches and ask which one matches the symptom. One symptom, one branch, one fix family.</li>
 <li>Teaching point: notice that three of the five (injection, jailbreak, tool misuse) are adversarial (someone is attacking), while two (hallucination, data leak) can happen with zero attacker involvement. The exam often makes you choose between an adversarial control and a quality control.</li>
+</ol></div>
+
+<figure><img src="img/05-failure-modes.svg" alt="Five cards naming the failure modes and their fix directions" title="Study figure: five failure modes, each with its own fix family."><figcaption>Study figure: five failure modes, each with its own fix family.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Each card names one failure mode and the direction of its fix: hallucination is grounded in retrieved sources, injection needs delimiting and confirmation gates, jailbreak needs output backstops.</li>
+<li>Data leak and tool misuse are plumbing bugs: redaction at collection, authorization design before execution.</li>
+<li>Takeaway: three are adversarial, two happen with no attacker at all. The exam often makes you choose between an adversarial control and a quality control.</li>
 </ol></div>
 
 <h3>How the big attacks work, under the hood</h3>
@@ -1409,6 +1424,13 @@ A research agent has tools: <code>search_web</code>, <code>read_inbox</code>, <c
 <p>Three built-in limitations show up as distractors. The model's knowledge has a cutoff date (it does not know last week's events). It is bad at exact computation over long numbers (use a calculator tool, not the model). Its context window is finite (long inputs get truncated or summarized, so "the model forgot page 1" is a context-management bug, not an attack). The credited answer matches the fix to the cause: retrieval or tools for knowledge gaps, context engineering for window limits.</p></div>
 <p class="u-next"><strong>Next:</strong> what the model already brings, Constitutional AI and the alignment you inherit before you build a single control of your own.</p>
 
+<figure><img src="img/05-injection-steps.svg" alt="Four-step indirect prompt injection attack plus stacked defenses" title="Study figure: indirect prompt injection, step by step."><figcaption>Study figure: indirect prompt injection, step by step.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Follow the cards left to right: the agent fetches a vendor page, hidden text smuggles an order, page text and your instructions share one context window with no marker for data versus orders, and the email goes out.</li>
+<li>The green panel is the defense stack: delimit and label untrusted content as data, and require a confirmation gate before side-effecting tools.</li>
+<li>Takeaway: indirect injection is the highest-severity agentic risk because the model has tool access.</li>
+</ol></div>
+
 <h2>2. What the model already brings: Constitutional AI and usage policies</h2>
 <p class="lede">Before you build a single control of your own, know what safety the model already brings, and where it stops.</p>
 <h3>What Constitutional AI is</h3>
@@ -1426,12 +1448,19 @@ model draft --&gt; self critique    two answers --&gt; AI picks better
 <li><strong>Phase 2: preference learning (RLAIF).</strong> The model generates pairs of responses; it then judges which one better follows the constitution. A preference model (also called a reward model) is trained on these AI-made judgments, and the main model is fine-tuned (further trained on new examples) with reinforcement learning against that reward signal. RLAIF stands for Reinforcement Learning from AI Feedback: the same loop as RLHF (from Human Feedback), but the rankings come from the AI applying the constitution.</li>
 </ul>
 <p>Why this matters to you as an architect: it explains Claude's behavior profile (strong refusal calibration, tendency to explain its reasoning, honesty about uncertainty) and its limits. CAI makes the model safer, but it does not make your system safe: your guardrails, HITL, and compliance work still sit on top.</p>
-<p><figure><img src="img/d5-constitutional-ai.jpg" alt="Two-phase diagram: phase 1 shows model draft to self critique to revision; phase 2 shows two answers to choose better to reward model to fine tune." title="Generated figure: Constitutional AI in two phases. Phase 1 teaches the model to revise itself against written principles; phase 2 turns AI judgments into a training signal."><figcaption>Generated figure: Constitutional AI in two phases. Phase 1 teaches the model to revise itself against written principles; phase 2 turns AI judgments into a training signal.</figcaption></figure></p>
+<figure><img src="img/d5-constitutional-ai.jpg" alt="Two-phase diagram: phase 1 shows model draft to self critique to revision; phase 2 shows two answers to choose better to reward model to fine tune." title="Generated figure: Constitutional AI in two phases. Phase 1 teaches the model to revise itself against written principles; phase 2 turns AI judgments into a training signal."><figcaption>Generated figure: Constitutional AI in two phases. Phase 1 teaches the model to revise itself against written principles; phase 2 turns AI judgments into a training signal.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Phase 1, left to right: "model draft" produces an answer, "self critique" judges it against the constitution, "revision" produces the improved answer. This loop creates the supervised data.</li>
 <li>The arrow drops to phase 2: "two answers" are generated, the AI picks the "choose better" one per the constitution, and those choices train the "reward model."</li>
 <li>"Fine tune" is the last box: reinforcement learning steers the model toward what the reward model scores highly.</li>
 <li>Teaching point: humans wrote the constitution, but the per-example judgments are AI-made. That is the whole scalability bet of RLAIF.</li>
+</ol></div>
+
+<figure><img src="img/05-constitutional-ai.svg" alt="Phase 1 supervised critique and revision plus phase 2 preference learning" title="Study figure: Constitutional AI in two training phases."><figcaption>Study figure: Constitutional AI in two training phases.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Phase 1: the model generates a response, critiques its own draft against the constitution's principles, and writes a revision. The revision pairs become supervised data.</li>
+<li>Phase 2: the model judges pairs of responses against the constitution, and that preference signal trains the policy.</li>
+<li>Takeaway: the key move is AI feedback from written principles, not human-written answers.</li>
 </ol></div>
 
 <h3>Usage policies and safety levels</h3>
@@ -1442,6 +1471,13 @@ model draft --&gt; self critique    two answers --&gt; AI picks better
 <p><span class="cl">The alignment-inheritance trap</span></p>
 <p>"Claude is aligned, so our application inherits safety" is a distractor. Alignment reduces the base rate of bad behavior; it does not cover your system's specific risks. A well-aligned model in a system with over-broad tool permissions, no input filtering, and no audit trail is still an incident waiting to happen. The exam will present a "but the model is safe" distractor against a scenario with missing system-level controls. The system-level controls are always the credited answer. CCAR-P tests architects who build on Claude: Anthropic owns model-level alignment (CAI, refusal training, usage policy enforcement); you own system-level safety (guardrails, HITL, compliance, monitoring). Items will probe that boundary: "the model refused a legitimate request" is a tuning and guardrail-precision problem on your side, not a reason to distrust the alignment work.</p></div>
 <p class="u-next"><strong>Next:</strong> guardrails and safety controls, the filters and gates you build around the model yourself.</p>
+
+<figure><img src="img/05-safety-levels.svg" alt="Usage policy versus the ASL ladder from 1 to 4" title="Study figure: usage policy and AI safety levels are two different instruments."><figcaption>Study figure: usage policy and AI safety levels are two different instruments.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The red panel is the usage policy: what the system may not be used for, from weapons to fraud at scale. Your guardrails backstop the model's own refusals.</li>
+<li>The amber panel is the AI Safety Levels ladder: as capabilities grow, the required safety practices ratchet up.</li>
+<li>Takeaway: a responsible deployment names the safety bar it is held to. Never assume today's practices suffice forever.</li>
+</ol></div>
 
 <h2>3. Guardrails and safety controls</h2>
 <p class="lede">You have met the five failure modes. Now the defenses, matched to each door the failure uses.</p>
@@ -1461,8 +1497,8 @@ MODEL output --&gt; [ OUTPUT GUARDRAILS: PII leak / hallucination / toxicity ] -
 <li><strong>Output filtering.</strong> The model's response is scanned after generation for PII or secrets leaks, and for hallucinations against retrieved sources (does the answer cite text that actually exists in the retrieved documents?). It also gets a toxicity re-screen and structured-output validation (does the JSON parse? do the fields match the schema?).</li>
 <li><strong>Tool-use controls.</strong> For agents: least-privilege tool scopes (the tool can only touch what it needs), argument allow-lists, mandatory human confirmation before irreversible actions (send, delete, pay), and sandboxing of code execution (running code in a sealed-off environment where it cannot touch anything else).</li>
 </ul>
-<p><figure><img src="img/d5-defense-in-depth.png" alt="Defense in depth: concentric protective layers around the core system" title="Defense in depth: each guardrail layer catches what the others miss."><figcaption>Defense in depth: each guardrail layer catches what the others miss.</figcaption></figure></p>
-<p><figure><img src="img/d5-akamai-ai-firewall.jpg" alt="Diagram of input guardrails (prompt injection, denial of service, malicious code) sitting between the AI app and the LLM, and output guardrails (sensitive data, hallucinations, toxic language) sitting on the response path back to the app." title="Internet-sourced figure: input and output guardrails in an AI firewall. Source: Akamai tech docs, &#x27;Protect your AI apps&#x27; (techdocs.akamai.com/cloud-security/docs/protect-your-ai-apps)."><figcaption>Internet-sourced figure: input and output guardrails in an AI firewall. Source: Akamai tech docs, &#x27;Protect your AI apps&#x27; (techdocs.akamai.com/cloud-security/docs/protect-your-ai-apps).</figcaption></figure></p>
+<figure><img src="img/d5-defense-in-depth.png" alt="Defense in depth: concentric protective layers around the core system" title="Defense in depth: each guardrail layer catches what the others miss."><figcaption>Defense in depth: each guardrail layer catches what the others miss.</figcaption></figure>
+<figure><img src="img/d5-akamai-ai-firewall.jpg" alt="Diagram of input guardrails (prompt injection, denial of service, malicious code) sitting between the AI app and the LLM, and output guardrails (sensitive data, hallucinations, toxic language) sitting on the response path back to the app." title="Internet-sourced figure: input and output guardrails in an AI firewall. Source: Akamai tech docs, &#x27;Protect your AI apps&#x27; (techdocs.akamai.com/cloud-security/docs/protect-your-ai-apps)."><figcaption>Internet-sourced figure: input and output guardrails in an AI firewall. Source: Akamai tech docs, &#x27;Protect your AI apps&#x27; (techdocs.akamai.com/cloud-security/docs/protect-your-ai-apps).</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Start at the left box, "AI app": this is the user and your application code.</li>
 <li>Follow the top arrow right: the user prompt request first passes through <strong>input guardrails</strong> before it ever reaches the model. The three checks listed (prompt injection, denial of service, malicious code) are all attacks that arrive <em>in the request</em>.</li>
@@ -1487,6 +1523,13 @@ A support copilot handles 100,000 requests per day. You add a classifier gate on
 <details class="pq"><summary>You might be wondering: where do guardrails live, in code or in the provider?</summary><div class="pq-answer"><p>Both. Provider-side options (like Bedrock Guardrails) are managed services: you configure policies, the provider runs the filters, and you get audit logs. Code-side options (NeMo Guardrails, custom middleware) live in your own service, in front of the API call. The design decision is about control versus effort. Provider guardrails are faster to adopt and come with the provider's compliance envelope. Your own layer gives you custom rules the provider never thought of. It also keeps sensitive content inside your boundary (it never leaves your VPC, your virtual private cloud, to be filtered).</p></div></details>
 <p class="u-next"><strong>Next:</strong> human-in-the-loop validation, putting human judgment where it changes outcomes instead of on every token.</p>
 
+<figure><img src="img/05-guardrail-layers.svg" alt="Four guardrail layers from input filtering to human review" title="Study figure: layered guardrails, each catching what the others miss."><figcaption>Study figure: layered guardrails, each catching what the others miss.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Follow the arrows: input filtering scans the prompt before the model, classifier gates score input and output cheaply, output guardrails scan the response before the app, and human review catches what machines miss.</li>
+<li>The layers defend against different things, which is why you need all of them.</li>
+<li>Takeaway: an input filter cannot catch a hallucination, and an output filter cannot stop an injection.</li>
+</ol></div>
+
 <h2>4. Human-in-the-loop validation strategies</h2>
 <p class="lede">Filters catch bad inputs and outputs. Some actions are too costly to get wrong even rarely, so a person stays in charge of the decision.</p>
 <h3>What it is</h3>
@@ -1505,15 +1548,22 @@ A support copilot handles 100,000 requests per day. You add a classifier gate on
 <li><strong>Risk-gated routing.</strong> The system scores each output on risk (action impact times model confidence) and routes only risky ones to humans. Low-risk, high-confidence outputs go straight through. This is the default architecture for scale: it concentrates human attention where it matters.</li>
 <li><strong>Sampled audit.</strong> A random fraction (say 2 to 5%) of auto-approved outputs is reviewed after the fact. This does not prevent errors; it measures the error rate and catches drift. Required as a complement to risk-gated routing, because gates have blind spots.</li>
 </ul>
-<p><figure><img src="img/d5-hitl-patterns.svg" alt="Three HITL patterns compared: review-before-release, risk-gated routing, and sampled audit, with when each is required, what it costs, and what each prevents or misses" title="Three human-in-the-loop patterns: which one, when."><figcaption>Three human-in-the-loop patterns: which one, when.</figcaption></figure></p>
+<figure><img src="img/d5-hitl-patterns.svg" alt="Three HITL patterns compared: review-before-release, risk-gated routing, and sampled audit, with when each is required, what it costs, and what each prevents or misses" title="Three human-in-the-loop patterns: which one, when."><figcaption>Three human-in-the-loop patterns: which one, when.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Read down, then across.</strong> Each column is one pattern. The rows ask the same four questions of all three: what happens, when it is required, what it costs, and what it prevents versus what it misses. Compare the bottom row across columns: only pattern 1 prevents individual harm, and pattern 3 explicitly cannot. That bottom row is the exam's favorite question.</p><div class="table-wrap"><table><tr><th>Component</th><th>What it is</th><th>Why it matters</th><th>What breaks if it is wrong</th></tr><tr><td>Pattern 1: review-before-release</td><td>Every output approved by a person</td><td>The only pattern that stops individual harm</td><td>Throughput: too slow for high volume</td></tr><tr><td>Pattern 2: risk-gated routing</td><td>Only risky outputs queue for review</td><td>Concentrates scarce attention where it matters</td><td>Mis-scored risk: harm slips through the "safe" lane</td></tr><tr><td>Pattern 3: sampled audit</td><td>Random 2-5% reviewed after the fact</td><td>Measures error rate and drift cheaply</td><td>Prevention: harm has already shipped when found</td></tr></table></div></div>
-<p><figure><img src="img/d5-hitl-risk-gate.jpg" alt="Flow diagram: model output goes to a risk gate; low risk takes auto release, high risk goes to a human review queue where a reviewer can approve, edit, or reject, and a learn loop feeds corrections back." title="Generated figure: the risk-gated HITL pipeline. The gate routes; the human decides; the loop learns."><figcaption>Generated figure: the risk-gated HITL pipeline. The gate routes; the human decides; the loop learns.</figcaption></figure></p>
+<figure><img src="img/d5-hitl-risk-gate.jpg" alt="Flow diagram: model output goes to a risk gate; low risk takes auto release, high risk goes to a human review queue where a reviewer can approve, edit, or reject, and a learn loop feeds corrections back." title="Generated figure: the risk-gated HITL pipeline. The gate routes; the human decides; the loop learns."><figcaption>Generated figure: the risk-gated HITL pipeline. The gate routes; the human decides; the loop learns.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Start at the blue "model output" box on the left. Every output passes through the amber "risk gate" diamond.</li>
 <li>The gate is a decision: low-risk and high-confidence outputs take the green "auto release" path at the top. Nothing human touches them.</li>
 <li>Risky outputs drop to the "human review queue" box. A person then picks one of three exits: approve, edit, or reject.</li>
 <li>The dashed "learn" arrow curves back to the model: every correction is training signal (prompt fixes, eval cases, fine-tuning data).</li>
 <li>Teaching point: the gate decides <em>who</em> handles the output, and the human decides <em>what happens</em>. A gate without the human is just a classifier; a human without the gate drowns in volume.</li>
+</ol></div>
+
+<figure><img src="img/05-hitl-patterns.svg" alt="Review-before-release, risk-gated routing, and sampled audit" title="Study figure: three human-oversight patterns, matched to the stakes."><figcaption>Study figure: three human-oversight patterns, matched to the stakes.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Review-before-release is 100 percent human approval, required for irreversible, visible, or legally binding actions like payments and hiring.</li>
+<li>Risk-gated routing scores risk as impact times confidence and sends only risky outputs to humans: the default architecture for scale.</li>
+<li>Takeaway: sampled audit does not prevent errors; it measures the error rate and catches drift. Use it as a complement, never a replacement.</li>
 </ol></div>
 
 <h3>Escalation design, under the hood</h3>
@@ -1560,7 +1610,7 @@ A support copilot handles 100,000 requests per day. You add a classifier gate on
 <li><strong>DPIA (Data Protection Impact Assessment).</strong> Required before high-risk processing (large-scale profiling, new AI features over personal data). For the exam: if the scenario says "new AI feature over EU user data at scale," the credited answer includes doing a DPIA first.</li>
 <li><strong>Cross-border transfers.</strong> Moving EU personal data to non-adequate countries needs safeguards (Standard Contractual Clauses). This is why data residency (keeping EU data in EU regions) shows up in architecture answers.</li>
 </ul>
-<p><figure><img src="img/d5-gdpr-data-flow.jpg" alt="Diagram showing an AI pipeline and stored logs on the left, with arrows to four user rights on the right: access my data, erase my data, take my data, stop processing, under a consent plus purpose banner." title="Generated figure: GDPR as a data-flow design problem. Rights are only real if the system can find and act on the data."><figcaption>Generated figure: GDPR as a data-flow design problem. Rights are only real if the system can find and act on the data.</figcaption></figure></p>
+<figure><img src="img/d5-gdpr-data-flow.jpg" alt="Diagram showing an AI pipeline and stored logs on the left, with arrows to four user rights on the right: access my data, erase my data, take my data, stop processing, under a consent plus purpose banner." title="Generated figure: GDPR as a data-flow design problem. Rights are only real if the system can find and act on the data."><figcaption>Generated figure: GDPR as a data-flow design problem. Rights are only real if the system can find and act on the data.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>The amber banner on top ("consent + purpose") is the gate: nothing flows without a lawful basis tied to a stated purpose.</li>
 <li>The blue "AI pipeline" box and the dark "stored logs" box are where personal data actually sits in your system.</li>
@@ -1577,6 +1627,13 @@ A user invokes the right to erasure. Your system holds: 400 conversation turns i
 <p><span class="cl">The anonymization trap</span></p>
 <p>"Anonymized data is exempt, so we can just hash the names" is a distractor. Hashing is pseudonymization, not anonymization: if the hash can be linked back (and with AI-scale data it usually can), GDPR still applies. True anonymization must be irreversible given all reasonably available means. Also, "the model memorized it" is not a deletion: removing a fact from a trained model's weights is an unsolved research problem, which is why you keep personal data out of training and fine-tuning sets in the first place.</p></div>
 <p class="u-next"><strong>Next:</strong> HIPAA, FedRAMP, and Zero Data Retention, sector rules for health data and the strictest data deal on offer.</p>
+
+<figure><img src="img/05-gdpr-seven.svg" alt="Seven cards for the GDPR design demands" title="Study figure: the seven GDPR demands you design for, not memorize."><figcaption>Study figure: the seven GDPR demands you design for, not memorize.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The seven cards run from lawful basis and data minimization through subject rights, retention, breach notification within 72 hours, DPIA before high-risk processing, and cross-border safeguards.</li>
+<li>Subject rights are a retrieval-design problem: find one person's data everywhere, including vector stores and backups.</li>
+<li>Takeaway: design for these, do not memorize them.</li>
+</ol></div>
 
 <h2>6. Compliance: HIPAA, FedRAMP, and Zero Data Retention</h2>
 <p class="lede">GDPR covers personal data generally. This chapter covers the sectors where the rules are strictest: health data and government workloads.</p>
@@ -1599,6 +1656,13 @@ A user invokes the right to erasure. Your system holds: 400 conversation turns i
 <li><strong>Access controls.</strong> Authentication (who are you), authorization (what may you touch), and least privilege, applied to the model endpoints, the vector store, the logs, and the review queue.</li>
 <li><strong>Encryption.</strong> In transit (TLS) and at rest (provider-managed or customer-managed keys), plus key-management answers for the strictest buyers.</li>
 </ul>
+<figure><img src="img/05-common-backbone.svg" alt="Four shared architectural demands plus zero data retention" title="Study figure: the common backbone GDPR, HIPAA, and FedRAMP all demand."><figcaption>Study figure: the common backbone GDPR, HIPAA, and FedRAMP all demand.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The four cards: data residency in approved regions, defined retention with enforced deletion, immutable audit trails of who accessed what, and least-privilege access controls.</li>
+<li>The green banner is the strongest answer: Zero Data Retention means nothing you send is kept.</li>
+<li>Takeaway: the three regimes differ in scope, but the architecture they demand shares one backbone.</li>
+</ol></div>
+
 <h3>Zero Data Retention, under the hood</h3>
 <p><strong>Rung 3: the full climb.</strong> ZDR (Zero Data Retention) is an arrangement where the model provider does not store your prompts and completions after serving them, and does not use them for training. Why it exists: the fastest way to prevent data leakage via the provider is to never let the provider keep the data. Key facts for design decisions (reconstructed from public provider documentation; confirm current terms before the exam):</p>
 <ul>
@@ -1607,9 +1671,9 @@ A user invokes the right to erasure. Your system holds: 400 conversation turns i
 <li>Google Cloud Vertex AI: Google states customer data is not used to train models; you keep Cloud Audit Logs and regional controls.</li>
 </ul>
 <p>The trade-off the exam tests: ZDR kills provider-side retention, which is exactly what privacy wants, but some regulated scenarios <em>require</em> retention: HIPAA audit controls and financial record-keeping need you to keep logs. The resolution is to log on <em>your</em> side (your VPC, your SIEM: security information and event management, your central security log system) while the provider retains nothing. ZDR plus your own audit trail satisfies both masters.</p>
-<p><figure><img src="img/d5-zdr-audit-tradeoff.svg" alt="Zero Data Retention trade-off: the provider side stores nothing so there are no provider logs to audit; your side carries the audit duty in your own VPC and SIEM" title="Zero Data Retention: what it moves, and what it does not remove."><figcaption>Zero Data Retention: what it moves, and what it does not remove.</figcaption></figure></p>
+<figure><img src="img/d5-zdr-audit-tradeoff.svg" alt="Zero Data Retention trade-off: the provider side stores nothing so there are no provider logs to audit; your side carries the audit duty in your own VPC and SIEM" title="Zero Data Retention: what it moves, and what it does not remove."><figcaption>Zero Data Retention: what it moves, and what it does not remove.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><p><strong>Read left, then right.</strong> The left panel is the provider under ZDR: nothing stored, so nothing for an auditor to request there. The arrow in the middle is the point: the audit burden moves, it does not vanish. The right panel is your side: you still log what the law requires, in your own systems. The bottom banner is the exam takeaway: ZDR never removes your audit duty.</p><div class="table-wrap"><table><tr><th>Component</th><th>What it is</th><th>Why it matters</th><th>What breaks if it is wrong</th></tr><tr><td>Provider side (ZDR on)</td><td>No prompts or outputs stored</td><td>Strong privacy posture, customer trust</td><td>You cannot ask the provider for records later</td></tr><tr><td>The moving burden</td><td>Audit duty shifts to you</td><td>Someone must still prove what happened</td><td>Assuming ZDR means "no logging needed"</td></tr><tr><td>Your side</td><td>Your VPC and SIEM hold the audit trail</td><td>This is the record the auditor reads</td><td>Tamperable or incomplete logs fail the audit</td></tr></table></div></div>
-<p><figure><img src="img/d5-deployment-options.jpg" alt="Three deployment option cards: API with ZDR, Bedrock, Vertex. Each lists data residency, audit trail, access control, HIPAA ready with check marks, except API with ZDR shows a red X on audit trail." title="Generated figure: deployment options compared on the compliance backbone. The red X is the trap: ZDR removes the provider&#x27;s logs, so you must build your own."><figcaption>Generated figure: deployment options compared on the compliance backbone. The red X is the trap: ZDR removes the provider&#x27;s logs, so you must build your own.</figcaption></figure></p>
+<figure><img src="img/d5-deployment-options.jpg" alt="Three deployment option cards: API with ZDR, Bedrock, Vertex. Each lists data residency, audit trail, access control, HIPAA ready with check marks, except API with ZDR shows a red X on audit trail." title="Generated figure: deployment options compared on the compliance backbone. The red X is the trap: ZDR removes the provider&#x27;s logs, so you must build your own."><figcaption>Generated figure: deployment options compared on the compliance backbone. The red X is the trap: ZDR removes the provider&#x27;s logs, so you must build your own.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Three cards, three ways to run Claude: direct API with a ZDR agreement, Amazon Bedrock, Google Vertex AI.</li>
 <li>Each card is scored on the same four compliance backbone items: data residency, audit trail, access control, HIPAA readiness.</li>
@@ -1650,13 +1714,20 @@ An AI screens 1,000 resumes: 600 from group A, 400 from group B. It advances 180
 <p class="eq-where">where: <strong>rate_of_lower_group</strong>, the selection rate of the worse-off group; <strong>rate_of_highest_group</strong>, the selection rate of the best-off group. The 0.80 bar is the EEOC four-fifths rule.</p>
 <p class="eq-worked"><strong>Worked example.</strong> The resume screener above: 20% / 30% = 0.67, below 0.80, so the test flags it. Removing the sensitive attribute does not fix it: proxies like name, zip code, and writing style carry the signal anyway, so you test outcomes, not inputs. Drill 4 lands the same way: 19/30 = 0.63, flagged.</p></div>
 
-<p><figure><img src="img/d5-fairness-loop.jpg" alt="Circular loop diagram: dataset to model to measure gaps (showing group A bar longer than group B bar) to fix and back to dataset." title="Generated figure: the fairness loop. Bias work is a cycle, not a one-time filter."><figcaption>Generated figure: the fairness loop. Bias work is a cycle, not a one-time filter.</figcaption></figure></p>
+<figure><img src="img/d5-fairness-loop.jpg" alt="Circular loop diagram: dataset to model to measure gaps (showing group A bar longer than group B bar) to fix and back to dataset." title="Generated figure: the fairness loop. Bias work is a cycle, not a one-time filter."><figcaption>Generated figure: the fairness loop. Bias work is a cycle, not a one-time filter.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Start at the blue "dataset" box: bias usually enters here, in the data the system learns from.</li>
 <li>Follow the arrow to "model": the model inherits and can amplify the skew.</li>
 <li>The "measure gaps" box is the key step: two bars show group A outperforming group B on the same metric. Without this disaggregated measurement, the overall average hides the gap (overall accuracy can look fine while one group fails).</li>
 <li>"Fix" covers the mitigations: better data, feature audits, threshold review, human oversight. The arrow loops back because fixes must be re-measured.</li>
 <li>Teaching point: fairness is measured on outcomes by group, never assumed from good intentions or from a single overall metric.</li>
+</ol></div>
+
+<figure><img src="img/05-bias-metrics.svg" alt="Demographic parity, equalized odds, and the four-fifths rule" title="Study figure: bias metrics over disaggregated evaluation."><figcaption>Study figure: bias metrics over disaggregated evaluation.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The blue banner is the method: run the eval set, then cut the results by group and compare.</li>
+<li>The three cards: demographic parity is simple but can conflict with accuracy; equalized odds asks whether we are equally accurate for everyone; the four-fifths rule flags selection rates below 80 percent of the highest group.</li>
+<li>Takeaway: equalized odds is usually the more defensible metric for decision systems.</li>
 </ol></div>
 
 <h3>Transparency: what "show your work" means for an AI system</h3>
@@ -1674,6 +1745,13 @@ An AI screens 1,000 resumes: 600 from group A, 400 from group B. It advances 180
 <p><span class="cl">The fairness traps</span></p>
 <p>"Fairness means treating everyone identically" is a distractor. Identical treatment of unequal situations can be unfair (a voice system trained only on one accent treats everyone "identically" and fails one group). The exam tests outcome-aware thinking: measure results by group, and be ready to defend which fairness metric you chose and why. The second trap: "we removed sensitive attributes, so the system is fair." Proxies (name, zip code, writing style) carry the signal anyway; you must test outcomes, not inputs.</p></div>
 <p class="u-next"><strong>Next:</strong> the exam drill, five scenarios and the decision matrix that fuses the whole domain.</p>
+
+<figure><img src="img/05-transparency.svg" alt="Decision logging, model cards and data sheets, user-facing disclosure" title="Study figure: transparency as three concrete practices."><figcaption>Study figure: transparency as three concrete practices.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Decision logging lets you answer why the system did that six months later: input, sources, model version, confidence, guardrail decisions, human review.</li>
+<li>Model cards and data sheets are the artifact auditors ask for; user-facing disclosure tells people they are talking to AI and how to appeal.</li>
+<li>Takeaway: transparency is the ability to explain and reconstruct, not a vibe.</li>
+</ol></div>
 
 <h2>8. Exam drill: five scenarios and the decision matrix</h2>
 <p class="u-bridge">You have the failure modes, the alignment you inherit, the guardrails, the human review, the regulations, and the fairness math. This chapter fuses them: five exam scenarios plus the decision matrix that turns any D5 scenario into the same four-beat answer.</p>
@@ -1707,7 +1785,7 @@ An AI screens 1,000 resumes: 600 from group A, 400 from group B. It advances 180
 <li>Step 3 is the trap catalog: six answers that sound responsible and are wrong. If your pick matches one, re-read the scenario.</li>
 </ol></div>
 
-<details class="pq"><summary>Drill 1. A hospital&#x27;s discharge-summary assistant drafts notes from visit transcripts. A vendor proposes running it on the direct API with no BAA, arguing the transcripts are \</summary><div class="pq-answer"><p><strong>Binding constraint:</strong> HIPAA. De-identification under HIPAA has a strict legal standard; clinical free text almost never meets it, and the vendor will touch PHI.</p>
+<details class="pq"><summary>Drill 1. A hospital&#x27;s discharge-summary assistant drafts notes from visit transcripts. A vendor proposes running it on the direct API with no BAA, arguing the transcripts are "de-identified."</summary><div class="pq-answer"><p><strong>Binding constraint:</strong> HIPAA. De-identification under HIPAA has a strict legal standard; clinical free text almost never meets it, and the vendor will touch PHI.</p>
 <p><strong>Correct move:</strong> sign a BAA with the provider, deploy inside a HIPAA-eligible envelope, apply minimum-necessary (only the current visit), keep your own immutable audit trail, and require clinician review-and-sign before notes enter the record.</p>
 <p><strong>Trap:</strong> accepting the "de-identified" claim at face value, or choosing the cheapest deployment because "the model is accurate." Accuracy is not a HIPAA control.</p></div></details>
 
@@ -1715,7 +1793,7 @@ An AI screens 1,000 resumes: 600 from group A, 400 from group B. It advances 180
 <p><strong>Correct move:</strong> require human confirmation before external sends (the irreversible, externally visible action), delimit retrieved content as data, scope tools with least privilege, and consider a dual-LLM pattern so the planner never reads raw page text.</p>
 <p><strong>Trap:</strong> adding an output toxicity filter (wrong layer; nothing toxic was written) or retraining the model (not your lever).</p></div></details>
 
-<details class="pq"><summary>Drill 3. An EU hiring assistant will screen 50,000 applications. The team plans to log full resumes \</summary><div class="pq-answer"><p><strong>Binding constraint:</strong> GDPR. High-risk AI processing of EU personal data at scale needs a DPIA first, plus purpose limitation, minimization, retention limits with enforced deletion, and erasure plumbing across the database, vector store, and logs.</p>
+<details class="pq"><summary>Drill 3. An EU hiring assistant will screen 50,000 applications. The team plans to log full resumes "for quality."</summary><div class="pq-answer"><p><strong>Binding constraint:</strong> GDPR. High-risk AI processing of EU personal data at scale needs a DPIA first, plus purpose limitation, minimization, retention limits with enforced deletion, and erasure plumbing across the database, vector store, and logs.</p>
 <p><strong>Correct move:</strong> run the DPIA before launch, minimize what is logged (redact what the task does not need), set and enforce a retention period, and build per-user lookup and deletion across every store.</p>
 <p><strong>Trap:</strong> "encrypt the logs" (does not satisfy minimization, purpose, or erasure) or bundled consent buried in terms of service.</p></div></details>
 
@@ -1856,6 +1934,26 @@ An AI screens 1,000 resumes: 600 from group A, 400 from group B. It advances 180
 </main>
 </div>
 <footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html" aria-current="page">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<script>
+/* CCAR-P volume order for the auto-generated prev/next footer. Overrides the
+   script's default manifest so the footer follows the same chain as the static
+   header nav: index -> prereq -> D1-D7 -> question bank -> design guide ->
+   crash course. (Plain hyphens only in this comment.) */
+window.DS_MANIFEST = [
+  { file: "index.html",                                label: "Start · Exam Overview & Study Map" },
+  { file: "prereq-claude-fundamentals.html",           label: "Prereq · Claude Developer Fundamentals" },
+  { file: "01-solution-design-architecture.html",      label: "D1 · Solution Design & Architecture (17%)" },
+  { file: "02-models-prompting-context.html",          label: "D2 · Models, Prompting & Context (13%)" },
+  { file: "03-integration.html",                       label: "D3 · Integration (19%)" },
+  { file: "04-evaluation-testing-optimization.html",   label: "D4 · Evaluation, Testing & Optimization (16%)" },
+  { file: "05-governance-safety-risk.html",             label: "D5 · Governance, Safety & Risk (14%)" },
+  { file: "06-stakeholder-communication-lifecycle.html", label: "D6 · Stakeholder Communication & Lifecycle (14%)" },
+  { file: "07-developer-productivity-enablement.html", label: "D7 · Developer Productivity & Enablement (7%)" },
+  { file: "08-question-bank.html",                     label: "Question Bank" },
+  { file: "09-system-design-guide.html",               label: "System Design Guide" },
+  { file: "crash-course.html",                         label: "Crash Course" }
+];
+</script>
 <script>
 /* ==========================================================================
    DS — Canonical Design System behavior (shared across study-guide tracks)
