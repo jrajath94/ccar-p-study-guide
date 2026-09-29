@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 528" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#16a34a"/></marker></defs>
+<rect width="900" height="528" rx="14" fill="#ffffff"/>
+<rect x="1" y="1" width="898" height="526" rx="13" fill="none" stroke="#cbd5e1"/>
+<text x="450.0" y="36" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">MCP server scopes: project, local, user</text>
+<text x="450.0" y="62" text-anchor="middle" font-size="13" fill="#64748b">Where an MCP server config lives decides who gets the tool.</text>
+<rect x="40" y="220" width="200" height="110" rx="10" fill="#ede9fe" stroke="#7c3aed"/>
+<text x="140.0" y="269.0" text-anchor="middle" font-size="15" fill="#5b21b6">Vetted registry</text>
+<text x="140.0" y="291.0" text-anchor="middle" font-size="12" fill="#64748b">Central catalog of
+approved servers</text>
+<line x1="240" y1="275" x2="300" y2="144" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="300" y="104" width="540" height="76" rx="10" fill="#ede9fe" stroke="#7c3aed"/>
+<text x="570.0" y="136" text-anchor="middle" font-size="15" fill="#5b21b6" font-weight="bold">PROJECT scope</text>
+<text x="320" y="166" text-anchor="start" font-size="12" fill="#64748b">.mcp.json at repo root, checked in</text>
+<text x="320" y="193" text-anchor="start" font-size="12" fill="#64748b">Whole team gets the same tools</text>
+<line x1="240" y1="275" x2="300" y2="270" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="300" y="230" width="540" height="76" rx="10" fill="#dbeafe" stroke="#2563eb"/>
+<text x="570.0" y="262" text-anchor="middle" font-size="15" fill="#1e40af" font-weight="bold">LOCAL scope</text>
+<text x="320" y="292" text-anchor="start" font-size="12" fill="#64748b">This project only (default)</text>
+<text x="320" y="319" text-anchor="start" font-size="12" fill="#64748b">Your agent, your checkout</text>
+<line x1="240" y1="275" x2="300" y2="396" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="300" y="356" width="540" height="76" rx="10" fill="#ccfbf1" stroke="#0d9488"/>
+<text x="570.0" y="388" text-anchor="middle" font-size="15" fill="#115e59" font-weight="bold">USER scope</text>
+<text x="320" y="418" text-anchor="start" font-size="12" fill="#64748b">Your Claude Code config</text>
+<text x="320" y="445" text-anchor="start" font-size="12" fill="#64748b">All your projects</text>
+<text x="450" y="500" text-anchor="middle" font-size="13" fill="#64748b">Team behavior belongs in project scope, committed to version control. Secrets live in env vars, never in the file.</text>
+</svg>
