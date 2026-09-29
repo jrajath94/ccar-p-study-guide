@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<style>
+/* Validation-assembly: bridge + equation rendering (additive, 2026-09-29). */
+.chapter-bridge,.topic-bridge,.u-bridge{border-left:3px solid #8a8f98;border-left:3px solid color-mix(in srgb,currentColor 40%,transparent);padding:.55rem .9rem;margin:1.1rem 0;background:rgba(128,128,128,.08);border-radius:0 6px 6px 0}
+.next-chapter,.u-next,.u-goto{font-weight:650;margin:1.15rem 0}
+.display-eq,.eq{text-align:center;margin:1.15rem 0;font-size:1.12em;line-height:1.7}
+.eq-where{margin:.1rem 0 1rem 1.25rem;font-size:.93em;opacity:.92}
+.eq-worked{border:1px solid #8a8f98;border:1px solid color-mix(in srgb,currentColor 30%,transparent);border-radius:8px;padding:.7rem 1rem;margin:1rem 0;background:rgba(128,128,128,.06)}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prerequisite: Claude Developer Fundamentals</title>
 <style>
@@ -1340,26 +1348,30 @@ html.xp-js .xp-reveal.xp-in {
 <main id="ds-content">
 <nav class="ds-crumb" aria-label="Breadcrumb"><ol><li><a href="index.html">Home</a></li><li aria-current="page">Prereq · Claude Developer Fundamentals</li></ol></nav>
 <div class="banner"><div class="kicker">CCAR-P · prerequisite crash course · one clean pass, small to big</div><h1>Prerequisite: Claude Developer Fundamentals</h1><p>Everything about the Claude API a CCAR-P candidate needs, in one linear volume. What Claude is, keys, Messages, system prompts, multi-turn, sampling, tool use, thinking, caching, batches, embeddings, the model lineup, MCP, Claude Code, streaming, rate limits, errors, evals, safety, prompt engineering, then a capstone that wires it all into one production app.</p><div class="facts"><span>22 units · zero repetition · visual ladders</span><span>6 internet diagrams · 3 transcript-vetted videos · Python throughout</span></div></div>
-<section class="unit" id=""><h2>How to use this volume</h2>
+<section class="unit"><h2>How to use this volume</h2>
 <p>Read it once, front to back. Every topic is a <strong>visual ladder</strong>: rung 1 gives you the plainest possible mental model in one short paragraph, then each rung adds exactly one layer of depth until the full production-grade picture stands. A diagram sits at <em>every</em> rung, so you literally watch the concept grow.</p>
 <p>Each unit ends with a knowledge check. Answer it from memory before you peek. Short sentences, plain words, real API shapes only. All code is Python with the Anthropic SDK, and every line that could confuse you has a comment.</p>
 <div class="callout"><div class="lbl">A note on honesty, before we start</div><p>CCAR-P has no formal prerequisites. The exam guide (v1.0, July 2026) does recommend a software-engineering foundation, about three years of systems architecture, and six months of hands-on production work with Claude. This volume covers the Claude half of that list: the developer fundamentals the exam assumes you already know. It does not teach software engineering or systems architecture. If those are new to you, pair this volume with real project work before you sit the exam.</p></div>
 
 <p>If you already finished the AI Practitioner material, the AWS half of your brain is warm. This volume warms up the Claude half. Your Claude experience so far has been mostly experimental. By the end of this volume it will be architectural: you will know what every knob does, what it costs, and when to turn it.</p>
-</div></details>
+</div>
 <p><strong>Next:</strong> What Claude is: predictions over tokens, the one idea everything else rests on.</p></section>
 
-<section class="unit" id=""><h2>What Claude is: predictions over tokens</h2>
+<section class="unit"><h2>What Claude is: predictions over tokens</h2>
 <p><strong>Rung 1: the plainest version.</strong> Claude is a large language model. It does one thing: given text, it predicts the most likely next token, then the next, until it decides to stop. A token is a chunk of text: a word, part of a word, or punctuation. "Unbelievable" is three tokens: un, believ, able. Roughly four characters make one token.</p>
 <figure><img src="img/fig-tokens.svg" alt="The word unbelievable split into three token boxes: un, believ, able" title="Figure 0.1. Tokens are the atoms: Claude reads and writes text in chunks of about four characters, not in words."><figcaption>Figure 0.1. Tokens are the atoms: Claude reads and writes text in chunks of about four characters, not in words.</figcaption></figure>
 <p><strong>Rung 2: tokens in, tokens out.</strong> Everything you send becomes one long sequence of input tokens: your instructions, the conversation so far, the documents, the tool definitions. Claude reads the whole sequence, predicts the next token, appends it, and repeats. The finished text is the output tokens. There is no other input channel and no other output channel: tokens are the whole interface.</p>
 <figure><img src="img/fig-request-anatomy.svg" alt="System, messages, and tools merge into one token sequence; Claude predicts the answer one token at a time" title="Figure 0.2. How Claude reads a request: everything you send becomes one token sequence, and the answer is written one token at a time."><figcaption>Figure 0.2. How Claude reads a request: everything you send becomes one token sequence, and the answer is written one token at a time. There is no other input channel.</figcaption></figure>
 <p><strong>Rung 3: the three numbers that run this volume.</strong> The <strong>context window</strong>: how many tokens fit in one request (200K to 1M on current models). <strong>max_tokens</strong>: your cap on the reply length, in tokens. <strong>Price</strong>: per token in and per token out, with output costing about 5x input. Every knob in this volume is a way to get more quality per token, or fewer tokens per task: sampling shapes which token gets picked, caching reuses tokens you already paid to process, batching halves the token price, and tier choice picks the cheapest model whose tokens are good enough.</p>
 <details class="pq"><summary>What is a token, and what does Claude do with them?</summary><div class="pq-answer"><p>A token is a chunk of text (a word, part of a word, or punctuation; roughly four characters). Claude reads a sequence of input tokens and predicts the next token, over and over, until the answer is complete. Tokens are also the billing unit: you pay per token in and per token out.</p>
-<p><strong>Next:</strong> Next: Your API key is the front door: the credential every call needs.</p></section>
+<p><strong>Next:</strong> Your API key is the front door: the credential every call needs.</p>
+</div></details></section>
 
-<section class="unit" id=""><h2>Your API key is the front door</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>You know what Claude is: predictions over tokens. Before you can ask for a single prediction, you need the front door: an API key.</p></div>
+<section class="unit"><h2>Your API key is the front door</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>You know what Claude is: predictions over tokens. Before you can ask for a single prediction, you need the front door: an API key.</p>
+<p><figure><img src="img/pr-api-key.svg" alt="Five steps from your code to Claude and back." title="The API key flow: the key rides in the header, the gateway checks it, and the request runs."><figcaption>The API key flow: the key rides in the header, the gateway checks it, and the request runs.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Your code sends a request with the key in the x-api-key header.</li><li>The gateway checks the key before anything else: wrong key, no request.</li><li>A valid key opens the door; the request runs and the response comes back.</li><li>The key is a secret. It never goes in code, repos, or chat.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If the key leaks into a repo, anyone holding it spends your money until you rotate it.</p></div></div>
 <p><strong>Rung 1: the plainest version.</strong> Your API key is a password that buys Claude answers. You show it with every request; Anthropic bills your account for what you use.</p>
 <pre><code class="language-text">  You ---(API key + question)---&gt; Claude API ---(answer)---&gt; You
                                           |
@@ -1386,10 +1398,13 @@ client = Anthropic()
 </code></pre>
 <details class="pq"><summary>Where does your API key live, and why?</summary><div class="pq-answer"><p>In an environment variable (<code>ANTHROPIC_API_KEY</code>), loaded by the SDK. Never in source code or git, because a leaked key lets anyone bill your account.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Your first API call: the Messages API, the endpoint everything builds on.</p></section>
+<p><strong>Next:</strong> Your first API call: the Messages API, the endpoint everything builds on.</p></section>
 
-<section class="unit" id=""><h2>Your first API call: the Messages API</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>You hold the key. Now the first call: the Messages API, the one endpoint everything else in this volume builds on.</p></div>
+<section class="unit"><h2>Your first API call: the Messages API</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>You hold the key. Now the first call: the Messages API, the one endpoint everything else in this volume builds on.</p>
+<p><figure><img src="img/pr-first-call.svg" alt="A request block with the three fields and a response block." title="Your first API call: model, max_tokens, and a messages array carrying the user turn."><figcaption>Your first API call: model, max_tokens, and a messages array carrying the user turn.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>model names the engine, max_tokens caps the reply length, messages carries the conversation.</li><li>The user role holds your turn. The assistant role will hold the reply.</li><li>The response comes back as JSON: the text plus usage counts.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If max_tokens is too small, the reply is cut off mid-thought and the stop reason says max_tokens.</p></div></div>
 <p><strong>Rung 1: the plainest version.</strong> You send a request with three things (which model, how long the reply may be, and your messages). You get back the reply text, why it stopped, and how many tokens it cost.</p>
 <pre><code class="language-text">  REQUEST                              RESPONSE
   { model, max_tokens, messages }  --&gt;  { text, stop_reason, usage }
@@ -1494,10 +1509,13 @@ print(message.usage.input_tokens, message.usage.output_tokens)
 </script>
 <details class="pq"><summary>Which three parameters does every messages.create call require?</summary><div class="pq-answer"><p><code>model</code>, <code>max_tokens</code>, and <code>messages</code>. Everything else (system, tools, temperature, caching) is optional.</p>
 </div></details>
-<p><strong>Next:</strong> Next: System prompts: the rules behind the curtain.</p></section>
+<p><strong>Next:</strong> System prompts: the rules behind the curtain.</p></section>
 
-<section class="unit" id=""><h2>System prompts: the rules behind the curtain</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>You can send messages. But every message restates the rules from scratch unless the rules live somewhere permanent. That permanent place is the system prompt.</p></div>
+<section class="unit"><h2>System prompts: the rules behind the curtain</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>You can send messages. But every message restates the rules from scratch unless the rules live somewhere permanent. That permanent place is the system prompt.</p>
+<p><figure><img src="img/pr-system-prompt.svg" alt="Three stacked layers with an example line in each." title="System, developer, user: three layers of instruction, each overriding the one below."><figcaption>System, developer, user: three layers of instruction, each overriding the one below.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>SYSTEM sets the role and the rules that never change: the curtain behind everything.</li><li>DEVELOPER adds app-level instructions: what this deployment is for.</li><li>USER carries the actual request. Higher layers win when instructions conflict.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If user input can override system rules, a prompt injection is just a polite request away.</p></div></div>
 <p><strong>Rung 1: the plainest version.</strong> A system prompt is the job description you hand Claude before the user ever speaks: who it is, the rules it always follows, the exact output format.</p>
 <pre><code class="language-text">  +---------------------------+
   | SYSTEM: job description   |  &lt;-- read first, applies to every turn
@@ -1536,10 +1554,13 @@ print(message.usage.input_tokens, message.usage.output_tokens)
 
 <details class="pq"><summary>System prompt or message: where does today&#x27;s date go?</summary><div class="pq-answer"><p>In messages. The system prompt holds stable instructions only, so its prefix stays cacheable.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Multi-turn: you are the memory.</p></section>
+<p><strong>Next:</strong> Multi-turn: you are the memory.</p></section>
 
-<section class="unit" id=""><h2>Multi-turn: you are the memory</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>One message gets one answer, and the API remembers nothing between calls. If you want a conversation, you supply the memory. This chapter shows how.</p></div>
+<section class="unit"><h2>Multi-turn: you are the memory</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>One message gets one answer, and the API remembers nothing between calls. If you want a conversation, you supply the memory. This chapter shows how.</p>
+<p><figure><img src="img/pr-multi-turn.svg" alt="A loop showing the growing messages array going back to the API." title="Multi-turn: you resend the whole conversation each turn, because the API keeps no memory."><figcaption>Multi-turn: you resend the whole conversation each turn, because the API keeps no memory.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>The API is stateless: it remembers nothing between calls.</li><li>You resend the full messages array every turn: user, assistant, user, assistant.</li><li>Your app is the memory. Truncate old turns when the context window fills.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you only send the latest turn, the model loses the thread and contradicts itself.</p></div></div>
 <p><strong>Rung 1: the plainest version.</strong> The API is stateless, so a "conversation" is just you resending the history plus the new turn. Your app owns the <code>messages</code> array.</p>
 <pre><code class="language-text">  Turn 1:  [ user: &quot;hi&quot; ]                                  --&gt; reply A
   Turn 2:  [ user: &quot;hi&quot;, assistant: A, user: &quot;thanks&quot; ]     --&gt; reply B
@@ -1577,10 +1598,13 @@ conversation.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot
 </code></pre>
 <details class="pq"><summary>Why does turn 50 of a chat cost more than turn 1?</summary><div class="pq-answer"><p>Because the API is stateless: you resend the whole history every turn, so input tokens grow with conversation length.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Sampling parameters: temperature, top_p, top_k.</p></section>
+<p><strong>Next:</strong> Sampling parameters: temperature, top_p, top_k.</p></section>
 
-<section class="unit" id=""><h2>Sampling parameters: temperature, top_p, top_k</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>You can hold a conversation. Now the three knobs that shape each answer: temperature, top_p, top_k.</p></div>
+<section class="unit"><h2>Sampling parameters: temperature, top_p, top_k</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>You can hold a conversation. Now the three knobs that shape each answer: temperature, top_p, top_k.</p>
+<p><figure><img src="img/pr-sampling.svg" alt="Three control cards with the setting and the effect." title="Sampling: temperature spreads or sharpens the distribution, top_p and top_k cut the tail."><figcaption>Sampling: temperature spreads or sharpens the distribution, top_p and top_k cut the tail.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Temperature 0 is deterministic, 1 is creative. Low for facts, higher for brainstorming.</li><li>top_p keeps the smallest set of tokens covering p of the probability: 0.9 is a common default.</li><li>top_k keeps only the k most likely tokens. Small k means safe, boring, predictable.</li><li>For exams: temperature near 0 and a fixed seed is the closest thing to reproducibility.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If temperature is high on a factual task, the same question gets a different answer every run.</p></div></div>
 <p><strong>Rung 1: the plainest version.</strong> Temperature is a dial from 0.0 to 1.0 on randomness (default 1.0). At 0, Claude almost always picks the most likely token: deterministic and reproducible. Near 1, it samples freely: varied and creative.</p>
 <pre><code class="language-text">  0.0 ------------------------- 1.0
   predictable                     creative
@@ -1599,9 +1623,9 @@ conversation.append({&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot
 </code></pre>
 <details class="pq"><summary>You need byte-identical JSON from 1,000 runs. What do you set?</summary><div class="pq-answer"><p><code>temperature=0</code>. Deterministic output for graded, structured work.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Tool use: giving Claude hands.</p></section>
+<p><strong>Next:</strong> Tool use: giving Claude hands.</p></section>
 
-<section class="unit" id=""><h2>Tool use: giving Claude hands</h2>
+<section class="unit"><h2>Tool use: giving Claude hands</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>So far Claude only talks. Tool use gives it hands: your functions, called when the model asks, with results fed back in.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> A model without tools can only talk. Tool use lets it act: query your database, call your APIs. The key insight the exam will probe: <strong>Claude never runs your tools.</strong> It only asks. Your code runs them and hands the results back.</p>
 <pre><code class="language-text">  Claude: &quot;I need order 48151623's status&quot;   (a tool_use REQUEST)
@@ -1687,9 +1711,9 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
 
 <details class="pq"><summary>Who executes a client tool: Claude or your code?</summary><div class="pq-answer"><p>Your code. Claude only emits a tool_use request; your loop runs the function and returns the result as a tool_result block.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Thinking: letting Claude reason before it speaks.</p></section>
+<p><strong>Next:</strong> Thinking: letting Claude reason before it speaks.</p></section>
 
-<section class="unit" id=""><h2>Thinking: letting Claude reason before it speaks</h2>
+<section class="unit"><h2>Thinking: letting Claude reason before it speaks</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>Tools let Claude act on the world. Thinking lets it reason before it speaks, which changes answer quality, latency, and cost at once.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Some models think in a private scratchpad before answering. You see the final answer; the scratchpad stays hidden (or summarized) unless you ask for it.</p>
 <pre><code class="language-text">  question --&gt; [ thinking: private scratchpad ] --&gt; answer
@@ -1714,9 +1738,9 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
 </code></pre>
 <details class="pq"><summary>You pass thinking blocks back in a follow-up turn. What must you never change?</summary><div class="pq-answer"><p>The signature. It must round-trip unmodified or the API rejects the request.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Prompt caching: pay for the prefix once.</p></section>
+<p><strong>Next:</strong> Prompt caching: pay for the prefix once.</p></section>
 
-<section class="unit" id=""><h2>Prompt caching: pay for the prefix once</h2>
+<section class="unit"><h2>Prompt caching: pay for the prefix once</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>Thinking and tools make requests bigger, and much of what you send repeats every turn. Caching means you pay for the stable prefix once, then read it back cheap.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Every request reprocesses its input tokens. Prompt caching lets you pay full price to process a long, stable prefix <em>once</em>, then pay only 10% of the input price to reuse it for five minutes.</p>
 <pre><code class="language-text">  call 1:  [ 20k system prompt ] + question  --&gt;  pay FULL price (cache written)
@@ -1759,9 +1783,9 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
 <p>A practitioner piece worth your time: <a href="https://dev.to/klement_gunndu_e16216829c/90-of-claude-apps-leak-context-heres-how-to-fix-it-before-it-costs-you-thousands-6p2">90% of Claude Apps Leak Context</a> walks through the real-world failure mode, sending the whole conversation every turn and watching cache misses spike, with SDK patterns that fix it. The habit it teaches (cache the stable front, slice the history) is exactly what the exam rewards.</p>
 <details class="pq"><summary>Your cache hit rate drops to zero after adding a timestamp to the system prompt. Why?</summary><div class="pq-answer"><p>The timestamp changes the prefix on every request, so the prefix hash never matches and every call pays a fresh cache write.</p>
 </div></details>
-<p><strong>Next:</strong> Next: The Batches API: half price, next day.</p></section>
+<p><strong>Next:</strong> The Batches API: half price, next day.</p></section>
 
-<section class="unit" id=""><h2>The Batches API: half price, next day</h2>
+<section class="unit"><h2>The Batches API: half price, next day</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>Caching cuts the price of repeated prefixes. For work with no deadline, the Batches API cuts the price of everything: 50% off, answers within 24 hours.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Some workloads do not need an answer now: nightly evals, bulk classification, backfilling labels. The Batches API takes your requests, processes them within 24 hours, and charges <strong>50% of standard prices</strong>.</p>
 <div style="text-align:center;margin:1.4rem 0;font-size:1.12em;line-height:1.7;"><div style="margin:.35rem 0;">batch price = 0.5 × standard price</div></div>
@@ -1799,9 +1823,9 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
 </code></pre>
 <details class="pq"><summary>You must label 40,000 support tickets by tomorrow morning. Batches or real-time calls?</summary><div class="pq-answer"><p>Batches: 50% cheaper, 24-hour window fits, 40,000 requests is under the 100,000 limit.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Embeddings: the gap you must know about.</p></section>
+<p><strong>Next:</strong> Embeddings: the gap you must know about.</p></section>
 
-<section class="unit" id=""><h2>Embeddings: the gap you must know about</h2>
+<section class="unit"><h2>Embeddings: the gap you must know about</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>Everything so far lived inside Claude's API. There is one gap you must know about: embeddings. They power retrieval, and they live elsewhere.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Embeddings turn text into lists of numbers (vectors) so you can search by meaning instead of keywords. They power RAG retrieval, semantic search, and clustering.</p>
 <pre><code class="language-text">  &quot;refund policy&quot;  --&gt;  [0.21, -0.88, 0.44, ...]  --&gt;  find nearby vectors = find related docs
@@ -1818,9 +1842,9 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
 </code></pre>
 <details class="pq"><summary>Which Anthropic API endpoint returns text embeddings?</summary><div class="pq-answer"><p>None. Anthropic offers no embeddings API; the documented path is a third-party provider such as Voyage AI.</p>
 </div></details>
-<p><strong>Next:</strong> Next: The model lineup: practitioner level.</p></section>
+<p><strong>Next:</strong> The model lineup: practitioner level.</p></section>
 
-<section class="unit" id=""><h2>The model lineup: practitioner level</h2>
+<section class="unit"><h2>The model lineup: practitioner level</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>You know the mechanics. Now the cast: the four models, what each is for, and the price pattern to memorize.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Four tiers, cheapest to dearest. Price tracks intelligence, and you do not need benchmark scores for the exam, only the selection logic.</p>
 <pre><code class="language-text">  Haiku 4.5  &lt;  Sonnet 5  &lt;  Opus 5.5  &lt;  Fable 5.1
@@ -1881,7 +1905,7 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
        |-- standard: reason, draft, decide     --&gt; Sonnet 5
        |-- critical: high-stakes judgment      --&gt; Opus 5.5 / Fable 5.1
 </code></pre>
-<p><strong>Rung 3: ids, windows, and compounding math.</strong> <strong>Family ids</strong> (<code>claude-sonnet-5</code>) track the latest snapshot automatically; <strong>dated ids</strong> (<code>claude-haiku-4-5-20251001</code>) pin one exact snapshot. Pin for reproducibility (evals), track for freshness (production chat). A 1M context window means you <em>can</em> send a million tokens, not that you should: cache-creation cost and latency scale with what you actually send. <strong>Effort levels</strong> (<code>low</code> through <code>xhigh</code>) on 5.x models give coarse control over reasoning depth. And the price math compounds: batches cost 50% of list, cache reads cost 10% of input price, so a Haiku batch call with a warm cache is roughly twenty times cheaper than a cold Fable call.</p>
+<p><strong>Rung 3: ids, windows, and compounding math.</strong> <strong>Family ids</strong> (<code>claude-sonnet-5</code>) track the latest snapshot automatically; <strong>dated ids</strong> (<code>claude-haiku-4-5-20251001</code>) pin one exact snapshot. Pin for reproducibility (evals), track for freshness (production chat). A 1M context window means you <em>can</em> send a million tokens, not that you should: cache-creation cost and latency scale with what you actually send. <strong>Effort levels</strong> (<code>low</code> through <code>xhigh</code>) on 5.x models give coarse control over reasoning depth. And the price math compounds: batches cost 50% of list, cache reads cost 10% of input price, so a Haiku batch call with a warm cache is roughly two hundred times cheaper than a cold Fable call.</p>
 <pre><code class="language-text">  cost per 1M Haiku input tokens:
     standard $1.00  --&gt;  batch (50%): $0.50  --&gt;  warm cache read (10%): $0.05
   ids:  claude-sonnet-5            family id: tracks the latest snapshot
@@ -1889,9 +1913,9 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
 </code></pre>
 <details class="pq"><summary>Your pipeline classifies 2M tickets a month and summarizes 50 escalations. Which models?</summary><div class="pq-answer"><p>Haiku for the bulk classification (cheap, fast), Sonnet or Opus for the 50 escalations where quality matters.</p>
 </div></details>
-<p><strong>Next:</strong> Next: MCP: the universal connector.</p></section>
+<p><strong>Next:</strong> MCP: the universal connector.</p></section>
 
-<section class="unit" id=""><h2>MCP: the universal connector</h2>
+<section class="unit"><h2>MCP: the universal connector</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>Models call tools through APIs you wire by hand, unless you use the universal connector. MCP is the standard that ends the N x M integration problem.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Without a standard, every app rebuilds the same integrations: N apps times M tools, every pair hand-built. The <strong>Model Context Protocol</strong> turns N x M into N + M: each app speaks MCP once, each tool speaks MCP once, and any pair connects.</p>
 <pre><code class="language-text">  WITHOUT:  app1-tool1  app1-tool2  app2-tool1  app2-tool2 ...  (N x M hand-built pairs)
@@ -1922,10 +1946,13 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
 
 <details class="pq"><summary>What problem does MCP solve, in one sentence?</summary><div class="pq-answer"><p>The N x M integration problem: without it every app hand-builds every tool integration; with it each app and each tool implements the standard once.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Claude Code and the Agent SDK: user level.</p></section>
+<p><strong>Next:</strong> Claude Code and the Agent SDK: user level.</p></section>
 
-<section class="unit" id=""><h2>Claude Code and the Agent SDK: user level</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>MCP connects models to tools. This chapter moves one level up: the user-facing products, Claude Code and the Agent SDK, and which to reach for.</p></div>
+<section class="unit"><h2>Claude Code and the Agent SDK: user level</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>MCP connects models to tools. This chapter moves one level up: the user-facing products, Claude Code and the Agent SDK, and which to reach for.</p>
+<p><figure><img src="img/pr-code-vs-sdk.svg" alt="Two panels comparing Claude Code and the Agent SDK." title="Code versus SDK: the CLI is the finished product, the SDK is the building block."><figcaption>Code versus SDK: the CLI is the finished product, the SDK is the building block.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Claude Code is the finished tool: terminal agent, your checkout, your permissions.</li><li>The Agent SDK is the building block: embed the same agent loop in your own app.</li><li>Use Code when a human drives. Use the SDK when your code drives.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you script the CLI like an SDK, you inherit a human interface: prompts, waits, and surprises.</p></div></div>
 <p><strong>Rung 1: the plainest version.</strong> Two ways to get agents without hand-rolling the tool loop yourself. <strong>Claude Code</strong> is Anthropic's terminal agent: it edits code, runs shell commands, and reads your repo on its own. The <strong>Agent SDK</strong> is the toolkit for building your <em>own</em> agents in Python or TypeScript, using the same loop primitives.</p>
 <pre><code class="language-text">  Claude Code:  terminal --&gt; agent works on YOUR codebase (you use it)
   Agent SDK:    your code --&gt; agent lives inside YOUR product (you build it)
@@ -1940,9 +1967,9 @@ while response.stop_reason == &quot;tool_use&quot; and turns &lt; MAX_TURNS:
 </code></pre>
 <details class="pq"><summary>Your product needs a support agent inside your own UI. Claude Code or Agent SDK?</summary><div class="pq-answer"><p>Agent SDK. Claude Code is a terminal tool for working on code; the SDK builds agents you embed in your product.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Streaming: tokens as they arrive.</p></section>
+<p><strong>Next:</strong> Streaming: tokens as they arrive.</p></section>
 
-<section class="unit" id=""><h2>Streaming: tokens as they arrive</h2>
+<section class="unit"><h2>Streaming: tokens as they arrive</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>You can build with the products. Now a production detail that users feel directly: streaming, tokens as they arrive instead of one long wait.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> By default the API waits until the full response is ready. Streaming flips that: tokens arrive as server-sent events (SSE) while Claude is still generating, so your UI renders text word by word like a chat app.</p>
 <pre><code class="language-text">  non-streaming:  wait .................... --&gt; full answer at once
@@ -1974,9 +2001,9 @@ with client.messages.stream(
 </code></pre>
 <details class="pq"><summary>Your nightly eval runs 5,000 prompts through the Batches API. Stream or not?</summary><div class="pq-answer"><p>Not. Nobody watches a batch job, and batches do not support streaming anyway.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Rate limits: RPM, ITPM, OTPM.</p></section>
+<p><strong>Next:</strong> Rate limits: RPM, ITPM, OTPM.</p></section>
 
-<section class="unit" id=""><h2>Rate limits: RPM, ITPM, OTPM</h2>
+<section class="unit"><h2>Rate limits: RPM, ITPM, OTPM</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>Streaming changes how fast answers feel. Rate limits cap how fast you may ask: RPM, ITPM, and OTPM, and what happens when you hit them.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Anthropic throttles usage on three dials: <strong>RPM</strong> (requests per minute), <strong>ITPM</strong> (input tokens per minute), <strong>OTPM</strong> (output tokens per minute). Limits rise with your usage tier.</p>
 <pre><code class="language-text">  your app --&gt; [ RPM | ITPM | OTPM ] --&gt; Claude API
@@ -1996,9 +2023,9 @@ with client.messages.stream(
 </code></pre>
 <details class="pq"><summary>You get a 429 with no retry-after header. What happened and what do you do?</summary><div class="pq-answer"><p>You hit a tier spend cap, not a rate limit. Stop retrying; raise the cap or wait for the reset.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Errors and retries: the codes that matter.</p></section>
+<p><strong>Next:</strong> Errors and retries: the codes that matter.</p></section>
 
-<section class="unit" id=""><h2>Errors and retries: the codes that matter</h2>
+<section class="unit"><h2>Errors and retries: the codes that matter</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>Limits get hit, networks fail, calls error. This chapter covers the error codes that matter and how to retry without making things worse.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Error codes split two ways: <strong>4xx means your fault</strong> (fix the request), <strong>5xx means their fault</strong> (retry with backoff). The SDK already retries transient failures (429, 500, 529) twice, with exponential backoff that honors <code>retry-after</code>.</p>
 <pre><code class="language-text">  4xx (400,401,403,404,413)  --&gt;  YOUR bug: fix the request, do not just retry
@@ -2079,9 +2106,9 @@ with client.messages.stream(
 </code></pre>
 <details class="pq"><summary>Your tool charges a customer per call. A request times out and the SDK retries. What breaks?</summary><div class="pq-answer"><p>A double charge, unless the tool function is idempotent. Retries are safe only when repeating the call is harmless.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Eval basics: measure, then trust.</p></section>
+<p><strong>Next:</strong> Eval basics: measure, then trust.</p></section>
 
-<section class="unit" id=""><h2>Eval basics: measure, then trust</h2>
+<section class="unit"><h2>Eval basics: measure, then trust</h2>
 <div class="board"><div class="lbl">Why this comes next.</div><p>Your calls work and your retries are sane. Now the question the exam never stops asking: how do you know the output is good? Measure, then trust.</p></div>
 <p><strong>Rung 1: the plainest version.</strong> Prompt engineering makes a prompt <em>better</em>. Evaluation tells you whether it is <em>good enough</em>, with a number instead of a feeling. Test the prompt the way you test code: run it against known cases and score it.</p>
 <pre><code class="language-text">  prompt + test cases --&gt; run --&gt; score (e.g. 82% correct)
@@ -2108,10 +2135,13 @@ with client.messages.stream(
 
 <details class="pq"><summary>Your new prompt beats the old one on your 5 test cases. Ship it?</summary><div class="pq-answer"><p>No. Five hand-picked cases prove nothing; run both over a real dataset and compare scores.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Safety and guardrails: the short version.</p></section>
+<p><strong>Next:</strong> Safety and guardrails: the short version.</p></section>
 
-<section class="unit" id=""><h2>Safety and guardrails: the short version</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>Evals measure quality. Safety is the other half of production: the short version of guardrails, enough to build on in D5.</p></div>
+<section class="unit"><h2>Safety and guardrails: the short version</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>Evals measure quality. Safety is the other half of production: the short version of guardrails, enough to build on in D5.</p>
+<p><figure><img src="img/pr-safety-layers.svg" alt="Three layers with one example control in each." title="Safety in layers: prevent, detect, respond. No single layer carries the load."><figcaption>Safety in layers: prevent, detect, respond. No single layer carries the load.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>PREVENT: stop the bad action before it happens. Least privilege, deny rules, input validation.</li><li>DETECT: see it while it happens. Hooks, PII scanners, audit logs.</li><li>RESPOND: contain it after. Kill switch, key rotation, the runbook.</li><li>One layer fails silently. Three layers fail loudly.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If detection is the only layer, you will know exactly when the leak happened and have no way to stop it.</p></div></div>
 <p><strong>Rung 1: the plainest version.</strong> Claude is trained with a safety-first approach (Anthropic calls it constitutional AI), aimed at making it helpful, honest, and harmless, and the API refuses certain content outright. But model-level safety is only one layer. The exam treats safety as an architecture concern, not a model feature.</p>
 <pre><code class="language-text">  safety = layers, not a model feature
   [ input checks ] -&gt; [ model ] -&gt; [ output checks ] -&gt; [ human review ]
@@ -2129,10 +2159,13 @@ with client.messages.stream(
 </code></pre>
 <details class="pq"><summary>Name two safety layers that live outside the model.</summary><div class="pq-answer"><p>Any two of: input validation, output checks, human review for high-stakes outputs, audit logging.</p>
 </div></details>
-<p><strong>Next:</strong> Next: Prompt engineering fundamentals: the five moves.</p></section>
+<p><strong>Next:</strong> Prompt engineering fundamentals: the five moves.</p></section>
 
-<section class="unit" id=""><h2>Prompt engineering fundamentals: the five moves</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>Mechanics, models, measurement, safety: all in place. This chapter distills prompting into five moves you can apply anywhere.</p></div>
+<section class="unit"><h2>Prompt engineering fundamentals: the five moves</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>Mechanics, models, measurement, safety: all in place. This chapter distills prompting into five moves you can apply anywhere.</p>
+<p><figure><img src="img/pr-five-moves.svg" alt="Five numbered move cards with an example of each." title="The five prompt moves: be specific, show one example, constrain the output, name the audience, demand the steps."><figcaption>The five prompt moves: be specific, show one example, constrain the output, name the audience, demand the steps.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>BE SPECIFIC: name the task, the input, and the bar for done.</li><li>SHOW ONE EXAMPLE: one input-output pair beats three paragraphs of description.</li><li>CONSTRAIN THE OUTPUT: format, length, and what to leave out.</li><li>NAME THE AUDIENCE: a junior dev needs different words than a staff engineer.</li><li>DEMAND THE STEPS: ask for the reasoning, not just the answer.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If the output format is unconstrained, the model invents one and your parser meets it in production.</p></div></div>
 <p><strong>Rung 1: the plainest version.</strong> Everything about writing better prompts starts with one move: be explicit. "Summarize this" is a wish; "three bullets, under 40 words, for a busy exec" is an instruction. Wishes get whatever the model feels like; instructions get what you asked for.</p>
 <pre><code class="language-text">  wish:        &quot;Summarize this&quot;                                    --&gt; unpredictable
   instruction: &quot;Three bullets, under 40 words, for a busy exec&quot;    --&gt; what you asked for
@@ -2148,10 +2181,13 @@ with client.messages.stream(
 </code></pre>
 <details class="pq"><summary>A teammate adds three paragraphs of motivational fluff to the system prompt. Eval score unchanged. Keep it?</summary><div class="pq-answer"><p>No. Unmeasured prompt weight costs tokens every call and breaks nothing by leaving. Delete it.</p>
 </div></details>
-<p><strong>Next:</strong> Next: the Capstone: one production app, climbed rung by rung.</p></section>
+<p><strong>Next:</strong> the Capstone: one production app, climbed rung by rung.</p></section>
 
-<section class="unit" id=""><h2>Capstone: one production app, climbed rung by rung</h2>
-<div class="board"><div class="lbl">Why this comes next.</div><p>Every piece is on the table. The capstone wires them into one production app, rung by rung, the way the exam expects you to think.</p></div>
+<section class="unit"><h2>Capstone: one production app, climbed rung by rung</h2>
+<div class="board"><div class="lbl">Why this comes next.</div><p>Every piece is on the table. The capstone wires them into one production app, rung by rung, the way the exam expects you to think.</p>
+<p><figure><img src="img/pr-capstone-ladder.svg" alt="Five rungs from call to deploy with the deliverable of each." title="The capstone ladder: five rungs from a working call to a deployed system."><figcaption>The capstone ladder: five rungs from a working call to a deployed system.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Rung 1: a working API call. Rung 2: a multi-turn conversation with memory.</li><li>Rung 3: tools the model can call. Rung 4: evals that prove it works.</li><li>Rung 5: a deployed system with monitoring. Each rung builds on the one below.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you skip rung 4, rung 5 is a deployment of hope.</p></div></div>
 <p>You now know every piece. Watch a support copilot grow from the simplest possible version to the full production picture. This is the whole volume as one ladder.</p>
 <p><strong>Rung 1: the simplest app that works.</strong> One call, one answer. A user asks, you send system plus message, Claude replies.</p>
 <pre><code class="language-text">  [chat UI] --&gt; your app --&gt; Messages API --&gt; answer text --&gt; [chat UI]
@@ -2201,7 +2237,7 @@ with client.messages.stream(
 
 <p>Count the units in that diagram: tokens, keys, messages, system, multi-turn, sampling (defaults), tool use, thinking, caching, batches, models, MCP, streaming, rate limits, errors, evals, safety. Seventeen of the twenty-one, in one app. The four you do not see (embeddings, Claude Code, prompt engineering, this capstone) are the ones that live outside the request path: embeddings feed the knowledge base the tools search, Claude Code built the app, prompt engineering wrote the prompts the evals grade.</p>
 <div class="takeaway"><p>If you can trace a request through that diagram and name the unit behind every arrow, the Claude half of your prerequisite gap is closed. The main track will now ask you to design systems like this one under exam constraints: cost ceilings, latency budgets, compliance rules. You have the vocabulary. Go build.</p>
-<p><strong>Next:</strong> Next: D1 (Solution Design and Architecture) in 01-solution-design-architecture.html, where this vocabulary meets exam scenarios.</p></div></section>
+<p><strong>Next:</strong> D1 (Solution Design and Architecture) in 01-solution-design-architecture.html, where this vocabulary meets exam scenarios.</p></div></section>
 
 <footer><p><strong>Sources and honesty notes.</strong> All API shapes, parameters, prices, limits, and model facts verified against platform.claude.com documentation on September 28, 2026. Model lineup (Fable 5.1, Opus 5.5, Sonnet 5, Haiku 4.5) and prices ($10/$50, $4/$20, $2/$10, $1/$5 per MTok in/out) are current as of that date and will drift; re-check before the exam.</p>
 <p>Videos: three YouTube embeds, IDs verified via oEmbed and transcripts read in full September 2026 (freeCodeCamp/Scrimba QfJB9d0J3Iw, Anthropic aZLr962R6Ag, The AI Frontier pBL_H4peDbI). One candidate video (The AI Frontier, multi-turn tools, b0empYH6Yds) was dropped because YouTube rate-limited the caption download and its transcript could not be vetted. Diagrams: agentic tool-use loop (markaicode.com), Claude Code agentic loop (claudedigest.com), MCP client-server architecture (sajalsharma.com), prompt-caching prefix diagram (AWS Machine Learning Blog); all downloaded locally, never hotlinked. Community link: dev.to context-leak piece, URL verified live September 2026. Generic learning material: no personal data.</p></footer>
@@ -2210,6 +2246,26 @@ with client.messages.stream(
 </main>
 </div>
 <footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html" aria-current="page">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<script>
+/* CCAR-P volume order for the auto-generated prev/next footer. Overrides the
+   script's default manifest so the footer follows the same chain as the static
+   header nav: index -> prereq -> D1-D7 -> question bank -> design guide ->
+   crash course. (Plain hyphens only in this comment.) */
+window.DS_MANIFEST = [
+  { file: "index.html",                                label: "Start · Exam Overview & Study Map" },
+  { file: "prereq-claude-fundamentals.html",           label: "Prereq · Claude Developer Fundamentals" },
+  { file: "01-solution-design-architecture.html",      label: "D1 · Solution Design & Architecture (17%)" },
+  { file: "02-models-prompting-context.html",          label: "D2 · Models, Prompting & Context (13%)" },
+  { file: "03-integration.html",                       label: "D3 · Integration (19%)" },
+  { file: "04-evaluation-testing-optimization.html",   label: "D4 · Evaluation, Testing & Optimization (16%)" },
+  { file: "05-governance-safety-risk.html",             label: "D5 · Governance, Safety & Risk (14%)" },
+  { file: "06-stakeholder-communication-lifecycle.html", label: "D6 · Stakeholder Communication & Lifecycle (14%)" },
+  { file: "07-developer-productivity-enablement.html", label: "D7 · Developer Productivity & Enablement (7%)" },
+  { file: "08-question-bank.html",                     label: "Question Bank" },
+  { file: "09-system-design-guide.html",               label: "System Design Guide" },
+  { file: "crash-course.html",                         label: "Crash Course" }
+];
+</script>
 <script>
 /* ==========================================================================
    DS — Canonical Design System behavior (shared across study-guide tracks)
