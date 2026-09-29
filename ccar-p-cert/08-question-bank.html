@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<style>
+/* Validation-assembly: bridge + equation rendering (additive, 2026-09-29). */
+.chapter-bridge,.topic-bridge,.u-bridge{border-left:3px solid #8a8f98;border-left:3px solid color-mix(in srgb,currentColor 40%,transparent);padding:.55rem .9rem;margin:1.1rem 0;background:rgba(128,128,128,.08);border-radius:0 6px 6px 0}
+.next-chapter,.u-next,.u-goto{font-weight:650;margin:1.15rem 0}
+.display-eq,.eq{text-align:center;margin:1.15rem 0;font-size:1.12em;line-height:1.7}
+.eq-where{margin:.1rem 0 1rem 1.25rem;font-size:.93em;opacity:.92}
+.eq-worked{border:1px solid #8a8f98;border:1px solid color-mix(in srgb,currentColor 30%,transparent);border-radius:8px;padding:.7rem 1rem;margin:1rem 0;background:rgba(128,128,128,.06)}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CCAR-P Practice Question Bank</title>
 <style>
@@ -1376,8 +1384,12 @@ html.xp-js .xp-reveal.xp-in {
 </tbody>
 </table></div>
 
+<p><figure><img src="img/q08-exam-shape.svg" alt="A stacked bar of item types and four exam-day rules." title="What 63 items in 120 minutes demands: two passes, a per-item budget, and no blanks."><figcaption>What 63 items in 120 minutes demands: two passes, a per-item budget, and no blanks.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>The mix is roughly 35 single-choice, 14 multi-response, 13 scenario. Scoring rewards knowledge spread wide.</li><li>Two passes: answer what you know first, flag the long scenarios, return with time left.</li><li>1:54 per item is a budget, not a target. A first step stem asks for the very first action, not the best tool.</li><li>Multi-response: read the selection count first and select exactly that many. No negative marking, so never leave a blank.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you sprint in one pass, the long scenarios eat the clock and the easy items at the end go unanswered.</p></div>
 <h2>How to use this bank</h2>
 <p>Read the <strong>scenario</strong>, then read the <strong>constraint</strong> box. The constraint is the scoring key: several options will be partly right, and the credited answer is the one that best satisfies the stated constraint (accuracy SLA, latency budget, compliance rule, cost ceiling). Find the numbers and rules in the scenario first, then judge each option against them. An option that is good engineering but breaks the constraint is a distractor. Pick your answer before opening the explanation panel. Each explanation gives the correct answer, why it wins, and why every other option loses.</p>
+
 <h2>Key terms used in this bank</h2>
 <p>Every term below appears in at least one question. Each is defined once, here, before its first use. Read this section once, then the questions can assume the vocabulary.</p>
 <h3>Retrieval and RAG</h3>
@@ -1401,6 +1413,9 @@ html.xp-js .xp-reveal.xp-in {
 <tr><td>ROUGE</td><td>A score that measures word overlap between a generated summary and a reference summary. It rewards similar wording, not truthfulness.</td></tr>
 </tbody>
 </table></div>
+<p><figure><img src="img/q08-rag-anatomy.svg" alt="Seven pipeline steps from docs through chunk, embed, index, hybrid, rerank, to the LLM." title="RAG anatomy: seven steps in order, from docs to the grounded answer."><figcaption>RAG anatomy: seven steps in order, from docs to the grounded answer.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Docs are chunked into 500-1000 token pieces with 10-20% overlap, then embedded as fixed-dimension vectors.</li><li>The vector DB indexes them for approximate nearest-neighbor search.</li><li>Hybrid adds BM25 lexical search; fusion combines both rankings.</li><li>Rerank scores query and document together with a cross-encoder and keeps the top-k.</li><li>The exam never asks for one number: it asks you to argue the trade-off. Bigger chunks raise recall but also noise and cost.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If the chunking ignores the data shape, recall dies no matter how good the reranker is.</p></div>
 <h3>Models and context</h3>
 <div class="table-wrap"><table>
 <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
@@ -1443,6 +1458,9 @@ html.xp-js .xp-reveal.xp-in {
 <tr><td>A/B test</td><td>Routing part of the traffic to version A and part to version B, then comparing measured outcomes to decide which ships.</td></tr>
 </tbody>
 </table></div>
+<p><figure><img src="img/q08-measurement.svg" alt="A bar chart of ticket latencies with p50, p95, p99 marked and a 5 second SLA line." title="Measuring latency: the SLA judges you on the 95th ticket, not the median."><figcaption>Measuring latency: the SLA judges you on the 95th ticket, not the median.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>p50 is the median ticket: 1.8s. p95 is the 95th percentile: 4.6s. p99 is 9.2s.</li><li>The dashed SLA line at 5s is what you are judged against: tickets above it fail.</li><li>Kill outliers before optimizing the median: p95 falls faster from the right tail than from the middle.</li><li>Prompt design levers for latency: cap max_tokens, fix the output format, use stop sequences.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you optimize the median, the SLA can still fail: the users in the tail are the ones who complain.</p></div>
 <h3>Governance and safety</h3>
 <div class="table-wrap"><table>
 <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
@@ -1460,9 +1478,17 @@ html.xp-js .xp-reveal.xp-in {
 <tr><td>Jailbreak</td><td>A prompt crafted to make the model bypass its own safety rules.</td></tr>
 </tbody>
 </table></div>
-<div class="callout"><p><strong>Why this order.</strong> The bank follows exam weight, heaviest domain first, so your practice time matches where the points are. D3 Integration is 19 percent of the exam, the largest single share, and the most scenario-dense: tool and agent configuration, auth gaps, accuracy-latency trade-offs, observability, RAG pipelines, and MCP versus API, CLI, and agent-to-agent patterns.</p></div>
+<div class="callout"><p><strong>Why this order.</strong> The bank follows exam weight, heaviest domain first, so your practice time matches where the points are. D3 Integration is 19 percent of the exam, the largest single share, and the most scenario-dense: tool and agent configuration, auth gaps, accuracy-latency trade-offs, observability, RAG pipelines, and MCP versus API, CLI, and agent-to-agent patterns.</p>
+<p><figure><img src="img/q08-governance.svg" alt="Four layers of defense with an example control in each." title="Defense in depth: prevent, detect, respond, govern."><figcaption>Defense in depth: prevent, detect, respond, govern.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>PREVENT: deny before the model acts. Least-privilege scopes, zero-data-retention, policy denial.</li><li>DETECT: see the leak while it happens. PreToolUse hooks, PII scanners, audit logs.</li><li>RESPOND: contain the blast radius. Kill switch, revoke the key, run the incident runbook.</li><li>GOVERN: prove it afterward. Deletion certificates, audit trails, reviews. GDPR wants data minimization and deletion, HIPAA wants PHI access controls and audit trails, FedRAMP wants accredited infrastructure.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If governance is only a policy document, there is no evidence when the auditor asks. Compliance evidence is a deliverable.</p></div>
+
+</div>
 <h2>D3. Integration (19% of the exam, about 12 items)</h2>
 <p>Tool and agent configuration, auth gaps, accuracy-latency trade-offs, observability, RAG pipelines, retrieval strategies, MCP vs API/CLI vs agent-to-agent, progressive discovery vs monolithic context.</p>
+<p><figure><img src="img/q08-integration-selector.svg" alt="A decision card listing RAG, MCP, chat surface, and agent with approvals." title="Integration mechanism selector: match the mechanism to where the knowledge comes from."><figcaption>Integration mechanism selector: match the mechanism to where the knowledge comes from.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Static, known sources: RAG over your corpus.</li><li>Live external data or actions: an MCP server.</li><li>A conversation users trust: a chat surface.</li><li>High-stakes decisions: an agent with approvals.</li><li>Hybrid when tools are real and knowledge is static: MCP tools for writes, RAG for retrieval.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you reach for an agent when a lookup would do, you pay agent prices for lookup answers.</p></div>
 
 <h3>Easy items</h3>
 <div class="qb-q"><div class="qb-head"><span class="qb-num">Q1</span><span class="constraint">D3</span><span class="qb-pill easy">Easy</span><span class="constraint">Select one</span></div><div class="qb-scenario">A legal-tech startup builds a contract question-answering assistant over 40,000 vendor contracts. Users ask questions like "What is the termination notice period in contract ACME-2024-118?" and expect the exact clause quoted. The team is designing the RAG pipeline and must choose a chunking strategy.</div><div class="constraint-block"><strong>Constraint:</strong> answers must cite the exact clause. Small errors in clause text are unacceptable to the legal team.</div><div class="qb-ask">Which chunking strategy best satisfies the constraint?</div><ol class="qb-opts" type="A"><li>Split each contract into 2,000-token chunks with no overlap, to keep each clause in rich surrounding context.</li><li>Split each contract into 400 to 600-token chunks with 10 percent overlap, and attach contract ID plus section heading as metadata on every chunk.</li><li>Embed each full contract as a single vector and retrieve the whole contract, letting the model find the clause.</li><li>Chunk by fixed 100-token windows with no overlap or metadata, to maximize retrieval precision.</li></ol><details class="pq"><summary>Show answer and explanation</summary><div class="pq-answer"><span class="qb-verdict">Answer: B</span><p class="qb-why"><strong>Why B is correct:</strong> the constraint is exact clause citation. Small chunks raise retrieval precision so the cited clause is actually returned, overlap prevents clauses split across boundaries from being lost, and metadata (contract ID, section) lets the system filter and cite correctly.</p><ol class="qb-distractors" type="A"><li>A is wrong because 2,000-token chunks dilute precision: the retriever returns long passages and the model may quote the wrong clause from the same chunk.</li><li>C is wrong because a whole contract far exceeds useful retrieval granularity; the model cannot reliably locate one clause in 40,000 embedded documents.</li><li>D is wrong because 100-token windows with no overlap will slice clauses in half, and without metadata the system cannot attribute a quote to the right contract.</li></ol></div></details></div>
@@ -1495,7 +1521,10 @@ html.xp-js .xp-reveal.xp-in {
 
 <p><strong>Next:</strong> D1 Solution Design and Architecture (17 percent). Integration implements designs; now the questions test the design decisions themselves.</p>
 <h2>D1. Solution Design and Architecture (17% of the exam, about 11 items)</h2>
-<div class="callout"><p><strong>Why this comes next.</strong> D3 tested how pieces connect. D1 tests the decisions that come before connection: choosing models, shaping context, and structuring the whole solution. It is 17 percent of the exam, the second-heaviest domain.</p></div>
+<div class="callout"><p><strong>Why this comes next.</strong> D3 tested how pieces connect. D1 tests the decisions that come before connection: choosing models, shaping context, and structuring the whole solution. It is 17 percent of the exam, the second-heaviest domain.</p>
+<p><figure><img src="img/q08-pattern-selector.svg" alt="Three cards for workflow, augmented LLM call, and agentic loop with examples." title="Pattern selector: workflows for fixed paths, augmented calls for one decision, agents for open-ended work."><figcaption>Pattern selector: workflows for fixed paths, augmented calls for one decision, agents for open-ended work.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>WORKFLOW: paths fixed, deterministic routing. Refund under $50 with no fraud flags: the same steps every time.</li><li>AUGMENTED LLM CALL: one reasoning step, then tools. Summarize the ticket, then file it: decide, act, done.</li><li>AGENTIC LOOP: the model chooses next steps. Novel tickets, unknown steps: plan, act, check, replan.</li><li>The exam rewards the simplest pattern that survives the failure modes.</li></ol>
+<p><strong>What breaks if a part fails:</strong> Fewer paths than needed is fragile; more than needed is a cost fire.</p></div></div>
 <p>Translating business problems into Claude solutions, end-to-end architectures, workflow vs agentic vs augmented LLM patterns, multi-agent orchestration, decomposition, business value pillars (efficiency, transformation, productivity, cost, performance SLAs).</p>
 
 <h3>Easy items</h3>
@@ -1526,7 +1555,10 @@ html.xp-js .xp-reveal.xp-in {
 
 <p><strong>Next:</strong> D4 Evaluation, Testing and Optimization (16 percent). Designed and integrated systems still need proof they work.</p>
 <h2>D4. Evaluation, Testing and Optimization (16% of the exam, about 10 items)</h2>
-<div class="callout"><p><strong>Why this comes next.</strong> D1 decided what to build and D3 connected it. D4 asks the question neither answered: how do you know it works? Evaluation design, testing strategy, and optimization under constraints. Sixteen percent of the exam.</p></div>
+<div class="callout"><p><strong>Why this comes next.</strong> D1 decided what to build and D3 connected it. D4 asks the question neither answered: how do you know it works? Evaluation design, testing strategy, and optimization under constraints. Sixteen percent of the exam.</p>
+<p><figure><img src="img/q08-eval-loop.svg" alt="Six pipeline steps from rubric to CI gates with a feedback loop." title="The eval loop: define the rubric, build the golden set, run the harness, turn failures into fixtures."><figcaption>The eval loop: define the rubric, build the golden set, run the harness, turn failures into fixtures.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Start with the rubric: the judge criteria written down before anything runs.</li><li>Build the golden set: 50-200 query and answer pairs with known-good answers.</li><li>Run the harness on the same prompt every time, diff the failures, cluster the causes.</li><li>Fix one thing, then let CI gates block the merge if a gate fails.</li><li>The loop never ends: every failure the loop cannot catch becomes a new fixture.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If the golden set never grows, regressions return wearing different clothes.</p></div></div>
 <p>Defining eval metrics (accuracy, latency, cost, safety, security), building eval datasets with mixed methods, A/B testing, diagnosing failures (prompt failure, hallucination, model mismatch), token and cost optimization, production monitoring.</p>
 
 <h3>Easy items</h3>
@@ -1556,7 +1588,10 @@ html.xp-js .xp-reveal.xp-in {
 
 <p><strong>Next:</strong> D5 Governance, Safety and Risk Management (14 percent). A system that works still operates under rules.</p>
 <h2>D5. Governance, Safety and Risk Management (14% of the exam, about 9 items)</h2>
-<div class="callout"><p><strong>Why this comes next.</strong> D4 proved the system works. D5 asks whether it is allowed to: safety, compliance, risk management, and the guardrails that bind every design. Fourteen percent of the exam.</p></div>
+<div class="callout"><p><strong>Why this comes next.</strong> D4 proved the system works. D5 asks whether it is allowed to: safety, compliance, risk management, and the guardrails that bind every design. Fourteen percent of the exam.</p>
+<p><figure><img src="img/q08-hitl-tiers.svg" alt="Four tiers from read-only to irreversible with the approval rule for each." title="HITL tiers: approval follows the stakes, from read-only to irreversible."><figcaption>HITL tiers: approval follows the stakes, from read-only to irreversible.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>READ-ONLY: look up account, search tickets. No approval, just log it.</li><li>REVERSIBLE WRITE: file a ticket, update status. Show what was done, offer undo.</li><li>DESTRUCTIVE: reset password, restart production. Explicit approval with a full preview; a timeout defaults to deny.</li><li>IRREVERSIBLE: terminate account, wipe device. Approval plus a second factor: a different human.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If destructive actions need no approval, the incident is one bad tool call away.</p></div></div>
 <p>Guardrails and safety controls, risks and failure modes of LLM systems, human-in-the-loop validation, regulatory compliance (GDPR, HIPAA, FedRAMP), ethical AI (bias, fairness, transparency).</p>
 
 <h3>Easy items</h3>
@@ -1585,7 +1620,10 @@ html.xp-js .xp-reveal.xp-in {
 
 <p><strong>Next:</strong> D6 Stakeholder Communication and Lifecycle Management (14 percent). Governed systems need buy-in, rollout plans, and a lifecycle.</p>
 <h2>D6. Stakeholder Communication and Lifecycle Management (14% of the exam, about 9 items)</h2>
-<div class="callout"><p><strong>Why this comes next.</strong> D5 set the rules. D6 tests the human side: explaining decisions to stakeholders, managing the lifecycle from pilot to production, and communicating risk. Fourteen percent of the exam.</p></div>
+<div class="callout"><p><strong>Why this comes next.</strong> D5 set the rules. D6 tests the human side: explaining decisions to stakeholders, managing the lifecycle from pilot to production, and communicating risk. Fourteen percent of the exam.</p>
+<p><figure><img src="img/q08-lifecycle.svg" alt="Six stage cards from identify to maintain with an arrow looping back." title="The lifecycle loop: six stages, and the traps live in the transitions."><figcaption>The lifecycle loop: six stages, and the traps live in the transitions.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Identify the AI-shaped pain, design the smallest thing that works, select the cheapest tier that fits.</li><li>Evaluate on golden data before you deploy; deploy with a champion and a challenger.</li><li>Maintain means watching drift and retraining: then the loop feeds back into identify.</li><li>The traps: skipping discovery, shipping without evals, no rollback plan.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If maintain has no owner, drift is discovered by customers.</p></div></div>
 <p>Structured discovery and requirements, communicating decisions and trade-offs, feedback loops and SLA alignment, architecture documentation, lifecycle phases from discovery through monitoring and iteration.</p>
 
 <h3>Easy items</h3>
@@ -1614,7 +1652,10 @@ html.xp-js .xp-reveal.xp-in {
 
 <p><strong>Next:</strong> D2 Claude Models, Prompting and Context Engineering (13 percent). Now the model-level foundations underneath everything above.</p>
 <h2>D2. Claude Models, Prompting and Context Engineering (13% of the exam, about 8 items)</h2>
-<div class="callout"><p><strong>Why this comes next.</strong> D3 through D6 tested systems and their surroundings. D2 goes one level down to the model itself: choosing models, writing prompts, and engineering context. Thirteen percent of the exam.</p></div>
+<div class="callout"><p><strong>Why this comes next.</strong> D3 through D6 tested systems and their surroundings. D2 goes one level down to the model itself: choosing models, writing prompts, and engineering context. Thirteen percent of the exam.</p>
+<p><figure><img src="img/q08-cache-breakpoints.svg" alt="Four numbered checkpoints for deciding whether prompt caching will pay off." title="Caching decisions in order: reuse, length, stability, TTL fit. The first no ends the analysis."><figcaption>Caching decisions in order: reuse, length, stability, TTL fit. The first no ends the analysis.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Reuse: is the same prefix read often enough to beat the 1.25x write premium? No means stop.</li><li>Length: is the prefix 512+ tokens (1024+ for Sonnet and Opus)? Below the minimum means stop.</li><li>Stability: does the prefix survive minutes, not seconds? Per-user volatility kills the payback.</li><li>TTL fit: does the reuse window fit inside 5 minutes? If the cache expires before it pays, stop.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you start with the model instead of reuse, you optimize a cache that never hits.</p></div></div>
 <p>Selecting Claude models on trade-offs, system prompts and templates, zero-shot vs few-shot vs chain-of-thought, context window management, prompt reuse (caching, modular prompts, Skills). Note: prompting is 6th of 7 domains by weight on this exam. It leads nothing.</p>
 
 <h3>Easy items</h3>
@@ -1642,7 +1683,10 @@ html.xp-js .xp-reveal.xp-in {
 
 <p><strong>Next:</strong> D7 Developer Productivity and Operational Enablement (7 percent), the smallest domain, closing the bank.</p>
 <h2>D7. Developer Productivity and Operational Enablement (7% of the exam, about 4 items)</h2>
-<div class="callout"><p><strong>Why this comes next.</strong> D7 is the smallest domain at 7 percent, and the most operational: configuring Claude tools for teams, AI-assisted workflows, debugging, and runbooks. A short section, and a good cool-down before exam strategy.</p></div>
+<div class="callout"><p><strong>Why this comes next.</strong> D7 is the smallest domain at 7 percent, and the most operational: configuring Claude tools for teams, AI-assisted workflows, debugging, and runbooks. A short section, and a good cool-down before exam strategy.</p>
+<p><figure><img src="img/q08-config-layers.svg" alt="Four layers from managed enforcement down to user preferences." title="D7 settings: managed beats project, project beats local, local beats user."><figcaption>D7 settings: managed beats project, project beats local, local beats user.</figcaption></figure></p>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>MANAGED: fleet-wide enforcement, rollout deny lists, allowed servers. Beats everything.</li><li>PROJECT: committed team config: CLAUDE.md, project MCP servers, hooks. Beats local and user.</li><li>LOCAL: this checkout only, never committed. Beats user.</li><li>USER: your personal preferences. Loses to everything above.</li><li>A secret in project scope must live in an env var, never in the file.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If team behavior lives in personal config, compliance depends on every individual complying forever.</p></div></div>
 <p>Configuring Claude tools and environments for teams (for example Claude Code), improving developer workflows with AI-assisted tooling, supporting debugging and operational issue resolution.</p>
 
 <h3>Easy items</h3>
@@ -1729,6 +1773,26 @@ Last verified against official Anthropic sources: September 2026.</p></footer>
 <footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><figure><img src="img/08-fig-03.svg" alt="Seven trap patterns with antidotes: aggregate, prompt-plea, bigger-model, demo, good-engineering, fan-out, retry-storm." title="Figure S-3. Seven trap patterns and their antidotes."><figcaption>Figure S-3. Seven trap patterns and their antidotes.</figcaption></figure>
 <div class="callout"><p><strong>Where to go next.</strong> You have worked 106 items across all seven domains. The natural next step is the <a href="09-system-design-guide.html">System Design Guide</a>: eight end-to-end reference designs with trade-off math, the deep version of what these questions tested. After that, the <a href="crash-course.html">Crash Course</a> compresses all seven domains for final review.</p></div>
 <h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html" aria-current="page">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<script>
+/* CCAR-P volume order for the auto-generated prev/next footer. Overrides the
+   script's default manifest so the footer follows the same chain as the static
+   header nav: index -> prereq -> D1-D7 -> question bank -> design guide ->
+   crash course. (Plain hyphens only in this comment.) */
+window.DS_MANIFEST = [
+  { file: "index.html",                                label: "Start · Exam Overview & Study Map" },
+  { file: "prereq-claude-fundamentals.html",           label: "Prereq · Claude Developer Fundamentals" },
+  { file: "01-solution-design-architecture.html",      label: "D1 · Solution Design & Architecture (17%)" },
+  { file: "02-models-prompting-context.html",          label: "D2 · Models, Prompting & Context (13%)" },
+  { file: "03-integration.html",                       label: "D3 · Integration (19%)" },
+  { file: "04-evaluation-testing-optimization.html",   label: "D4 · Evaluation, Testing & Optimization (16%)" },
+  { file: "05-governance-safety-risk.html",             label: "D5 · Governance, Safety & Risk (14%)" },
+  { file: "06-stakeholder-communication-lifecycle.html", label: "D6 · Stakeholder Communication & Lifecycle (14%)" },
+  { file: "07-developer-productivity-enablement.html", label: "D7 · Developer Productivity & Enablement (7%)" },
+  { file: "08-question-bank.html",                     label: "Question Bank" },
+  { file: "09-system-design-guide.html",               label: "System Design Guide" },
+  { file: "crash-course.html",                         label: "Crash Course" }
+];
+</script>
 <script>
 /* ==========================================================================
    DS — Canonical Design System behavior (shared across study-guide tracks)
