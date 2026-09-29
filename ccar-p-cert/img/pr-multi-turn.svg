@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#16a34a"/></marker></defs>
+<rect width="900" height="440" rx="14" fill="#ffffff"/>
+<rect x="1" y="1" width="898" height="438" rx="13" fill="none" stroke="#cbd5e1"/>
+<text x="450.0" y="36" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">Multi-turn: you are the memory</text>
+<text x="450.0" y="62" text-anchor="middle" font-size="13" fill="#64748b">The API is stateless. A conversation is you resending the history plus the new turn.</text>
+<rect x="40" y="100" width="820" height="120" rx="10" fill="#f1f5f9" stroke="#64748b"/>
+<text x="450" y="130" text-anchor="middle" font-size="13" fill="#64748b" font-weight="bold">turn 1</text>
+<text x="450" y="158" text-anchor="middle" font-size="14" fill="#1e293b">[ user: "hi" ]  --&gt;  reply A</text>
+<text x="450" y="190" text-anchor="middle" font-size="12" fill="#94a3b8">your app stores reply A</text>
+<rect x="40" y="240" width="820" height="120" rx="10" fill="#dbeafe" stroke="#2563eb"/>
+<text x="450" y="270" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="bold">turn 2</text>
+<text x="450" y="298" text-anchor="middle" font-size="14" fill="#1e293b">[ user: "hi", assistant: A, user: "thanks" ]  --&gt;  reply B</text>
+<text x="450" y="330" text-anchor="middle" font-size="12" fill="#1e40af">you rebuild and resend the WHOLE array every turn</text>
+<text x="450.0" y="400" text-anchor="middle" font-size="12" fill="#94a3b8">Cost grows with history length. That is why context management and caching exist.</text>
+</svg>
