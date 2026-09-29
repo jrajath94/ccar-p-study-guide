@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" role="img" aria-label="How Claude reads a request: system, messages, and tools become one token sequence; the answer is written one token at a time">
+  <rect width="900" height="300" fill="none"/>
+  <text x="450" y="28" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#a8a8a8">Everything you send becomes one input; the answer is written one token at a time</text>
+  <g font-family="sans-serif">
+    <rect x="20" y="60" width="160" height="66" rx="10" fill="#0d0d0d" stroke="#262626" stroke-width="2"/>
+    <text x="100" y="88" text-anchor="middle" font-size="15" fill="#ececec">system</text>
+    <text x="100" y="109" text-anchor="middle" font-size="12" fill="#a8a8a8">standing rules</text>
+    <rect x="20" y="140" width="160" height="66" rx="10" fill="#0d0d0d" stroke="#262626" stroke-width="2"/>
+    <text x="100" y="168" text-anchor="middle" font-size="15" fill="#ececec">messages</text>
+    <text x="100" y="189" text-anchor="middle" font-size="12" fill="#a8a8a8">conversation turns</text>
+    <rect x="20" y="220" width="160" height="56" rx="10" fill="#0d0d0d" stroke="#262626" stroke-width="2"/>
+    <text x="100" y="246" text-anchor="middle" font-size="15" fill="#ececec">tools + docs</text>
+    <path d="M180 93 H225 M180 173 H225 M180 248 H225" stroke="#f0b429" stroke-width="2"/>
+    <rect x="225" y="120" width="170" height="110" rx="10" fill="#0d0d0d" stroke="#f0b429" stroke-width="2"/>
+    <text x="310" y="155" text-anchor="middle" font-size="15" fill="#ececec">one token</text>
+    <text x="310" y="177" text-anchor="middle" font-size="15" fill="#ececec">sequence</text>
+    <text x="310" y="203" text-anchor="middle" font-size="12" fill="#a8a8a8">input tokens</text>
+    <path d="M395 175 H440" stroke="#f0b429" stroke-width="2"/>
+    <rect x="440" y="120" width="150" height="110" rx="10" fill="#0d0d0d" stroke="#262626" stroke-width="2"/>
+    <text x="515" y="155" text-anchor="middle" font-size="15" fill="#ececec">Claude</text>
+    <text x="515" y="177" text-anchor="middle" font-size="12" fill="#a8a8a8">predicts next</text>
+    <text x="515" y="195" text-anchor="middle" font-size="12" fill="#a8a8a8">token, repeat</text>
+    <path d="M590 175 H635" stroke="#f0b429" stroke-width="2"/>
+    <rect x="635" y="120" width="170" height="110" rx="10" fill="#0d0d0d" stroke="#f0b429" stroke-width="2"/>
+    <text x="720" y="155" text-anchor="middle" font-size="15" fill="#ececec">answer</text>
+    <text x="720" y="177" text-anchor="middle" font-size="12" fill="#a8a8a8">output tokens,</text>
+    <text x="720" y="195" text-anchor="middle" font-size="12" fill="#a8a8a8">5x input price</text>
+  </g>
+  <text x="450" y="262" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#a8a8a8">stateless: each request stands alone; history is re-sent every turn</text>
+</svg>
