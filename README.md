@@ -12,17 +12,17 @@ Complete study materials for Anthropic's professional-tier Claude certification 
 
 | File | What it is |
 |---|---|
-| `index.html` | Start here. Guide home page with study order |
+| `ccar-p-cert/index.html` | Start here. Guide home page with study order |
 | `EXAM-BLUEPRINT.md` | Verified exam facts, 7 domains + weights + official objectives, CCAR-P vs CCAR-F, how they ask |
-| `01-solution-design-architecture.html` | D1 Solution Design & Architecture (17%) |
-| `02-models-prompting-context.html` | D2 Claude Models, Prompting & Context Engineering (13%) |
-| `03-integration.html` | D3 Integration (19%) |
-| `04-evaluation-testing-optimization.html` | D4 Evaluation, Testing & Optimization (16%) |
-| `05-governance-safety-risk.html` | D5 Governance, Safety & Risk Management (14%) |
-| `06-stakeholder-communication-lifecycle.html` | D6 Stakeholder Communication & Lifecycle Management (14%) |
-| `07-developer-productivity-enablement.html` | D7 Developer Productivity & Operational Enablement (7%) |
-| `08-question-bank.html` | 64 practice questions (21 easy / 23 medium / 20 hard) + exam-day strategy |
-| `09-system-design-guide.html` | 8 end-to-end reference designs with trade-off math |
+| `ccar-p-cert/01-solution-design-architecture.html` | D1 Solution Design & Architecture (17%) |
+| `ccar-p-cert/02-models-prompting-context.html` | D2 Claude Models, Prompting & Context Engineering (13%) |
+| `ccar-p-cert/03-integration.html` | D3 Integration (19%) |
+| `ccar-p-cert/04-evaluation-testing-optimization.html` | D4 Evaluation, Testing & Optimization (16%) |
+| `ccar-p-cert/05-governance-safety-risk.html` | D5 Governance, Safety & Risk Management (14%) |
+| `ccar-p-cert/06-stakeholder-communication-lifecycle.html` | D6 Stakeholder Communication & Lifecycle Management (14%) |
+| `ccar-p-cert/07-developer-productivity-enablement.html` | D7 Developer Productivity & Operational Enablement (7%) |
+| `ccar-p-cert/08-question-bank.html` | 64 practice questions (21 easy / 23 medium / 20 hard) + exam-day strategy |
+| `ccar-p-cert/09-system-design-guide.html` | 8 end-to-end reference designs with trade-off math |
 
 Every volume is a single self-contained HTML file (works offline, no external dependencies). Each concept is taught from zero: what it is, why it exists, how it works under the hood, concrete numbers, common misunderstandings, diagrams with walkthroughs, and an exam-relevance line.
 
