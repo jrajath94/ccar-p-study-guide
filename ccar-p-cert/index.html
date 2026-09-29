@@ -1343,7 +1343,7 @@ html.xp-js .xp-reveal.xp-in {
 <p class="eyebrow">Study guide · generic learning material</p>
 
 <h1>Claude Certified Architect - Professional (CCAR-P)</h1>
-<p class="lede">Complete study materials for Anthropic's professional-tier Claude certification: seven domain volumes taught from first principles, a 106-question practice bank, and a system design guide. Built from the official exam guide v1.0 (effective July 2026).</p>
+<p class="lede">Complete study materials for Anthropic's professional-tier Claude certification: seven domain volumes taught from first principles, a 106-question practice bank, and a system design guide. Built from the official exam guide v1.0 (effective July 2026). Claude is a large language model: it reads text as tokens and predicts what comes next, token by token. A Claude architect assembles models, instructions, context, and tools into systems that satisfy cost, latency, quality, and safety constraints at once. This exam tests that judgment, not feature recall.</p>
 
 <div class="facts">
 <div class="fact"><b>CCAR-P</b><span>Exam code</span></div>
@@ -1353,6 +1353,7 @@ html.xp-js .xp-reveal.xp-in {
 <div class="fact"><b>720 / 1000</b><span>Pass mark</span></div>
 <div class="fact"><b>$175</b><span>Fee</span></div>
 </div>
+<div class="board"><div class="lbl">Suggested order.</div><p>If you are starting from zero: the <a href="prereq-claude-fundamentals.html">prereq volume</a> first, then D1 through D7 in order, then the <a href="08-question-bank.html">question bank</a>.</p><p>Short on time: the <a href="crash-course.html">crash course</a> compresses all seven domains in exam-weight order, then the bank for timed reps.</p></div>
 
 <h2>Prerequisites</h2>
 <a class="vol" href="prereq-claude-fundamentals.html"><div class="row"><h3>Prereq. Claude Developer Fundamentals</h3><span class="w">start here</span></div><p>Read this first if the Claude API is new to you: keys, Messages, multi-turn, sampling, tool use, thinking, caching, batches, embeddings, the model lineup, MCP, Claude Code, streaming, rate limits, errors, evals, safety, prompt engineering, and a capstone that wires it all into one production app. The exam assumes you already know this half of the story.</p></a>
@@ -1371,6 +1372,7 @@ html.xp-js .xp-reveal.xp-in {
 <a class="vol" href="06-stakeholder-communication-lifecycle.html"><div class="row"><h3>6. Stakeholder Communication &amp; Lifecycle</h3><span class="w">14%</span></div><p>Structured discovery, communicating trade-offs, SLAs and expectation alignment, architecture documentation, lifecycle management.</p></a>
 
 <a class="vol" href="07-developer-productivity-enablement.html"><div class="row"><h3>7. Developer Productivity &amp; Enablement</h3><span class="w">7%</span></div><p>Claude Code rollout, permissions and hooks, MCP distribution, AI-assisted workflows, secrets governance, debugging, runbooks.</p></a>
+<p><strong>The turn from learning to proving.</strong> Seven volumes teach the judgment. The pages below test it: the bank for timed reps, the system design guide for scenario practice, the crash course for final review.</p>
 
 <h2>Practice and reference</h2>
 <a class="vol" href="08-question-bank.html"><div class="row"><h3>Practice question bank</h3><span class="w">106 Q</span></div><p>106 scenario-style questions weighted like the exam (29 easy / 49 medium / 28 hard), multiple-choice and multiple-response, each with why-correct and why-each-distractor-is-wrong explanations, plus exam-day strategy.</p></a>
@@ -1378,6 +1380,7 @@ html.xp-js .xp-reveal.xp-in {
 <a class="vol" href="09-system-design-guide.html"><div class="row"><h3>System design guide</h3><span class="w">8 designs</span></div><p>Eight end-to-end reference designs: production RAG, tool-using agents, multi-agent orchestration, production MCP, caching economics, multi-cloud failover, evals-as-code, and the cost/latency/quality trilemma.</p></a>
 
 <a class="vol" href="crash-course.html"><div class="row"><h3>Crash course</h3><span class="w">1 volume</span></div><p>One extremely dense volume covering all seven domains in exam-weight order: decision rules, must-memorize numbers, 25 trap patterns, 25 rapid-fire questions, and the pre-exam checklist. Built to be enough for all 63 items.</p></a>
+<p><strong>How the pieces fit.</strong> Material first, proof second, review last. The plan below turns that into a two-week schedule.</p>
 
 <h2>How to use this guide</h2>
 <ol>
@@ -1387,6 +1390,7 @@ html.xp-js .xp-reveal.xp-in {
 <li>Use the system design guide to build architectural judgment. That is what CCAR-P actually tests.</li>
 <li>Re-check model pricing and feature availability in the official docs before exam day; marked figures in the volumes are illustrative.</li>
 </ol>
+<figure><img src="img/index-study-path.svg" alt="Study path: prereq, then the seven domain volumes in exam-weight order, then the question bank and system designs, then the crash course, then the exam" title="The path through this guide."><figcaption>The path through this guide: prereq, domains in weight order, practice, crash course, exam day.</figcaption></figure>
 <h2>What actually helps (from candidates who passed)</h2>
 <p>The exam tests architectural judgment under constraints, not documentation recall. Every passer says the same thing in different words: <strong>it tests decisions, not features.</strong> Much of what it asks has no documentation page behind it, because it is asking how an architect behaves, not how Claude behaves.</p>
 <ul>
