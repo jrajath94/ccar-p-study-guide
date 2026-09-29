@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="Charis SIL, Georgia, serif">
+  <rect x="0" y="0" width="960" height="560" rx="10" fill="#0d0d0d"/>
+  <text x="30" y="42" font-size="24" fill="#ececec" font-weight="bold">Why normal testing breaks on generative systems</text>
+  <!-- left: deterministic -->
+  <rect x="30" y="64" width="440" height="400" rx="8" fill="#111111" stroke="#262626" stroke-width="2"/>
+  <text x="52" y="100" font-size="18" fill="#ececec" font-weight="bold">Deterministic code</text>
+  <text x="52" y="132" font-size="14" fill="#a8a8a8">One input → one correct output.</text>
+  <rect x="52" y="152" width="396" height="70" rx="6" fill="#1a1a1a" stroke="#262626"/>
+  <text x="66" y="180" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">add(2, 3)</text>
+  <text x="200" y="180" font-size="14" fill="#a8a8a8" font-family="ui-monospace, Menlo, monospace">→</text>
+  <text x="230" y="180" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">5</text>
+  <text x="66" y="206" font-size="13" fill="#a8a8a8">run it 1,000 times: still 5</text>
+  <rect x="52" y="240" width="396" height="70" rx="6" fill="#1a1a1a" stroke="#262626"/>
+  <text x="66" y="268" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">assertEqual(output, 5)</text>
+  <text x="66" y="294" font-size="13" fill="#a8a8a8">An assertion states the one right answer.</text>
+  <rect x="52" y="330" width="396" height="54" rx="6" fill="#12351f"/>
+  <text x="66" y="363" font-size="15" fill="#7ddf9a" font-weight="bold">✓ PASS — the test means something</text>
+  <text x="52" y="416" font-size="13" fill="#a8a8a8">Same code, same answer, forever.</text>
+  <text x="52" y="438" font-size="13" fill="#a8a8a8">Unless the code changes, the test cannot fail.</text>
+  <!-- right: generative -->
+  <rect x="500" y="64" width="430" height="400" rx="8" fill="#111111" stroke="#f0b429" stroke-width="2"/>
+  <text x="522" y="100" font-size="18" fill="#f0b429" font-weight="bold">Generative system</text>
+  <text x="522" y="132" font-size="14" fill="#a8a8a8">One input → many valid outputs.</text>
+  <rect x="522" y="152" width="386" height="110" rx="6" fill="#1a1a1a" stroke="#262626"/>
+  <text x="536" y="180" font-size="13" fill="#ececec" font-family="ui-monospace, Menlo, monospace">"Summarize this contract"</text>
+  <text x="536" y="204" font-size="13" fill="#a8a8a8">run 1: "A 2-year lease at $4k/mo…"</text>
+  <text x="536" y="226" font-size="13" fill="#a8a8a8">run 2: "Lease: 24 months, $4,000 monthly…"</text>
+  <text x="536" y="248" font-size="13" fill="#a8a8a8">run 3: "Tenant pays $4k per month…"</text>
+  <rect x="522" y="278" width="386" height="70" rx="6" fill="#1a1a1a" stroke="#262626"/>
+  <text x="536" y="306" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">assertEqual(output, "A 2-year…")</text>
+  <text x="536" y="332" font-size="13" fill="#a8a8a8">Which run is "the" right answer?</text>
+  <rect x="522" y="364" width="386" height="54" rx="6" fill="#3d1518"/>
+  <text x="536" y="397" font-size="15" fill="#ff9a9a" font-weight="bold">✗ FAIL — but runs 2 and 3 were fine</text>
+  <!-- footer -->
+  <rect x="30" y="484" width="900" height="52" rx="8" fill="#111111" stroke="#262626" stroke-width="1"/>
+  <text x="52" y="517" font-size="14" fill="#ececec">The felt problem: strict equality cannot grade prose. You need checks for structure, judges for quality, humans for truth.</text>
+</svg>
