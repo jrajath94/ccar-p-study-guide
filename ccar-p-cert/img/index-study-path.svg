@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 280" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+  <text x="340" y="32" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">The path through this guide</text>
+  <g font-size="13.5">
+    <rect x="20" y="70" width="150" height="70" rx="10" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="95" y="98" text-anchor="middle" font-weight="bold" fill="#1e40af">1. Prereq</text>
+    <text x="95" y="120" text-anchor="middle" fill="#475569">Claude developer</text>
+    <text x="95" y="136" text-anchor="middle" fill="#475569">fundamentals</text>
+    <text x="182" y="110" font-size="22" fill="#64748b">&#8594;</text>
+    <rect x="206" y="70" width="150" height="70" rx="10" fill="#d1fae5" stroke="#047857" stroke-width="1.5"/>
+    <text x="281" y="98" text-anchor="middle" font-weight="bold" fill="#064e3b">2. Domain volumes</text>
+    <text x="281" y="120" text-anchor="middle" fill="#475569">D1 to D7, weighted</text>
+    <text x="281" y="136" text-anchor="middle" fill="#475569">D3 19% down to D7 7%</text>
+    <text x="368" y="110" font-size="22" fill="#64748b">&#8594;</text>
+    <rect x="392" y="70" width="130" height="70" rx="10" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="457" y="98" text-anchor="middle" font-weight="bold" fill="#78350f">3. Practice</text>
+    <text x="457" y="120" text-anchor="middle" fill="#475569">106 questions,</text>
+    <text x="457" y="136" text-anchor="middle" fill="#475569">8 system designs</text>
+    <text x="534" y="110" font-size="22" fill="#64748b">&#8594;</text>
+    <rect x="548" y="70" width="112" height="70" rx="10" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+    <text x="604" y="98" text-anchor="middle" font-weight="bold" fill="#7f1d1d">4. Crash</text>
+    <text x="604" y="120" text-anchor="middle" fill="#475569">all domains,</text>
+    <text x="604" y="136" text-anchor="middle" fill="#475569">night before</text>
+  </g>
+  <rect x="60" y="170" width="560" height="80" rx="10" fill="#f1f5f9" stroke="#64748b"/>
+  <text x="340" y="200" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#1e293b">The exam tests architectural judgment under constraints,</text>
+  <text x="340" y="222" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#1e293b">not documentation recall: decisions, not features.</text>
+</svg>
