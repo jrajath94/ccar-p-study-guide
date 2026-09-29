@@ -2,6 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<style>
+/* Validation-assembly: bridge + equation rendering (additive, 2026-09-29). */
+.chapter-bridge,.topic-bridge,.u-bridge{border-left:3px solid #8a8f98;border-left:3px solid color-mix(in srgb,currentColor 40%,transparent);padding:.55rem .9rem;margin:1.1rem 0;background:rgba(128,128,128,.08);border-radius:0 6px 6px 0}
+.next-chapter,.u-next,.u-goto{font-weight:650;margin:1.15rem 0}
+.display-eq,.eq{text-align:center;margin:1.15rem 0;font-size:1.12em;line-height:1.7}
+.eq-where{margin:.1rem 0 1rem 1.25rem;font-size:.93em;opacity:.92}
+.eq-worked{border:1px solid #8a8f98;border:1px solid color-mix(in srgb,currentColor 30%,transparent);border-radius:8px;padding:.7rem 1rem;margin:1rem 0;background:rgba(128,128,128,.06)}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Claude Certified Architect - Professional (CCAR-P)</title>
 <style>
@@ -1359,7 +1367,11 @@ html.xp-js .xp-reveal.xp-in {
 <a class="vol" href="prereq-claude-fundamentals.html"><div class="row"><h3>Prereq. Claude Developer Fundamentals</h3><span class="w">start here</span></div><p>Read this first if the Claude API is new to you: keys, Messages, multi-turn, sampling, tool use, thinking, caching, batches, embeddings, the model lineup, MCP, Claude Code, streaming, rate limits, errors, evals, safety, prompt engineering, and a capstone that wires it all into one production app. The exam assumes you already know this half of the story.</p></a>
 
 <h2>Domain volumes</h2>
-<a class="vol" href="01-solution-design-architecture.html"><div class="row"><h3>1. Solution Design &amp; Architecture</h3><span class="w">17%</span></div><p>Business problem to Claude solution, end-to-end architectures, workflow vs agentic patterns, multi-agent orchestration, decomposition, business value pillars and SLAs.</p></a>
+<figure><img src="img/idx-domain-weights.svg" alt="Seven domain bars with their percentages." title="Domain weights in the CCAR-P exam: D3 is largest, D7 smallest, the rest in the teens."><figcaption>Domain weights in the CCAR-P exam: D3 is largest, D7 smallest, the rest in the teens.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>D3 integration is the heaviest at 19%. D7 developer productivity is the lightest at 7%.</li><li>D1, D4, D2, D5, D6 all sit in the 13-17% band. Nothing is skippable, but D3 and D1 buy the most items per hour studied.</li><li>The exam has 63 items in 120 minutes: about 1:54 per item.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you study all domains equally, the 7% domain gets as much time as the 19% domain and the math punishes you.</p></div>
+<a class="vol" href="01-solution-design-architecture.html"><div class="row"><h3>1. Solution Design &amp; Architecture</h3><span class="w">17%</span></div><p>Business problem to Claude solution, end-to-end architectures, workflow vs agentic patterns, multi-agent orchestration, decomposition, business value pillars and SLAs.</p>
+</a>
 
 <a class="vol" href="02-models-prompting-context.html"><div class="row"><h3>2. Claude Models, Prompting &amp; Context</h3><span class="w">13%</span></div><p>Model selection trade-offs, system prompts, zero/few-shot and chain-of-thought, context management, prompt caching economics, Skills.</p></a>
 
@@ -1375,7 +1387,11 @@ html.xp-js .xp-reveal.xp-in {
 <p><strong>The turn from learning to proving.</strong> Seven volumes teach the judgment. The pages below test it: the bank for timed reps, the system design guide for scenario practice, the crash course for final review.</p>
 
 <h2>Practice and reference</h2>
-<a class="vol" href="08-question-bank.html"><div class="row"><h3>Practice question bank</h3><span class="w">106 Q</span></div><p>106 scenario-style questions weighted like the exam (29 easy / 49 medium / 28 hard), multiple-choice and multiple-response, each with why-correct and why-each-distractor-is-wrong explanations, plus exam-day strategy.</p></a>
+<figure><img src="img/idx-practice-pipeline.svg" alt="Five pipeline steps from learn through mock with a loop back." title="The practice pipeline: learn, quiz, repair the weak spot, re-quiz, then mock."><figcaption>The practice pipeline: learn, quiz, repair the weak spot, re-quiz, then mock.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Learn a domain from the full page. Quiz yourself from the question bank immediately.</li><li>Repair the weak spot the quiz found, in the full page, not in your notes.</li><li>Re-quiz the same weak spot, then take the timed mock. The loop repeats until the mock says stop.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you reread instead of quizzing, familiarity feels like knowledge and the mock is the first honest signal.</p></div>
+<a class="vol" href="08-question-bank.html"><div class="row"><h3>Practice question bank</h3><span class="w">106 Q</span></div><p>106 scenario-style questions weighted like the exam (29 easy / 49 medium / 28 hard), multiple-choice and multiple-response, each with why-correct and why-each-distractor-is-wrong explanations, plus exam-day strategy.</p>
+</a>
 
 <a class="vol" href="09-system-design-guide.html"><div class="row"><h3>System design guide</h3><span class="w">8 designs</span></div><p>Eight end-to-end reference designs: production RAG, tool-using agents, multi-agent orchestration, production MCP, caching economics, multi-cloud failover, evals-as-code, and the cost/latency/quality trilemma.</p></a>
 
@@ -1393,6 +1409,9 @@ html.xp-js .xp-reveal.xp-in {
 <figure><img src="img/index-study-path.svg" alt="Study path: prereq, then the seven domain volumes in exam-weight order, then the question bank and system designs, then the crash course, then the exam" title="The path through this guide."><figcaption>The path through this guide: prereq, domains in weight order, practice, crash course, exam day.</figcaption></figure>
 <h2>What actually helps (from candidates who passed)</h2>
 <p>The exam tests architectural judgment under constraints, not documentation recall. Every passer says the same thing in different words: <strong>it tests decisions, not features.</strong> Much of what it asks has no documentation page behind it, because it is asking how an architect behaves, not how Claude behaves.</p>
+<figure><img src="img/idx-constraint-first.svg" alt="A funnel from constraint to tool to pattern to trade-off with examples." title="Study constraint-first: the constraint tells you which tool, pattern, and trade-off to learn."><figcaption>Study constraint-first: the constraint tells you which tool, pattern, and trade-off to learn.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Name the binding constraint first: latency, cost, correctness, compliance.</li><li>The constraint picks the tool, the tool picks the pattern, the pattern carries a trade-off.</li><li>This is how the exam asks: it gives you a constraint and asks which option survives it.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you memorize tools without constraints, every option looks equally right and the exam picks the distractor.</p></div>
 <ul>
 <li><strong>Read the constraint first, then the architecture.</strong> When a scenario arrives, ask: is this primarily a cost problem? Latency? Reliability? Context? Safety? Multiple answers will look technically reasonable; only one fits the actual constraint.</li>
 <li><strong>Apply the simplicity test.</strong> What is the simplest approach that satisfies the stated constraints? More agents, more tools, and more abstraction are not automatically better.</li>
@@ -1404,6 +1423,9 @@ html.xp-js .xp-reveal.xp-in {
 </ul>
 <h2>The 2-week intensive plan (4+ hours a day)</h2>
 <p>Assumes 3+ years of architecture experience and some hands-on LLM exposure. Confirm your Partner Network eligibility on day 1. About 60 hours total.</p>
+<figure><img src="img/idx-two-week.svg" alt="Fourteen day cells grouped into three phases with the daily rhythm." title="The 2-week plan: one heavy domain per day, questions every night, mock exams at the end."><figcaption>The 2-week plan: one heavy domain per day, questions every night, mock exams at the end.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Days 1-2: prereqs and warm-up. Days 3-9: one domain per day, heaviest first.</li><li>Days 10-12: the question bank and weak-spot repair. Days 13-14: timed mocks and exam-day strategy.</li><li>Every evening ends with question-bank items, not rereading.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If the mocks move to the last night, there is no time left to repair what they find.</p></div>
 <p><strong>Week 1: build judgment (days 1–7).</strong></p>
 <ul>
 <li><strong>Day 1 (4h):</strong> Read the official Exam Guide v1.0 end to end. Self-assessment: rate yourself 1–5 in each of the 7 domains. Start a mistake log with five tags: Concept (didn't know it), Boundary (knew it, used it in the wrong scenario), Reading (missed "first step" / "best" / "root cause"), Engineering (picked workable but unreliable), Terminology.</li>
@@ -1439,11 +1461,34 @@ html.xp-js .xp-reveal.xp-in {
 <li><strong>Tech-check the day before</strong> (online proctored): run Pearson's system test on the exact computer and network you'll use. Private room, one screen, webcam, mic, stable connection, no VPN.</li>
 <li><strong>The retake wait is real</strong> (14/30/90 days between attempts). Treat it as single-shot. A reason to be careful, not to panic.</li>
 </ol>
-<footer><p><strong>Sources and honesty notes.</strong> Exam facts (63 items, 120 min, 720/1000, $175, Pearson VUE, domain weights) per the CCAR-P Exam Guide v1.0 (effective July 2026), cross-checked against six independent September 2026 sources. Study tactics distilled from first-person passer reports (Sept 2026): one CCAR-P passer thread, two passer reels, and the 973/1000 community guide. Built 2026-09-28. Pricing and product details change. Verify against docs.anthropic.com before exam day. Generic learning material; no personal data.</p></footer>
+<footer><p><strong>Sources and honesty notes.</strong> Exam facts (63 items, 120 min, 720/1000, $175, Pearson VUE, domain weights) per the CCAR-P Exam Guide v1.0 (effective July 2026), cross-checked against six independent September 2026 sources. Study tactics distilled from first-person passer reports (Sept 2026): one CCAR-P passer thread, two passer reels, and the 973/1000 community guide. Built 2026-09-28. Pricing and product details change. Verify against docs.anthropic.com before exam day. Generic learning material; no personal data.</p>
+<figure><img src="img/idx-exam-day.svg" alt="Four panels for arrive, first pass, second pass, and the closing rules." title="Exam day: arrive early, two passes, budget 1:54 per item, never leave a blank."><figcaption>Exam day: arrive early, two passes, budget 1:54 per item, never leave a blank.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol><li>Arrive early: ID checked, tutorial done before the clock starts. Nerves settle on a rehearsed routine.</li><li>First pass: answer what you know, flag the long scenarios, keep moving.</li><li>Second pass: return to the flagged items with the time that is left.</li><li>Multi-response: read the selection count first. No negative marking, so answer everything.</li></ol>
+<p><strong>What breaks if a part fails:</strong> If you do one slow pass, the long scenarios eat the clock and the easy items at the end die unanswered.</p></div></footer>
 
 </main>
 </div>
 <footer class="ds-site-footer"><div class="ds-foot-inner"><p class="ds-foot-brand"><a href="index.html">CCAR-P Study Guide</a> · generic learning material</p><nav aria-label="Sitemap"><div class="ds-sitemap"><div><h2>Prerequisites</h2><ul><li><a href="prereq-claude-fundamentals.html">Prereq · Claude Developer Fundamentals</a></li></ul></div><div><h2>Domain volumes</h2><ul><li><a href="01-solution-design-architecture.html">D1 · Solution Design &amp; Architecture (17%)</a></li><li><a href="02-models-prompting-context.html">D2 · Models, Prompting &amp; Context (13%)</a></li><li><a href="03-integration.html">D3 · Integration (19%)</a></li><li><a href="04-evaluation-testing-optimization.html">D4 · Evaluation, Testing &amp; Optimization (16%)</a></li><li><a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a></li><li><a href="06-stakeholder-communication-lifecycle.html">D6 · Stakeholder Communication &amp; Lifecycle (14%)</a></li><li><a href="07-developer-productivity-enablement.html">D7 · Developer Productivity &amp; Enablement (7%)</a></li></ul></div><div><h2>Practice and reference</h2><ul><li><a href="08-question-bank.html">Practice Question Bank (106 questions)</a></li><li><a href="09-system-design-guide.html">System Design Guide (8 reference designs)</a></li><li><a href="crash-course.html">Crash Course (all 7 domains)</a></li></ul></div></div></nav></div></footer>
+<script>
+/* CCAR-P volume order for the auto-generated prev/next footer. Overrides the
+   script's default manifest so the footer follows the same chain as the static
+   header nav: index -> prereq -> D1-D7 -> question bank -> design guide ->
+   crash course. (Plain hyphens only in this comment.) */
+window.DS_MANIFEST = [
+  { file: "index.html",                                label: "Start · Exam Overview & Study Map" },
+  { file: "prereq-claude-fundamentals.html",           label: "Prereq · Claude Developer Fundamentals" },
+  { file: "01-solution-design-architecture.html",      label: "D1 · Solution Design & Architecture (17%)" },
+  { file: "02-models-prompting-context.html",          label: "D2 · Models, Prompting & Context (13%)" },
+  { file: "03-integration.html",                       label: "D3 · Integration (19%)" },
+  { file: "04-evaluation-testing-optimization.html",   label: "D4 · Evaluation, Testing & Optimization (16%)" },
+  { file: "05-governance-safety-risk.html",             label: "D5 · Governance, Safety & Risk (14%)" },
+  { file: "06-stakeholder-communication-lifecycle.html", label: "D6 · Stakeholder Communication & Lifecycle (14%)" },
+  { file: "07-developer-productivity-enablement.html", label: "D7 · Developer Productivity & Enablement (7%)" },
+  { file: "08-question-bank.html",                     label: "Question Bank" },
+  { file: "09-system-design-guide.html",               label: "System Design Guide" },
+  { file: "crash-course.html",                         label: "Crash Course" }
+];
+</script>
 <script>
 /* ==========================================================================
    DS — Canonical Design System behavior (shared across study-guide tracks)
