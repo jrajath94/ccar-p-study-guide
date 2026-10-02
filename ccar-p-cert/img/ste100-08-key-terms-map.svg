@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#16a34a"/></marker><marker id="ahp" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#7c3aed"/></marker></defs>
+<rect width="900" height="500" rx="14" fill="#ffffff"/>
+<rect x="1" y="1" width="898" height="498" rx="13" fill="none" stroke="#cbd5e1"/>
+<text x="450.0" y="36" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">Key terms, grouped by domain</text>
+<text x="450.0" y="62" text-anchor="middle" font-size="13" fill="#64748b">Every term below appears in at least one question. Each is defined once, before first use.</text>
+<rect x="30" y="100" width="160" height="220" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="110.0" y="124" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#2563eb">Retrieval and RAG</text>
+<text x="110.0" y="146" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">chunking</text>
+<text x="110.0" y="165" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">hybrid search</text>
+<text x="110.0" y="184" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">rerank</text>
+<rect x="205" y="100" width="160" height="220" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+<text x="285.0" y="124" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#16a34a">Models and context</text>
+<text x="285.0" y="146" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">context window</text>
+<text x="285.0" y="165" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">prompt caching</text>
+<text x="285.0" y="184" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">temperature</text>
+<rect x="380" y="100" width="160" height="220" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+<text x="460.0" y="124" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#d97706">Integration</text>
+<text x="460.0" y="146" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">MCP server</text>
+<text x="460.0" y="165" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">tool use</text>
+<text x="460.0" y="184" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">idempotency</text>
+<rect x="555" y="100" width="160" height="220" rx="10" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.5"/>
+<text x="635.0" y="124" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#7c3aed">Measurement</text>
+<text x="635.0" y="146" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">golden dataset</text>
+<text x="635.0" y="165" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">LLM-as-judge</text>
+<text x="635.0" y="184" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">p95 latency</text>
+<rect x="730" y="100" width="160" height="220" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="810.0" y="124" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#dc2626">Governance</text>
+<text x="810.0" y="146" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">guardrails</text>
+<text x="810.0" y="165" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">HITL</text>
+<text x="810.0" y="184" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">red-teaming</text>
+<text x="450.0" y="370" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Five groups, one per exam domain cluster.</text>
+<rect x="200" y="395" width="500" height="70" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+<text x="450.0" y="419" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#64748b">How to use this map</text>
+<text x="450.0" y="441" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">skim before your first attempt</text>
+<text x="450.0" y="460" text-anchor="middle" font-size="11" font-weight="normal" fill="#1e293b">return when a question uses a term you half-know</text>
+</svg>
