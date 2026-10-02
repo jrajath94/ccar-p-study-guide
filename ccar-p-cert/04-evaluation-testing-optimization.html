@@ -1369,12 +1369,12 @@ html.xp-js .xp-reveal.xp-in {
 <div id="ds-sidebar-root"></div>
 <main id="ds-content">
 <nav class="ds-crumb" aria-label="Breadcrumb"><ol><li><a href="index.html">Home</a></li><li aria-current="page">D4 · Evaluation, Testing &amp; Optimization (16%)</li></ol></nav>
-<div class="banner"><div class="kicker">CCAR-P · DOMAIN D4 · 16% · ~10 QUESTIONS</div><h1>Evaluation, Testing and Optimization</h1><p>This domain tests one thing: can you run a production Claude system like an engineer instead of a demo builder? That means measuring quality before and after every change, catching the failure that aggregate numbers hide, choosing the right test for the right risk, and trading cost, latency and quality against each other on purpose. Every question here is scenario based. The traps punish vibes and reward evidence.</p><div class="facts"><span>D4 · 16% · ~10 questions</span><span>Multiple-choice + multiple-response</span></div></div>
+<div class="banner"><div class="kicker">CCAR-P · DOMAIN D4 · 16% · ~10 QUESTIONS</div><h1>Evaluation, Testing and Optimization</h1><p>This domain tests one thing: can you run a production Claude system like an engineer instead of a demo builder? That means four things. First, measure quality before and after every change. Second, catch the failures that aggregate numbers hide.</p><p>Third, choose the right test for the right risk. Fourth, trade cost, latency and quality against each other on purpose. Every question here is scenario based. The traps punish guessing and reward evidence.</p><div class="facts"><span>D4 · 16% · ~10 questions</span><span>Multiple-choice + multiple-response</span></div></div>
 <section class="unit">
 <h2>1. Why testing a generative system feels wrong (and what replaces the old tools)</h2>
-<p><strong>Rung 1: the one-paragraph version.</strong> Traditional software testing assumes one right answer: <code>assert f(2) == 4</code>. A language model breaks that assumption on purpose. The same prompt, asked twice, returns two different wordings that can both be correct. <strong>Temperature</strong> is the dial that controls how adventurous the model's word choices are: low temperature picks the most likely word each time, high temperature samples from less likely words. <strong>Sampling</strong> is that random draw itself: every output is a sample from a <strong>distribution</strong> (the model's probabilities over what could come next), not a lookup from a table.</p>
+<p><strong>Rung 1: the one-paragraph version.</strong> Traditional software testing assumes one right answer: assert f(2) == 4. A language model breaks that assumption on purpose. The same prompt, asked twice, returns two different wordings that can both be correct.</p><p>Temperature is the dial that controls how adventurous the model's word choices are. Low temperature picks the most likely word each time. High temperature samples from less likely words. Sampling is that random draw itself: every output is a sample from a distribution (the model's probabilities over what could come next), not a lookup from a table.</p>
 <p>So exact-match assertions, the workhorse of unit testing, fail on correct answers. What replaces them: assertions about <em>properties</em> of the output instead of its exact text. Is it faithful to the retrieved documents? Does it parse? Did the agent call the right tool? Those properties are checkable, and everything in this volume is machinery for checking them at scale.</p>
-<figure><img src="img/04-deterministic-vs-generative.svg" alt="Two panels. Left: a deterministic function, input 2 always yields output 4, one arrow, one answer. Right: a generative model, one prompt fans out into several different valid answers sampled from a distribution." title="Figure 1.1. Deterministic code has one right answer per input; a generative model samples from a distribution, so one prompt has many valid answers."><figcaption>Figure 1.1. Deterministic code has one right answer per input; a generative model samples from a distribution, so one prompt has many valid answers. Diagram made for this guide.</figcaption></figure>
+<figure><img src="img/04-deterministic-vs-generative.svg" alt="Two panels. Left: a deterministic function, input 2 always yields output 4, one arrow, one answer. Right: a generative model, one prompt fans out into several different valid answers sampled from a distribution." title="Figure 1.1. Deterministic code has one right answer per input; a generative model samples from a distribution, so one prompt has many valid answers."><figcaption>Figure 1.1. Deterministic code has one right answer per input. A generative model samples from a distribution, so one prompt has many valid answers. Diagram made for this guide.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li><strong>Left panel: deterministic.</strong> Input 2 enters a function box, output 4 leaves. One arrow, one answer, every time. This is the world <code>assert</code> was built for.</li>
 <li><strong>Right panel: generative.</strong> One prompt enters the model. Three different answers leave, each a valid sample from the distribution. The dial labeled temperature controls how spread out the samples are.</li>
@@ -1383,22 +1383,22 @@ html.xp-js .xp-reveal.xp-in {
 <p><strong>Teaching point:</strong> every D4 scenario about "the tests keep failing but the answers look fine" is this diagram. The fix is never a stricter string match; it is a property the test should have checked instead.</p></div>
 
 <h3>Rung 2: one level deeper</h3>
-<p>A concrete example. A summarizer is asked twice to summarize the same earnings paragraph. Run one says: "Revenue grew 12 percent on strong cloud demand." Run two says: "Cloud demand drove a 12 percent revenue increase." Both are correct. They share no five-word phrase in common, so an exact-match test against run one fails run two. A test written against meaning, "does the summary state the 12 percent figure and the cloud cause", passes both. That is the whole shift: test the property, not the prose.</p>
+<p>A concrete example. Ask a summarizer twice to summarize the same earnings paragraph. Run one says: "Revenue grew 12 percent on strong cloud demand." Run two says: "Cloud demand drove a 12 percent revenue increase." Both are correct. They share no five-word phrase in common, so an exact-match test against run one fails run two. A test written against meaning, "does the summary state the 12 percent figure and the cloud cause", passes both. That is the whole shift: test the property, not the prose.</p>
 <p>Three replacements cover everything exact match used to do:</p>
 <ol>
-<li><strong>Deterministic checks on the deterministic parts.</strong> Most of a production pipeline is not generative at all: retrieval, parsing, tool routing, schema validation, PII filtering. Those parts get traditional tests. Section 4 builds this layer first, before any model is scored.</li>
+<li>Deterministic checks on the deterministic parts. Most of a production pipeline is not generative at all: retrieval, parsing, tool routing, schema validation, PII filtering. Those parts get traditional tests. Section 4 builds this layer first, before the harness scores any model.</li>
 <li><strong>Property judges for the generative core.</strong> A rubric ("does the answer cite its sources? is the tone appropriate?") scored by a separate model or a sampled human. Section 5 builds this grader and its failure modes.</li>
-<li><strong>Statistical assertions over many runs.</strong> Instead of "this output equals that string", ask "does at least one of five tries succeed" (<strong>pass@k</strong>, pronounced "pass at k") or "is the mean score above the bar with a tight spread". Section 7 uses these to compare versions fairly.</li>
+<li>Statistical assertions over many runs. Instead of "this output equals that string", ask "does at least one of five tries succeed" (pass@k, pronounced "pass at k"). A second form: "is the mean score above the bar with a tight spread". Section 7 uses these to compare versions fairly.</li>
 </ol>
 <figure><img src="img/04-rungs.svg" alt="Three rungs from the idea to the testing discipline" title="What replaces exact match: test the property, not the prose."><figcaption>Figure 1.2. What replaces exact match: test the property, not the prose.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
-<li>The blue banner is the shift: two correct summaries can share no five-word phrase, so exact match fails one of them while a property test passes both.</li>
-<li>The three rungs build up: Rung 1 is the idea, Rung 2 is the concrete summarizer example, Rung 3 is the discipline of pinning the model version, temperature 0, and a fixed seed.</li>
+<li>The blue banner is the shift. Two correct summaries can share no five-word phrase. Exact match fails one of them. A property test passes both.</li>
+<li>The three rungs build up. Rung 1 is the idea. Rung 2 is the concrete summarizer example. Rung 3 is the discipline: pin the model version, temperature 0, and a fixed seed.</li>
 <li>Takeaway: because outputs vary, a single example proves nothing. Every claim in this volume is a claim about a distribution.</li>
 </ol></div>
 
 <h3>Rung 3: the full picture</h3>
-<p>Nondeterminism is a feature for creativity and a bug for testing, so eval work pins it down: fix the model version, set temperature low or to zero for eval runs, and fix the random seed where the API allows it. A moving model makes before/after comparisons meaningless, which is why the test framework in section 4 pins versions and the A/B method in section 7 randomizes properly instead of eyeballing. One more consequence: because outputs vary, a single example proves nothing. Every claim in this volume, "prompt B is better", "the new model regressed", "the judge agrees with humans", is a claim about a distribution, and the volume's machinery exists to make such claims honestly.</p>
+<p>Nondeterminism is a feature for creativity and a bug for testing. Eval work pins it down. Fix the model version. Set temperature low or to zero for eval runs. Fix the random seed where the API allows it. A moving model makes before/after comparisons meaningless.</p><p>That is why the test framework in section 4 pins versions. It is also why the A/B method in section 7 randomizes properly instead of eyeballing. One more consequence: because outputs vary, a single example proves nothing. Take the claims in this volume: "prompt B is better", "the new model regressed", "the judge agrees with humans". Each is a claim about a distribution. The volume's machinery exists to make such claims honestly.</p>
 <div class="exam-ask"><p>Scenario shape: "the tests keep failing but the answers look fine", or a team proposing exact-match assertions on model output. The credited move names the mismatch: outputs are samples, so assert properties (faithfulness, schema, tool choice) or score over many runs, never exact strings. The trap: "lower the temperature to zero and exact-match everything" (hides the variance instead of measuring it, and zero temperature does not guarantee byte-identical outputs across versions).</p>
 <p><strong>The rule to carry:</strong> deterministic parts get deterministic tests; the generative core gets property checks and statistics. Mixing them up, exact-matching prose or eyeballing infrastructure, is how teams fool themselves.</p></div>
 <p class="examline"><strong>Exam relevance:</strong> this is the lens for the whole domain. When a scenario describes flaky tests on good outputs, reach for properties and distributions, not stricter matching.</p>
@@ -1408,7 +1408,7 @@ html.xp-js .xp-reveal.xp-in {
 <section class="unit"><h2>2. The eval flywheel: why evaluation comes first</h2>
 <p class="u-bridge">Section 1 proved the old tests cannot work on generative systems: outputs are samples, so you test properties and distributions. This section builds the machine that does it: the eval loop, and the fixed test set every version gets measured against.</p>
 <p><span class="def"><span class="term">Evaluation (eval)</span> means scoring your system on a fixed set of test cases so you can compare versions. An eval is not a demo. A demo shows what the system can do once. An eval shows what it does every time, on cases you chose in advance.</span></p>
-<p><strong>Rung 1: the one-paragraph version.</strong> Production LLM work is a loop: ship a change, measure it against a fixed test set, diagnose the failures, fix them, measure again. Without the fixed test set, every iteration is a guess. You cannot tell whether a new prompt helped or hurt, because each conversation you eyeball is a different sample. Evals turn opinions into numbers. Almost every D4 question is secretly a question about this loop. Should the team go live? Run the eval. Which of two prompts is better? Run the eval. Did the new model version break anything? Run the regression eval. The correct answer is almost never "trust the demo" or "eyeball a few examples".</p>
+<p><strong>Rung 1: the one-paragraph version.</strong> Production LLM work is a loop: ship a change, measure it against a fixed test set, diagnose the failures, fix them, measure again. Without the fixed test set, every iteration is a guess. You cannot tell whether a new prompt helped or hurt, because each conversation you eyeball is a different sample. Evals turn opinions into numbers. Almost every D4 question is secretly a question about this loop.</p><p>Should the team go live: run the eval. Which of two prompts is better: run the eval. Did the new model version break anything: run the regression eval. The correct answer is almost never "trust the demo" or "eyeball a few examples".</p>
 <figure><img src="img/04-fig-01.png" alt="Evaluation feedback loop: user query flows into the application, which consults a RAG LLM and is scored by an Eval LLM; good scores go to output, bad scores loop back as new instructions and context" title="Figure 2.1. An eval wired into the loop: an Eval LLM scores application output and failed cases feed back as new instructions and context."><figcaption>Figure 2.1. An eval wired into the loop: an Eval LLM scores application output and failed cases feed back as new instructions and context.</figcaption></figure>
 <figure><img src="img/04-eval-loop.svg" alt="Closed eval loop in four stages: ship a change, measure on a fixed test set, diagnose failures, fix and re-measure, cycling continuously" title="Figure 2.2. The closed loop: ship, measure, diagnose, fix, repeat. The fixed test set is what makes each turn of the loop comparable."><figcaption>Figure 2.2. The closed loop: ship, measure, diagnose, fix, repeat. The fixed test set is what makes each turn of the loop comparable. Diagram made for this guide.</figcaption></figure>
 <p><span class="src">Source: Weaviate blog, "Evals for enterprise workflows" (weaviate.io). Diagram reused for teaching; original text labels preserved.</span></p>
@@ -1431,8 +1431,8 @@ html.xp-js .xp-reveal.xp-in {
 
 <section class="unit"><h2>3. Defining metrics: measure what the task actually needs</h2>
 <p class="u-bridge">The loop needs numbers to turn. A loop without metrics is a demo with extra steps. This section defines the numbers: what to measure, and how to pick the metric the task actually needs.</p>
-<p>A <span class="def"><span class="term">metric</span> is a number you compute the same way every time, so versions of your system can be compared fairly.</span> Defining metrics is the first official objective, and it is where most real projects go wrong: they pick a metric that is easy to compute instead of one that matches the task.</p>
-<p><strong>Rung 1: the one-paragraph version.</strong> Before you build, decide how you will know it works. One number per thing you care about: right answers (accuracy), speed (latency), money (cost), harm (safety), attacks (security). Pick the wrong number and you will optimize the wrong thing, like shipping a contract reviewer that is 96 percent right overall but wrong on one in ten privacy contracts (the worked example below).</p>
+<p>A metric is a number you compute the same way every time, so you can compare versions of your system fairly. Defining metrics is the first official objective. It is also where most real projects go wrong. They pick a metric that is easy to compute instead of one that matches the task.</p>
+<p>Rung 1: the one-paragraph version. Before you build, decide how you will know it works. One number per thing you care about: right answers (accuracy), speed (latency), money (cost), harm (safety), attacks (security). Pick the wrong number and you will optimize the wrong thing. You might ship a contract reviewer that is 96 percent right overall. It is wrong on one in ten privacy contracts (the worked example below).</p>
 <h3>The five metric families</h3>
 <ul>
 <li><strong>Accuracy (quality).</strong> Did the output do the job right? The exact formula depends on the task (see the table below). Never assume one formula fits all.</li>
@@ -1443,8 +1443,8 @@ html.xp-js .xp-reveal.xp-in {
 </ul>
 <figure><img src="img/04-metric-families.svg" alt="Five cards for the accuracy, latency, cost, safety, and security metric families" title="The five metric families: measure what the task actually needs."><figcaption>Figure 3.2. The five metric families: measure what the task actually needs.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
-<li>Each card is one family: accuracy asks whether the output did the job; latency reports percentiles because users feel the p95, not the mean; cost is first-class because bills scale with usage.</li>
-<li>Safety and security are measured on adversarial test sets, never on normal traffic.</li>
+<li>Each card is one family. Accuracy asks whether the output did the job. Latency reports percentiles because users feel the p95, not the mean. Cost is first-class because bills scale with usage.</li>
+<li>Measure safety and security on adversarial test sets, never on normal traffic.</li>
 <li>Takeaway: the metric must fit the task shape, or it lies.</li>
 </ol></div>
 
@@ -1453,8 +1453,8 @@ html.xp-js .xp-reveal.xp-in {
 <p><span class="def"><span class="term">Precision</span> is: of everything the system flagged, how many were correct. <span class="term">Recall</span> is: of everything it should have flagged, how many did it catch. <span class="term">F1</span> is the harmonic mean of the two, a single number that punishes a system that is great at one and terrible at the other.</span></p>
 <div class="callout math"><span class="callout-h">Formula: classification metrics</span>
 <p class="eq">P = TP / (TP + FP) &nbsp;&nbsp; R = TP / (TP + FN) &nbsp;&nbsp; F1 = 2PR / (P + R)</p>
-<p class="eq-where">where: <strong>TP</strong>, true positives (flagged, and correct); <strong>FP</strong>, false positives (flagged, but innocent); <strong>FN</strong>, false negatives (missed: should have been flagged). F1 is the harmonic mean, so a terrible score on either side drags the total down.</p>
-<p class="eq-worked"><strong>Worked example.</strong> A fraud detector flags 100 transactions; 80 are real fraud (TP = 80, FP = 20). There are 120 real frauds in total (FN = 40). P = 80/100 = 0.80. R = 80/120 &asymp; 0.667. F1 = 2 &times; 0.80 &times; 0.667 / (0.80 + 0.667) &asymp; 0.727. The read: decent at not crying wolf, but it misses a third of the fraud. For fraud, recall is the metric that matters, because a missed fraud costs more than a false alarm.</p></div>
+<p class="eq-where">where: <strong>TP</strong>, true positives (the system flagged them, and it was right). <strong>FP</strong>, false positives (the system flagged them, but they were innocent). <strong>FN</strong>, false negatives (missed: the system should have flagged them). F1 is the harmonic mean, so a terrible score on either side drags the total down.</p>
+<p class="eq-worked"><strong>Worked example.</strong> A fraud detector flags 100 transactions. 80 are real fraud (TP = 80, FP = 20). There are 120 real frauds in total (FN = 40). P = 80/100 = 0.80.</p><p class="eq-worked">R = 80/120 &asymp; 0.667. F1 = 2 &times; 0.80 &times; 0.667 / (0.80 + 0.667) &asymp; 0.727. The read: it avoids most false alarms, but it misses a third of the fraud. For fraud, recall is the metric that matters, because a missed fraud costs more than a false alarm.</p></div>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -1500,9 +1500,15 @@ html.xp-js .xp-reveal.xp-in {
 </ol></div>
 
 <h3>Worked example: the trap of aggregate accuracy</h3>
+<figure><img src="img/ste100-04-accuracy-trap.svg" alt="Bar chart comparing overall accuracy of 95 percent against three segments: A at 98, B at 97, C at 62 percent" title="Study figure: the aggregate accuracy trap."><figcaption>Study figure: the aggregate accuracy trap.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The green bar shows 95 percent overall. It looks safe.</li>
+<li>The red bar shows segment C at 62 percent. The average hides it.</li>
+<li>Takeaway: score every metric per segment, not just overall.</li>
+</ol></div>
 <p><strong>Rung 3: the full picture: the most tested idea in D4.</strong> This appears almost verbatim in community exam reports. A contract review assistant must reach at least 95 percent accuracy on <strong>each</strong> of five contract types. On a 1,000 contract eval set it scores 96 percent overall. The team wants to go live. Should they?</p>
-<p>Do the arithmetic on a concrete case. The set holds 200 contracts of each of the five types, and the system scores: Employment 98, NDA 99, Lease 97, Vendor 96, Privacy 90 percent. Correct answers: 196 + 198 + 194 + 192 + 180 = 960 out of 1000, which is 96 percent overall. The overall number passes. The Privacy segment at 90 percent fails the 95 percent bar. One in ten privacy contracts is reviewed wrong, and the average hides it completely. That is the whole trap in one paragraph.</p>
-<p>The fix is <strong>segmented (sliced) metrics</strong>: compute every metric per contract type, per language, per customer tier, per input length, whatever dimensions matter. The launch gate becomes "every segment passes", not "the average passes".</p>
+<p>Do the arithmetic on a concrete case. The set holds 200 contracts of each of the five types. The system scores: Employment 98, NDA 99, Lease 97, Vendor 96, Privacy 90 percent. Correct answers: 196 + 198 + 194 + 192 + 180 = 960 out of 1000, which is 96 percent overall.</p><p>The overall number passes. The Privacy segment at 90 percent fails the 95 percent bar. The system reviews one in ten privacy contracts wrong, and the average hides it completely. That is the whole trap in one paragraph.</p>
+<p>The fix: <strong>segmented (sliced) metrics</strong>. Compute every metric per contract type, per language, per customer tier, per input length, whatever dimensions matter. The launch gate becomes "every segment passes", not "the average passes".</p>
 <pre><code class="language-text">overall: 96% (celebrated)          per type: 98 / 99 / 97 / 96 / 90
 target:  95% per type              Privacy = 90%  &lt;-- FAILS the bar
 rule: the average never satisfies a per-segment requirement
@@ -1512,34 +1518,40 @@ rule: the average never satisfies a per-segment requirement
 <li>Read the big number first: <strong>96% overall</strong>. This is what the team celebrates.</li>
 <li>Find the dashed green line: the <strong>target of 95%</strong>. It applies to each bar, not just the average.</li>
 <li>Scan the blue bars: Employment 98, NDA 99, Lease 97, Vendor 96. All pass.</li>
-<li>Stop at the red bar: <strong>Privacy at 90%</strong>. One in ten privacy contracts is reviewed wrong.</li>
+<li>Stop at the red bar: <strong>Privacy at 90%</strong>. The system reviews one in ten privacy contracts wrong.</li>
 <li>Ask the exam question: does "96% overall" satisfy "at least 95% on each type"? No. The red bar is the answer.</li>
 </ol>
 <p><strong>Teaching point:</strong> whenever a scenario gives you an overall number and a per-segment requirement, the credited answer always drills into segments. "Ship it, 96% beats 95%" is the trap.</p></div>
 
 <div class="exam-ask"><p>Scenario shape: a target like "95% accuracy on each of five document types" plus an overall number that looks passing. The trap answers: go live on the aggregate, switch to a bigger model, add more training data. The credited answer: measure per segment, fix the failing segments first. A second shape: pick the right metric for the task (precision vs recall for a fraud detector where missing fraud costs more than false alarms: recall matters more).</p>
-<p><strong>The traps to carry:</strong> "high accuracy means the model is good" is a distractor. Accuracy is a property of the system on a specific test set, not a property of the model. The same model scores differently on different segments, different prompt versions and different judges. Always ask: accuracy of what, on which data, measured how. And when you optimize one metric, name the metrics that must not regress. These are <strong>guardrail metrics</strong>: safety rate, p95 latency, cost per request. An A/B test ships only if the primary metric improves AND every guardrail holds.</p></div>
+<p><strong>The traps to carry:</strong> "high accuracy means the model is good" is a distractor. Accuracy is a property of the system on a specific test set, not a property of the model. The same model scores differently on different segments, different prompt versions and different judges. Always ask: accuracy of what, on which data, measured how.</p><p>And when you optimize one metric, name the metrics that must not regress. These are <strong>guardrail metrics</strong>: safety rate, p95 latency, cost per request. An A/B test ships only if the primary metric improves AND every guardrail holds.</p></div>
 
-<p class="examline"><strong>Exam relevance:</strong> metric definition is the foundation every other objective builds on. Expect 2 to 3 questions where the right move is choosing or slicing a metric before acting.</p>
+<p class="examline">Exam relevance: metric definition is the foundation every other objective builds on. Expect 2 to 3 questions where the right move is to choose or slice a metric before acting.</p>
 <p class="u-next"><strong>Next:</strong> eval datasets and test frameworks, the golden data and the harness that runs it.</p></section>
 
 <section class="unit">
 <h2>4. Eval datasets and test frameworks: checks first, then gold</h2>
 <p class="u-bridge">Metrics say what to measure. This section says what to measure against: the golden dataset and the test framework that runs it. Checks first, then gold: deterministic checks before model-graded ones.</p>
-<p><span class="def"><span class="term">Golden dataset</span>: a fixed set of inputs with known good answers, curated by hand, that every version of your system is tested against. <span class="term">Regression suite</span>: the subset you run after every change to prove nothing that used to work broke. A golden dataset is the asset; the regression suite is how you use it daily.</span></p>
-<p><strong>Rung 1: the one-paragraph version.</strong> An eval program has three layers, built in this order. First, <strong>functional checks</strong>: deterministic, exact-match tests on the parts of the pipeline that are not generative at all. Did retrieval return the right document IDs? Does the output parse as JSON? Did the agent call the right tool with valid arguments? Did any PII leak into the logs? These run on every commit like unit tests: fast, free, zero judgment calls.</p>
+<p><span class="def"><span class="term">Golden dataset</span>: a fixed set of inputs with known good answers, curated by hand. You test every version of your system against it. <span class="term">Regression suite</span>: the subset you run after every change to prove nothing that used to work broke. A golden dataset is the asset; the regression suite is how you use it daily.</span></p>
+<p><strong>Rung 1: the one-paragraph version.</strong> An eval program has three layers, built in this order. First, functional checks: deterministic, exact-match tests on the parts of the pipeline that are not generative at all. Did retrieval return the right document IDs?</p><p>Does the output parse as JSON? Did the agent call the right tool with valid arguments? Did any PII leak into the logs? These run on every commit like unit tests: fast, free, zero judgment calls.</p>
 <p>Second, the <strong>golden dataset</strong>: a few hundred hand-verified input/output pairs sampled from real traffic, the ground truth for quality. Third, the <strong>test framework</strong>: the harness that runs the golden set, scores it with layered methods, and diffs versions side by side. Teams that start with the judge and skip the functional checks end up paying model dollars to catch bugs a regex would have found.</p>
 <h3>The deterministic layer: functional checks</h3>
-<p><strong>Rung 2: one level deeper.</strong> Section 1 drew the line between deterministic and generative behavior. The eval program starts on the deterministic side, because those checks are cheap and total. For a RAG pipeline: assert the retriever returned the expected document IDs for known queries. For an agent: assert it called the right tool with schema-valid arguments. For any pipeline: assert the output parses (JSON schema validation), assert no PII or secrets appear in outputs or logs, assert latency under the budget. These are traditional software tests wearing an AI costume, and they belong in CI on every commit. A change that breaks a functional check blocks the merge before any model is ever scored.</p>
+<figure><img src="img/ste100-04-functional-checks.svg" alt="Four panels: schema check, format check, refusal check, regression check" title="Study figure: the deterministic layer of functional checks."><figcaption>Study figure: the deterministic layer of functional checks.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Each panel names one exact check and what it verifies.</li>
+<li>These checks are cheap and never flake.</li>
+<li>Takeaway: run them before any LLM judge.</li>
+</ol></div>
+<p><strong>Rung 2: one level deeper.</strong> Section 1 drew the line between deterministic and generative behavior. The eval program starts on the deterministic side, because those checks are cheap and total. For a RAG pipeline: assert the retriever returned the expected document IDs for known queries.</p><p>For an agent: assert it called the right tool with schema-valid arguments. For any pipeline: assert the output parses (JSON schema validation), assert no PII or secrets appear in outputs or logs, assert latency under the budget. These are traditional software tests wearing an AI costume, and they belong in CI on every commit. A change that breaks a functional check blocks the merge before the harness scores any model.</p>
 <h3>The golden dataset</h3>
 <p>Once the deterministic checks hold, the generative core needs its own ground truth. Start from production reality, not imagination. Sample real user inputs, anonymize them, and have domain experts write or verify the expected answers. Aim for coverage across the segments from section 3: every contract type, every language, short and long inputs, easy and adversarial cases. A few hundred well chosen cases beat ten thousand near duplicates.</p>
 <p>Three hygiene rules:</p>
 <ul>
 <li><strong>Label quality beats size.</strong> One wrong expected answer poisons every comparison. Have a second person spot check labels, and track inter-rater agreement (do two labelers agree? If not, the task definition is fuzzy, not the labelers).</li>
-<li><strong>Keep a held-out split.</strong> Never tune prompts against the full set. Tune on a dev split, report on a held-out test split. Otherwise you are grading your own homework: the prompt overfits the test cases and the score lies.</li>
+<li>Keep a held-out split. Never tune prompts against the full set. Tune on a dev split, report on a held-out test split. Otherwise you grade your own homework: the prompt overfits the test cases and the score lies.</li>
 <li><strong>Version the dataset.</strong> When you add cases, bump the version and keep the old one. If scores jump between versions, you need to know whether the system improved or the test got easier.</li>
 </ul>
-<p>One anti-pattern the exam loves: a golden set written by the same model being evaluated. That is self-grading with extra steps; the labels inherit the model's blind spots.</p>
+<p>One anti-pattern the exam loves: a golden set written by the same model that you evaluate. That grades itself with extra steps. The labels inherit the model's blind spots.</p>
 <figure><img src="img/04-golden-dataset.svg" alt="Anatomy of one golden-dataset row plus hygiene rules" title="The golden dataset: ground truth for the generative core."><figcaption>Figure 4.2. The golden dataset: ground truth for the generative core.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>The amber panel shows one row: a real, anonymized user input, a domain-expert-written expected answer, and segment tags like contract type, language, and difficulty.</li>
@@ -1548,7 +1560,13 @@ rule: the average never satisfies a per-segment requirement
 </ol></div>
 
 <h3>The test framework around the dataset</h3>
-<p><strong>Rung 3: the full picture.</strong> A dataset alone is a spreadsheet. A <strong>test framework</strong> is the harness that runs it: it feeds each input to the system, captures outputs plus traces, scores them with the layered methods below, stores results per version, and diffs versions side by side. No single scoring method fits every case, so production evals layer three methods, cheapest first:</p>
+<figure><img src="img/ste100-04-taming-nondeterminism.svg" alt="Four panels: temperature zero, fixed seed, multiple runs, frozen prompt" title="Study figure: taming nondeterminism in evals."><figcaption>Study figure: taming nondeterminism in evals.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Each panel locks down one source of randomness.</li>
+<li>Temperature 0 and a fixed seed make single runs repeatable.</li>
+<li>Takeaway: the same prompt must mean the same score.</li>
+</ol></div>
+<p><strong>Rung 3: the full picture.</strong> A dataset alone is a spreadsheet. A test framework is the harness that runs it. It feeds each input to the system. It captures outputs plus traces.</p><p>It scores them with the layered methods below. It stores results per version. It diffs versions side by side. No single scoring method fits every case, so production evals layer three methods, cheapest first:</p>
 <pre><code class="language-text">volume: many                    RULE CHECKS (exact match, schema, tool args)   fast, free
 volume: bulk                    LLM JUDGE (rubric scoring)                     dollars overnight
 volume: few                     HUMAN REVIEW (taste, nuance, high stakes)      the gold standard
@@ -1565,7 +1583,7 @@ volume: few                     HUMAN REVIEW (taste, nuance, high stakes)      t
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Start at the narrow top layer: <strong>human review</strong>. Slow, costly, and the gold standard. Only a few cases reach here, as the side note says.</li>
 <li>Move down to the middle: the <strong>LLM judge</strong>. Medium speed, medium cost. It scores the bulk that rules cannot decide.</li>
-<li>End at the wide bottom layer: <strong>rule tests</strong>. Fast, cheap, exact. Most cases are checked here, as the side note says.</li>
+<li>End at the wide bottom layer: rule tests. Fast, cheap, exact. The harness checks most cases here, as the side note says.</li>
 <li>Notice the shape: wide at the bottom, narrow at the top. Cost and care rise as volume falls. Humans also calibrate the layers below, keeping the whole stack honest.</li>
 </ol>
 <p><strong>Teaching point:</strong> exam scenarios often hand you a limited budget and ask how to evaluate thousands of outputs. The credited answer layers methods by cost, never "have humans grade everything" (too slow) or "trust the judge alone" (uncalibrated).</p></div>
@@ -1576,12 +1594,13 @@ volume: few                     HUMAN REVIEW (taste, nuance, high stakes)      t
 <li><strong>Failure bucketing.</strong> Group failures by type (wrong tool, invented fact, format break) so a 2 percent regression becomes an actionable list.</li>
 <li><strong>CI integration.</strong> The functional checks run on every commit; the regression suite runs on every prompt or code change, like unit tests. A change that drops the score blocks the merge.</li>
 </ul>
-<details><summary>You might be wondering: how big should the golden set be?</summary>
+<details><summary>You might ask: how big should the golden set be?</summary>
 <div>
-<p>Big enough that a real regression moves the number, small enough to run fast. A practical rule: start with 200 to 500 cases covering every segment. Then do the statistics. If your system scores 90 percent on 200 cases, the 95 percent confidence interval is roughly plus or minus 4 points, so only swings bigger than that are trustworthy. If you need to detect a 2 point change, you need roughly 1,000 cases. The exam will not ask you to compute this, but it will reward answers that mention statistical power when someone proposes A/B testing on 50 samples.</p>
+<p>Big enough that a real regression moves the number, small enough to run fast. A practical rule: start with 200 to 500 cases covering every segment. Then do the statistics. If your system scores 90 percent on 200 cases, the 95 percent confidence interval is roughly plus or minus 4 points.</p>
+<p>Only swings bigger than that are trustworthy. If you need to detect a 2 point change, you need roughly 1,000 cases. The exam will not ask you to compute this. It will reward answers that mention statistical power when someone proposes A/B testing on 50 samples.</p>
 </div></details>
 
-<div class="exam-ask"><p>Scenario shape: a team with no evals, or evals built from the same examples used in the prompt. The credited move: build a golden set from sampled production traffic with human verified labels, keep a held-out split, layer rule checks plus judge plus human audit. The trap: "add more few shot examples from the test set" (contamination) or "just run it on 20 examples the engineer wrote" (unrepresentative).</p>
+<div class="exam-ask"><p>Scenario shape: a team with no evals, or evals built from the same examples used in the prompt. The credited move: build a golden set from sampled production traffic with human verified labels. Keep a held-out split. Layer rule checks plus judge plus human audit. The trap: "add more few shot examples from the test set" (contamination) or "just run it on 20 examples the engineer wrote" (unrepresentative).</p>
 <p><strong>The contamination rule to carry:</strong> test cases leaking into prompts, few shot examples or fine tuning data inflates scores and hides real weakness. Keep few shot examples and test cases strictly separate. If a case appears in the prompt, it cannot also be in the test.</p></div>
 
 <p class="examline"><strong>Exam relevance:</strong> dataset design questions test judgment under constraints: representativeness, label quality, held-out splits, and mixing methods by cost. Look for the answer that balances all four.</p>
@@ -1601,6 +1620,12 @@ volume: few                     HUMAN REVIEW (taste, nuance, high stakes)      t
 <li><strong>Parse the score as structured output.</strong> Force JSON with a schema so "4" never arrives as "four-ish".</li>
 </ol>
 <h3>The failure modes (the exam loves these)</h3>
+<figure><img src="img/ste100-04-judge-biases.svg" alt="Four cards: position bias, verbosity bias, self-preference, harshness drift, each with its fix" title="Study figure: LLM judge failure modes and fixes."><figcaption>Study figure: LLM judge failure modes and fixes.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Each card names one bias and shows its fix.</li>
+<li>Position bias: swap the order and average the scores.</li>
+<li>Takeaway: the exam asks for each bias by name.</li>
+</ol></div>
 <p><strong>Rung 3: the full picture.</strong> A judge is a model, so it has model biases. Know all four by name:</p>
 <pre><code class="language-text">SELF PREFERENCE    judge scores its own model family higher
 VERBOSITY BIAS     longer answers win, even when the extra words add nothing
@@ -1609,7 +1634,7 @@ DRIFT              same judge, different scores after a model version update
 </code></pre>
 <p>Each one has a named fix (below and in the walkthrough). The exam describes a symptom and expects the diagnosis.</p>
 <ul>
-<li><strong>Self preference.</strong> A judge tends to score outputs from its own model family higher. Fix: judge with a different model family than the one you are evaluating, or at least blind the judge to which system produced the output.</li>
+<li><strong>Self preference.</strong> A judge tends to score outputs from its own model family higher. Fix: judge with a different model family than the one under test, or at least blind the judge to which system produced the output.</li>
 <li><strong>Verbosity bias.</strong> Judges reward longer answers even when the extra words add nothing. Fix: add "prefer concise correct answers" to the rubric, or normalize by length.</li>
 <li><strong>Position bias.</strong> When comparing A vs B, judges favor whichever comes first (or second, depending on the model). Fix: run both orders and average, or score each output independently instead of pairwise.</li>
 <li><strong>Drift and inconsistency.</strong> The same judge scores differently after a model version update, and disagrees with itself on reruns. Fix: pin the judge model version, rerun a calibration sample regularly, and never compare scores across judge versions.</li>
@@ -1626,7 +1651,7 @@ DRIFT              same judge, different scores after a model version update
 
 <h3>Calibration: proving the judge agrees with humans</h3>
 <p><strong>Rung 4: the exam rung: the discipline that makes the judge trustworthy.</strong> <span class="def"><span class="term">Calibration</span> means checking the judge against human graders on a shared sample and measuring agreement. A judge is only as good as its agreement with the humans it stands in for.</span></p>
-<p>The procedure: take 100 to 200 outputs, have humans score them with the same rubric, have the judge score them, then compute agreement. The standard number is <strong>Cohen's kappa</strong>, which measures agreement beyond chance: above 0.8 is strong, 0.6 to 0.8 is acceptable for most uses, below 0.6 means the rubric or the judge needs work. Recalibrate on a fresh sample whenever the judge model, the rubric or the data distribution changes.</p>
+<p>The procedure: take 100 to 200 outputs, have humans score them with the same rubric, have the judge score them, then compute agreement. The standard number is <strong>Cohen's kappa</strong>. It measures agreement beyond chance. Above 0.8 is strong.</p><p>0.6 to 0.8 is acceptable for most uses. Below 0.6 means the rubric or the judge needs work. Recalibrate on a fresh sample whenever the judge model, the rubric or the data distribution changes.</p>
 <p>One more rule the exam tests: the judge must never be the system under test grading itself without blinding. "We used the same model to generate and judge, and it says we are great" is a finding of nothing.</p>
 <div class="exam-ask"><p>Scenario shape: scores improved after the team switched the judge to the same model that generates the answers (trap: celebrate; credited: self preference, re judge blinded or with a different family). Or: the judge prefers the longer of two equal answers (verbosity bias, fix the rubric). Or: scores shifted after a judge model upgrade with no product change (drift, pin versions and recalibrate). Learn to match each symptom to its bias and fix.</p>
 <p><strong>The judge rules to carry:</strong> "the judge gave us 4.6 out of 5, so quality is 4.6" is always a distractor. A judge score is not an absolute truth. And the judge must never be the system under test grading itself without blinding. "We used the same model to generate and judge, and it says we are great" is a finding of nothing.</p></div>
@@ -1636,16 +1661,16 @@ DRIFT              same judge, different scores after a model version update
 
 <section class="unit"><figure><img src="img/04-judge-calibration.svg" alt="Three-step calibration procedure plus how to read Cohen's kappa" title="Calibration: prove the judge agrees with humans."><figcaption>Figure 5.2. Calibration: prove the judge agrees with humans.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
-<li>Follow the arrows: take 100 to 200 outputs, have humans and the judge score them with the same rubric, then compute Cohen's kappa, the agreement beyond chance.</li>
-<li>Read the kappa: above 0.8 is strong, 0.6 to 0.8 is acceptable, below 0.6 means the rubric or the judge needs work.</li>
+<li>Follow the arrows. Take 100 to 200 outputs. Have humans and the judge score them with the same rubric. Then compute Cohen's kappa, the agreement beyond chance.</li>
+<li>Read the kappa. Above 0.8 is strong. 0.6 to 0.8 is acceptable. Below 0.6 means the rubric or the judge needs work.</li>
 <li>Takeaway: a judge is only as good as its agreement with the humans it stands in for.</li>
 </ol></div>
 
 <h2>6. Diagnosing system issues: hallucination vs prompt failure vs model mismatch</h2>
 <p class="u-bridge">Evals and judges tell you the system is wrong. They do not tell you why. This section is the triage: hallucination, prompt failure, or model mismatch, matched by symptom before you change anything.</p>
 <p>When a Claude system produces bad output, the fix depends on the cause, and the causes need different medicine. The exam names three: <strong>prompt failure</strong>, <strong>hallucination</strong>, and <strong>model mismatch</strong>. Learn to tell them apart by their signatures.</p>
-<p><strong>Rung 1: the one-paragraph version.</strong> Wrong diagnosis means wrong medicine. If the model invents facts, the cure is grounding (retrieval, citations): a bigger model hallucinates too, just more fluently. If it ignores your instructions, the cure is prompt repair: the capability is there, the directions were unclear. If the task exceeds what the model can do, the cure is a stronger model or decomposition. The exam describes a symptom and offers fixes from different columns. Match the column first.</p>
-<div class="def"><div class="lbl">Hallucination</div><p>the model states as fact something false or unverifiable, with full confidence. It is not lying; it is predicting plausible sounding text without grounding.</p></div>
+<p><strong>Rung 1: the one-paragraph version.</strong> Wrong diagnosis means wrong medicine. If the model invents facts, ground the model with retrieval and citations: a bigger model hallucinates too, just more fluently. If it ignores your instructions, the cure is prompt repair: the capability is there, the directions were unclear.</p><p>If the task exceeds what the model can do, the cure is a stronger model or decomposition. The exam describes a symptom and offers fixes from different columns. Match the column first.</p>
+<div class="def"><div class="lbl">Hallucination</div><p>the model states as fact something false or unverifiable, with full confidence. It is not lying; it predicts plausible sounding text without grounding.</p></div>
 
 <div class="def"><div class="lbl">Prompt failure</div><p>the model misunderstands or ignores your instructions: wrong format, skipped steps, answered a different question. The capability is there; the directions were unclear, contradictory or buried.</p></div>
 
@@ -1692,36 +1717,43 @@ DRIFT              same judge, different scores after a model version update
 
 <figure><img src="img/04-symptom-cards.svg" alt="Three symptom cards: hallucination, prompt failure, and model mismatch" title="Signature symptoms: read the symptom, run the confirming test."><figcaption>Figure 6.2. Signature symptoms: read the symptom, run the confirming test.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
-<li>Each card pairs a symptom with its confirming test: hallucination is confirmed by asking the model to quote the source; prompt failure by rewriting the instruction explicitly; model mismatch by running the same prompt on a larger model.</li>
+<li>Each card pairs a symptom with its confirming test. Confirm hallucination by asking the model to quote the source. Confirm prompt failure by rewriting the instruction explicitly. Confirm model mismatch by running the same prompt on a larger model.</li>
 <li>Run the confirming test before touching anything. The symptom table is the triage tool.</li>
 <li>Takeaway: never fix before diagnosing.</li>
 </ol></div>
 
 <h3>The diagnosis procedure</h3>
+<figure><img src="img/ste100-04-diagnosis-flow.svg" alt="Flowchart: a wrong output leads to two questions that separate prompt failure, hallucination, and model mismatch" title="Study figure: diagnose first, then treat."><figcaption>Study figure: diagnose first, then treat.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Start at the top with any wrong output.</li>
+<li>The first diamond asks if the output is deterministic.</li>
+<li>Each answer points to one fix: prompt, grounding, or tier.</li>
+</ol></div>
 <p><strong>Rung 3: the full picture.</strong> Four steps, in order. This is the procedure the credited answer follows.</p>
 <ol>
 <li><strong>Reproduce it.</strong> Capture the exact input, model version, prompt version and seed. If you cannot reproduce it, you cannot prove you fixed it.</li>
 <li><strong>Isolate the layer.</strong> A Claude system has layers: retrieval, prompt, model, tools, post processing. Test each alone. Swap in known good retrieved docs: if the answer fixes itself, retrieval was the fault, not the model.</li>
 <li><strong>Change one thing.</strong> Same discipline as A/B testing. If you rewrite the prompt AND switch models, you learn nothing.</li>
-<li><strong>Check the trace.</strong> Read the full trace (section 9): what did the model actually see? Truncated context, a failed tool call hidden by a retry, or a system prompt that got overridden are all visible in traces and invisible in the final answer.</li>
+<li><strong>Check the trace.</strong> Read the full trace (section 9): what did the model actually see? The trace shows what the final answer hides: truncated context, a failed tool call hidden by a retry, or a system prompt that got overridden.</li>
 </ol>
 <figure><img src="img/04-fig-06.jpg" alt="Decision tree: bad output branches into invented facts (ground with retrieval), missed instructions (rewrite prompt), wrong model (switch model)" title="Figure 6.1. The triage tree: match the symptom to the cause, then apply the matching fix. Wrong diagnosis means wrong medicine."><figcaption>Figure 6.1. The triage tree: match the symptom to the cause, then apply the matching fix. Wrong diagnosis means wrong medicine.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Top diamond: <strong>bad output</strong>. Every diagnosis starts here, with a reproduced case.</li>
-<li>Left branch: <strong>invented facts</strong>. The model made things up. The fix is grounding: retrieval, citations, "quote the source" instructions.</li>
+<li>Left branch: <strong>invented facts</strong>. The model made things up. The fix: ground the model with retrieval, citations, and "quote the source" instructions.</li>
 <li>Middle branch: <strong>missed instructions</strong>. The model can do the task but did not follow directions. The fix is the prompt: explicit steps, format examples, no contradictions.</li>
-<li>Right branch: <strong>wrong model</strong>. The task is beyond this model. The fix is routing up: a larger or more capable model for this segment.</li>
+<li>Right branch: <strong>wrong model</strong>. The task is beyond this model. The fix: route up to a larger or more capable model for this segment.</li>
 <li>Read down each column: symptom, then cause, then fix. Never apply a fix from the wrong column.</li>
 </ol>
-<p><strong>Teaching point:</strong> exam scenarios describe symptoms and offer fixes from different columns. "The model invents case law" plus the option "switch to a bigger model" is a column mismatch: the credited fix is grounding with retrieval, because a bigger model hallucinates too, just more fluently.</p></div>
+<p><strong>Teaching point:</strong> exam scenarios describe symptoms and offer fixes from different columns. "The model invents case law" plus the option "switch to a bigger model" is a column mismatch. The credited fix is to ground the model with retrieval. A bigger model hallucinates too, just more fluently.</p></div>
 
-<details><summary>You might be wondering: what about tool failures?</summary>
+<details><summary>You might ask: what about tool failures?</summary>
 <div>
-<p>Tool failures deserve their own bucket. Signatures: the model calls the wrong tool, passes invalid arguments, or ignores a tool result. Causes split the same three ways. The tool description was unclear (prompt failure, fix the description and add examples). The arguments were invented (grounding, validate with schemas). The third cause: the task needs planning the model cannot do (mismatch, decompose into smaller steps). Always validate tool arguments against a schema before executing: it turns silent corruption into loud, diagnosable errors.</p>
+<p>Tool failures deserve their own bucket. Signatures: the model calls the wrong tool, passes invalid arguments, or ignores a tool result. Causes split the same three ways. The tool description was unclear (prompt failure, fix the description and add examples).</p>
+<p>The model invented the arguments (fix with grounding, validate with schemas). The third cause: the task needs planning the model cannot do (mismatch, decompose into smaller steps). Always validate tool arguments against a schema before executing: it turns silent corruption into loud, diagnosable errors.</p>
 </div>
 </details>
 
-<div class="exam-ask"><p>Scenario shape: a symptom description plus four candidate fixes. Match symptom to cause to fix: invented facts need grounding (retrieval, citations), ignored instructions need prompt repair, hard reasoning failures need a stronger model or decomposition. The traps are cross column fixes, especially "upgrade the model" for what is clearly a prompt or retrieval problem, and "rewrite the prompt" for what is clearly beyond the model's capability.</p>
+<div class="exam-ask"><p>Scenario shape: a symptom description plus four candidate fixes. Match symptom to cause to fix. Invented facts need grounding (retrieval, citations). Ignored instructions need prompt repair.</p><p>Hard reasoning failures need a stronger model or decomposition. The traps are cross column fixes. Watch especially for "upgrade the model" on what is clearly a prompt or retrieval problem. And "rewrite the prompt" on what is clearly beyond the model's capability.</p>
 <p><strong>The first-resort rule to carry:</strong> "bad output means we need a better model" is the most expensive distractor. Model upgrades do not cure prompt failures or ungrounded generation. Diagnose first: most production issues are prompt or retrieval problems wearing a model costume.</p></div>
 
 <p class="examline"><strong>Exam relevance:</strong> diagnosis questions test the triage discipline: reproduce, isolate the layer, change one thing, read the trace. The credited answer names the cause before the cure.</p>
@@ -1730,12 +1762,18 @@ DRIFT              same judge, different scores after a model version update
 <section class="unit"><h2>7. A/B testing and iterative improvement</h2>
 <p class="u-bridge">Offline evals compare versions on fixed cases. Some questions need real users: novelty effects, distribution shift, business outcomes. This section is the A/B discipline that answers them without fooling yourself.</p>
 <p><span class="def"><span class="term">A/B test</span>: split live traffic randomly between the current system (A, the control) and a changed version (B, the variant), then compare them on the same metrics. It exists because offline evals cannot capture everything: real user behavior, real input distributions, and real business outcomes only appear in production.</span></p>
-<p><strong>Rung 1: the one-paragraph version.</strong> An A/B test answers one question: is the new version actually better, in production, on real users? The discipline around the test matters more than the statistics: one variable at a time, the same metrics on both arms, guardrails that must not regress, enough runtime to cover weekly patterns, no stopping early because day one looked good.</p>
+<p><strong>Rung 1: the one-paragraph version.</strong> An A/B test answers one question: is the new version actually better, in production, on real users? The discipline around the test matters more than the statistics. One variable at a time.</p><p>The same metrics on both arms. Guardrails that must not regress. Enough runtime to cover weekly patterns. No stopping early because day one looked good.</p>
 <h3>Designing the test</h3>
+<figure><img src="img/ste100-04-ab-test.svg" alt="Four-step pipeline: hypothesis, split traffic, run both, measure and ship" title="Study figure: designing the A/B test."><figcaption>Study figure: designing the A/B test.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Follow the arrows left to right.</li>
+<li>Each step has one job. Hypothesis first, shipping last.</li>
+<li>Takeaway: change one thing at a time.</li>
+</ol></div>
 <p><strong>Rung 2: one level deeper.</strong> Five design rules. The exam tests the discipline, not the math.</p>
 <ol>
 <li><strong>One change at a time.</strong> If B differs from A in prompt, model and retrieval settings, a win tells you nothing about what worked. Change one variable per test.</li>
-<li><strong>Pick the randomization unit.</strong> Usually the user or the session, not the request: if one user sees A on one message and B on the next, the experience is inconsistent and the data is polluted. Hash the user ID into a bucket and keep them there for the whole test. This is called <strong>sticky bucketing</strong>.</li>
+<li>Pick the randomization unit. Usually the user or the session, not the request. If one user sees A on one message and B on the next, the experience is inconsistent. Mixed arms pollute the data. Hash the user ID into a bucket and keep them there for the whole test. Engineers call this sticky bucketing.</li>
 <li><strong>Name the primary metric and the guardrails up front.</strong> Primary: the thing you hope improves (task success rate). Guardrails: the things that must not regress (safety refusal rate, p95 latency, cost per session). Writing these down before the test prevents cherry picking the metric that happened to win afterward.</li>
 <li><strong>Size it for the effect you care about.</strong> Small traffic or a tiny expected gain means a long test. A test that is too short produces noise, not answers. As a rule of thumb, you need enough samples that the observed difference would rarely happen by chance. If traffic is thin, prefer offline evals and reserve A/B for big changes.</li>
 <li><strong>Run it long enough to cover weekly patterns.</strong> Weekday and weekend users differ. A three day test can mislead; one to two full weeks is the norm for user facing systems.</li>
@@ -1744,7 +1782,7 @@ DRIFT              same judge, different scores after a model version update
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Left: <strong>traffic</strong>, the stream of real users. One stream, not two: this keeps the comparison fair.</li>
 <li>The split: one arrow becomes two <strong>equal</strong> arrows. Random assignment, sticky per user.</li>
-<li>Top path: <strong>A, the control</strong>. The system as it runs today. It is the baseline everything is measured against.</li>
+<li>Top path: <strong>A, the control</strong>. The system as it runs today. It is the baseline you measure everything against.</li>
 <li>Bottom path: <strong>B, the variant</strong>. Exactly one deliberate change.</li>
 <li>Right: both arms report the same <strong>quality gauges</strong>, and the red <strong>guardrail shield</strong> watches safety, latency and cost on both. B ships only if it wins on the primary metric and no guardrail trips.</li>
 </ol>
@@ -1759,8 +1797,8 @@ DRIFT              same judge, different scores after a model version update
 <li><strong>Carryover.</strong> If the variant changes conversation memory or cached state, users crossing between arms contaminate results. Sticky bucketing plus clean state per arm fixes this.</li>
 </ul>
 <h3>The iteration loop</h3>
-<p>A/B testing is not one test. It is the loop from section 2 at production scale: form a hypothesis ("a shorter system prompt cuts latency without hurting quality"), ship the variant to a slice of traffic, read primary plus guardrails, then promote, kill or iterate. Keep a log of every test with its hypothesis and outcome. Teams that do not write down hypotheses repeat failed experiments; the log is organizational memory.</p>
-<p>One caution: <strong>peeking</strong> (checking results daily and stopping the moment B looks good) inflates false wins. Decide the runtime or the sample target in advance and respect it. If you must peek, use sequential testing methods designed for it, which the exam will not ask you to compute but may ask you to name as the fix.</p>
+<p>A/B testing is not one test. It is the loop from section 2 at production scale. Form a hypothesis ("a shorter system prompt cuts latency without hurting quality"). Ship the variant to a slice of traffic. Read primary plus guardrails.</p><p>Then promote, kill or iterate. Keep a log of every test with its hypothesis and outcome. Teams that do not write down hypotheses repeat failed experiments. The log is organizational memory.</p>
+<p>One caution: peeking (checking results daily and stopping the moment B looks good) inflates false wins. Decide the runtime or the sample target in advance and respect it. If you must peek, use sequential testing methods designed for it. The exam will not ask you to compute them. It may ask you to name them as the fix.</p>
 <div class="exam-ask"><p>Scenario shape: a team ran an A/B test for two days on 200 users and wants to ship (trap: ship; credited: insufficient sample and runtime, extend or fall back to offline evals). Or: B wins on the primary metric but p95 latency doubled (trap: ship on the win; credited: guardrail tripped, reject or optimize first). Or: users saw both variants across messages (trap: ignore; credited: randomization unit should be the user with sticky bucketing).</p>
 <p><strong>The guardrail rule to carry:</strong> "the B arm won on quality, so we ship it" is always a distractor. Not until the guardrails clear. A variant that answers better but leaks PII twice as often, or costs three times more per session, fails the test. The credited exam answer almost always checks the guardrails before promoting.</p></div>
 
@@ -1769,7 +1807,7 @@ DRIFT              same judge, different scores after a model version update
 
 <section class="unit"><figure><img src="img/04-iteration-loop.svg" alt="Four-step A/B loop with the no-peeking warning" title="The iteration loop: A/B testing at production scale."><figcaption>Figure 7.2. The iteration loop: A/B testing at production scale.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
-<li>Follow the arrows: form a hypothesis, ship one change to a slice of traffic with sticky bucketing, read the primary metric plus guardrails, then promote, kill, or iterate.</li>
+<li>Follow the arrows. Form a hypothesis. Ship one change to a slice of traffic with sticky bucketing. Read the primary metric plus guardrails. Then promote, kill, or iterate.</li>
 <li>The red banner is the discipline: peeking inflates false wins, so decide the runtime or sample target in advance and respect it.</li>
 <li>Takeaway: keep a log of every test. Teams that do not write down hypotheses repeat failed experiments.</li>
 </ol></div>
@@ -1777,9 +1815,15 @@ DRIFT              same judge, different scores after a model version update
 <h2>8. Token, latency and cost optimization</h2>
 <p class="u-bridge">Everything so far measures quality. Shipping is a three-way trade: quality, latency, cost. This section is the optimization toolkit, in the order the exam rewards: cache first, trim the waste second, route third, batch fourth, model downgrade last.</p>
 <p>Every production Claude system lives inside a triangle: <strong>quality, latency, cost</strong>. Push one corner and the others move. The architect's job is not to minimize cost or maximize quality in isolation. It is to pick the point on the triangle the business asked for, and to know the price of moving.</p>
-<p><strong>Rung 1: the one-paragraph version.</strong> Everything the system spends is measured in tokens: input tokens are what you send, output tokens are what the model writes (they cost more and take longer, because generation is sequential: each token waits for the previous one). The five optimizations below all attack the same bill from different angles, in a fixed order: caching first, model downgrade last.</p>
-<p>Start with the vocabulary. A <span class="def"><span class="term">token</span> is the unit the API bills and the model reads: roughly 3 to 4 characters of English per token. <span class="term">Input tokens</span> are what you send (system prompt, documents, history). <span class="term">Output tokens</span> are what the model writes, and they cost more per token and take longer, because generation is sequential: each token waits for the previous one.</span></p>
-<h3>Prompt caching: the highest leverage optimization</h3>
+<p><strong>Rung 1: the one-paragraph version.</strong> Measure everything the system spends in tokens: input tokens are what you send, output tokens are what the model writes (they cost more and take longer, because generation is sequential: each token waits for the previous one). The five optimizations below all attack the same bill from different angles, in a fixed order: caching first, model downgrade last.</p>
+<p>Start with the vocabulary. A <span class="def"><span class="term">token</span> is the unit the API bills and the model reads: roughly 3 to 4 characters of English per token. <span class="term">Input tokens</span> are what you send (system prompt, documents, history). <span class="term">Output tokens</span> are what the model writes. They cost more per token and take longer, because generation is sequential: each token waits for the previous one.</span></p>
+<h3>Prompt caching: the most valuable optimization</h3>
+<figure><img src="img/ste100-04-cache-math.svg" alt="Three panels comparing full price, cached price, and the savings math for 50 thousand tokens" title="Study figure: prompt caching economics."><figcaption>Study figure: prompt caching economics.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Full price: $3 per million tokens. Cached: $0.30.</li>
+<li>The third panel works the example: 40k cached of 50k.</li>
+<li>Takeaway: stable prefixes save 72 percent per request.</li>
+</ol></div>
 <p><strong>Rung 2: one level deeper.</strong> <span class="def"><span class="term">Prompt caching</span> lets you mark a prefix of your prompt (system instructions, reference documents) as cacheable. The provider stores its processed form and reuses it across requests instead of recomputing it every time. It exists because most production prompts repeat a large static prefix with a small changing suffix.</span></p>
 <p>The economics, from published Anthropic pricing. These are the numbers to memorize:</p>
 <ul>
@@ -1787,26 +1831,26 @@ DRIFT              same judge, different scores after a model version update
 <li><strong>Cache read (hit):</strong> 0.1 times the base input price. Ten times cheaper than normal input tokens.</li>
 <li><strong>TTL (time to live):</strong> how long the cache entry survives unused. Default 5 minutes; a 1 hour option exists at 2x the base input price for cache writes (versus 1.25x at the 5-minute TTL). TTL is the expiry timer: touch the entry with a matching prefix and the timer resets.</li>
 </ul>
-<p>The critical constraint: caching works on <strong>exact prefix matches</strong>. If request A starts with [system + doc1 + doc2] and request B starts with [system + doc2 + doc1], the prefixes differ and nothing is reused. Order your prompt with the most static content first and the most variable content last, or caching silently does nothing.</p>
+<p>The critical constraint: caching works on <strong>exact prefix matches</strong>. If request A starts with [system + doc1 + doc2] and request B starts with [system + doc2 + doc1], the prefixes differ and the cache reuses nothing. Order your prompt with the most static content first and the most variable content last, or caching silently does nothing.</p>
 <h4>Worked example with real arithmetic</h4>
 <p>A support assistant sends a 10,000 token product manual with every request, plus 500 tokens of conversation. It serves 100 requests per hour. Base input price: $3 per million tokens (illustrative published tier).</p>
 <ul>
 <li><strong>No cache:</strong> 100 requests times 10,500 tokens = 1,050,000 tokens. Cost: 1.05 x $3 = <strong>$3.15 per hour</strong>.</li>
 <li><strong>With cache:</strong> one write of 10,000 tokens at 1.25x = 12,500 token equivalents = $0.0375. Then 99 requests hit the cache: 99 x 10,000 tokens at 0.1x = 99,000 token equivalents = $0.297. The 500 variable tokens per request are never cached: 100 x 500 = 50,000 tokens = $0.15. Total: 0.0375 + 0.297 + 0.15 = <strong>$0.48 per hour</strong>.</li>
 </ul>
-<p>Same answers, 85 percent cheaper. The break even is after a single reuse of the prefix within the TTL window: the 25 percent write premium is repaid by the first cache hit, which saves 90 percent of the prefix's input price. If the prefix is never reused before the TTL expires, the 25 percent write premium is wasted.</p>
+<p>Same answers, 85 percent cheaper. The break even is after a single reuse of the prefix within the TTL window. The first cache hit repays the 25 percent write premium. That hit saves 90 percent of the prefix's input price. If nothing reuses the prefix before the TTL expires, you waste the 25 percent write premium.</p>
 <div class="callout math"><span class="callout-h">Formula: prompt-cache break-even</span>
 <p class="eq">write cost = 1.25 &times; prefix_tokens &times; price &nbsp;&nbsp; cached read = 0.10 &times; prefix_tokens &times; price</p>
-<p class="eq-where">where: <strong>prefix_tokens</strong>, the static prompt content reused across requests; <strong>price</strong>, dollars per input token. Every cached hit saves 90% of the prefix cost; the 25% write premium is paid once.</p>
-<p class="eq-worked"><strong>Worked example.</strong> A 10,000-token prefix at $3 per million. Write premium: 0.25 &times; 10,000/1M &times; $3 = $0.0075. Each cache hit saves 0.90 &times; 10,000/1M &times; $3 = $0.027. The first reuse already repays the write, and the paragraph above shows the full picture: $3.15 per hour uncached, $0.48 per hour cached, the same answers at 85 percent off.</p></div>
-<figure><img src="img/04-fig-07.jpg" alt="Two cost bars: no cache at $3.00 with all full price token chips, with cache at $0.36 with mostly pale cached chips" title="Figure 8.1. The same request, two bills. Cached prefix tokens cost one tenth of fresh ones, so a repeated static prefix collapses the input bill from dollars to cents."><figcaption>Figure 8.1. The same request, two bills. Cached prefix tokens cost one tenth of fresh ones, so a repeated static prefix collapses the input bill from dollars to cents. Bar labels are rounded illustration; the worked example gives $3.15 and $0.48 per hour.</figcaption></figure>
+<p class="eq-where">where: <strong>prefix_tokens</strong>, the static prompt content reused across requests. <strong>price</strong>, dollars per input token. Every cached hit saves 90% of the prefix cost. You pay the 25% write premium once.</p>
+<p class="eq-worked"><strong>Worked example.</strong> A 10,000-token prefix at $3 per million. Write premium: 0.25 &times; 10,000/1M &times; $3 = $0.0075. Each cache hit saves 0.90 &times; 10,000/1M &times; $3 = $0.027. The first reuse already repays the write. The paragraph above shows the full picture: $3.15 per hour uncached, $0.48 per hour cached, the same answers at 85 percent off.</p></div>
+<figure><img src="img/04-fig-07.jpg" alt="Two cost bars: no cache at $3.00 with all full price token chips, with cache at $0.36 with mostly pale cached chips" title="Figure 8.1. The same request, two bills. Cached prefix tokens cost one tenth of fresh ones, so a repeated static prefix collapses the input bill from dollars to cents."><figcaption>Figure 8.1. The same request, two bills. Cached prefix tokens cost one tenth of fresh ones, so a repeated static prefix collapses the input bill from dollars to cents. The bars use rounded labels for illustration. The worked example gives $3.15 and $0.48 per hour.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>Top row: <strong>no cache</strong>. Every token chip is full price blue. The total reads in whole dollars.</li>
 <li>Bottom row: <strong>with cache</strong>. Nine chips are pale (cache hits at one tenth price), one is full blue (the write premium plus the variable suffix). The total reads in cents: roughly a tenth of the row above.</li>
 <li>The arrow between them says <strong>same request</strong>. Nothing about quality changed. Only the billing did.</li>
 <li>Ask the exam question: when does this fail? When prefixes differ per request, when traffic is too sparse to reuse within TTL, or when the static block sits after variable content.</li>
 </ol>
-<p><strong>Teaching point:</strong> caching is the exam's favorite cost question because it has a clean trap: "enable caching" is wrong when every request has a unique prefix. The credited answer checks prefix stability first.</p></div>
+<p><strong>Teaching point:</strong> caching is the exam's favorite cost question. It has a clean trap: "enable caching" is wrong when every request has a unique prefix. The credited answer checks prefix stability first.</p></div>
 
 <h3>The rest of the optimization toolkit</h3>
 <p><strong>Rung 3: the full picture.</strong> Five more optimizations, in the order the exam rewards:</p>
@@ -1814,31 +1858,38 @@ DRIFT              same judge, different scores after a model version update
 <li><strong>Output discipline.</strong> Output tokens cost more and stream slower. Ask for exactly what you need: "answer in under 100 words" or structured JSON instead of prose. Verbose defaults are a silent budget leak.</li>
 <li><strong>Right size retrieval.</strong> In RAG, retrieving 20 chunks when 5 suffice multiplies input tokens. Tune chunk count on the eval set: quality first, then cut until quality moves.</li>
 <li><strong>Context compaction.</strong> Long conversations grow the input every turn. Summarize older turns into a compact state and drop the raw history. This cuts tokens per request and often improves quality, because the model stops drowning in stale context.</li>
-<li><strong>Model routing.</strong> Send easy requests to a small fast model (Haiku class) and hard ones to a large model (Sonnet or Opus class). A classifier or a rule (short question, no tools needed) does the routing. Typical split: 70 to 80 percent of traffic is easy, so routing cuts the bill by half or more while the hard cases keep top quality. The exam trap: routing everything to the biggest model "for quality" with no cost analysis.</li>
+<li><strong>Model routing.</strong> Send easy requests to a small fast model (Haiku class) and hard ones to a large model (Sonnet or Opus class). A classifier or a rule (short question, no tools needed) does the routing. Typical split: 70 to 80 percent of traffic is easy. Routing cuts the bill by half or more while the hard cases keep top quality. The exam trap: routing everything to the biggest model "for quality" with no cost analysis.</li>
 <li><strong>Batching.</strong> The Batch API processes non urgent requests at roughly half price with up to 24 hour turnaround. If the use case tolerates delay (nightly report generation, bulk classification), batching is the cheapest per token option. Never batch user facing chat.</li>
 </ul>
 <div class="callout fix"><span class="lbl">The optimization order</span>
-When a scenario asks how to cut cost, apply optimizations in this order: 1) prompt caching (near free if prefixes repeat), 2) output discipline and retrieval right sizing (quality neutral), 3) model routing (small quality risk, big savings), 4) batching for delay tolerant work, 5) model downgrade as a last resort, validated on evals. Each step gets re measured on the eval set before the next. The exam rewards this sequence and punishes jumping to step 5.
+<p>When a scenario asks how to cut cost, apply optimizations in this order. 1) prompt caching (near free if prefixes repeat). 2) output discipline and retrieval right sizing (quality neutral). 3) model routing (small quality risk, big savings).</p>
+<p>4) batching for delay tolerant work. 5) model downgrade as a last resort, validated on evals. Re-measure each step on the eval set before the next. The exam rewards this sequence and punishes jumping to step 5.</p>
 </div>
 
-<div class="exam-ask"><p>Scenario shape: a bill that is too high, or a latency budget that is blown. The credited answer picks the optimization that fits the constraint: caching when prefixes repeat (check the trap: unique prefixes per request), routing when traffic splits easy and hard, batching when delay is tolerated, compaction when conversations grow. A second shape: compute which option is cheaper from token counts. Show the arithmetic, not the vibe.</p>
-<p><strong>The cheapest-model trap to carry:</strong> "optimization means using the cheapest model" is a distractor. Cost optimization means the best quality per dollar at the required latency. Sometimes that is a bigger model with caching and short outputs beating a small model that needs three retries to get it right. Retries are the hidden cost multiplier: a cheap model with a 30 percent retry rate can cost more than an expensive model that nails it first try.</p></div>
+<div class="exam-ask"><p>Scenario shape: a bill that is too high, or a latency budget that is blown. The credited answer picks the optimization that fits the constraint. Caching when prefixes repeat (check the trap: unique prefixes per request). Routing when traffic splits easy and hard.</p><p>Batching when the use case tolerates delay. Compaction when conversations grow. A second shape: compute which option is cheaper from token counts. Show the arithmetic, not the vibe.</p>
+<p><strong>The cheapest-model trap to carry:</strong> "optimization means using the cheapest model" is a distractor. Cost optimization means the best quality per dollar at the required latency. Sometimes that is a bigger model with caching and short outputs beating a small model that needs three retries to get it right. Retries are the hidden cost multiplier. A cheap model with a 30 percent retry rate can cost more than an expensive model that nails it first try.</p></div>
 
 <p class="examline"><strong>Exam relevance:</strong> expect numbers. Know cache write 1.25x and read 0.1x, batching around half price, and the prefix match rule. The traps test whether you check the precondition before applying the optimization.</p>
 <p class="u-next"><strong>Next:</strong> observability and monitoring, seeing the system you shipped.</p></section>
 
 <section class="unit"><figure><img src="img/04-opt-toolkit.svg" alt="Five optimization steps from prompt caching to model downgrade" title="Apply optimizations in this order; re-measure on evals between steps."><figcaption>Figure 8.2. Apply optimizations in this order; re-measure on evals between steps.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
-<li>The five cards run in exam-rewarded order: prompt caching first, then output discipline and retrieval right-sizing, then model routing, then batching, then model downgrade as a last resort.</li>
-<li>Each step is re-measured on the eval set before the next. The exam punishes jumping straight to step 5.</li>
+<li>The five cards run in exam-rewarded order. Prompt caching first, then output discipline and retrieval right-sizing, then model routing, then batching. Model downgrade is a last resort.</li>
+<li>Re-measure each step on the eval set before the next. The exam punishes jumping straight to step 5.</li>
 <li>Takeaway: a cheap model with a 30 percent retry rate can cost more than an expensive model that nails it first try.</li>
 </ol></div>
 
 <h2>9. Observability and monitoring: seeing the system in production</h2>
 <p class="u-bridge">You can measure, compare, and optimize. Then the system goes live and you need to keep seeing it. This section is observability: traces, monitoring, and the logging contract that keeps traces useful and legal.</p>
-<p><span class="def"><span class="term">Observability</span> means you can answer "what happened and why" for any request, from data you collected in advance. Logging records events; observability is the ability to reconstruct the full story of a request: what the model saw, what it called, how long each step took, what it cost, and where it went wrong.</span></p>
-<p><strong>Rung 1: the one-paragraph version.</strong> A trace is the story of one request, told as nested spans (one timed operation inside another): the request contains the model call, which contains the tool call. Each span carries timing, identity, token usage, and outcome. Monitoring is the system built on top of traces: dashboards for "is it healthy right now," alerts with runbooks for "wake someone up," production evals for "is quality drifting." The exam tests the logging contract: what each span carries, what gets redacted and when, and how traces feed the layers above.</p>
+<p><span class="def"><span class="term">Observability</span> means you can answer "what happened and why" for any request, from data you collected in advance. Logging records events. Observability is the ability to reconstruct the full story of a request. The story covers what the model saw, what it called, how long each step took, what it cost, and where it went wrong.</span></p>
+<p><strong>Rung 1: the one-paragraph version.</strong> A trace is the story of one request, told as nested spans (one timed operation inside another): the request contains the model call, which contains the tool call. Each span carries timing, identity, token usage, and outcome. Monitoring is the system built on top of traces.</p><p>Dashboards answer "is it healthy right now". Alerts with runbooks answer "wake someone up". Production evals answer "is quality drifting". The exam tests the logging contract: what each span carries, what gets redacted and when, and how traces feed the layers above.</p>
 <h3>Trace structure: the unit of understanding</h3>
+<figure><img src="img/ste100-04-trace-spans.svg" alt="Span tree: one request bar with nested retrieval, vector search, rerank, and generate spans" title="Study figure: trace structure."><figcaption>Study figure: trace structure.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>The top bar is the whole request: 14.2 seconds.</li>
+<li>Nested bars show where the time went. Retrieval took 9.8 seconds.</li>
+<li>Takeaway: the slowest span tells you what to fix.</li>
+</ol></div>
 <p><strong>Rung 2: one level deeper.</strong> <span class="def"><span class="term">Trace</span>: the complete record of one request, organized as a tree of <span class="term">spans</span>. A span is one timed operation: the top span is the whole request, child spans are the model call, each tool call, each retrieval step. Spans nest, so you can see that the 8 second request spent 7 seconds inside one slow tool call.</span></p>
 <p>Every span should carry the same core fields:</p>
 <ul>
@@ -1852,13 +1903,19 @@ When a scenario asks how to cut cost, apply optimizations in this order: 1) prom
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
 <li>The three bars are <strong>spans</strong> on a timeline (0 to 400 ms at the bottom). The long blue <strong>request</strong> span contains the teal <strong>model call</strong> span, which contains the orange <strong>tool call</strong> span. Nesting shows what happened inside what.</li>
 <li>Read the field tags on the right: <strong>latency 342ms</strong> on the request, <strong>tokens 128</strong> and <strong>cost $0.004</strong> on the model call. These are the fields from the list above.</li>
-<li>Find the red stamp on the tool call: <strong>PII redacted</strong>. The arguments contained personal data, so the values were stripped before the trace was stored. The structure (which tool, how long) remains.</li>
+<li>Find the red stamp on the tool call: <strong>PII redacted</strong>. The arguments contained personal data, so the pipeline stripped the values before it stored the trace. The structure (which tool, how long) remains.</li>
 <li>Ask the diagnostic question: if this request was slow, which bar is longest? The waterfall answers in one glance. That is the whole point of tracing.</li>
 </ol>
 <p><strong>Teaching point:</strong> the exam tests what to log and what to redact. Log structure, timing, versions, tokens and cost. Redact PII, credentials and raw user content. A trace that stores full prompts with customer data is a security finding, not good observability.</p></div>
 
 <h3>PII redaction and log hygiene</h3>
-<p><span class="def"><span class="term">PII</span> (personally identifiable information): any data that identifies a person: names, emails, account numbers, health details. <span class="term">Redaction</span>: removing or masking PII before logs are stored or shipped.</span></p>
+<figure><img src="img/ste100-04-redaction-pipeline.svg" alt="Pipeline: raw log to PII detection to redaction to safe storage" title="Study figure: PII redaction and log hygiene."><figcaption>Study figure: PII redaction and log hygiene.</figcaption></figure>
+<div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
+<li>Follow the arrows left to right.</li>
+<li>Detection tags each PII span. Redaction replaces values with labels.</li>
+<li>Takeaway: never store the raw log.</li>
+</ol></div>
+<p><span class="def"><span class="term">PII</span> (personally identifiable information): any data that identifies a person: names, emails, account numbers, health details. <span class="term">Redaction</span>: removing or masking PII before you store or ship the logs.</span></p>
 <p>Rules that show up on the exam:</p>
 <ul>
 <li><strong>Redact at collection, not at query time.</strong> Once raw PII sits in a log store, every person with log access can read it, and every breach includes it. Strip it in the logging pipeline before storage.</li>
@@ -1870,12 +1927,12 @@ When a scenario asks how to cut cost, apply optimizations in this order: 1) prom
 <p><strong>Rung 3: the full picture.</strong> Traces answer "what happened in this request". Monitoring answers "is the system healthy right now". Build it in three layers:</p>
 <ol>
 <li><strong>Dashboards:</strong> live views of the metric families from section 3: quality scores, p50 and p95 latency, cost per request, safety refusal rates, error rates. Segmented, always (section 3's lesson applies to dashboards too).</li>
-<li><strong>Alerts:</strong> thresholds on the dashboards with owners. Alert on symptom, not cause: "p95 latency above 4 seconds for 10 minutes" pages someone; "quality score dropped 5 points week over week" opens an investigation. Alert fatigue is real: every alert must have a runbook entry saying what to do.</li>
-<li><strong>Production evals:</strong> the loop never stops. Sample live traffic, score it with the judge plus human audit (sections 4 and 5), and watch for drift: quality decaying as user behavior shifts or the model version changes under you. A sudden quality drop with no code change on your side points at provider side drift: check the model version in your traces first.</li>
+<li><strong>Alerts:</strong> thresholds on the dashboards with owners. Alert on symptom, not cause. "p95 latency above 4 seconds for 10 minutes" pages someone. "quality score dropped 5 points week over week" opens an investigation. Alert fatigue is real: every alert must have a runbook entry saying what to do.</li>
+<li><strong>Production evals:</strong> the loop never stops. Sample live traffic. Score it with the judge plus human audit (sections 4 and 5). Watch for drift: quality decaying as user behavior shifts or the model version changes under you. A sudden quality drop with no code change on your side points at provider side drift: check the model version in your traces first.</li>
 </ol>
 <figure><img src="img/04-traces-to-monitoring.svg" alt="Dashboards, alerts, and production evals" title="From traces to monitoring: three layers."><figcaption>Figure 9.3. From traces to monitoring: three layers.</figcaption></figure>
 <div class="diagram-walkthrough"><div class="lbl">How to read this diagram</div><ol>
-<li>The three layers: dashboards show live views of the metric families, segmented always; alerts put thresholds with owners on the dashboards and alert on symptom, not cause; production evals sample live traffic and score it with the judge.</li>
+<li>The three layers. Dashboards show live views of the metric families, segmented always. Alerts put thresholds with owners on the dashboards and alert on symptom, not cause. Production evals sample live traffic and score it with the judge.</li>
 <li>Every alert needs a runbook entry, and alert fatigue is real.</li>
 <li>Takeaway: the loop never stops. Feed production failures back into the golden dataset.</li>
 </ol></div>
@@ -1887,10 +1944,10 @@ When a scenario asks how to cut cost, apply optimizations in this order: 1) prom
 <li><strong>Tail based:</strong> decide after seeing the outcome (keep all errors and slow requests, sample the successes). Best signal per dollar: you always capture the interesting cases.</li>
 <li><strong>Always keep aggregates.</strong> Even unsampled requests contribute to counters and histograms, so dashboards stay complete while detailed traces stay affordable.</li>
 </ul>
-<div class="exam-ask"><p>Scenario shape: "quality dropped in production, what do you check first?" The credited path: dashboards segmented by version and segment, then traces of failing requests, then the eval suite to confirm. The traps: retrain or switch models immediately (no diagnosis), or log full user prompts to debug (PII violation). A second shape: design logging for a regulated use case. The credited answer redacts PII at collection, keeps versioned traces, and sets short retention on content.</p>
-<p><strong>The dashboard trap to carry:</strong> "monitoring is watching a dashboard" is a distractor. Dashboards without alerts are television. Alerts without runbooks are noise. Production evals without a feedback loop are trivia. The exam's credited answers always close the loop: detect, alert, diagnose from traces, fix, verify on the eval set.</p></div>
+<div class="exam-ask"><p>Scenario shape: "quality dropped in production, what do you check first?" The credited path has three steps. Dashboards segmented by version and segment. Then traces of failing requests.</p><p>Then the eval suite to confirm. The traps: retrain or switch models immediately (no diagnosis), or log full user prompts to debug (PII violation). A second shape: design logging for a regulated use case. The credited answer redacts PII at collection, keeps versioned traces, and sets short retention on content.</p>
+<p><strong>The dashboard trap to carry:</strong> "monitoring means watching a dashboard" is a distractor. Dashboards without alerts are television. Alerts without runbooks are noise. Production evals without a feedback loop are trivia. The exam's credited answers always close the loop: detect, alert, diagnose from traces, fix, verify on the eval set.</p></div>
 
-<p class="examline"><strong>Exam relevance:</strong> observability questions test the logging contract: what each span carries, what gets redacted and when, and how traces feed dashboards, alerts and production evals. "Log everything including user data" is always wrong.</p>
+<p class="examline"><strong>Exam relevance:</strong> observability questions test the logging contract. They test what each span carries, what gets redacted and when, and how traces feed dashboards, alerts and production evals. "Log everything including user data" is always wrong.</p>
 <p class="u-next"><strong>Next:</strong> the exam checklist, the whole domain on one page.</p></section>
 
 <section class="unit"><figure><img src="img/04-sampling.svg" alt="Head-based versus tail-based sampling" title="Sampling: you cannot keep everything."><figcaption>Figure 9.2. Sampling: you cannot keep everything.</figcaption></figure>
@@ -1915,7 +1972,7 @@ When a scenario asks how to cut cost, apply optimizations in this order: 1) prom
 </ul>
 <p>Across all of D4, the exam rewards one instinct above all: <strong>measure before you act, and distrust the single number</strong>. The wrong answers ship on vibes, optimize blindly, or trust an uncalibrated judge. The right answers define the metric, slice it, test the change, check the guardrails, and only then decide.</p>
 <div class="u-goto"><span class="lbl">Where to go next</span>
-<p>You can now prove a system works before it ships: properties over exact matches, the eval flywheel, metrics matched to tasks, calibrated judges, disciplined A/B tests, and optimization in the exam's order. The next volume is what happens when systems go live and touch the real world: <a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a>, where the measured system meets failure modes, guardrails, and the law.</p></div></section>
+<p>You can now prove a system works before it ships. The toolkit: properties over exact matches, the eval flywheel, metrics matched to tasks, calibrated judges, disciplined A/B tests, and optimization in the exam's order. The next volume covers what happens when systems go live and touch the real world: <a href="05-governance-safety-risk.html">D5 · Governance, Safety &amp; Risk (14%)</a>. There the measured system meets failure modes, guardrails, and the law.</p></div></section>
 
 <footer><p>D4: Evaluation, Testing and Optimization · CCAR-P Study Guide · Generic learning material. Last verified against official Anthropic sources: September 2026. Pricing numbers are illustrative published tiers; verify current pricing before architecture decisions. Diagram in Figure 2.1 courtesy of the Weaviate blog; all other figures generated for this guide.</p></footer>
 
