@@ -176,9 +176,7 @@ times 30 = 6,000 MB = 6 GB per month.
 
 ### The 10-step best-answer method in action
 
-Note: the canonical §17 text was not in this builder's context. The steps
-below reconstruct the standard exam method. The coordinator should align
-them with §17.
+The canonical 10-step best-answer method, applied to this question:
 
 Mini question: "A shared support bot reads order history. Agents must see
 only their region's orders. Which design fits? A) System prompt: 'only show
@@ -187,18 +185,20 @@ before returning rows. C) One deployment per region."
 
 | Step | Action on this question |
 |---|---|
-| 1. Read the stem once | Type: design choice under a data-isolation constraint |
-| 2. Mark the hard constraints | Cross-region reads forbidden. One shared bot |
-| 3. Predict before reading options | Deterministic filter before context |
-| 4. Read every option | Do not stop at the first plausible one |
-| 5. Delete constraint breakers | A breaks the constraint: a prompt is guidance, not enforcement |
-| 6. Delete different-problem solvers | C solves deployment topology, not access control |
-| 7. Compare survivors on cost, risk, reversibility | B isolates data in one deployment. C multiplies deployments |
-| 8. Hunt the traps | "The model was told" presents guidance as a control |
-| 9. Match the decisive constraint | B is the only deterministic check before context |
-| 10. Stress-test the pick | B survives production and audit: identity, filter, log |
+| 1. Question type | Best architecture under data isolation |
+| 2. Lifecycle stage | Design |
+| 3. Objective | One shared bot where agents see only their region |
+| 4. Hard constraints | Cross-region reads are forbidden. One shared deployment |
+| 5. System layer | Authorization before context, not instructions |
+| 6. Infeasible options | None: all three could run |
+| 7. Constraint violators | A is guidance, not enforcement. C breaks the shared-bot constraint |
+| 8. Compare survivors | Only B remains |
+| 9. Hidden consequences | C multiplies deployments and cost. A fails audit |
+| 10. Verify | B is the complete single answer |
 
 Verdict: B. The decisive constraint is deterministic isolation, and only B
+
+Do not assume the exam always wants more autonomy, a larger model, more tools, more logging, a human reviewer everywhere, a new framework, or a complete redesign. Sometimes the best answer is: clarify the requirement, remove an unnecessary capability, fix retrieval, add a deterministic validation gate, narrow permissions, or preserve an existing sufficient workflow. The scenario, not a slogan, determines the answer.
 enforces it in code before the model sees the data.
 
 ## 6. Product and protocol mapping
