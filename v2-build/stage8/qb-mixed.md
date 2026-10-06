@@ -958,14 +958,14 @@ the new version gets copied traffic with no user impact.
 10. Misconception tested: "same tier means same model." Version changes
 behavior. Test the version, not the name.
 
-## Q-M-15 (V2-D2.4), Select TWO
+## Q-M-15 (V2-D2.4), Select THREE
 
 **Scenario.** A vineyard sensor assistant answers irrigation questions.
 Each call loads the full season of sensor readings: 60,000 tokens.
 Duplicate readings from overlapping sensors appear twice. The model
 sometimes answers from March data for a July question.
 
-**Question.** Which TWO context faults are present? Select TWO.
+**Question.** Which THREE context faults are present? Select THREE.
 
 **Options.**
 A) Context growth: the full season loads on every call.
@@ -974,7 +974,7 @@ C) Dilution: March data answers July questions.
 D) Context exhaustion: the window overflows.
 E) Conversation loss: old turns vanish.
 
-**Answer.** A, B
+**Answer.** A, B, C
 
 **Method walk (Steps 1-10).**
 1. Question type: context fault diagnosis (multi).
@@ -987,46 +987,52 @@ answers.
 7. Eliminate constraint-violating: D needs an overflow (none stated), E
 needs lost turns (none stated).
 8. Compare on objective: the evidence names growth and duplication
-directly.
-9. Hidden dependencies: the March/July error is a symptom, not a named
-fault here.
-10. Verify: A and B. C describes a symptom of A, not a separate fault
-in this taxonomy use.
+directly, and the March-for-July answers show dilution: the model
+attends to the wrong span of the bloated context.
+9. Hidden dependencies: each fault needs its own fix (retrieval for
+growth, dedupe for duplication, fewer better-placed chunks for
+dilution).
+10. Verify: A, B, and C. D and E lack evidence. Select THREE.
 
 **Explanation.**
-1. Correct answer: A, B.
+1. Correct answer: A, B, C.
 2. Decisive scenario phrase: "the full season of sensor readings:
 60,000 tokens. Duplicate readings from overlapping sensors appear
-twice."
+twice. The model sometimes answers from March data for a July
+question."
 3. Requirement-to-option matrix:
 
 | Evidence | A | B | C | D | E |
 |---|---|---|---|---|---|
 | 60,000 tokens per call | Yes | No | No | No | No |
 | Readings appear twice | No | Yes | No | No | No |
+| Wrong-month answers from a bloated context | No | No | Yes | No | No |
 | Window overflow stated | No | No | No | No | No |
 
-4. Why A and B satisfy the diagnosis: the full-season load on every call
-is textbook context growth. The doubled readings are textbook
-duplication. Both are stated directly in the evidence.
-5. Why A and B best meet the objective: V2-D2.4 names growth and
-duplication as distinct faults with distinct fixes (retrieval for
-growth, dedupe for duplication). Naming both points at both fixes.
-6. Every rejected choice explained: C (dilution) tempts, but the
-March-for-July error is the symptom of loading everything. The named
-faults are the load and the doubles. D needs an overflow error, which
-the scenario never states. E needs vanishing turns, which never appear.
-7. Exact limitation or tradeoff: fixing growth with retrieval and
-duplication with dedupe still leaves index quality as the bound.
+4. Why A, B, and C satisfy the diagnosis: the full-season load on every
+call is textbook context growth. The doubled readings are textbook
+duplication. The March-for-July answers are textbook dilution: the
+model attends to the wrong span of an oversized context. All three are
+named faults in the V2-D2.4 taxonomy.
+5. Why A, B, and C best meet the objective: V2-D2.4 names growth,
+duplication, and dilution as distinct faults with distinct fixes
+(retrieval for growth, dedupe for duplication, fewer better-placed
+chunks for dilution). Naming all three points at all three fixes.
+6. Every rejected choice explained: D needs an overflow error, which
+the scenario never states. E needs vanishing turns, which never
+appear.
+7. Exact limitation or tradeoff: fixing all three still leaves index
+quality as the bound for the retrieval that replaces the full-season
+load.
 8. Relevant evidence (with date): context fault taxonomy (growth,
 duplication, loss, exhaustion, dilution) from lesson-D2-4 (§4), Oct 6
 2026.
-9. Counterfactual where each plausible alternative wins: C wins as a
-named fault when the evidence shows attention failure with a small
-context. D wins when the call errors on window size. E wins when old
-turns vanish after compaction.
-10. Misconception tested: "every symptom is a separate fault." Symptoms
-trace to faults. Name the fault the evidence states.
+9. Counterfactual where each plausible alternative wins: D wins when
+the call errors on window size. E wins when old turns vanish after
+compaction.
+10. Misconception tested: "growth alone explains every context
+failure." Each named fault needs its own fix. Name every fault the
+evidence shows.
 
 ## Q-M-16 (V2-D3.1)
 
