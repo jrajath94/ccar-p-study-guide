@@ -410,3 +410,24 @@ Results go into BUILD-LOG.md as the final section.
   served from the clobbered file. Flagged for lane-discipline follow-up.
 
 ## BUILD COMPLETE — CCAR-P crash course v2 shipped 2026-10-06.
+
+## PDF typography fix (2026-10-06 ~17:20-17:40 EDT) — Raj's order
+
+Raj rejected the v2 PDF: serif fallback rendered, beige panels, ragged-left text, cramped lines.
+
+### Root causes found
+1. **Broken style-element structure (the big one):** crash-course.html's main `<style>` was never closed before `<style media="print">`, so the print block was swallowed as raw text inside the first style element. The literal `<style media="print">` text broke CSS parsing (only 24 rules parsed; print sheet missing from document.styleSheets). Additionally the transplanted `ds-dark-theme` block (unscoped, after the print block) set body background #000000 / light text, winning the cascade in print. Result: black pages. Fixed by properly closing style elements (3 separate sheets) and wrapping ds-dark-theme in `@media screen`.
+2. **No Inter on box:** body fell back to serif. Fixed: Inter Regular+Bold installed (~/.fonts), print stack now `"Inter", "Source Sans 3", "IBM Plex Sans", sans-serif`.
+3. **Beige washes:** CSS backgrounds on pre/.key-takeaway/th + SVG panel fills (#FFFDF8/#F7F4EE) + baked paper texture in 12 webp chapter plates. Fixed: all CSS backgrounds → #ffffff (teal/orange/navy figure ink kept); SVG panel fills overridden to white via attribute selector; 12 webp plates whitened with PIL (paper-keyed, figure colors verified safe, backups in /tmp/imgbak).
+
+### Changes applied
+- print.css rewritten (v2-build/print.css): Inter first, `text-align: justify` + `hyphens: auto` on p/li (headings stay left), line-height 1.4, all backgrounds white, SVG wash override, figure aspect-ratio rules kept (max-width 7.5in, width/height auto).
+- Embedded `<style media="print">` blocks replaced in crash-course.html + question-bank.html with the new CSS.
+- crash-course.html style structure repaired (separate style elements; ds-dark-theme screen-scoped).
+
+### Verification (all pass)
+- pypdf: Inter-Regular + Inter-Bold embedded (subset) in both PDFs; Producer/Creator stripped.
+- Computed-style check in Chromium print emulation: white body bg, ink text color, justified paragraphs, Inter first — both files.
+- Visual inspection (pdftoppm): TOC white/clean with page numbers; body pages justified, 1.4 spacing, white ground; figures white-paneled with chip colors intact; chapter plates white (no beige); tables/code white; no clipped content.
+- crash-course.pdf: 260 pages. question-bank.pdf: 296 pages.
+- Zip rebuilt: ccar-p-crash-course-v2.zip (19 files).
