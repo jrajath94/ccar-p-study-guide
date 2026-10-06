@@ -297,7 +297,7 @@ D) Cache the retrieval results.
 5. System layer: per-stage latency vs accuracy.
 6. Eliminate infeasible: all are feasible.
 7. Eliminate constraint-violating: C removes verification, which guards correctness, the floor math must hold.
-8. Compare on objective: rerank costs 700 ms per 1 point (worst ratio), removing it gives 2.2 s and 92%, still above the floor.
+8. Compare on objective: rerank costs 700 ms per 1 point (worst ratio), removing it gives 2.2 s and 92%, still above the floor but still 200 ms over the SLA, so this is the best first cut and the team keeps cutting from the measured table.
 9. Hidden dependencies: the ms-per-point numbers must be measured, not guessed, removal needs a re-run of evals.
 10. Verify: A alone. Single select.
 
@@ -316,7 +316,12 @@ D) Cache the retrieval results.
 4. Why A satisfies all hard constraints: cutting rerank removes 700 ms (2.9 to 2.2 s) and 1 point (93% to 92%), which stays above the 90% floor.
 5. Why A best meets the objective: V2-D3.3 says when p95 breaks the SLA, cut the stage with the worst ms per accuracy point, the table names rerank.
 6. Every rejected choice explained: B is the lesson's valid-but-inferior, deeper reasoning adds 900 ms to a p95 already at 2.9 s, moving the binding constraint the wrong way. C cuts verification, the cheapest points per ms and the correctness guard, the floor math (93 - 4 = 89%) then breaks. D may help retrieval latency but does not address the measured worst ratio, and the cache needs a stable prefix to pay.
-7. Exact limitation or tradeoff: A spends 1 point of headroom, if accuracy later drifts down, the team has less buffer and must revisit.
+7. Exact limitation or tradeoff: A spends 1 point of headroom, and
+2.2 s still sits 200 ms above the 2 s SLA, so A is the best first cut,
+not the full fix. The team must find the remaining 200 ms next (a
+reasoning trim or a retrieval cache, each re-measured), with evals
+re-run after every cut. If accuracy later drifts down, the thinner
+buffer forces a revisit.
 8. Relevant evidence (with date): "p95 breaks the SLA: cut the stage with the worst ms per accuracy point" from lesson-D3-3 (§9), Oct 6 2026, exam scope via S03/S04, Sept 2026.
 9. Counterfactual where each plausible alternative wins: B wins if the SLA were loose and accuracy sat below the floor. C wins never as a first cut, verification is the guard. D wins if retrieval's 400 ms were the binding stage and the prefix is stable.
 10. Misconception tested: cut the biggest latency number. The ratio decides, not the raw ms, 900 ms for 2 points beats 700 ms for 1 point.
