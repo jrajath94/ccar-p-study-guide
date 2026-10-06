@@ -208,3 +208,16 @@ prereq-claude-fundamentals stay as-is. Fragments live in v2-build/.
 - Canonical §17 verbatim in all 11 worked examples. Transfer questions answer-free.
 - Claim classification + dates in every evidence table; toy rates marked.
 - Next: Stage 6 — Domains 6 and 7 (Stakeholders/Lifecycle; Dev Productivity).
+
+## Stage 6 (2026-10-06 ~13:50-13:58 EDT) — COMPLETE
+
+- Domains 6 (14%) and 7 (7%), all 8 objectives: structured discovery (485:1),
+  trade-off communication (five fields/five audiences), expectation alignment
+  (error budgets, iterate-vs-re-architect), ADRs (nine fields, 60:1),
+  lifecycle phases (five phases, four gates, no-substitution), team config
+  (guidance vs enforcement, verified vs docs Oct 6), AI-assisted workflows
+  (four-part evidence rule), debugging (symptom-to-suspect map, runbooks).
+- All 38 objectives now have crash-course lessons (33 domain + 5? no: 11+8+11+8).
+  Correction: Stage 3 built 11, Stage 4 built 8, Stage 5 built 11, Stage 6 built 8.
+- 0 hard STE violations (coordinator re-verified). 32 SVGs parse.
+- Next: Stage 7 — comparisons (§18), artifacts (§21), labs, 3 capstones (§23).
