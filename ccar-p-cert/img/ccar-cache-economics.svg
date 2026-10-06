@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<rect width="960" height="500" rx="14" fill="#1e293b"/>
+<text x="480" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#e8e6e1">Cache the prefix: pay once, read at a tenth</text>
+<text x="480" y="62" text-anchor="middle" font-size="13" fill="#9fb0c3">8,000-token prefix, 1M turns a day. Write 1.25x, read 0.1x, TTL 5 min.</text>
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="aht" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#0d9488"/></marker><marker id="aha" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#d97706"/></marker></defs>
+<rect x="40" y="88" width="880" height="150" rx="10" fill="#28303d" stroke="#dc2626" stroke-width="1.5"/>
+<text x="480" y="118" text-anchor="middle" font-size="15" font-weight="bold" fill="#fca5a5">BEFORE: no cache</text>
+<text x="480" y="140" text-anchor="middle" font-size="12.5" fill="#9fb0c3">8,000 tokens x 1M turns = 8B tokens a day, every token at full price.</text>
+<text x="480" y="160" text-anchor="middle" font-size="12.5" fill="#9fb0c3">The repeated prefix is the biggest line item on the bill.</text>
+<rect x="80" y="180" width="800" height="28" rx="6" fill="#dc2626" opacity="0.8"/>
+<text x="480" y="199" text-anchor="middle" font-size="13" fill="#fff">8B tokens / day at 1.0x</text>
+<rect x="40" y="262" width="880" height="170" rx="10" fill="#28303d" stroke="#0d9488" stroke-width="1.5"/>
+<text x="480" y="292" text-anchor="middle" font-size="15" font-weight="bold" fill="#7ee0d2">AFTER: cached prefix</text>
+<text x="480" y="314" text-anchor="middle" font-size="12.5" fill="#9fb0c3">One 1.25x write. Every later read at 0.1x. Prefix bill falls ~90%.</text>
+<text x="480" y="334" text-anchor="middle" font-size="12.5" fill="#9fb0c3">Rules: min 1,024 tokens, at most 4 breakpoints (the 5th is a 400),</text>
+<text x="480" y="354" text-anchor="middle" font-size="12.5" fill="#9fb0c3">stable prefix order. Reordered instructions break the cache.</text>
+<rect x="80" y="360" width="80" height="28" rx="6" fill="#0d9488" opacity="0.85"/>
+<text x="480" y="379" text-anchor="middle" font-size="13" fill="#9fb0c3">8B tokens / day at 0.1x read + one 1.25x write</text>
+</svg>
