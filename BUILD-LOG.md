@@ -182,3 +182,18 @@ prereq-claude-fundamentals stay as-is. Fragments live in v2-build/.
 - STE100: coordinator re-ran ste_check on all 9 lesson files — 0 hard violations.
 - Transfer questions answer-free (Stage 8 owns keys). Print contract honored.
 - Next: Stage 4 — Domain 3 (Integration, 8 objectives, heaviest domain).
+
+## Stage 4 (2026-10-06 ~13:30-13:38 EDT) — COMPLETE
+
+- Domain 3 (Integration, 19%), all 8 objectives: capability bloat (logging is not
+  removal), authN/authZ + MCP OAuth 2.1 profile, accuracy-latency (rerank priced
+  at 750ms/accuracy point), observability (nine trace parts, one id), RAG
+  pipeline (10 stages, precision/recall toy), retrieval strategies (freshness
+  rule: live state behind a tool call), integration mechanisms (MCP lifecycle
+  pinned, NxM vs N+M arithmetic), progressive discovery (94.5% token cut).
+- Canonical §17 verbatim in all 8 worked examples. 0 hard STE violations
+  (coordinator re-verified). 25 SVGs parse. Prior stages reused by name only.
+- Caveats kept visible: MCP spec claims corroborated by independent sources, not
+  a same-session official-spec read (Stage 9 re-verify); Claude product support
+  per MCP primitive marked unverified; D3.3 prereq V2-D4.1 untaught (Stage 5).
+- Next: Stage 5 — Domains 4 and 5 (Evaluation; Governance/Safety/Risk).
