@@ -175,9 +175,7 @@ Savings: $500 - $51 = $449 per week, times 52 = $23,348 per year.
 
 ### The 10-step best-answer method in action
 
-Note: the canonical §17 text was not in this builder's context. The steps
-below reconstruct the standard exam method. The coordinator should align
-them with §17.
+The canonical 10-step best-answer method, applied to this question:
 
 Mini question: "A 200-person support org wants ticket triage. Wrong routing
 delays refunds, so error cost is high. Budget is fixed. Which approach fits?
@@ -187,18 +185,20 @@ thresholds, then set them from its behavior."
 
 | Step | Action on this question |
 |---|---|
-| 1. Read the stem once | Type: design choice under constraints |
-| 2. Mark the hard constraints | High error cost. Fixed budget |
-| 3. Predict before reading options | Numbers must come before the build |
-| 4. Read every option | Do not stop at the first plausible one |
-| 5. Delete constraint breakers | A breaks the error-cost constraint: no bar for wrong routing |
-| 6. Delete different-problem solvers | C builds a demo, not a cost-capped rollout |
-| 7. Compare survivors on cost, risk, reversibility | B alone survives. C measures after errors already cost refunds |
-| 8. Hunt the traps | "Tune later" sounds agile. It hides unmeasured error cost |
-| 9. Match the decisive constraint | B is the only option with a bar before money moves |
-| 10. Stress-test the pick | B survives production. A and C gamble with refunds |
+| 1. Question type | Best architecture under constraints |
+| 2. Lifecycle stage | Design |
+| 3. Objective | Route tickets with bounded error cost inside a fixed budget |
+| 4. Hard constraints | Wrong routing delays refunds. Budget is fixed |
+| 5. System layer | Requirements and acceptance, not the model |
+| 6. Infeasible options | None: all three could run |
+| 7. Constraint violators | A sets no bar on error cost. C sets thresholds after damage |
+| 8. Compare survivors | Only B remains |
+| 9. Hidden consequences | C lets real refund damage happen before it measures. A tunes with no stop rule |
+| 10. Verify | B is the complete single answer |
 
 Verdict: B. The decisive constraint is error cost, and only B puts a
+
+Do not assume the exam always wants more autonomy, a larger model, more tools, more logging, a human reviewer everywhere, a new framework, or a complete redesign. Sometimes the best answer is: clarify the requirement, remove an unnecessary capability, fix retrieval, add a deterministic validation gate, narrow permissions, or preserve an existing sufficient workflow. The scenario, not a slogan, determines the answer.
 number on it before the build.
 
 ## 6. Product and protocol mapping
