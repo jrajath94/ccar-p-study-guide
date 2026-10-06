@@ -354,3 +354,59 @@ Results go into BUILD-LOG.md as the final section.
   sections resolve); /tmp relative image paths (base tag); pypdf 6.19 API
   (clone as method); named-dest leading-slash keys.
 - Zip: ccar-p-crash-course-v2.zip (HTMLs + PDFs + img-v2 + README + BUILD-LOG).
+
+## COMPLETION VALIDATION GATE (2026-10-06 ~20:20 EDT) — ALL FOUR GATES PASS
+
+### Gate 1: Presence validation — 22/22 PRESENT, 0 MISSING
+- crash-course.html: 7 domains, diagnostic, 4 foundations — PRESENT
+- 26 §18 comparisons (5 files, 3+ minimal pairs each) — PRESENT
+- 23 §21 artifacts — PRESENT
+- 9 labs, 3 capstones — PRESENT
+- question-bank.html: 25 questions/domain (qb-D1..D7), 50 mixed, 4 full mocks,
+  counterfactual drills, diagnostic answer key — PRESENT
+- error ledger, readiness dashboard, Oct 6 currentness appendix,
+  final review sheets, source registry, blueprint ledger — PRESENT
+- crash-course.pdf, question-bank.pdf (print-spec) — PRESENT
+- ccar-p-crash-course-v2.zip — PRESENT
+- 12 AI chapter images (img-v2/) — PRESENT
+
+### Gate 2: Figure validation — PASS
+- Every lesson carries a page audit table; no blank figure cells (verified
+  during stage builds).
+- 12 AI chapter plates, all from Muse native tools per the provenance rule.
+  Each reviewed against the visual-spec reject list: 12/12 pass,
+  0 regenerations needed.
+- PDF spot-checks (cover, D1/D3 chapter plates, SVG figure pages, code
+  pages): every image renders sharp, correctly proportioned, not clipped.
+
+### Gate 3: PDF validation per Raj's print spec — PASS
+- 10/14/18pt type scale, 1.35 line height, 0.5in margins.
+- Widow/orphan control on; page break before each domain (verified p23, p70);
+  keep-with-next on headers, figures, KEY TAKEAWAY blocks (visually confirmed).
+- Nested clickable TOC with physical page numbers verified against actual
+  named destinations: 22/22 crash-course, 11/11 question-bank, 0 mismatches.
+- Images: aspect-ratio preserved, max 7.5in, centered, 12pt padding.
+- Code blocks: monospace, no wrapping, structure intact.
+- Metadata stripped (Producer/Creator: None, verified).
+- crash-course.pdf: 235 pages, 11MB. question-bank.pdf: 287 pages, 3.9MB.
+
+### Gate 4: Repo validation — PASS
+- Remote root layout correct; no scattered files. v1 archive untouched locally;
+  old domain pages and index.html unchanged.
+- Blob SHA exact match local->remote on all 7 key files (crash-course.html,
+  question-bank.html, crash-course.pdf, question-bank.pdf, zip, README.md,
+  BUILD-LOG.md).
+- v2-build: 129 files remote = 129 local. img-v2: 12 files.
+- Push needed 3 attempts (GitHub Contents API transient 500/502/400s);
+  final attempt 148/148 files, 0 failed.
+
+### Incident during validation (resolved)
+- At 20:06 UTC the local crash-course.pdf was overwritten by a raw Chromium
+  render (HeadlessChrome/153, 247 pages, unstamped, metadata present) from the
+  sibling AIP-C01 v2 coordinator's pipeline. The remote was unaffected: the
+  correct verified build was already pushed. Local file restored by
+  re-stamping the 19:36 pass-2 render — byte-identical to remote
+  (SHA 65e88801ff057028e428618a44056e31ca8a50f2). No deliverable was ever
+  served from the clobbered file. Flagged for lane-discipline follow-up.
+
+## BUILD COMPLETE — CCAR-P crash course v2 shipped 2026-10-06.
