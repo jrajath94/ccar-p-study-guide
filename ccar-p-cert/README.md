@@ -13,7 +13,7 @@ Complete study materials for Anthropic's professional-tier Claude certification 
 | File | What it is |
 |---|---|
 | `index.html` | Start here. Guide home page with study order |
-| `EXAM-BLUEPRINT.md` | Verified exam facts, 7 domains + weights + official objectives, CCAR-P vs CCAR-F, how they ask |
+| `prereq-claude-fundamentals.html` | Prereq. What Claude is and how it reads text, for readers new to the model |
 | `01-solution-design-architecture.html` | D1 Solution Design & Architecture (17%) |
 | `02-models-prompting-context.html` | D2 Claude Models, Prompting & Context Engineering (13%) |
 | `03-integration.html` | D3 Integration (19%) |
@@ -21,8 +21,10 @@ Complete study materials for Anthropic's professional-tier Claude certification 
 | `05-governance-safety-risk.html` | D5 Governance, Safety & Risk Management (14%) |
 | `06-stakeholder-communication-lifecycle.html` | D6 Stakeholder Communication & Lifecycle Management (14%) |
 | `07-developer-productivity-enablement.html` | D7 Developer Productivity & Operational Enablement (7%) |
-| `08-question-bank.html` | 64 practice questions (21 easy / 23 medium / 20 hard) + exam-day strategy |
+| `08-question-bank.html` | 106 practice questions (29 easy / 49 medium / 28 hard) + exam-day strategy |
 | `09-system-design-guide.html` | 8 end-to-end reference designs with trade-off math |
+| `crash-course.html` | Last-mile review. All 7 domains, must-memorize numbers, 25 trap patterns, 25 quick questions |
+| `EXAM-BLUEPRINT.md` | Verified exam facts, 7 domains + weights + official objectives, CCAR-P vs CCAR-F, how they ask |
 
 Every volume is a single self-contained HTML file (works offline, no external dependencies). Each concept is taught from zero: what it is, why it exists, how it works under the hood, concrete numbers, common misunderstandings, diagrams with walkthroughs, and an exam-relevance line.
 
