@@ -3336,22 +3336,25 @@ never as a threshold.
 ## M3-Q33 (V2-D4.1)
 
 **Scenario.** A voice bot's requirement is "fast responses." The team
-sets p95 under 2 seconds as the acceptance threshold.
+sets p95 under 2 seconds as the acceptance threshold. No one is named
+to answer for the threshold.
 
-**Question.** Is this a complete threshold?
+**Question.** Which link of the Lesson 7-4A requirement chain is still
+missing?
 
 **Options.**
-A) Yes. Latency is named with a number.
-B) Partially: it needs the measurement conditions too (which utterances,
-what load, which percentile window), or "fast" stays vague at the
-edges.
-C) No. Latency never matters.
-D) Yes, and delete all other metrics.
+A) Nothing: requirement, metric, threshold, and owner are all present.
+B) The owner: no one is named to answer for the threshold.
+C) The requirement: "fast responses" was never written down.
+D) The metric: latency was never named.
 
-**Key.** B. Decisive phrase: "p95 under 2 seconds." Why: a threshold
-needs the metric, the line, and the measurement conditions. Without
-them, teams measure different things and both claim green.
-Counterfactual: A wins when the conditions are already standardized.
+**Key.** B. Decisive phrase: "No one is named to answer for the
+threshold." Why: the Lesson 7-4A chain runs requirement, metric,
+threshold, owner. The scenario gives the first three. Without a named
+owner, the threshold drifts when the traffic mix changes. A is the
+trap: "the team" is not a named owner. C and D contradict the stated
+scenario. Counterfactual: A wins when a named role owns the threshold
+and reviews it on a cadence.
 
 ## M3-Q34 (V2-D4.2)
 
