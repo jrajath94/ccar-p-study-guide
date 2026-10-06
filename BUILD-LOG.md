@@ -305,3 +305,20 @@ Results go into BUILD-LOG.md as the final section.
 - Deliverables: audit-report.md (per-question status), audit-changelog.md,
   rejected-items.md (empty). Banks corrected in place. 0 hard STE.
 - Next: Stage 9 — final coverage/accuracy/currentness/ambiguity audit.
+
+## Stage 9 (2026-10-06 ~15:15-15:25 EDT) — COMPLETE (final quality-gate audit)
+
+- Independent auditor ran all 12 §26 gates: 10 PASS, 2 PASS with open items.
+- Open items fixed by the coordinator: (1) ledger status codes S→A for all 38
+  objectives (lessons + question coverage + audit all exist); (2) Stage 2 lessons
+  §17 reconstruction replaced with the canonical verbatim 10-step text +
+  anti-slogan paragraph (lesson-7-4A/7-3A/7-1A/7-2A); (3) STE hard fails cleaned
+  in stage1 files (ledger, exam-facts, prereq-graph, source-registry) and
+  stage5/stage-report.md — all 0 hard now.
+- §24 deliverables built: error-ledger.md, readiness-dashboard.md,
+  currentness-appendix.md (View A baseline / View B empty-but-open), final-review-sheets.md.
+- Stage 9 audit found: no post-Oct-6 claims, no fabricated execution, 3 executed
+  artifacts re-ran with matching output, 20 marked ILLUSTRATIVE, mocks carry
+  no-pass-prediction disclaimers.
+- Next: ASSEMBLY — crash-course.html + AI images + print-spec PDF + zip, then
+  the completion validation gate.
