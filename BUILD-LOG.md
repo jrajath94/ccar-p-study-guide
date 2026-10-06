@@ -322,3 +322,35 @@ Results go into BUILD-LOG.md as the final section.
   no-pass-prediction disclaimers.
 - Next: ASSEMBLY — crash-course.html + AI images + print-spec PDF + zip, then
   the completion validation gate.
+
+## ASSEMBLY (2026-10-06 ~15:25-15:40 EDT) — COMPLETE
+
+- Assembler: v2-build/assemble.py (markdown fragments -> HTML, H1/H2 demotion,
+  per-section id prefixes, :::takeaway -> key-takeaway divs, nested clickable
+  TOC, chapter images injected).
+- crash-course.html (1.26MB): 22 sections — exam facts, diagnostic, 4
+  foundations, D1-D7 lessons (38 objectives), 26 comparisons, 23 artifacts,
+  9 labs, 3 capstones, review sheets, readiness dashboard, error ledger,
+  currentness appendix, source registry + blueprint ledger. 204 figures,
+  119 key-takeaway blocks, 531 ids, 0 broken TOC links.
+- question-bank.html (1.06MB): 11 sections — diagnostic key, 477 questions
+  (qb-D1..D7, qb-mixed), 52 counterfactual drills, 4 full mocks. 624 ids,
+  0 broken TOC links.
+- 12 AI-generated chapter plates (Muse native pipeline only, per provenance
+  rule): cover + D1-D7 + 4 foundations. All 12 reviewed against the visual-spec
+  reject list: 12/12 pass, 0 regenerations needed.
+- wm_clean.py Layer A run on both HTMLs (byte audit, no changes needed).
+- PDF builder: v2-build/build_pdf.py — two-pass Chromium render (letter,
+  0.5in margins), named-destination page numbers injected into the TOC,
+  pypdf stamp (running header + page numbers, cover clean, /Dests preserved),
+  metadata stripped (Producer: None verified).
+- crash-course.pdf: 235 pages, 11MB. question-bank.pdf: 287 pages, 3.9MB.
+- PDF QA: TOC page numbers verified against actual dest pages (22/22
+  crash-course, 11/11 question-bank, 0 mismatches). Image pages visually
+  inspected (cover, D1/D3 chapter plates, SVG figure pages, code pages):
+  all render sharp, correct proportions, not clipped. Code blocks monospace,
+  no wrapping. No widow/orphan or split-takeaway violations observed.
+- Fixes during assembly: Chromium flaky dest creation (retry until all
+  sections resolve); /tmp relative image paths (base tag); pypdf 6.19 API
+  (clone as method); named-dest leading-slash keys.
+- Zip: ccar-p-crash-course-v2.zip (HTMLs + PDFs + img-v2 + README + BUILD-LOG).
