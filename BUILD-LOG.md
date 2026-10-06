@@ -147,3 +147,20 @@ prereq-claude-fundamentals stay as-is. Fragments live in v2-build/.
 - Depth+conciseness bar (standing law): zero-prerequisite understandability AND
   learn-in-one-sitting conciseness; auditor checks beginner-follows and no
   paragraph repeats earlier teaching. Applies to all v2 fragments.
+
+## Stage 2 (2026-10-06 ~13:16-13:16 EDT... completed 13:15) — COMPLETE
+
+- Prerequisite diagnostic: 16 scenario questions, 4 per foundation area (§7.1-§7.4),
+  answer-free (key ships in Stage 8).
+- Four foundational micro-lessons (crash-course order §7.4→§7.3→§7.1→§7.2), each on
+  the §16 14-item template: lesson-7-4A (requirement→metric→threshold→owner),
+  lesson-7-3A (tokens/generation/hallucination/retrieval-vs-tuning/injection),
+  lesson-7-1A (timeouts/retries/idempotency/backoff/breakers),
+  lesson-7-2A (authN/authZ, enforcement before context, secrets, tenants, audit).
+- 20 inline SVG lesson plates, spec palette only, computed arithmetic in figures.
+- STE100: 0 hard violations across all 5 files (warnings only). Coordinator verified.
+- Depth+conciseness bar applied: each concept taught once, later references by name.
+- Stage-2 caveat corrected: the canonical §17 10-step method text lives in the
+  coordinator's build brief (it was in Raj's original prompt); Stage 3 workers get
+  the canonical text, not the worker's reconstruction.
+- Next: Stage 3 — Domains 1 and 2 crash-course lessons.
