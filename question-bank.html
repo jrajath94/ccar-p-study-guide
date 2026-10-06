@@ -28,8 +28,12 @@ nav.toc a:hover{text-decoration:underline}
 .cover img{max-width:640px;width:100%;height:auto;margin:24px auto;display:block}
 .meta{color:#5C6B7A;font-size:13px}
 </style>
-<style media="print">/* CCAR-P v2 print stylesheet — Raj's PDF print spec (2026-10-06).
-   Drafted at Stage 1 so all fragment builds conform early. */
+<style media="print">
+@media print {
+/* CCAR-P v2 print stylesheet — Raj's PDF print spec.
+   Revised 2026-10-06 ~17:20 EDT per Raj's typography order:
+   Inter (installed + embedded), justified paragraphs, ALL backgrounds
+   removed (white page), 1.4 line height. 10/14/18pt type scale kept. */
 
 @page {
   size: letter;
@@ -40,20 +44,20 @@ nav.toc a:hover{text-decoration:underline}
   --ink: #1B2838;
   --muted: #5C6B7A;
   --line: #D9D3C7;
-  --panel: #FFFDF8;
-  --bg: #F7F4EE;
 }
 
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
 body {
-  font-family: "Anthropic Sans", Inter, "Source Sans 3", "IBM Plex Sans", sans-serif;
+  font-family: "Inter", "Source Sans 3", "IBM Plex Sans", sans-serif;
   font-size: 10pt;
-  line-height: 1.35;
+  line-height: 1.4;
   color: var(--ink);
-  background: #fff;
+  background: #ffffff;
   widows: 3;
   orphans: 3;
+  text-align: justify;
+  hyphens: auto;
 }
 
 /* 18pt bold domain titles — forced page break before each major domain */
@@ -61,6 +65,7 @@ h1 {
   font-size: 18pt;
   font-weight: 700;
   line-height: 1.2;
+  text-align: left;
   page-break-before: always;
   page-break-after: avoid;
   break-after: avoid;
@@ -68,11 +73,12 @@ h1 {
 }
 h1:first-of-type { page-break-before: avoid; }
 
-/* 14pt bold section headers — keep with next */
+/* 14pt bold section headers — keep with next, never justified */
 h2 {
   font-size: 14pt;
   font-weight: 700;
   line-height: 1.25;
+  text-align: left;
   page-break-after: avoid;
   break-after: avoid;
   page-break-inside: avoid;
@@ -81,13 +87,16 @@ h2 {
 h3, h4 {
   font-size: 11pt;
   font-weight: 700;
+  text-align: left;
   page-break-after: avoid;
   break-after: avoid;
   margin: 10pt 0 4pt 0;
 }
-p { margin: 0 0 6pt 0; }
+p { margin: 0 0 6pt 0; text-align: justify; hyphens: auto; }
+li { text-align: justify; hyphens: auto; }
 
-/* Figures: max 7.5in wide, centered, 12pt padding, never split */
+/* Figures: max 7.5in wide, centered, 12pt padding, never split.
+   Native aspect ratio always preserved (viewBox SVGs + width/height auto). */
 figure.fig {
   max-width: 7.5in;
   margin: 12pt auto;
@@ -95,6 +104,7 @@ figure.fig {
   text-align: center;
   page-break-inside: avoid;
   break-inside: avoid;
+  background: #ffffff;
 }
 figure.fig svg, figure.fig img {
   max-width: 7.5in;
@@ -103,6 +113,11 @@ figure.fig svg, figure.fig img {
   display: block;
   margin: 0 auto;
 }
+/* Strip paper/panel washes from inline SVG figures — keep chip ink. */
+figure.fig svg [fill="#FFFDF8"], figure.fig svg [fill="#fffdf8"],
+figure.fig svg [fill="#F7F4EE"], figure.fig svg [fill="#f7f4ee"] {
+  fill: #ffffff !important;
+}
 figcaption {
   font-size: 8.5pt;
   color: var(--muted);
@@ -110,48 +125,55 @@ figcaption {
   text-align: center;
 }
 
-/* Code and ASCII: monospace, no wrapping, structural integrity */
+/* Code and ASCII: monospace, no wrapping, structural integrity, white ground */
 pre {
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 8.5pt;
   line-height: 1.3;
   white-space: pre;
   overflow-x: hidden;
-  background: var(--panel);
+  background: #ffffff;
   border: 1pt solid var(--line);
   padding: 8pt;
   page-break-inside: avoid;
   break-inside: avoid;
   margin: 8pt 0;
+  text-align: left;
 }
 code {
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 9pt;
 }
 
-/* KEY TAKEAWAY blocks: never split across pages */
+/* KEY TAKEAWAY blocks: never split across pages, white ground, teal rule kept */
 .key-takeaway {
   border-left: 3pt solid #1F7A72;
-  background: var(--panel);
+  background: #ffffff;
   padding: 8pt 12pt;
   margin: 8pt 0;
   page-break-inside: avoid;
   break-inside: avoid;
 }
 
-/* Tables: compact, dense */
+/* Tables: compact, dense, white header ground */
 table { border-collapse: collapse; width: 100%; font-size: 9pt; margin: 6pt 0; }
 th, td { border: 1pt solid var(--line); padding: 4pt 6pt; text-align: left; }
-th { background: var(--bg); font-weight: 700; }
+th { background: #ffffff; font-weight: 700; }
 
 /* TOC: nested, clickable (digital); page numbers injected at PDF build */
+nav.toc { text-align: left; }
 nav.toc ul { list-style: none; padding-left: 12pt; }
 nav.toc a { color: var(--ink); text-decoration: none; }
 
-.page-marker{font-weight:700}nav.toc .page-marker{float:right}
+/* TOC page markers (injected at PDF build time, print only) */
+.page-marker { font-weight: 700; }
+nav.toc .page-marker { float: right; }
+
 /* Screen preview keeps the same density */
 @media screen {
   body { max-width: 7.5in; margin: 0.5in auto; }
+}
+
 }
 </style>
 </head>
