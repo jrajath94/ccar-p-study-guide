@@ -265,3 +265,15 @@ Results go into BUILD-LOG.md as the final section.
   lessons' documented traps. Toy assumptions labeled "not in source".
 - Open: independent adversarial audit of every answer key (Stage 8d).
 - Next: Stage 8b — D5-D7 questions (75).
+
+## Stage 8b (2026-10-06 ~14:28-14:41 EDT) — COMPLETE
+
+- 75 original questions: 25 per domain for D5-D7 (qb-D5..qb-D7). IDs
+  Q-D5-01..Q-D7-25, all unique. 18 multi-response (24%). Coverage tables meet
+  per-objective minimums (D7: 9/8/8). Full §19.2 10-point explanations.
+- 0 hard STE violations (coordinator re-verified). D5.4 items carry
+  not-legal-advice labels; D7 config claims cite lesson-D7-1.
+- All 12 unseen-transfer questions from stages 5-6 lessons are answered in
+  the banks. (Stages 2-4 transfer answers also belong in Stage 8 — noted for
+  8c/d check.)
+- Next: Stage 8c — 50 mixed + counterfactual drills + diagnostic key + 4 mocks.
