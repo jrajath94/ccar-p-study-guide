@@ -253,3 +253,15 @@ Results go into BUILD-LOG.md as the final section.
   all 14 sections, computed budgets, failure injection.
 - 0 hard STE violations (coordinator re-verified). 11 SVGs parse.
 - Next: Stage 8 — original assessment system (question bank + independent audit).
+
+## Stage 8a (2026-10-06 ~14:15-14:27 EDT) — COMPLETE
+
+- 100 original questions: 25 per domain for D1-D4 (qb-D1..qb-D4). IDs
+  Q-D1-01..Q-D4-25, all unique. 24 multi-response (~a quarter). Coverage tables
+  meet per-objective minimums. Every item: scenario, options, answer key,
+  §17 10-step walk, all 10 §19.2 explanation points. 5 weak items rewritten
+  (Q-D1-21 arithmetic; Q-D2-25, Q-D3-18, Q-D3-25, Q-D4-11 Select-TWO→THREE).
+- 0 hard STE violations (coordinator re-verified). Distractors reuse the
+  lessons' documented traps. Toy assumptions labeled "not in source".
+- Open: independent adversarial audit of every answer key (Stage 8d).
+- Next: Stage 8b — D5-D7 questions (75).
