@@ -164,9 +164,7 @@ same key is one charge, not two.
 
 ### The 10-step best-answer method in action
 
-Note: the canonical §17 text was not in this builder's context. The steps
-below reconstruct the standard exam method. The coordinator should align
-them with §17.
+The canonical 10-step best-answer method, applied to this question:
 
 Mini question: "A checkout agent charges cards through a flaky tool (2%
 fail). Double charges are unacceptable. Which design fits? A) Prompt the
@@ -175,18 +173,20 @@ as idempotency key. C) Queue the charge and retry for 24 hours."
 
 | Step | Action on this question |
 |---|---|
-| 1. Read the stem once | Type: design choice under a money constraint |
-| 2. Mark the hard constraints | No double charge. 2% flake |
-| 3. Predict before reading options | Retry must be safe and keyed |
-| 4. Read every option | Do not stop at the first plausible one |
-| 5. Delete constraint breakers | A breaks safety: model retries are non-deterministic and unobservable |
-| 6. Delete different-problem solvers | C solves durability, not the double-charge. Checkout needs an answer now |
-| 7. Compare survivors on cost, risk, reversibility | B bounds latency at 8 seconds. C delays settlement a day |
-| 8. Hunt the traps | "The model can retry" confuses who owns reliability |
-| 9. Match the decisive constraint | B is the only option with a safe, bounded retry |
-| 10. Stress-test the pick | B survives production: the key dedupes, the timeout bounds the wait |
+| 1. Question type | Best architecture under a money constraint |
+| 2. Lifecycle stage | Design |
+| 3. Objective | Charge cards through a flaky tool with zero double charges |
+| 4. Hard constraints | Double charges are unacceptable. The tool fails 2% of calls |
+| 5. System layer | Reliability in the caller, not in the model |
+| 6. Infeasible options | None: all three could run |
+| 7. Constraint violators | A uses non-deterministic model retries. C delays settlement a day |
+| 8. Compare survivors | Only B remains |
+| 9. Hidden consequences | C solves durability, not the double charge. A hides who owns reliability |
+| 10. Verify | B is the complete single answer |
 
 Verdict: B. The decisive constraint is the double charge, and only B
+
+Do not assume the exam always wants more autonomy, a larger model, more tools, more logging, a human reviewer everywhere, a new framework, or a complete redesign. Sometimes the best answer is: clarify the requirement, remove an unnecessary capability, fix retrieval, add a deterministic validation gate, narrow permissions, or preserve an existing sufficient workflow. The scenario, not a slogan, determines the answer.
 makes the retry safe by construction.
 
 ## 6. Product and protocol mapping
