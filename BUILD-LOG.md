@@ -164,3 +164,21 @@ prereq-claude-fundamentals stay as-is. Fragments live in v2-build/.
   coordinator's build brief (it was in Raj's original prompt); Stage 3 workers get
   the canonical text, not the worker's reconstruction.
 - Next: Stage 3 — Domains 1 and 2 crash-course lessons.
+
+## Stage 3 (2026-10-06 ~13:20-13:29 EDT) — COMPLETE
+
+- Domains 1 and 2 crash-course lessons, all 11 objectives:
+  lesson-D1-1 (V2-D1.1 Claude-vs-deterministic fork), lesson-D1-2 (V2-D1.2
+  seven-gate pipeline), lesson-D1-patterns (merged V2-D1.3+D1.4+D1.5, each objective
+  keeps its own §16 items 1-5,9-13), lesson-D1-6 (V2-D1.6 net-value equation),
+  lesson-D2-1..D2-5 (tiers/cascade, prompt zones, technique ladder, context
+  accounts, caching prefix rule + 4% break-even).
+- Canonical §17 10-step method trained verbatim in all 11 worked examples +
+  anti-slogan paragraph. Stage 2 foundations reused by name only.
+- 50 inline SVGs, all parse as XML, spec palette, unique marker IDs, shell+source
+  captions, shown arithmetic ("Not in source" on invented toy rates; cache
+  pricing labeled current product behavior; tier matrix labeled secondary
+  enrichment).
+- STE100: coordinator re-ran ste_check on all 9 lesson files — 0 hard violations.
+- Transfer questions answer-free (Stage 8 owns keys). Print contract honored.
+- Next: Stage 4 — Domain 3 (Integration, 8 objectives, heaviest domain).
