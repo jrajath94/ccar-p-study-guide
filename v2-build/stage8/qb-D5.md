@@ -915,12 +915,12 @@ D) Promise the agency that the model is safe.
 
 ## Q-D5-21 (V2-D5.5)
 
-**Scenario.** A loan-screening agent scores 94% correct overall on 1,000 applications. Group A has 800 applicants and scores 96%. Group B has 200 applicants and scores 68%. The ship floor is 90% per group.
+**Scenario.** A loan-screening agent scores 90% correct overall on 1,000 applications. Group A has 800 applicants and scores 96%. Group B has 200 applicants and scores 68%. The ship floor is 90% per group.
 
 **Question.** Which action fits?
 
 **Options.**
-A) Ship. The 94% overall exceeds the floor.
+A) Ship. The 90% overall meets the floor.
 B) Block the ship, hold the per-group floor, and fix the upstream data gap behind group B's 68%.
 C) Tune the model for a higher overall score.
 D) Remove group B from the evaluation set.
@@ -952,7 +952,7 @@ D) Remove group B from the evaluation set.
 
 4. Why B satisfies all hard constraints: the 28-point gap blocks the ship, and the fix goes upstream to the data instead of tuning the aggregate.
 5. Why B best meets the objective: V2-D5.5 requires evaluation across subgroups, not the aggregate only. The floor is per group, and group B misses it by 22 points.
-6. Every rejected choice explained: A is the aggregate trap. The 94% hides the 68%. The scenario names a group. The answer is the group floor. C is the documented trap. On the toy the aggregate moved 94 to 95 while group B stayed at 68. The gap is a data problem, not a model problem. D hides the group. The harm ships with the model, unmeasured.
+6. Every rejected choice explained: A is the aggregate trap. The 90% hides the 68%. The scenario names a group. The answer is the group floor. C is the documented trap. On the toy the aggregate moved 90 to 91 while group B stayed at 68. The gap is a data problem, not a model problem. D hides the group. The harm ships with the model, unmeasured.
 7. Exact limitation or tradeoff: the upstream fix costs a rebalanced corpus and a re-run, and small groups mean noisy scores, so the re-run must report its uncertainty.
 8. Relevant evidence (with date): the subgroup arithmetic and the upstream-fix rule from lesson-D5-5 (§§4-5), Oct 6, 2026. Exam scope via S03/S04, Sept 2026.
 9. Counterfactual where each plausible alternative wins: A wins for an internal tool with no affected group, where the aggregate is the whole story. C wins when every group already clears its floor and the goal is a better overall. D wins never.
