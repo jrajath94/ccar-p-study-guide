@@ -197,3 +197,14 @@ prereq-claude-fundamentals stay as-is. Fragments live in v2-build/.
   a same-session official-spec read (Stage 9 re-verify); Claude product support
   per MCP primitive marked unverified; D3.3 prereq V2-D4.1 untaught (Stage 5).
 - Next: Stage 5 — Domains 4 and 5 (Evaluation; Governance/Safety/Risk).
+
+## Stage 5 (2026-10-06 ~13:40-13:49 EDT) — COMPLETE
+
+- Domains 4 (16%) and 5 (14%), all 11 objectives: eval metrics, datasets/frameworks,
+  A/B testing, failure diagnosis, optimization, production monitoring, guardrails,
+  risk taxonomy, human-in-the-loop, compliance (not legal advice), responsible AI.
+- 0 hard STE violations (coordinator re-verified). 55 SVGs parse after 2 tag fixes
+  by the coordinator (rect/text mismatches in D5-3 and D5-4 figure 3).
+- Canonical §17 verbatim in all 11 worked examples. Transfer questions answer-free.
+- Claim classification + dates in every evidence table; toy rates marked.
+- Next: Stage 6 — Domains 6 and 7 (Stakeholders/Lifecycle; Dev Productivity).
