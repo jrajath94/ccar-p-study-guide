@@ -291,3 +291,17 @@ Results go into BUILD-LOG.md as the final section.
   + 52 drills + 16 diagnostic items.
 - Next: Stage 8d — independent adversarial audit (fresh worker, per-question
   status, fix loop max 3).
+
+## Stage 8d (2026-10-06 ~15:05-15:15 EDT) — COMPLETE (independent adversarial audit)
+
+- Fresh worker (built none of the material) attacked all 477 questions + 16
+  diagnostic keys per §19.3. Verdicts: PASS 489, FIXED 4, REJECTED 0, PENDING 0.
+- Fixes: Q-M-15 Select TWO→THREE (three defensible answers); M3-Q33 key A→B
+  (old key demanded an untaught requirement); Q-D3-07 explanation (residual
+  200ms gap stated); Q-D5-21 arithmetic 94%→90.4%≈90% in scenario/option/key.
+- 4 genuine attacks defeated (Q-D4-03, M1-Q28, M4-Q33, priority flags M2-Q13,
+  M4-Q47 all stood). All scenario arithmetic spot-checked; one inconsistency
+  found and fixed.
+- Deliverables: audit-report.md (per-question status), audit-changelog.md,
+  rejected-items.md (empty). Banks corrected in place. 0 hard STE.
+- Next: Stage 9 — final coverage/accuracy/currentness/ambiguity audit.
