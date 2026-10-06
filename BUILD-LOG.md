@@ -132,3 +132,18 @@ prereq-claude-fundamentals stay as-is. Fragments live in v2-build/.
 - Gaps kept visible: no official objective IDs, no per-domain item counts,
   platform parity unchecked (Stages 2-4), post-baseline changes → Stage 9 appendix.
 - Next: Stage 2 — prerequisite diagnostic (no answers) + §7.x foundational lessons.
+
+## PDF print spec (2026-10-06 ~13:07 EDT, Raj's order) — standing for the v2 PDF
+
+- Drafted NOW (not at the end): v2-build/print.css + v2-build/pdf-print-spec.md.
+- 10pt body / 14pt bold section headers / 18pt bold domain titles; Anthropic Sans
+  stack; 1.35 line-height; 0.5in margins; widows/orphans 3; page break before each
+  domain; keep-with-next on headers, figures, KEY TAKEAWAY blocks.
+- Fragment structural contract (all stages): H1 = domain title, H2 = section,
+  :::takeaway fenced divs, <figure class="fig"> + figcaption, fenced code only.
+- Images: native size checked first, proportional, max 7.5in, centered, 12pt
+  padding, visually verified in the rendered PDF.
+- Interactive nested TOC: clickable in digital, physical page numbers in print.
+- Depth+conciseness bar (standing law): zero-prerequisite understandability AND
+  learn-in-one-sitting conciseness; auditor checks beginner-follows and no
+  paragraph repeats earlier teaching. Applies to all v2 fragments.
