@@ -171,9 +171,7 @@ It fits, but stuffing 100 contracts in one call dilutes focus.
 
 ### The 10-step best-answer method in action
 
-Note: the canonical §17 text was not in this builder's context. The steps
-below reconstruct the standard exam method. The coordinator should align
-them with §17.
+The canonical 10-step best-answer method, applied to this question:
 
 Mini question: "A law firm summarizes 1,000 contracts per day. A wrong
 date in a summary can void a filing. Which design fits? A) Trust the model
@@ -182,18 +180,20 @@ source text. C) Fine-tune on 10,000 past summaries, then spot-check."
 
 | Step | Action on this question |
 |---|---|
-| 1. Read the stem once | Type: design choice under consequence |
-| 2. Mark the hard constraints | Wrong date voids a filing. 1,000 per day |
-| 3. Predict before reading options | Every output needs a check outside the model |
-| 4. Read every option | Do not stop at the first plausible one |
-| 5. Delete constraint breakers | A breaks the error-cost constraint: monthly checks miss daily damage |
-| 6. Delete different-problem solvers | C solves style, not factuality |
-| 7. Compare survivors on cost, risk, reversibility | B checks every output. C still trusts every output |
-| 8. Hunt the traps | "Fine-tune" sounds like it fixes facts. It tunes style, not truth |
-| 9. Match the decisive constraint | B is the only option with per-output verification |
-| 10. Stress-test the pick | B survives production: the citation check is deterministic code |
+| 1. Question type | Best architecture under consequence |
+| 2. Lifecycle stage | Design |
+| 3. Objective | Summarize 1,000 contracts a day with no voided filings |
+| 4. Hard constraints | One wrong date voids a filing. Volume is 1,000 per day |
+| 5. System layer | Verification of outputs, not model training |
+| 6. Infeasible options | None: all three could run |
+| 7. Constraint violators | A checks monthly while damage happens daily. C tunes style, not facts |
+| 8. Compare survivors | Only B remains |
+| 9. Hidden consequences | Fine-tuning sounds like a fact fix. It changes style, not truth |
+| 10. Verify | B is the complete single answer |
 
 Verdict: B. The decisive constraint is the voided filing, and only B
+
+Do not assume the exam always wants more autonomy, a larger model, more tools, more logging, a human reviewer everywhere, a new framework, or a complete redesign. Sometimes the best answer is: clarify the requirement, remove an unnecessary capability, fix retrieval, add a deterministic validation gate, narrow permissions, or preserve an existing sufficient workflow. The scenario, not a slogan, determines the answer.
 checks every output against the source.
 
 ## 6. Product and protocol mapping
