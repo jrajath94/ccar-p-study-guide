@@ -277,3 +277,17 @@ Results go into BUILD-LOG.md as the final section.
   the banks. (Stages 2-4 transfer answers also belong in Stage 8 — noted for
   8c/d check.)
 - Next: Stage 8c — 50 mixed + counterfactual drills + diagnostic key + 4 mocks.
+
+## Stage 8c (2026-10-06 ~14:42-15:03 EDT) — COMPLETE
+
+- 50 mixed-domain questions (qb-mixed.md, blueprint-weighted, Q-M-01..50);
+  52 counterfactual drills (CF-01..52, 2 per §18 pair); diagnostic answer key
+  (diagnostic-key.md, 16 items with remediation pointers); 4 full 63-item mocks
+  (mocks.md, M1-Q01..M4-Q63, domain mix per verified weights, 120-min plans,
+  no raw-percentage pass promises). 370 new items, all original, none reused.
+- One incident repaired by the worker: a cleanup regex deleted 18 option letters
+  + 3 quote duplications; all found and hand-repaired.
+- 0 hard STE violations (coordinator re-verified). Full bank now: 477 questions
+  + 52 drills + 16 diagnostic items.
+- Next: Stage 8d — independent adversarial audit (fresh worker, per-question
+  status, fix loop max 3).
