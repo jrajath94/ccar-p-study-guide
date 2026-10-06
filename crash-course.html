@@ -3,33 +3,39 @@
 <title>Claude Certified Architect - Professional: Crash Course</title>
 <style>
 body{font-family:"Anthropic Sans",Inter,"Source Sans 3","IBM Plex Sans",sans-serif;
-font-size:15px;line-height:1.55;color:#1B2838;background:#F7F4EE;margin:0;padding:0}
-.page{max-width:860px;margin:0 auto;background:#FFFDF8;padding:32px 40px;box-shadow:0 0 0 1px #D9D3C7}
-h1{font-size:30px;font-weight:700;border-bottom:2px solid #1B2838;padding-bottom:8px}
-h2{font-size:22px;font-weight:700;color:#1B2838;margin-top:28px}
-h3{font-size:17px;font-weight:700;color:#1B2838}
+font-size:15px;line-height:1.55;color:#ececec;background:#000000;margin:0;padding:0}
+.page{max-width:none;margin:0 auto;background:transparent;padding:0;box-shadow:none}
+h1{font-size:30px;font-weight:700;border-bottom:2px solid #262626;padding-bottom:8px;color:#ececec}
+h2{font-size:22px;font-weight:700;color:#ececec;margin-top:28px}
+h3{font-size:17px;font-weight:700;color:#ececec}
 table{border-collapse:collapse;width:100%;font-size:13px;margin:12px 0}
-th,td{border:1px solid #D9D3C7;padding:6px 8px;text-align:left;vertical-align:top}
-th{background:#F7F4EE;font-weight:700}
-pre{background:#F7F4EE;border:1px solid #D9D3C7;padding:12px;overflow-x:auto;
-font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;white-space:pre}
-code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px}
-.key-takeaway{border-left:4px solid #1F7A72;background:#E7F4EF;padding:12px 16px;margin:16px 0}
+th,td{border:1px solid #262626;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#161616;font-weight:700;color:#ececec}
+td{color:#ececec}
+pre{background:#111111;border:1px solid #262626;padding:12px;overflow-x:auto;
+font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;white-space:pre;color:#ececec}
+code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px;color:#ececec}
+.key-takeaway{border-left:4px solid #2aa79b;background:#0f1f1c;padding:12px 16px;margin:16px 0;color:#ececec}
 figure.fig{margin:20px auto;text-align:center;max-width:100%}
 figure.fig svg,figure.fig img{max-width:100%;height:auto}
-figcaption{font-size:12px;color:#5C6B7A;margin-top:6px}
-nav.toc{background:#F7F4EE;border:1px solid #D9D3C7;padding:16px 24px;margin:24px 0}
+figcaption{font-size:12px;color:#a8a8a8;margin-top:6px}
+nav.toc{background:#0d0d0d;border:1px solid #262626;padding:16px 24px;margin:24px 0}
 nav.toc ul{list-style:none;padding-left:0}
 nav.toc ul ul{padding-left:20px}
-nav.toc a{color:#1E4D8C;text-decoration:none}
+nav.toc a{color:#6cb2ff;text-decoration:none}
 nav.toc a:hover{text-decoration:underline}
 .cover{text-align:center;padding:60px 20px}
 .cover h1{font-size:38px;border:none}
 .cover img{max-width:640px;width:100%;height:auto;margin:24px auto;display:block}
-.meta{color:#5C6B7A;font-size:13px}
+.meta{color:#a8a8a8;font-size:13px}
+
 </style>
-<style media="print">/* CCAR-P v2 print stylesheet — Raj's PDF print spec (2026-10-06).
-   Drafted at Stage 1 so all fragment builds conform early. */
+<style media="print">
+@media print {
+/* CCAR-P v2 print stylesheet — Raj's PDF print spec.
+   Revised 2026-10-06 ~17:20 EDT per Raj's typography order:
+   Inter (installed + embedded), justified paragraphs, ALL backgrounds
+   removed (white page), 1.4 line height. 10/14/18pt type scale kept. */
 
 @page {
   size: letter;
@@ -40,20 +46,20 @@ nav.toc a:hover{text-decoration:underline}
   --ink: #1B2838;
   --muted: #5C6B7A;
   --line: #D9D3C7;
-  --panel: #FFFDF8;
-  --bg: #F7F4EE;
 }
 
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
 body {
-  font-family: "Anthropic Sans", Inter, "Source Sans 3", "IBM Plex Sans", sans-serif;
+  font-family: "Inter", "Source Sans 3", "IBM Plex Sans", sans-serif;
   font-size: 10pt;
-  line-height: 1.35;
+  line-height: 1.4;
   color: var(--ink);
-  background: #fff;
+  background: #ffffff;
   widows: 3;
   orphans: 3;
+  text-align: justify;
+  hyphens: auto;
 }
 
 /* 18pt bold domain titles — forced page break before each major domain */
@@ -61,6 +67,7 @@ h1 {
   font-size: 18pt;
   font-weight: 700;
   line-height: 1.2;
+  text-align: left;
   page-break-before: always;
   page-break-after: avoid;
   break-after: avoid;
@@ -68,11 +75,12 @@ h1 {
 }
 h1:first-of-type { page-break-before: avoid; }
 
-/* 14pt bold section headers — keep with next */
+/* 14pt bold section headers — keep with next, never justified */
 h2 {
   font-size: 14pt;
   font-weight: 700;
   line-height: 1.25;
+  text-align: left;
   page-break-after: avoid;
   break-after: avoid;
   page-break-inside: avoid;
@@ -81,13 +89,16 @@ h2 {
 h3, h4 {
   font-size: 11pt;
   font-weight: 700;
+  text-align: left;
   page-break-after: avoid;
   break-after: avoid;
   margin: 10pt 0 4pt 0;
 }
-p { margin: 0 0 6pt 0; }
+p { margin: 0 0 6pt 0; text-align: justify; hyphens: auto; }
+li { text-align: justify; hyphens: auto; }
 
-/* Figures: max 7.5in wide, centered, 12pt padding, never split */
+/* Figures: max 7.5in wide, centered, 12pt padding, never split.
+   Native aspect ratio always preserved (viewBox SVGs + width/height auto). */
 figure.fig {
   max-width: 7.5in;
   margin: 12pt auto;
@@ -95,6 +106,7 @@ figure.fig {
   text-align: center;
   page-break-inside: avoid;
   break-inside: avoid;
+  background: #ffffff;
 }
 figure.fig svg, figure.fig img {
   max-width: 7.5in;
@@ -103,6 +115,11 @@ figure.fig svg, figure.fig img {
   display: block;
   margin: 0 auto;
 }
+/* Strip paper/panel washes from inline SVG figures — keep chip ink. */
+figure.fig svg [fill="#FFFDF8"], figure.fig svg [fill="#fffdf8"],
+figure.fig svg [fill="#F7F4EE"], figure.fig svg [fill="#f7f4ee"] {
+  fill: #ffffff !important;
+}
 figcaption {
   font-size: 8.5pt;
   color: var(--muted);
@@ -110,52 +127,590 @@ figcaption {
   text-align: center;
 }
 
-/* Code and ASCII: monospace, no wrapping, structural integrity */
+/* Code and ASCII: monospace, no wrapping, structural integrity, white ground */
 pre {
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 8.5pt;
   line-height: 1.3;
   white-space: pre;
   overflow-x: hidden;
-  background: var(--panel);
+  background: #ffffff;
   border: 1pt solid var(--line);
   padding: 8pt;
   page-break-inside: avoid;
   break-inside: avoid;
   margin: 8pt 0;
+  text-align: left;
 }
 code {
   font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 9pt;
 }
 
-/* KEY TAKEAWAY blocks: never split across pages */
+/* KEY TAKEAWAY blocks: never split across pages, white ground, teal rule kept */
 .key-takeaway {
   border-left: 3pt solid #1F7A72;
-  background: var(--panel);
+  background: #ffffff;
   padding: 8pt 12pt;
   margin: 8pt 0;
   page-break-inside: avoid;
   break-inside: avoid;
 }
 
-/* Tables: compact, dense */
+/* Tables: compact, dense, white header ground */
 table { border-collapse: collapse; width: 100%; font-size: 9pt; margin: 6pt 0; }
 th, td { border: 1pt solid var(--line); padding: 4pt 6pt; text-align: left; }
-th { background: var(--bg); font-weight: 700; }
+th { background: #ffffff; font-weight: 700; }
 
 /* TOC: nested, clickable (digital); page numbers injected at PDF build */
+nav.toc { text-align: left; }
 nav.toc ul { list-style: none; padding-left: 12pt; }
 nav.toc a { color: var(--ink); text-decoration: none; }
 
-.page-marker{font-weight:700}nav.toc .page-marker{float:right}
+/* TOC page markers (injected at PDF build time, print only) */
+.page-marker { font-weight: 700; }
+nav.toc .page-marker { float: right; }
+
 /* Screen preview keeps the same density */
 @media screen {
   body { max-width: 7.5in; margin: 0.5in auto; }
 }
+
+}
 </style>
+<style id="ds-dark-theme">
+@media screen {
+
+/* ==== DS dark theme + sidebar nav (transplanted from AIP-C01 volume) ==== */
+:root {
+  --bg: #000000;
+  --surface: #0d0d0d;
+  --border: #262626;
+  --text: #ececec;
+  --muted: #a8a8a8;
+  --accent: #f0b429;   /* warm amber — key highlights, active states, takeaways */
+  --link: #6cb2ff;
+  --code-bg: #111111;
+  --font-sans: "Anthropic Sans", "Inter", "Charis SIL", "Atkinson Hyperlegible", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-chrome: "Anthropic Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+/* ---------- Base ---------- */
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 1rem;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-x: clip;          /* no horizontal scroll at any width; clip keeps sticky working */
+}
+
+a { color: var(--link); }
+a:hover { text-decoration-thickness: 2px; }
+
+/* Visible focus for keyboard users — never remove without replacement. */
+:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.ds-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link: hidden until focused. */
+.ds-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+.ds-skip:focus { left: 0.75rem; top: 0.75rem; }
+
+
+/* ---------- Reading progress bar ---------- */
+
+#ds-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  pointer-events: none;
+}
+
+
+/* ---------- Sidebar ---------- */
+
+#ds-sidebar-root {
+  flex: 0 0 300px;
+  width: 300px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  z-index: 60;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.ds-side-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding-bottom: 2rem;
+}
+
+.ds-side-search {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.ds-side-search input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+}
+.ds-side-search input::placeholder { color: var(--muted); }
+
+.ds-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+.ds-nav-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-right: 0.6rem;
+}
+
+.ds-nav-toggle {
+  flex: 0 0 auto;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0.55rem 0.3rem 0.55rem 1rem;
+  font-family: inherit;
+}
+.ds-nav-toggle:hover { color: var(--accent); }
+
+.ds-nav-link {
+  flex: 1 1 auto;
+  display: block;
+  min-width: 0;
+  padding: 0.45rem 0.25rem 0.45rem 0.4rem;
+  padding-left: 1.25rem;
+  margin-left: -0.55rem;      /* align text under toggle glyph */
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  border-left: 2px solid transparent;
+}
+.ds-nav-link:hover { color: #ffffff; background: rgba(255, 255, 255, 0.04); }
+.ds-nav-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
+.ds-nav-sub { list-style: none; margin: 0; padding: 0; }
+.ds-nav-subrow .ds-nav-link {
+  padding-left: 2.6rem;
+  margin-left: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.ds-nav-subrow .ds-nav-link:hover { color: var(--text); }
+.ds-nav-subrow .ds-nav-link.active { color: var(--accent); }
+
+.ds-done-wrap { flex: 0 0 auto; display: inline-flex; align-items: center; }
+.ds-done {
+  width: 1rem; height: 1rem;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+.ds-nav-row.done .ds-nav-link {
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+
+/* ---------- Main content ---------- */
+
+#ds-content {
+  flex: 1 1 auto;
+  min-width: 0;               /* lets flex child shrink; prevents overflow */
+  overflow-wrap: break-word;   /* long unbroken strings (ARNs, URLs) break instead of spilling */
+  padding: 2.5rem 2rem 4rem;
+}
+.ds-content-inner {
+  max-width: 72ch;
+  margin: 0 auto;
+}
+
+
+/* ---------- Hamburger / drawer (mobile) ---------- */
+
+#ds-hamburger {
+  display: none;
+  position: fixed;
+  top: 0.75rem; left: 0.75rem;
+  z-index: 90;
+  width: 2.75rem; height: 2.75rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+#ds-hamburger span {
+  display: block;
+  width: 1.25rem; height: 2px;
+  background: var(--text);
+}
+
+#ds-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 900px) {
+  body { display: block; }
+
+  #ds-hamburger { display: inline-flex; }
+
+  #ds-sidebar-root {
+    position: fixed;
+    left: 0; top: 0;
+    flex: none;
+    width: min(320px, 85vw);
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  }
+  body.ds-drawer-open #ds-sidebar-root { transform: translateX(0); }
+  body.ds-drawer-open #ds-overlay { display: block; }
+
+  #ds-content { padding: 4.25rem 1.25rem 3rem; }
+}
+
+
+
+/* copy buttons (DS runtime) */
+.ds-copy-btn {
+  position: absolute;
+  top: 0.5rem; right: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+}
+
+.ds-copy-btn:hover { color: var(--text); border-color: var(--muted); }
+
+/* DS site header/footer/volnav/prev-next (transplanted) */
+/* Prev / next volume footer */
+.ds-prevnext {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 1rem;
+  margin: 3.5rem 0 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.75rem;
+}
+
+.ds-prevnext a {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;               /* flex item must shrink below label width on narrow screens */
+  max-width: 48%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.9rem 1.2rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.ds-prevnext a:hover { border-color: var(--accent); }
+
+.ds-prevnext .ds-next { text-align: right; }
+
+.ds-prev-empty { flex: 1 1 0; min-width: 0; max-width: 48%; }
+
+.ds-pn-kicker {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.25rem;
+}
+
+.ds-pn-label { font-weight: 600; line-height: 1.5; }
+
+/* ==========================================================================
+   SITE CHROME — header (track title, breadcrumbs, volume nav, prev/next),
+   footer sitemap. Rendered by ds.js from window.DS_MANIFEST, identical on
+   every page. Nav chrome uses --font-chrome (clean system sans) for contrast
+   with the Charis SIL reading font.
+   ========================================================================== */
+
+#ds-content .ds-site-header {
+  font-family: var(--font-chrome);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  margin: -2.5rem -2rem 2.25rem;
+  padding: 0.85rem 2rem 0;
+}
+
+#ds-content .ds-site-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+#ds-content .ds-track-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  text-decoration: none;
+  overflow-wrap: break-word;
+}
+
+#ds-content .ds-track-title:hover { color: var(--accent); }
+
+#ds-content .ds-hpn { display: flex; gap: 0.5rem; flex: none; }
+
+#ds-content .ds-hpn a {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  white-space: nowrap;
+}
+
+#ds-content .ds-hpn a:hover { color: var(--accent); border-color: var(--accent); }
+
+#ds-content .ds-crumb { margin: 0.65rem 0 0; }
+
+#ds-content .ds-crumb ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+#ds-content .ds-crumb li + li::before {
+  content: "/";
+  margin: 0 0.45rem;
+  color: var(--border);
+}
+
+#ds-content .ds-crumb a { color: var(--link); text-decoration: none; }
+
+#ds-content .ds-crumb a:hover { text-decoration: underline; }
+
+#ds-content .ds-crumb [aria-current="page"] { color: var(--text); }
+
+#ds-content .ds-volnav {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  list-style: none;
+  margin: 0.65rem -2rem 0;
+  padding: 0 2rem 0.7rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+#ds-content .ds-volnav a {
+  display: block;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+
+#ds-content .ds-volnav a:hover { color: var(--text); background: rgba(255, 255, 255, 0.04); }
+
+#ds-content .ds-volnav a[aria-current="page"] {
+  color: var(--accent);
+  font-weight: 600;
+  border-color: var(--border);
+  background: var(--code-bg);
+}
+
+/* Volumes block at the top of the sidebar (mobile drawer shows this). */
+.ds-side-volumes { padding: 0.85rem 1rem 0.25rem; border-bottom: 1px solid var(--border); }
+
+.ds-side-volumes h2 {
+  font-family: var(--font-chrome);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.35rem;
+  padding: 0;
+  border: 0;
+}
+
+.ds-side-volumes ul { list-style: none; margin: 0; padding: 0 0 0.6rem; }
+
+.ds-side-volumes a {
+  display: block;
+  font-family: var(--font-chrome);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.35rem 0;
+}
+
+.ds-side-volumes a:hover { color: var(--text); }
+
+.ds-side-volumes a[aria-current="page"] { color: var(--accent); font-weight: 600; }
+
+/* Footer sitemap: every volume + track home. */
+#ds-content .ds-site-footer {
+  font-family: var(--font-chrome);
+  font-size: 0.85rem;
+  color: var(--muted);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  margin: 2.5rem -2rem -4rem;
+  padding: 1.5rem 2rem 2.5rem;
+}
+
+#ds-content .ds-site-footer .ds-footer-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.25rem;
+}
+
+#ds-content .ds-site-footer .ds-footer-home {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+#ds-content .ds-site-footer .ds-footer-home:hover { color: var(--accent); }
+
+#ds-content .ds-site-footer nav ul {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  columns: 2;
+  column-gap: 2rem;
+}
+
+#ds-content .ds-site-footer nav li { break-inside: avoid; }
+
+#ds-content .ds-site-footer nav a {
+  color: var(--muted);
+  text-decoration: none;
+  line-height: 2;
+}
+
+#ds-content .ds-site-footer nav a:hover { color: var(--accent); }
+
+#ds-content .ds-site-footer nav a[aria-current="page"] { color: var(--accent); font-weight: 600; }
+
+/* Figure parallax: gentle vertical drift on figure images (excludes
+   .fig-light cards so the white plate never shows an edge). The figure gets
+   overflow:hidden from JS when parallax activates, so the drift cannot
+   cause layout shift or edge bleed. */
+figure.ds-px { overflow: hidden; }
+
+figure.ds-px img {
+  transform: translateY(var(--px, 0px));
+  will-change: transform;
+}
+
+/* code blocks are positioning contexts for DS copy buttons */
+pre { position: relative; }
+
+}
+</style>
+
 </head>
-<body><div class="page">
+<body>
+<div id="ds-sidebar-root"></div>
+<main id="ds-content"><div class="ds-content-inner"><div class="page">
 <div class="cover"><h1>Claude Certified Architect - Professional: Crash Course</h1><p>The shortest defensible route through all 38 published objectives.</p><img src="img-v2/cover.webp" alt="cover art"><p class="meta">Baseline: October 6, 2026. Blueprint v1.0 (July 2026). All practice questions are original. No exam dumps.</p></div>
 <nav class="toc" id="toc"><h2>Contents</h2><ul>
 <li><a href="#sec-exam"><strong>Exam Facts and How to Use This Course</strong></a><ul><li><a href="#exam-h1">CCAR-P v2 , Stage 1: Exam Identity and Blueprint (Oct 6, 2026)</a></li></ul></li>
@@ -30258,4 +30813,643 @@ Q=question coverage built, A=audited.</p>
 <p>Ledger rule: an objective moves from S to L only when its lesson carries a mechanism explanation, a decision boundary, an application example, and a diagnostic/transfer assessment (§5.1).</p>
 </div>
 </section>
-</div></body></html>
+</div>
+</div><!-- /.ds-content-inner --></main>
+<script>
+/* ==== DS runtime (transplanted from AIP-C01 volume) ==== */
+
+/* ==== DS runtime — do not edit per-file (build.py inlines) ==== */
+/* ==========================================================================
+   DS — Canonical Design System behavior (shared across study-guide tracks)
+   Inlined verbatim into a single <script> before </body> in each volume.
+   Zero per-page config except an optional manifest override:
+     <script>window.DS_TRACK = "aipc01";
+             window.DS_MANIFEST = [{file:"index.html",label:"…"}, …];<\/script>
+   must appear BEFORE this script to take effect.
+   Auto-builds: sidebar nav (from the page's own h2/h3), scroll-spy, search
+   filter, completion checkmarks (localStorage), reading progress bar,
+   prev/next footer, copy buttons, .pq reveal toggles, keyboard shortcuts,
+   mobile drawer. Leaves <details>/<summary> fully native.
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var TRACK = window.DS_TRACK || "ccarp";
+
+  var TRACK_TITLE = window.DS_TRACK_TITLE ||
+    (TRACK === "aipc01" ? "AIP-C01 Study Guide" : "CCAR-P Study Guide");
+
+  /* Official CCAR-P volume order (hardcoded). Each entry: filename + short
+     human label shown in the prev/next footer. */
+  var MANIFEST = window.DS_MANIFEST || [
+    { file: "index.html",                                label: "Start · Exam Overview & Study Map" },
+    { file: "01-solution-design-architecture.html",      label: "D1 · Solution Design & Architecture (17%)" },
+    { file: "02-models-prompting-context.html",          label: "D2 · Models, Prompting & Context (13%)" },
+    { file: "03-integration.html",                       label: "D3 · Integration (19%)" },
+    { file: "04-evaluation-testing-optimization.html",   label: "D4 · Evaluation, Testing & Optimization (16%)" },
+    { file: "05-governance-safety-risk.html",             label: "D5 · Governance, Safety & Risk (14%)" },
+    { file: "06-stakeholder-communication-lifecycle.html", label: "D6 · Stakeholder Communication & Lifecycle (14%)" },
+    { file: "07-developer-productivity-enablement.html", label: "D7 · Developer Productivity & Enablement (7%)" },
+    { file: "08-question-bank.html",                     label: "Question Bank" },
+    { file: "09-system-design-guide.html",               label: "System Design Guide" }
+  ];
+
+  document.documentElement.classList.add("ds-js");
+
+  var main = document.getElementById("ds-content");
+  if (!main) return; // minimal DOM contract not met — bail quietly
+
+  var sidebarRoot = document.getElementById("ds-sidebar-root");
+
+  /* ---------- helpers ---------- */
+
+  function slugify(s) {
+    var out = String(s).toLowerCase().trim()
+      .replace(/[^a-z0-9\u00c0-\u024f]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .replace(/-+/g, "-");
+    return out || "section";
+  }
+
+  function storeGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function storeSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* private mode */ } }
+  function storeDel(k) { try { window.localStorage.removeItem(k); } catch (e) { /* private mode */ } }
+
+  var pageFile = (window.location.pathname.split("/").pop() || "index.html")
+    .split("?")[0].split("#")[0] || "index.html";
+
+  /* ---------- 1. Ensure every h2/h3 has a unique slugified id ---------- */
+
+  var usedIds = {};
+  var headings = Array.prototype.slice.call(main.querySelectorAll("h2, h3"));
+  headings.forEach(function (h) {
+    var base = (h.id && h.id.trim()) ? h.id.trim() : slugify(h.textContent);
+    var id = base, n = 1;
+    while (usedIds[id]) { n += 1; id = base + "-" + n; }
+    usedIds[id] = true;
+    h.id = id;
+    if (h.tagName === "H2") h.setAttribute("tabindex", "-1"); // focus target for Alt+Arrow jumps
+  });
+
+  /* ---------- 2. Wrap main content at 72ch ---------- */
+
+  var inner = document.createElement("div");
+  inner.className = "ds-content-inner";
+  while (main.firstChild) inner.appendChild(main.firstChild);
+  main.appendChild(inner);
+
+  /* ---------- 2b. Site chrome: header (track title, breadcrumbs, volume
+     nav, prev/next) + footer sitemap. Built from window.DS_MANIFEST so
+     every page gets identical chrome; regenerates on every build. ---------- */
+
+  function manifestIndex() {
+    for (var i = 0; i < MANIFEST.length; i++) {
+      if (MANIFEST[i].file === pageFile) return i;
+    }
+    return -1;
+  }
+  var mi = manifestIndex();
+
+  function volLink(entry, text, cls, title) {
+    var a = document.createElement("a");
+    if (cls) a.className = cls;
+    a.href = entry.file;
+    a.textContent = text;
+    if (title) a.setAttribute("title", title);
+    return a;
+  }
+
+  var headerEl = document.createElement("header");
+  headerEl.className = "ds-site-header";
+
+  var topRow = document.createElement("div");
+  topRow.className = "ds-site-header-top";
+  var trackLink = document.createElement("a");
+  trackLink.className = "ds-track-title";
+  trackLink.href = "index.html";
+  trackLink.textContent = TRACK_TITLE;
+  topRow.appendChild(trackLink);
+
+  var hpn = document.createElement("nav");
+  hpn.className = "ds-hpn";
+  hpn.setAttribute("aria-label", "Previous and next volume");
+  if (mi > 0) hpn.appendChild(volLink(MANIFEST[mi - 1], "\u2190 Prev", null, "Previous: " + MANIFEST[mi - 1].label));
+  if (mi !== -1 && mi < MANIFEST.length - 1) hpn.appendChild(volLink(MANIFEST[mi + 1], "Next \u2192", null, "Next: " + MANIFEST[mi + 1].label));
+  if (hpn.firstChild) topRow.appendChild(hpn);
+  headerEl.appendChild(topRow);
+
+  var crumb = document.createElement("nav");
+  crumb.className = "ds-crumb";
+  crumb.setAttribute("aria-label", "Breadcrumb");
+  var ol = document.createElement("ol");
+  var homeLi = document.createElement("li");
+  if (mi === 0) {
+    var homeCur = document.createElement("span");
+    homeCur.setAttribute("aria-current", "page");
+    homeCur.textContent = "Home";
+    homeLi.appendChild(homeCur);
+  } else {
+    homeLi.appendChild(volLink({ file: "index.html", label: "Home" }, "Home", null, "Track home"));
+  }
+  ol.appendChild(homeLi);
+  if (mi > 0) {
+    var curLi = document.createElement("li");
+    var curSpan = document.createElement("span");
+    curSpan.setAttribute("aria-current", "page");
+    curSpan.textContent = MANIFEST[mi].label;
+    curLi.appendChild(curSpan);
+    ol.appendChild(curLi);
+  }
+  crumb.appendChild(ol);
+  headerEl.appendChild(crumb);
+
+  var volNav = document.createElement("nav");
+  volNav.setAttribute("aria-label", "All volumes");
+  var volUl = document.createElement("ul");
+  volUl.className = "ds-volnav";
+  MANIFEST.forEach(function (entry, i) {
+    var li = document.createElement("li");
+    var a = volLink(entry, entry.label);
+    if (i === mi) a.setAttribute("aria-current", "page");
+    li.appendChild(a);
+    volUl.appendChild(li);
+  });
+  volNav.appendChild(volUl);
+  headerEl.appendChild(volNav);
+  main.insertBefore(headerEl, inner);
+
+  var footerEl = document.createElement("footer");
+  footerEl.className = "ds-site-footer";
+  var fKicker = document.createElement("p");
+  fKicker.className = "ds-footer-kicker";
+  fKicker.textContent = "Sitemap";
+  footerEl.appendChild(fKicker);
+  footerEl.appendChild(volLink({ file: "index.html", label: "Track home" }, "Track home", "ds-footer-home", "Back to the study guide home"));
+  var fNav = document.createElement("nav");
+  fNav.setAttribute("aria-label", "Sitemap");
+  var fUl = document.createElement("ul");
+  MANIFEST.forEach(function (entry, i) {
+    var li = document.createElement("li");
+    var a = volLink(entry, entry.label);
+    if (i === mi) a.setAttribute("aria-current", "page");
+    li.appendChild(a);
+    fUl.appendChild(li);
+  });
+  fNav.appendChild(fUl);
+  footerEl.appendChild(fNav);
+  main.appendChild(footerEl);
+
+  /* ---------- 3. Global chrome: skip link, progress bar, hamburger, overlay ---------- */
+
+  var skip = document.createElement("a");
+  skip.href = "#ds-content";
+  skip.className = "ds-skip";
+  skip.textContent = "Skip to content";
+  document.body.insertBefore(skip, document.body.firstChild);
+
+  var progress = document.createElement("div");
+  progress.id = "ds-progress";
+  progress.setAttribute("aria-hidden", "true");
+  document.body.appendChild(progress);
+
+  var burger = document.createElement("button");
+  burger.id = "ds-hamburger";
+  burger.type = "button";
+  burger.setAttribute("aria-label", "Open navigation menu");
+  burger.setAttribute("aria-expanded", "false");
+  burger.setAttribute("aria-controls", "ds-sidebar-root");
+  burger.innerHTML = "<span></span><span></span><span></span>";
+  document.body.appendChild(burger);
+
+  var overlay = document.createElement("div");
+  overlay.id = "ds-overlay";
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.appendChild(overlay);
+
+  function drawerOpen() {
+    document.body.classList.add("ds-drawer-open");
+    burger.setAttribute("aria-expanded", "true");
+    burger.setAttribute("aria-label", "Close navigation menu");
+  }
+  function drawerClose() {
+    document.body.classList.remove("ds-drawer-open");
+    burger.setAttribute("aria-expanded", "false");
+    burger.setAttribute("aria-label", "Open navigation menu");
+  }
+  burger.addEventListener("click", function () {
+    if (document.body.classList.contains("ds-drawer-open")) drawerClose();
+    else drawerOpen();
+  });
+  overlay.addEventListener("click", drawerClose);
+
+  /* ---------- 4. Build the sidebar from h2/h3 ---------- */
+
+  var linkById = {};
+  var sectionIds = []; // h2 ids in order (for Alt+Arrow jumps)
+  var searchInput = null;
+
+  if (sidebarRoot) {
+    sidebarRoot.setAttribute("role", "navigation");
+    sidebarRoot.setAttribute("aria-label", "Study guide sections");
+
+    var sideInner = document.createElement("div");
+    sideInner.className = "ds-side-inner";
+
+    var volBlock = document.createElement("div");
+    volBlock.className = "ds-side-volumes";
+    var volH = document.createElement("h2");
+    volH.textContent = "Volumes";
+    volBlock.appendChild(volH);
+    var volList = document.createElement("ul");
+    MANIFEST.forEach(function (entry, i) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = entry.file;
+      a.textContent = entry.label;
+      if (i === manifestIndex()) a.setAttribute("aria-current", "page");
+      li.appendChild(a);
+      volList.appendChild(li);
+    });
+    volBlock.appendChild(volList);
+    sideInner.appendChild(volBlock);
+
+    var searchWrap = document.createElement("div");
+    searchWrap.className = "ds-side-search";
+    var searchLabel = document.createElement("label");
+    searchLabel.className = "ds-visually-hidden";
+    searchLabel.setAttribute("for", "ds-nav-search");
+    searchLabel.textContent = "Filter sections";
+    searchInput = document.createElement("input");
+    searchInput.id = "ds-nav-search";
+    searchInput.type = "search";
+    searchInput.setAttribute("placeholder", "Filter sections…  ( / )");
+    searchInput.setAttribute("aria-label", "Filter sections");
+    searchWrap.appendChild(searchLabel);
+    searchWrap.appendChild(searchInput);
+    sideInner.appendChild(searchWrap);
+
+    var nav = document.createElement("ul");
+    nav.className = "ds-nav";
+    sideInner.appendChild(nav);
+    sidebarRoot.appendChild(sideInner);
+
+    function makeDone(title, id) {
+      var key = TRACK + ":" + pageFile + ":done:" + id;
+      var wrap = document.createElement("span");
+      wrap.className = "ds-done-wrap";
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.className = "ds-done";
+      cb.setAttribute("aria-label", "Mark section complete: " + title);
+      cb.checked = storeGet(key) === "1";
+      cb.addEventListener("change", function () {
+        if (cb.checked) storeSet(key, "1"); else storeDel(key);
+        var row = cb.closest(".ds-nav-row");
+        if (row) row.classList.toggle("done", cb.checked);
+      });
+      wrap.appendChild(cb);
+      if (cb.checked) {
+        // row class applied after row exists (see below via queue)
+        setTimeout(function () {
+          var row = cb.closest(".ds-nav-row");
+          if (row) row.classList.add("done");
+        }, 0);
+      }
+      return wrap;
+    }
+
+    var subCounter = 0;
+    var currentSub = null;
+
+    headings.forEach(function (h) {
+      var title = h.textContent.trim();
+      if (h.tagName === "H2") {
+        sectionIds.push(h.id);
+        subCounter += 1;
+        var subId = "ds-sub-" + subCounter;
+
+        var chapterLi = document.createElement("li");
+        chapterLi.className = "ds-nav-chapter";
+
+        var row = document.createElement("div");
+        row.className = "ds-nav-row";
+
+        var toggle = document.createElement("button");
+        toggle.type = "button";
+        toggle.className = "ds-nav-toggle";
+        toggle.textContent = "▾";
+        toggle.setAttribute("aria-expanded", "true");
+        toggle.setAttribute("aria-controls", subId);
+        toggle.setAttribute("aria-label", "Collapse section: " + title);
+
+        var sub = document.createElement("ul");
+        sub.className = "ds-nav-sub";
+        sub.id = subId;
+
+        toggle.addEventListener("click", function () {
+          var open = toggle.getAttribute("aria-expanded") === "true";
+          toggle.setAttribute("aria-expanded", String(!open));
+          toggle.setAttribute("aria-label", (open ? "Expand" : "Collapse") + " section: " + title);
+          toggle.textContent = open ? "▸" : "▾";
+          sub.hidden = open;
+        });
+
+        var a = document.createElement("a");
+        a.className = "ds-nav-link";
+        a.href = "#" + h.id;
+        a.textContent = title;
+        a.setAttribute("data-target", h.id);
+
+        row.appendChild(toggle);
+        row.appendChild(a);
+        row.appendChild(makeDone(title, h.id));
+        chapterLi.appendChild(row);
+        chapterLi.appendChild(sub);
+        nav.appendChild(chapterLi);
+        currentSub = sub;
+        linkById[h.id] = a;
+      } else if (currentSub) { // h3 → subsection of the current chapter
+        var sli = document.createElement("li");
+        sli.className = "ds-nav-row ds-nav-subrow";
+        var sa = document.createElement("a");
+        sa.className = "ds-nav-link";
+        sa.href = "#" + h.id;
+        sa.textContent = title;
+        sa.setAttribute("data-target", h.id);
+        sli.appendChild(sa);
+        sli.appendChild(makeDone(title, h.id));
+        currentSub.appendChild(sli);
+        linkById[h.id] = sa;
+      }
+    });
+
+    // Live filter
+    searchInput.addEventListener("input", function () {
+      var q = searchInput.value.trim().toLowerCase();
+      Array.prototype.forEach.call(nav.querySelectorAll(".ds-nav-chapter"), function (ch) {
+        var chapterLink = ch.querySelector(".ds-nav-row > .ds-nav-link");
+        var chapterText = chapterLink ? chapterLink.textContent.toLowerCase() : "";
+        var subMatch = false;
+        Array.prototype.forEach.call(ch.querySelectorAll(".ds-nav-subrow"), function (sr) {
+          var m = !q || sr.textContent.toLowerCase().indexOf(q) !== -1;
+          sr.style.display = m ? "" : "none";
+          if (m) subMatch = true;
+        });
+        ch.style.display = (!q || chapterText.indexOf(q) !== -1 || subMatch) ? "" : "none";
+      });
+    });
+
+    // Close the mobile drawer when a nav link is tapped
+    nav.addEventListener("click", function (e) {
+      var a = e.target && e.target.closest ? e.target.closest("a.ds-nav-link") : null;
+      if (a && window.innerWidth <= 900) drawerClose();
+    });
+
+    /* ---------- 5. Scroll-spy ---------- */
+
+    var spyLinks = headings
+      .map(function (h) { return linkById[h.id]; })
+      .filter(function (a) { return !!a; });
+
+    function setActive(id) {
+      spyLinks.forEach(function (a) {
+        a.classList.toggle("active", a.getAttribute("data-target") === id);
+      });
+    }
+
+    if ("IntersectionObserver" in window && headings.length) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      }, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
+      headings.forEach(function (h) { spy.observe(h); });
+    }
+  }
+
+  /* ---------- 6. Reading progress bar ---------- */
+
+  var ticking = false;
+  function updateProgress() {
+    var el = document.documentElement;
+    var max = el.scrollHeight - el.clientHeight;
+    var pct = max > 0 ? (el.scrollTop / max) * 100 : 0;
+    progress.style.width = pct.toFixed(2) + "%";
+    ticking = false;
+  }
+  window.addEventListener("scroll", function () {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(updateProgress); }
+  }, { passive: true });
+  window.addEventListener("resize", updateProgress);
+  updateProgress();
+
+  /* ---------- 7. Prev / next volume footer (from manifest) ---------- */
+
+  if (mi !== -1) {
+    var pn = document.createElement("nav");
+    pn.className = "ds-prevnext";
+    pn.setAttribute("aria-label", "Previous and next volume");
+
+    function pnLink(entry, cls, kicker) {
+      var a = document.createElement("a");
+      a.className = cls;
+      a.href = entry.file;
+      var k = document.createElement("span");
+      k.className = "ds-pn-kicker";
+      k.textContent = kicker;
+      var lab = document.createElement("span");
+      lab.className = "ds-pn-label";
+      lab.textContent = entry.label;
+      a.appendChild(k);
+      a.appendChild(lab);
+      return a;
+    }
+
+    if (mi > 0) pn.appendChild(pnLink(MANIFEST[mi - 1], "ds-prev", "Previous"));
+    else {
+      var spacer = document.createElement("span");
+      spacer.className = "ds-prev-empty";
+      spacer.setAttribute("aria-hidden", "true");
+      pn.appendChild(spacer);
+    }
+    if (mi < MANIFEST.length - 1) pn.appendChild(pnLink(MANIFEST[mi + 1], "ds-next", "Next"));
+
+    inner.appendChild(pn);
+  }
+  // If the current page is not in the manifest, no prev/next is rendered.
+
+  /* ---------- 8. Copy buttons on every <pre> ---------- */
+
+  Array.prototype.forEach.call(inner.querySelectorAll("pre"), function (pre) {
+    if (pre.querySelector(".ds-copy-btn")) return; // don't double-inject
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "ds-copy-btn";
+    btn.textContent = "Copy";
+    btn.setAttribute("aria-label", "Copy code block");
+    btn.addEventListener("click", function () {
+      var code = pre.querySelector("code");
+      var text = code ? code.innerText : pre.innerText;
+      function feedback(ok) {
+        btn.textContent = ok ? "Copied" : "Failed";
+        window.setTimeout(function () { btn.textContent = "Copy"; }, 1500);
+      }
+      function legacyCopy() {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand("copy"); } catch (e) { /* ignore */ }
+        document.body.removeChild(ta);
+        feedback(ok);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          function () { feedback(true); },
+          function () { legacyCopy(); }
+        );
+      } else {
+        legacyCopy();
+      }
+    });
+    pre.appendChild(btn);
+  });
+
+  /* ---------- 9. .pq reveal toggles (details/summary left native) ---------- */
+
+  Array.prototype.forEach.call(inner.querySelectorAll(".pq"), function (pq) {
+    if (pq.tagName === "DETAILS") return; // native disclosure — do not touch
+    var btn = pq.querySelector(".pq-reveal");
+    var ans = pq.querySelector(".pq-answer");
+    if (!btn || !ans || btn.tagName !== "BUTTON") return;
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", ans.id || "");
+    btn.addEventListener("click", function () {
+      var open = ans.classList.toggle("open");
+      btn.setAttribute("aria-expanded", String(open));
+      btn.textContent = open ? "Hide answer" : "Reveal answer";
+    });
+  });
+
+  /* ---------- 10. Keyboard shortcuts ---------- */
+
+  document.addEventListener("keydown", function (e) {
+    var active = document.activeElement;
+    var inField = active && /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName);
+
+    // "/" focuses the sidebar search (when not typing somewhere)
+    if (e.key === "/" && !inField && !e.ctrlKey && !e.metaKey && !e.altKey && searchInput) {
+      e.preventDefault();
+      if (window.innerWidth <= 900 && !document.body.classList.contains("ds-drawer-open")) drawerOpen();
+      searchInput.focus();
+      return;
+    }
+
+    // Esc closes the mobile drawer; otherwise clears the search
+    if (e.key === "Escape") {
+      if (document.body.classList.contains("ds-drawer-open")) {
+        drawerClose();
+        burger.focus();
+      } else if (active === searchInput) {
+        searchInput.value = "";
+        searchInput.dispatchEvent(new Event("input", { bubbles: true }));
+        searchInput.blur();
+      }
+      return;
+    }
+
+    // Alt+ArrowDown / Alt+ArrowUp jump to next/previous h2 section
+    if (e.altKey && (e.key === "ArrowDown" || e.key === "ArrowUp") && sectionIds.length) {
+      e.preventDefault();
+      var dir = e.key === "ArrowDown" ? 1 : -1;
+      var y = window.scrollY + 120;
+      var idx = -1;
+      sectionIds.forEach(function (id, i) {
+        var el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top + window.scrollY <= y) idx = i;
+      });
+      var target = idx + dir;
+      if (target < 0) target = 0;
+      if (target >= sectionIds.length) target = sectionIds.length - 1;
+      var tel = document.getElementById(sectionIds[target]);
+      if (tel) {
+        tel.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (tel.focus) tel.focus({ preventScroll: true });
+      }
+    }
+  });
+  /* ---------- 11. Scroll reveal + figure parallax (progressive enhancement) ----------
+     .reveal is added here (never in markup), so content is fully visible with
+     JS disabled. Respects prefers-reduced-motion. Parallax drift is a small
+     transform on plain figure images only; it never changes layout. ---------- */
+
+  (function () {
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* Scroll reveal: gentle rise-in on content blocks as they enter the viewport. */
+    var revealTargets = inner.querySelectorAll(
+      "figure, .pq, .exam-ask, .takeaway, .panel, .diagram-walkthrough, " +
+      ".table-wrap, .ladder, .cc-qa"
+    );
+    if (!reduceMotion && "IntersectionObserver" in window) {
+      var revealEls = Array.prototype.slice.call(revealTargets);
+      revealEls.forEach(function (el) { el.classList.add("reveal"); });
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            en.target.classList.add("revealed");
+            io.unobserve(en.target);
+          }
+        });
+      }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+      revealEls.forEach(function (el) { io.observe(el); });
+    }
+    /* reduceMotion or no IntersectionObserver: no .reveal class is added,
+       so every block stays fully visible. */
+
+    /* Figure parallax: gentle --px drift on plain figure images only
+       (.fig-light cards are excluded so the white plate never shows an edge). */
+    if (!reduceMotion) {
+      var pxFigs = [];
+      Array.prototype.forEach.call(
+        inner.querySelectorAll("figure:not(.fig-light)"),
+        function (fig) {
+          if (fig.querySelector("img")) {
+            fig.classList.add("ds-px");
+            pxFigs.push(fig);
+          }
+        }
+      );
+      var pxTicking = false;
+      function pxUpdate() {
+        var vh = window.innerHeight || 800;
+        pxFigs.forEach(function (fig) {
+          var img = fig.querySelector("img");
+          if (!img) return;
+          var r = img.getBoundingClientRect();
+          if (r.bottom < -160 || r.top > vh + 160) return; /* off-screen: skip */
+          var center = (r.top + r.height / 2) - vh / 2;
+          var drift = center * -0.015;
+          if (drift > 8) drift = 8;
+          if (drift < -8) drift = -8;
+          img.style.setProperty("--px", drift.toFixed(1) + "px");
+        });
+        pxTicking = false;
+      }
+      function pxRequest() {
+        if (!pxTicking) { pxTicking = true; window.requestAnimationFrame(pxUpdate); }
+      }
+      window.addEventListener("scroll", pxRequest, { passive: true });
+      window.addEventListener("resize", pxRequest);
+      pxUpdate();
+    }
+  })();
+})();
+
+
+</script>
+</body></html>
