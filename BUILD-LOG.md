@@ -221,3 +221,35 @@ prereq-claude-fundamentals stay as-is. Fragments live in v2-build/.
   Correction: Stage 3 built 11, Stage 4 built 8, Stage 5 built 11, Stage 6 built 8.
 - 0 hard STE violations (coordinator re-verified). 32 SVGs parse.
 - Next: Stage 7 — comparisons (§18), artifacts (§21), labs, 3 capstones (§23).
+
+## Completion validation gate (2026-10-06 ~14:06 EDT, Raj's order)
+
+Runs after Stage 9, before any completion is declared. Checklist recorded at
+v2-build/completion-gate-checklist.md. Four gates, all must pass:
+1. Presence validation: explicit checklist of every required deliverable
+   (crash-course HTML with 7 domains + diagnostics + foundations; all §18
+   comparisons with 3+ minimal pairs; all §21 artifacts; 3 capstones + 9 labs;
+   25/domain + 50 mixed + 4 mocks + counterfactual drills; error ledger;
+   readiness dashboard; Oct 6 currentness appendix; final review sheets; source
+   registry; blueprint ledger; print-spec PDF; zip). No MISSING may remain.
+2. Figure validation: page audit per visual_system_generic.md; every
+   AI-generated image verified on-topic and clean; regenerations logged.
+3. PDF validation per print spec: type scale, line height, margins,
+   widow/orphan, domain page breaks, keep-with-next, clickable TOC with verified
+   page numbers, aspect-ratio-checked images, monospace no-wrap code. Visual
+   inspection of every image-bearing page.
+4. Repo validation: final push to jrajath94/ccar-p-study-guide, then remote vs
+   local verification — every file present, no drift, README + BUILD-LOG
+   current, zip + PDF downloadable and intact. Re-push gaps before done.
+Results go into BUILD-LOG.md as the final section.
+
+## Stage 7 (2026-10-06 ~14:00-14:10 EDT) — COMPLETE
+
+- All 26 §18 comparisons as tight matrices with ≥3 minimal pairs each
+  (comparisons-01..05, 78 minimal pairs total); 23 §21 artifacts
+  (artifacts-01/02; A5/A12/A13 executed locally with real output, 20 marked
+  ILLUSTRATIVE; "Evaluation runner" renamed from STE100-banned term);
+  9 labs (local-first, cost caps, cleanup documented); 3 capstones A/B/C with
+  all 14 sections, computed budgets, failure injection.
+- 0 hard STE violations (coordinator re-verified). 11 SVGs parse.
+- Next: Stage 8 — original assessment system (question bank + independent audit).
