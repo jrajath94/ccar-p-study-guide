@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 330" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+  <text x="340" y="32" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">Three dials throttle your traffic</text>
+  <g font-size="14">
+    <rect x="40" y="60" width="180" height="80" rx="10" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5"/>
+    <text x="130" y="90" text-anchor="middle" font-weight="bold" fill="#1e40af">RPM</text>
+    <text x="130" y="114" text-anchor="middle" fill="#475569">requests per minute</text>
+    <rect x="250" y="60" width="180" height="80" rx="10" fill="#d1fae5" stroke="#047857" stroke-width="1.5"/>
+    <text x="340" y="90" text-anchor="middle" font-weight="bold" fill="#064e3b">ITPM</text>
+    <text x="340" y="114" text-anchor="middle" fill="#475569">input tokens per minute</text>
+    <rect x="460" y="60" width="180" height="80" rx="10" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="550" y="90" text-anchor="middle" font-weight="bold" fill="#78350f">OTPM</text>
+    <text x="550" y="114" text-anchor="middle" fill="#475569">output tokens per minute</text>
+    <text x="340" y="172" text-anchor="middle" font-size="15" font-weight="bold" fill="#1e293b">You get a 429. Two kinds. Check the header.</text>
+    <rect x="40" y="195" width="290" height="100" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+    <text x="185" y="222" text-anchor="middle" font-weight="bold" fill="#1e293b">retry-after present</text>
+    <text x="185" y="246" text-anchor="middle" fill="#475569">rate limit: wait the</text>
+    <text x="185" y="266" text-anchor="middle" fill="#475569">advertised time, retry</text>
+    <text x="185" y="286" text-anchor="middle" fill="#475569">with backoff</text>
+    <rect x="350" y="195" width="290" height="100" rx="10" fill="#fee2e2" stroke="#b91c1c" stroke-width="1.5"/>
+    <text x="495" y="222" text-anchor="middle" font-weight="bold" fill="#7f1d1d">no retry-after</text>
+    <text x="495" y="246" text-anchor="middle" fill="#475569">tier spend cap: STOP</text>
+    <text x="495" y="266" text-anchor="middle" fill="#475569">retrying. Raise the cap</text>
+    <text x="495" y="286" text-anchor="middle" fill="#475569">or wait for the reset.</text>
+  </g>
+</svg>
