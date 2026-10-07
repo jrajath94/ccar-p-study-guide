@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#16a34a"/></marker><marker id="ahp" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#7c3aed"/></marker></defs>
+<rect width="900" height="500" rx="14" fill="#ffffff"/>
+<rect x="1" y="1" width="898" height="498" rx="13" fill="none" stroke="#cbd5e1"/>
+<text x="450.0" y="36" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">Design 4: MCP security boundaries</text>
+<text x="450.0" y="62" text-anchor="middle" font-size="13" fill="#64748b">Treat the server as untrusted until it proves otherwise.</text>
+<rect x="60" y="100" width="780" height="90" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="450.0" y="124" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#dc2626">1. Pin and review</text>
+<text x="450.0" y="146" text-anchor="middle" font-size="12" font-weight="normal" fill="#1e293b">pin a reviewed version - never auto-update a tool server</text>
+<rect x="60" y="210" width="780" height="90" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+<text x="450.0" y="234" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#d97706">2. Least privilege</text>
+<text x="450.0" y="256" text-anchor="middle" font-size="12" font-weight="normal" fill="#1e293b">run it with least privilege - read-only where possible</text>
+<rect x="60" y="320" width="780" height="110" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+<text x="450.0" y="344" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#16a34a">3. Authenticate per user</text>
+<text x="450.0" y="366" text-anchor="middle" font-size="12" font-weight="normal" fill="#1e293b">OAuth delegated tokens: the agent acts AS the user</text>
+<text x="450.0" y="385" text-anchor="middle" font-size="12" font-weight="normal" fill="#1e293b">never share service-account passwords with assistants</text>
+<text x="450.0" y="404" text-anchor="middle" font-size="12" font-weight="normal" fill="#1e293b">scope: only the covered processing the token names</text>
+<line x1="450" y1="190" x2="450" y2="210" stroke="#dc2626" stroke-width="2" marker-end="url(#ahr)"/>
+<line x1="450" y1="300" x2="450" y2="320" stroke="#d97706" stroke-width="2" marker-end="url(#ah)"/>
+</svg>
