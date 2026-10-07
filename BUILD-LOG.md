@@ -458,3 +458,8 @@ Raj rejected the v2 PDF: serif fallback rendered, beige panels, ragged-left text
 - Build hardening in v2-build/build_pdf.py: (1) `render_with_images()` — after pass-2 render, counts embedded raster XObjects via pypdf against the expected img-v2 count from the HTML; re-renders up to 3x, raises instead of silently shipping a plateless PDF. (2) `render()` now waits for every `<img>` to decode plus a settle beat before print-to-PDF (file:// images can lag networkidle).
 - Results: crash-course.pdf 243pp (12/12 images, first try), question-bank.pdf 356pp (1/1). pypdf: AnthropicSans-Bold + AnthropicSansWeb-TextRegular subsets embedded in both; Producer/Creator stripped. 816 + 26 named destinations; TOC page numbers spot-verified. Visual audit (cover, TOC, body, 3 plate pages incl. wide d1, takeaway, code): clean Anthropic Sans, justified, white, ink links, plates sharp at native aspect (1.50 / 3.00), takeaway/code/table contrast strong.
 - Note: the earlier 238pp "shipped" PDF was missing 11 plates — this rebuild replaces it. Page count moved 238 -> 243 with plates correctly laid out.
+
+## SHIPPED (2026-10-07 ~00:50 UTC)
+- crash-course.pdf (243pp, 12/12 plates) + question-bank.pdf (356pp, 1/1): 12/16/20pt, Anthropic Sans embedded, justified, white, 1.4 line height, colors audited, plate-figure hiding bug fixed, image-embed guard added to build_pdf.py.
+- Zip rebuilt (10.6MB, 19 files, testzip OK).
+- Pushed 19 files to jrajath94/ccar-p-study-guide (push-dir, ok=19 failed=0); remote byte-verified: 7/7 root files MATCH, 12/12 img-v2 MATCH. Remote-only leftovers from earlier pushes (root print.css 2894b, ccar-p-cert/ dir) untouched — flagged for Raj.
