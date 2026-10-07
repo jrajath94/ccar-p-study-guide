@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" font-family="Charis SIL, Georgia, serif">
+  <rect x="0" y="0" width="960" height="600" rx="10" fill="#0d0d0d"/>
+  <text x="30" y="42" font-size="24" fill="#ececec" font-weight="bold">One call to the Messages API: request in, response out</text>
+  <!-- request box -->
+  <rect x="30" y="64" width="430" height="440" rx="8" fill="#111111" stroke="#262626" stroke-width="2"/>
+  <text x="52" y="100" font-size="18" fill="#f0b429" font-weight="bold">HTTP REQUEST</text>
+  <text x="52" y="130" font-size="15" fill="#ececec" font-family="ui-monospace, Menlo, monospace">POST https://api.anthropic.com/v1/messages</text>
+  <text x="52" y="164" font-size="15" fill="#a8a8a8">Headers (who you are):</text>
+  <text x="52" y="190" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">x-api-key: sk-ant-••••••</text>
+  <text x="52" y="214" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">anthropic-version: 2023-06-01</text>
+  <text x="52" y="248" font-size="15" fill="#a8a8a8">Body (what you want), as JSON:</text>
+  <text x="52" y="276" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">{</text>
+  <text x="66" y="300" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">"model": "claude-sonnet-class",</text>
+  <text x="66" y="324" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">"max_tokens": 1024,</text>
+  <text x="66" y="348" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">"system": "You are a support agent.",</text>
+  <text x="66" y="372" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">"messages": [</text>
+  <text x="80" y="396" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">{"role": "user",</text>
+  <text x="94" y="420" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">"content": "Where is my order?"}</text>
+  <text x="66" y="444" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">]</text>
+  <text x="52" y="468" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">}</text>
+  <text x="52" y="494" font-size="13" fill="#a8a8a8">Each request is stateless: resend the</text>
+  <text x="52" y="512" font-size="13" fill="#a8a8a8">history every time.</text>
+  <!-- arrow -->
+  <polygon points="470,250 500,250 500,230 540,264 500,298 500,278 470,278" fill="#f0b429"/>
+  <text x="472" y="322" font-size="14" fill="#a8a8a8">one</text>
+  <text x="472" y="340" font-size="14" fill="#a8a8a8">call</text>
+  <!-- response box -->
+  <rect x="560" y="64" width="370" height="440" rx="8" fill="#111111" stroke="#262626" stroke-width="2"/>
+  <text x="582" y="100" font-size="18" fill="#f0b429" font-weight="bold">JSON RESPONSE</text>
+  <text x="582" y="130" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">{</text>
+  <text x="596" y="156" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">"id": "msg_01Ab…",</text>
+  <text x="596" y="182" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">"content": [</text>
+  <text x="610" y="208" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">{"type": "text",</text>
+  <text x="624" y="234" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">"text": "Your order…"}</text>
+  <text x="596" y="260" font-size="14" fill="#6cb2ff" font-family="ui-monospace, Menlo, monospace">],</text>
+  <text x="596" y="286" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">"stop_reason": "end_turn",</text>
+  <text x="596" y="312" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">"usage": {</text>
+  <text x="610" y="338" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">"input_tokens": 512,</text>
+  <text x="610" y="364" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">"output_tokens": 96</text>
+  <text x="596" y="390" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">}</text>
+  <text x="582" y="416" font-size="14" fill="#ececec" font-family="ui-monospace, Menlo, monospace">}</text>
+  <text x="582" y="450" font-size="13" fill="#a8a8a8">stop_reason tells you why it</text>
+  <text x="582" y="468" font-size="13" fill="#a8a8a8">stopped: end_turn, max_tokens,</text>
+  <text x="582" y="486" font-size="13" fill="#a8a8a8">or tool_use (Unit 3).</text>
+  <!-- footer -->
+  <rect x="30" y="524" width="900" height="52" rx="8" fill="#111111" stroke="#262626" stroke-width="1"/>
+  <text x="52" y="557" font-size="14" fill="#a8a8a8">Your code owns everything around the call: the key, retries, timeouts, and the conversation history.</text>
+</svg>
