@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" font-family="Charis SIL, Georgia, serif">
+  <rect x="0" y="0" width="960" height="500" rx="10" fill="#0d0d0d"/>
+  <text x="30" y="42" font-size="24" fill="#ececec" font-weight="bold">Streaming: same total time, far shorter wait</text>
+  <!-- row 1 -->
+  <text x="30" y="100" font-size="17" fill="#ececec" font-weight="bold">Without streaming</text>
+  <rect x="30" y="120" width="700" height="44" rx="6" fill="#1a1a1a" stroke="#262626" stroke-width="1"/>
+  <rect x="30" y="120" width="700" height="44" rx="6" fill="none" stroke="#a8a8a8" stroke-width="1" stroke-dasharray="6 4"/>
+  <text x="330" y="149" font-size="14" fill="#a8a8a8">25 seconds of blank screen…</text>
+  <rect x="730" y="120" width="180" height="44" rx="6" fill="#6cb2ff"/>
+  <text x="756" y="149" font-size="14" fill="#0d0d0d" font-weight="bold">full answer</text>
+  <text x="30" y="190" font-size="13" fill="#a8a8a8">User sees nothing until the last token is generated.</text>
+  <!-- row 2 -->
+  <text x="30" y="248" font-size="17" fill="#ececec" font-weight="bold">With streaming (SSE)</text>
+  <rect x="30" y="268" width="900" height="44" rx="6" fill="#1a1a1a" stroke="#262626" stroke-width="1"/>
+  <rect x="30" y="268" width="60" height="44" rx="6" fill="#262626"/>
+  <text x="40" y="297" font-size="12" fill="#a8a8a8">wait</text>
+  <rect x="90" y="268" width="810" height="44" rx="6" fill="#f0b429" opacity="0.85"/>
+  <text x="400" y="297" font-size="14" fill="#0d0d0d" font-weight="bold">tokens appear one by one, rendered live</text>
+  <!-- TTFT marker -->
+  <line x1="90" y1="258" x2="90" y2="330" stroke="#ececec" stroke-width="2"/>
+  <polygon points="90,246 82,260 98,260" fill="#ececec"/>
+  <text x="100" y="248" font-size="14" fill="#ececec" font-weight="bold">TTFT ≈ 0.6 s</text>
+  <text x="30" y="352" font-size="13" fill="#a8a8a8">TTFT (time to first token) is what the user feels. Total generation time is unchanged.</text>
+  <!-- events strip -->
+  <rect x="30" y="380" width="900" height="88" rx="8" fill="#111111" stroke="#262626" stroke-width="1"/>
+  <text x="52" y="410" font-size="14" fill="#a8a8a8">The stream is a sequence of events over one connection:</text>
+  <text x="52" y="440" font-size="13" fill="#ececec" font-family="ui-monospace, Menlo, monospace">message_start → content_block_delta ("Your") → content_block_delta (" order") → … → message_delta (usage) → message_stop</text>
+</svg>
