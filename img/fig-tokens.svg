@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 230" role="img" aria-label="The word unbelievable split into three tokens">
+  <rect width="720" height="230" fill="none"/>
+  <text x="360" y="30" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#a8a8a8">One English word, as Claude sees it</text>
+  <g font-family="sans-serif">
+    <rect x="150" y="60" width="120" height="72" rx="10" fill="#0d0d0d" stroke="#f0b429" stroke-width="2"/>
+    <text x="210" y="106" text-anchor="middle" font-size="30" fill="#ececec">un</text>
+    <rect x="300" y="60" width="120" height="72" rx="10" fill="#0d0d0d" stroke="#f0b429" stroke-width="2"/>
+    <text x="360" y="106" text-anchor="middle" font-size="30" fill="#ececec">believ</text>
+    <rect x="450" y="60" width="120" height="72" rx="10" fill="#0d0d0d" stroke="#f0b429" stroke-width="2"/>
+    <text x="510" y="106" text-anchor="middle" font-size="30" fill="#ececec">able</text>
+  </g>
+  <text x="210" y="160" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#a8a8a8">token 1</text>
+  <text x="360" y="160" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#a8a8a8">token 2</text>
+  <text x="510" y="160" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#a8a8a8">token 3</text>
+  <text x="360" y="200" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#ececec">"unbelievable" = 3 tokens, roughly 4 characters each</text>
+</svg>
