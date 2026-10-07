@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<rect width="960" height="600" rx="14" fill="#1e293b"/>
+<text x="480" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#e8e6e1">Debug in order: the model is the last suspect</text>
+<text x="480" y="62" text-anchor="middle" font-size="13" fill="#9fb0c3">Stop reason first, schema second, model last. Then run the runbook.</text>
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="aht" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#0d9488"/></marker><marker id="aha" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#d97706"/></marker></defs>
+<text x="40" y="100" font-size="13" font-weight="bold" fill="#9fb0c3">THE ORDER</text>
+<rect x="40" y="120" width="208" height="150" rx="10" fill="#28303d" stroke="#2563eb" stroke-width="1.5"/>
+<text x="144" y="150" text-anchor="middle" font-size="15" font-weight="bold" fill="#cfe3ff">1. Stop reason</text>
+<text x="144" y="172" text-anchor="middle" font-size="12" fill="#9fb0c3">finished, max turns,</text>
+<text x="144" y="192" text-anchor="middle" font-size="12" fill="#9fb0c3">budget, denied</text>
+<rect x="264" y="120" width="208" height="150" rx="10" fill="#28303d" stroke="#2563eb" stroke-width="1.5"/>
+<text x="368" y="150" text-anchor="middle" font-size="15" font-weight="bold" fill="#cfe3ff">2. tool_use / result</text>
+<text x="368" y="172" text-anchor="middle" font-size="12" fill="#9fb0c3">errored tool, empty</text>
+<text x="368" y="192" text-anchor="middle" font-size="12" fill="#9fb0c3">result, wrong shape</text>
+<rect x="488" y="120" width="208" height="150" rx="10" fill="#28303d" stroke="#d97706" stroke-width="1.5"/>
+<text x="592" y="150" text-anchor="middle" font-size="15" font-weight="bold" fill="#cfe3ff">3. Schema drift</text>
+<text x="592" y="172" text-anchor="middle" font-size="12" fill="#9fb0c3">did the schema change</text>
+<text x="592" y="192" text-anchor="middle" font-size="12" fill="#9fb0c3">since the prompt</text>
+<text x="592" y="212" text-anchor="middle" font-size="12" fill="#9fb0c3">was written?</text>
+<rect x="712" y="120" width="208" height="150" rx="10" fill="#28303d" stroke="#0d9488" stroke-width="1.5"/>
+<text x="816" y="150" text-anchor="middle" font-size="15" font-weight="bold" fill="#cfe3ff">4. Frozen replay</text>
+<text x="816" y="172" text-anchor="middle" font-size="12" fill="#9fb0c3">same trace, current</text>
+<text x="816" y="192" text-anchor="middle" font-size="12" fill="#9fb0c3">system: passes now</text>
+<text x="816" y="212" text-anchor="middle" font-size="12" fill="#9fb0c3">= drift</text>
+<line x1="248" y1="195" x2="264" y2="195" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="472" y1="195" x2="488" y2="195" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="696" y1="195" x2="712" y2="195" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="480" y="300" text-anchor="middle" font-size="13" fill="#dc2626">The classic error: upgrading the model before checking the schema.</text>
+<text x="40" y="330" font-size="13" font-weight="bold" fill="#9fb0c3">THE RUNBOOK: 2 AM SPEND SPIKE</text>
+<rect x="40" y="350" width="280" height="120" rx="10" fill="#28303d" stroke="#dc2626" stroke-width="1.5"/>
+<text x="180" y="380" text-anchor="middle" font-size="15" font-weight="bold" fill="#fca5a5">Mitigate</text>
+<text x="180" y="402" text-anchor="middle" font-size="12.5" fill="#9fb0c3">kill the runaway</text>
+<text x="180" y="422" text-anchor="middle" font-size="12.5" fill="#9fb0c3">sessions first</text>
+<rect x="340" y="350" width="280" height="120" rx="10" fill="#28303d" stroke="#d97706" stroke-width="1.5"/>
+<text x="480" y="380" text-anchor="middle" font-size="15" font-weight="bold" fill="#fde68a">Diagnose</text>
+<text x="480" y="402" text-anchor="middle" font-size="12.5" fill="#9fb0c3">read traces: find the</text>
+<text x="480" y="422" text-anchor="middle" font-size="12.5" fill="#9fb0c3">loop with no cap</text>
+<rect x="640" y="350" width="280" height="120" rx="10" fill="#28303d" stroke="#16a34a" stroke-width="1.5"/>
+<text x="780" y="380" text-anchor="middle" font-size="15" font-weight="bold" fill="#bbf7d0">Harden</text>
+<text x="780" y="402" text-anchor="middle" font-size="12.5" fill="#9fb0c3">add the cap and</text>
+<text x="780" y="422" text-anchor="middle" font-size="12.5" fill="#9fb0c3">a spend alert</text>
+<line x1="320" y1="410" x2="340" y2="410" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="620" y1="410" x2="640" y2="410" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<text x="480" y="510" text-anchor="middle" font-size="12.5" fill="#9fb0c3">The team that diagnoses before mitigating gets billed for the diagnosis too.</text>
+</svg>
