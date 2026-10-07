@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#16a34a"/></marker></defs>
+<rect width="900" height="520" rx="14" fill="#ffffff"/>
+<rect x="1" y="1" width="898" height="518" rx="13" fill="none" stroke="#cbd5e1"/>
+<text x="450.0" y="36" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">Prompt engineering: the five moves</text>
+<text x="450.0" y="62" text-anchor="middle" font-size="13" fill="#64748b">Applied in order. Move 5 keeps the other four honest.</text>
+<rect x="40" y="96" width="52" height="52" rx="26" fill="#dbeafe" stroke="#2563eb"/>
+<text x="66" y="129" text-anchor="middle" font-size="18" fill="#1e40af" font-weight="bold">1</text>
+<text x="120" y="124" text-anchor="start" font-size="15" fill="#1e293b" font-weight="bold">1. Be explicit</text>
+<text x="120" y="148" text-anchor="start" font-size="12" fill="#64748b">Wishes get whatever the model feels like; instructions get what you asked for.</text>
+<rect x="40" y="178" width="52" height="52" rx="26" fill="#ede9fe" stroke="#7c3aed"/>
+<text x="66" y="211" text-anchor="middle" font-size="18" fill="#5b21b6" font-weight="bold">2</text>
+<text x="120" y="206" text-anchor="start" font-size="15" fill="#1e293b" font-weight="bold">2. Show examples</text>
+<text x="120" y="230" text-anchor="start" font-size="12" fill="#64748b">Two or three input/output pairs teach format and tone faster than paragraphs.</text>
+<rect x="40" y="260" width="52" height="52" rx="26" fill="#ccfbf1" stroke="#0d9488"/>
+<text x="66" y="293" text-anchor="middle" font-size="18" fill="#115e59" font-weight="bold">3</text>
+<text x="120" y="288" text-anchor="start" font-size="15" fill="#1e293b" font-weight="bold">3. Structure with XML tags</text>
+<text x="120" y="312" text-anchor="start" font-size="12" fill="#64748b">&lt;context&gt;, &lt;instructions&gt;, &lt;examples&gt;: parseable landmarks for long prompts.</text>
+<rect x="40" y="342" width="52" height="52" rx="26" fill="#fef3c7" stroke="#d97706"/>
+<text x="66" y="375" text-anchor="middle" font-size="18" fill="#92400e" font-weight="bold">4</text>
+<text x="120" y="370" text-anchor="start" font-size="15" fill="#1e293b" font-weight="bold">4. Ask for reasoning</text>
+<text x="120" y="394" text-anchor="start" font-size="12" fill="#64748b">On hard tasks, step-by-step thinking first. Reasoning quality drives answer quality.</text>
+<rect x="40" y="424" width="52" height="52" rx="26" fill="#dcfce7" stroke="#16a34a"/>
+<text x="66" y="457" text-anchor="middle" font-size="18" fill="#166534" font-weight="bold">5</text>
+<text x="120" y="452" text-anchor="start" font-size="15" fill="#1e293b" font-weight="bold">5. Iterate with evals</text>
+<text x="120" y="476" text-anchor="start" font-size="12" fill="#64748b">Every edit gets measured on the dataset, or it did not happen. No superstition.</text>
+</svg>
