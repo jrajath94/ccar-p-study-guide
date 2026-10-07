@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="ahg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#16a34a"/></marker></defs>
+<rect width="900" height="440" rx="14" fill="#ffffff"/>
+<rect x="1" y="1" width="898" height="438" rx="13" fill="none" stroke="#cbd5e1"/>
+<text x="450.0" y="36" text-anchor="middle" font-size="19" font-weight="bold" fill="#1e293b">The lifecycle loop: six stages, three traps</text>
+<text x="450.0" y="62" text-anchor="middle" font-size="13" fill="#64748b">D6 questions live in the transitions between stages, not inside them.</text>
+<rect x="30" y="120" width="128" height="110" rx="10" fill="#f8fafc" stroke="#64748b"/>
+<text x="94" y="152" text-anchor="middle" font-size="12" fill="#94a3b8">1</text>
+<text x="94" y="174" text-anchor="middle" font-size="14" fill="#1e293b" font-weight="bold">identify</text>
+<text x="94" y="198" text-anchor="middle" font-size="11" fill="#64748b">find the AI-shaped</text>
+<text x="94" y="214" text-anchor="middle" font-size="11" fill="#64748b">pain</text>
+<line x1="158" y1="175" x2="172" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="172" y="120" width="128" height="110" rx="10" fill="#f8fafc" stroke="#64748b"/>
+<text x="236" y="152" text-anchor="middle" font-size="12" fill="#94a3b8">2</text>
+<text x="236" y="174" text-anchor="middle" font-size="14" fill="#1e293b" font-weight="bold">design</text>
+<text x="236" y="198" text-anchor="middle" font-size="11" fill="#64748b">smallest thing</text>
+<text x="236" y="214" text-anchor="middle" font-size="11" fill="#64748b">that works</text>
+<line x1="300" y1="175" x2="314" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="314" y="120" width="128" height="110" rx="10" fill="#f8fafc" stroke="#64748b"/>
+<text x="378" y="152" text-anchor="middle" font-size="12" fill="#94a3b8">3</text>
+<text x="378" y="174" text-anchor="middle" font-size="14" fill="#1e293b" font-weight="bold">select</text>
+<text x="378" y="198" text-anchor="middle" font-size="11" fill="#64748b">cheapest tier</text>
+<text x="378" y="214" text-anchor="middle" font-size="11" fill="#64748b">that fits</text>
+<line x1="442" y1="175" x2="456" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="456" y="120" width="128" height="110" rx="10" fill="#f8fafc" stroke="#64748b"/>
+<text x="520" y="152" text-anchor="middle" font-size="12" fill="#94a3b8">4</text>
+<text x="520" y="174" text-anchor="middle" font-size="14" fill="#1e293b" font-weight="bold">evaluate</text>
+<text x="520" y="198" text-anchor="middle" font-size="11" fill="#64748b">prove it on</text>
+<text x="520" y="214" text-anchor="middle" font-size="11" fill="#64748b">golden data</text>
+<line x1="584" y1="175" x2="598" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="598" y="120" width="128" height="110" rx="10" fill="#f8fafc" stroke="#64748b"/>
+<text x="662" y="152" text-anchor="middle" font-size="12" fill="#94a3b8">5</text>
+<text x="662" y="174" text-anchor="middle" font-size="14" fill="#1e293b" font-weight="bold">deploy</text>
+<text x="662" y="198" text-anchor="middle" font-size="11" fill="#64748b">champion and</text>
+<text x="662" y="214" text-anchor="middle" font-size="11" fill="#64748b">challenger</text>
+<line x1="726" y1="175" x2="740" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<rect x="740" y="120" width="128" height="110" rx="10" fill="#f8fafc" stroke="#64748b"/>
+<text x="804" y="152" text-anchor="middle" font-size="12" fill="#94a3b8">6</text>
+<text x="804" y="174" text-anchor="middle" font-size="14" fill="#1e293b" font-weight="bold">maintain</text>
+<text x="804" y="198" text-anchor="middle" font-size="11" fill="#64748b">watch drift,</text>
+<text x="804" y="214" text-anchor="middle" font-size="11" fill="#64748b">retrain</text>
+<line x1="868" y1="175" x2="884" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+<text x="450" y="290" text-anchor="middle" font-size="13" fill="#dc2626">Traps: skipping discovery, shipping without evals, no rollback plan.</text>
+<text x="450.0" y="400" text-anchor="middle" font-size="12" fill="#94a3b8">The loop never ends: maintain feeds back into identify.</text>
+</svg>
