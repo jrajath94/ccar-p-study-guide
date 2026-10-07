@@ -190,6 +190,15 @@ body footer {
   display: none !important;
 }
 
+/* Chapter-plate figures receive a runtime "ds-px" parallax class from the
+   transplanted screen JS (it tags every figure containing an <img>). They are
+   CONTENT and must print: this override beats the chrome-hiding rule above
+   (0-2-2 vs 0-2-1) so the 11 plates are never hidden again. Without it, the
+   rule matches [class*=" ds-"] and print-to-PDF silently drops every plate. */
+body figure.fig[class*="ds-"] {
+  display: block !important;
+}
+
 /* TOC page markers (injected at PDF build time, print only) */
 .page-marker { font-weight: 700; }
 nav.toc .page-marker { float: right; }
@@ -197,8 +206,7 @@ nav.toc .page-marker { float: right; }
 /* Screen preview keeps the same density */
 @media screen {
   body { max-width: 7.5in; margin: 0.5in auto; }
-}
-</style>
+}</style>
 <style id="ds-dark-theme">
 @media screen {
 
