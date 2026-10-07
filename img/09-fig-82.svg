@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" role="img" aria-label="Tier the workload: cheap models do the bulk, strong models handle the hard slice, caching and batch cut the rest">
+  <style>
+    text { font-family: "Charis SIL", Georgia, serif; fill: #ececec; }
+    .small { font-size: 14px; fill: #a8a8a8; }
+    .lbl { font-size: 16px; font-weight: bold; }
+  </style>
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="bold">Tier the workload (the triangle cheat code)</text>
+  <!-- workload bar -->
+  <text x="40" y="70" class="small">100 requests</text>
+  <rect x="40" y="82" width="740" height="54" rx="8" fill="#141414" stroke="#333" stroke-width="1"/>
+  <rect x="40" y="82" width="592" height="54" rx="8" fill="#1a2a1a" stroke="#6cb2ff" stroke-width="1.5"/>
+  <rect x="632" y="82" width="148" height="54" rx="8" fill="#2a1a1a" stroke="#f0b429" stroke-width="1.5"/>
+  <text x="336" y="105" text-anchor="middle" class="lbl">80 bulk &#8594; cheap tier</text>
+  <text x="336" y="126" text-anchor="middle" class="small">small model, cached prompts</text>
+  <text x="706" y="105" text-anchor="middle" class="lbl">20 hard &#8594; strong</text>
+  <text x="706" y="126" text-anchor="middle" class="small">flagship, one pass</text>
+  <!-- worked example -->
+  <rect x="40" y="160" width="740" height="150" rx="8" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+  <text x="65" y="192" font-size="16" font-weight="bold" fill="#f0b429">Worked: 50 extraction workers (Design 3)</text>
+  <text x="65" y="220" class="small">Uniform flagship: 50 agents at $0.018 each = <tspan fill="#ececec" font-weight="bold">~$0.90</tspan></text>
+  <text x="65" y="246" class="small">Tiered: 50 small-tier extractors + flagship orchestrator and critic pass = <tspan fill="#ececec" font-weight="bold">~$0.40</tspan></text>
+  <text x="65" y="272" class="small">Same quality bar, less than half the cost. The binding constraint (accuracy) is met by the critic pass, not by every worker.</text>
+  <text x="65" y="298" class="small">Rule: find the binding constraint, buy the cheapest tier that satisfies it, tier the workload, then cache and batch.</text>
+</svg>
