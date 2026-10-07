@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="480" viewBox="0 0 1120 480" font-family="-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+<rect x="0" y="0" width="1120" height="480" fill="#FFFFFF"/>
+<text x="560" y="40" font-size="22" fill="#163D7A" text-anchor="middle" font-weight="700">Zero Data Retention: what it moves, and what it does not remove</text>
+<!-- left: provider side -->
+<rect x="20" y="70" width="460" height="300" rx="10" fill="#EAF0FA" stroke="#1F5FBF" stroke-width="1.5"/>
+<rect x="20" y="70" width="460" height="52" rx="10" fill="#1F5FBF"/>
+<text x="250" y="102" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="700">Provider side (ZDR on)</text>
+<text x="60" y="160" font-size="15" fill="#24292F">Prompts and outputs are <tspan font-weight="700">not stored</tspan>.</text>
+<text x="60" y="190" font-size="15" fill="#24292F">Not used for training. No abuse-monitoring</text>
+<text x="60" y="220" font-size="15" fill="#24292F">copies kept past the request window.</text>
+<line x1="60" y1="248" x2="440" y2="248" stroke="#D8DEE6" stroke-width="1"/>
+<text x="60" y="280" font-size="15" fill="#0E7C7B">Result: there are no provider logs</text>
+<text x="60" y="310" font-size="15" fill="#0E7C7B">for an auditor to ask for.</text>
+<text x="60" y="344" font-size="14" fill="#5C6570">Good for: privacy posture, data-residency</text>
+<text x="60" y="366" font-size="14" fill="#5C6570">arguments, customer trust.</text>
+<!-- arrow -->
+<polygon points="500,190 560,190 560,170 600,210 560,250 560,230 500,230" fill="#163D7A"/>
+<text x="550" y="280" font-size="13" fill="#163D7A" text-anchor="middle" font-weight="700">the audit</text>
+<text x="550" y="298" font-size="13" fill="#163D7A" text-anchor="middle" font-weight="700">burden moves</text>
+<!-- right: your side -->
+<rect x="640" y="70" width="460" height="300" rx="10" fill="#FFF3E8" stroke="#A15C07" stroke-width="1.5"/>
+<rect x="640" y="70" width="460" height="52" rx="10" fill="#A15C07"/>
+<text x="870" y="102" font-size="17" fill="#FFFFFF" text-anchor="middle" font-weight="700">Your side (your duty)</text>
+<text x="680" y="160" font-size="15" fill="#24292F">You log what the law requires:</text>
+<text x="680" y="190" font-size="15" fill="#24292F">request metadata, decisions made,</text>
+<text x="680" y="220" font-size="15" fill="#24292F">who was notified and when.</text>
+<line x1="680" y1="248" x2="1060" y2="248" stroke="#D8DEE6" stroke-width="1"/>
+<text x="680" y="280" font-size="15" fill="#C0392B">Kept in your VPC and your SIEM,</text>
+<text x="680" y="310" font-size="15" fill="#C0392B">not at the provider.</text>
+<text x="680" y="344" font-size="14" fill="#5C6570">This is the record the auditor reads.</text>
+<text x="680" y="366" font-size="14" fill="#5C6570">Tamper-evident, retention per policy.</text>
+<!-- bottom banner -->
+<rect x="20" y="396" width="1080" height="60" rx="10" fill="#163D7A"/>
+<text x="560" y="432" font-size="16" fill="#FFFFFF" text-anchor="middle" font-weight="600">ZDR removes provider retention. It never removes your audit duty: someone must still be able to prove what the system did.</text>
+</svg>
