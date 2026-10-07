@@ -444,3 +444,17 @@ Raj rejected the v2 PDF: serif fallback rendered, beige panels, ragged-left text
 - Image audit: all 12 webp plates aspect-ratio verified (1.50 / 3.00 native, preserved); SVG panel fills already white; figures sharp, not clipped.
 - Results: crash-course.pdf 238pp, question-bank.pdf 356pp (full content verified: 175 domain + 50 mixed IDs, 4 mocks, drills, diagnostic key, zero duplication). TOC page numbers verified. Metadata stripped.
 - Standing pattern now in force: every generated material gets font + image + visual audit before shipping.
+
+## SHIPPED (2026-10-07 ~00:10 UTC)
+- crash-course.pdf (238pp) + question-bank.pdf (356pp): 12/16/20pt, Anthropic Sans embedded, justified, white, 1.4 line height, colors audited, chrome leaks fixed, images aspect-true.
+- Zip rebuilt (7.1MB, 19 files). Pushed to jrajath94/ccar-p-study-guide; remote byte-verified FULLY IN SYNC (7/7 root files + 12/12 img-v2).
+- Audit pattern applied: font embed check + visual page inspection + TOC verification + content completeness check on every generation.
+
+## PDF rebuild: dropped-plate-figures bug found and fixed (2026-10-06 ~20:15-20:45 EDT, during Raj's 12/16/20pt + Anthropic Sans + color-audit rebuild)
+
+- While re-verifying this rebuild, the fresh build's PDF had only 1/12 images embedded (238pp) — the 11 webp chapter plates were silently missing. The previously "shipped" 238pp PDF had the same defect: only the cover image embedded.
+- Root cause: the transplanted screen JS adds a `ds-px` parallax class at runtime to every `figure` containing an `<img>` (line ~31442). The print rule hiding transplanted ds-* chrome (`body [class*=" ds-"]` -> `display: none !important`) therefore matched every chapter-plate figure (`class="fig reveal ds-px"`) and hid all 11 plates in print. SVG figures (no `<img>`) and the cover (not in a figure) were unaffected — exactly the observed pattern.
+- Fix in v2-build/print.css (source of truth, re-injected into both HTMLs): `body figure.fig[class*="ds-"] { display: block !important; }` placed after the chrome-hiding rule (specificity 0-2-2 beats 0-2-1), so plate figures always print.
+- Build hardening in v2-build/build_pdf.py: (1) `render_with_images()` — after pass-2 render, counts embedded raster XObjects via pypdf against the expected img-v2 count from the HTML; re-renders up to 3x, raises instead of silently shipping a plateless PDF. (2) `render()` now waits for every `<img>` to decode plus a settle beat before print-to-PDF (file:// images can lag networkidle).
+- Results: crash-course.pdf 243pp (12/12 images, first try), question-bank.pdf 356pp (1/1). pypdf: AnthropicSans-Bold + AnthropicSansWeb-TextRegular subsets embedded in both; Producer/Creator stripped. 816 + 26 named destinations; TOC page numbers spot-verified. Visual audit (cover, TOC, body, 3 plate pages incl. wide d1, takeaway, code): clean Anthropic Sans, justified, white, ink links, plates sharp at native aspect (1.50 / 3.00), takeaway/code/table contrast strong.
+- Note: the earlier 238pp "shipped" PDF was missing 11 plates — this rebuild replaces it. Page count moved 238 -> 243 with plates correctly laid out.
