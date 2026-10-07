@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" font-family="'Charis SIL', Georgia, 'Times New Roman', serif">
+<rect width="900" height="430" rx="14" fill="#1e293b"/>
+<text x="450" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#e8e6e1">All four must hold, or write the if-statement</text>
+<text x="450" y="62" text-anchor="middle" font-size="13" fill="#9fb0c3">The AI-shaped test: one failed condition diverts to the NO-GO card.</text>
+<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#64748b"/></marker><marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#2563eb"/></marker><marker id="ahr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#dc2626"/></marker><marker id="aht" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L0,9 L9,4.5 z" fill="#0d9488"/></marker></defs>
+<rect x="24" y="88" width="200" height="128" rx="10" fill="#28303d" stroke="#2563eb" stroke-width="1.5"/>
+<text x="124" y="118" text-anchor="middle" font-size="15" font-weight="bold" fill="#cfe3ff">Messy input</text>
+<text x="124" y="140" text-anchor="middle" font-size="12.5" fill="#9fb0c3">language or messy data,</text>
+<text x="124" y="160" text-anchor="middle" font-size="12.5" fill="#9fb0c3">not a clean table</text>
+<rect x="240" y="88" width="200" height="128" rx="10" fill="#28303d" stroke="#2563eb" stroke-width="1.5"/>
+<text x="340" y="118" text-anchor="middle" font-size="15" font-weight="bold" fill="#cfe3ff">No if-statement</text>
+<text x="340" y="140" text-anchor="middle" font-size="12.5" fill="#9fb0c3">you cannot write</text>
+<text x="340" y="160" text-anchor="middle" font-size="12.5" fill="#9fb0c3">the rule as code</text>
+<rect x="456" y="88" width="200" height="128" rx="10" fill="#28303d" stroke="#2563eb" stroke-width="1.5"/>
+<text x="556" y="118" text-anchor="middle" font-size="15" font-weight="bold" fill="#cfe3ff">Checkable cost</text>
+<text x="556" y="140" text-anchor="middle" font-size="12.5" fill="#9fb0c3">a wrong answer has</text>
+<text x="556" y="160" text-anchor="middle" font-size="12.5" fill="#9fb0c3">a bounded cost</text>
+<rect x="672" y="88" width="200" height="128" rx="10" fill="#28303d" stroke="#2563eb" stroke-width="1.5"/>
+<text x="772" y="118" text-anchor="middle" font-size="15" font-weight="bold" fill="#cfe3ff">Verifier exists</text>
+<text x="772" y="140" text-anchor="middle" font-size="12.5" fill="#9fb0c3">something checks</text>
+<text x="772" y="160" text-anchor="middle" font-size="12.5" fill="#9fb0c3">the output</text>
+<polygon points="450,252 530,300 450,348 370,300" fill="#28303d" stroke="#64748b" stroke-width="1.5"/>
+<text x="450" y="294" text-anchor="middle" font-size="14" font-weight="bold" fill="#e8e6e1">All four?</text>
+<text x="450" y="314" text-anchor="middle" font-size="12" fill="#9fb0c3">every one</text>
+<line x1="124" y1="216" x2="450" y2="252" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="340" y1="216" x2="450" y2="252" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="556" y1="216" x2="450" y2="252" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<line x1="772" y1="216" x2="450" y2="252" stroke="#64748b" stroke-width="1.5" marker-end="url(#ah)"/>
+<rect x="620" y="262" width="240" height="76" rx="10" fill="#28303d" stroke="#0d9488" stroke-width="1.5"/>
+<text x="740" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#7ee0d2">GO: reach for the model</text>
+<text x="740" y="314" text-anchor="middle" font-size="12" fill="#9fb0c3">design the system</text>
+<line x1="530" y1="300" x2="620" y2="300" stroke="#0d9488" stroke-width="1.5" marker-end="url(#aht)"/>
+<rect x="40" y="262" width="240" height="76" rx="10" fill="#28303d" stroke="#dc2626" stroke-width="1.5"/>
+<text x="160" y="292" text-anchor="middle" font-size="14" font-weight="bold" fill="#fca5a5">NO-GO: write the if-statement</text>
+<text x="160" y="314" text-anchor="middle" font-size="12" fill="#9fb0c3">rules engine, regex, lookup table</text>
+<line x1="370" y1="300" x2="280" y2="300" stroke="#dc2626" stroke-width="1.5" marker-end="url(#ahr)"/>
+</svg>
