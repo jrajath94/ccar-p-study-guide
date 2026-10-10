@@ -1,0 +1,691 @@
+{
+ "itemId": "04-evaluation-testing-optimization",
+ "itemKind": "lesson",
+ "revision": "815c779e85dea4b570785e55a9a8f9bbb8ecd4fdf86b24a71554d87952935c3f",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "04-evaluation-testing-optimization-intro",
+   "blocks": [
+    {
+     "anchor": "04-evaluation-testing-optimization-intro-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "04-evaluation-testing-optimization-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "04-evaluation-testing-optimization-intro-p01",
+     "definition": "A builder who ships demos without measurement or tests.",
+     "term": "demo builder"
+    },
+    {
+     "anchor": "04-evaluation-testing-optimization-intro-p02",
+     "definition": "Built around stories plus constraints, rewarding evidence.",
+     "term": "scenario based"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "04-evaluation-testing-optimization-intro-p01",
+     "answer": "Whether you can run a production Claude system like an engineer: measure quality, catch hidden failures, pick the right test, trade cost, latency, and quality on purpose.",
+     "id": "04-evaluation-testing-optimization-intro-r1",
+     "question": "What does this domain test?"
+    }
+   ],
+   "title": "Evaluation, Testing and Optimization"
+  },
+  {
+   "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces",
+   "blocks": [
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-p10",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-end",
+   "keyTerms": [
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-p02",
+     "definition": "The dial controlling how adventurous the model's word choices are.",
+     "term": "temperature"
+    },
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-p02",
+     "definition": "The random draw itself: every output samples the model's distribution.",
+     "term": "sampling"
+    },
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-p03",
+     "definition": "Unit tests asserting exact output text; they fail on correct answers.",
+     "term": "exact-match assertions"
+    },
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-aside03",
+     "definition": "Tests on output properties like faithfulness, schema, or tool choice.",
+     "term": "property checks"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-p03",
+     "answer": "The same prompt returns two different wordings that can both be correct. Test properties of the output, not its exact text.",
+     "id": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-r1",
+     "question": "Why do exact-match assertions fail on model output?"
+    },
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-p07",
+     "answer": "Fix the model version, set temperature low or to zero, and fix the random seed where the API allows it.",
+     "id": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-r2",
+     "question": "How do you pin down nondeterminism for evals?"
+    },
+    {
+     "anchor": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-p10",
+     "answer": "Deterministic parts get deterministic tests; the generative core gets property checks and statistics.",
+     "id": "1-why-testing-a-generative-system-feels-wrong-and-what-replaces-r3",
+     "question": "What is the rule to carry?"
+    }
+   ],
+   "title": "1. Why testing a generative system feels wrong (and what replaces the old tools)"
+  },
+  {
+   "anchor": "2-the-eval-flywheel-why-evaluation-comes-first",
+   "blocks": [
+    {
+     "anchor": "2-the-eval-flywheel-why-evaluation-comes-first-p08",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "2-the-eval-flywheel-why-evaluation-comes-first-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "2-the-eval-flywheel-why-evaluation-comes-first-end",
+   "keyTerms": [
+    {
+     "anchor": "2-the-eval-flywheel-why-evaluation-comes-first-p01",
+     "definition": "Scoring your system on a fixed set of test cases to compare versions.",
+     "term": "eval"
+    },
+    {
+     "anchor": "2-the-eval-flywheel-why-evaluation-comes-first-p01",
+     "definition": "The fixed cases every version gets measured against.",
+     "term": "fixed test set"
+    },
+    {
+     "anchor": "2-the-eval-flywheel-why-evaluation-comes-first-p04",
+     "definition": "The eval run after a model version change to catch breakage.",
+     "term": "regression eval"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "2-the-eval-flywheel-why-evaluation-comes-first-p02",
+     "answer": "A demo shows what the system can do once. An eval scores it on a fixed set of cases, showing what it does every time.",
+     "id": "2-the-eval-flywheel-why-evaluation-comes-first-r1",
+     "question": "Eval versus demo?"
+    },
+    {
+     "anchor": "2-the-eval-flywheel-why-evaluation-comes-first-p08",
+     "answer": "Before launch, after every change, and continuously in production. A team that evals once has a snapshot; always has a steering wheel.",
+     "id": "2-the-eval-flywheel-why-evaluation-comes-first-r2",
+     "question": "When do evals run?"
+    },
+    {
+     "anchor": "2-the-eval-flywheel-why-evaluation-comes-first-p07",
+     "answer": "Propose a fixed eval set and compare both versions on it.",
+     "id": "2-the-eval-flywheel-why-evaluation-comes-first-r3",
+     "question": "Two engineers argue with hand-picked examples. What is the credited answer?"
+    }
+   ],
+   "title": "2. The eval flywheel: why evaluation comes first"
+  },
+  {
+   "anchor": "3-defining-metrics-measure-what-the-task-actually-needs",
+   "blocks": [
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-p16",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "3-defining-metrics-measure-what-the-task-actually-needs-end",
+   "keyTerms": [
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-p05",
+     "definition": "Of everything flagged, how many were correct.",
+     "term": "precision"
+    },
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-p05",
+     "definition": "Of everything that should have been flagged, how many were caught.",
+     "term": "recall"
+    },
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-p05",
+     "definition": "The harmonic mean of precision and recall.",
+     "term": "F1"
+    },
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-p13",
+     "definition": "Metrics computed per slice of the data, not just as an average.",
+     "term": "segmented"
+    },
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-aside06",
+     "definition": "Metrics that must not regress while you optimize the primary one.",
+     "term": "guardrail metrics"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-p05",
+     "answer": "Precision: of flagged, how many correct. Recall: of should-have-flagged, how many caught. F1: the harmonic mean, punishing lopsidedness.",
+     "id": "3-defining-metrics-measure-what-the-task-actually-needs-r1",
+     "question": "Precision versus recall versus F1?"
+    },
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-p12",
+     "answer": "No. The Privacy segment fails the bar while the average hides it. Measure per segment and fix failing segments first.",
+     "id": "3-defining-metrics-measure-what-the-task-actually-needs-r2",
+     "question": "96% overall, Privacy segment 90%, bar 95% per type. Go live?"
+    },
+    {
+     "anchor": "3-defining-metrics-measure-what-the-task-actually-needs-p17",
+     "answer": "Metrics that must not regress while you optimize: safety rate, p95 latency, cost per request.",
+     "id": "3-defining-metrics-measure-what-the-task-actually-needs-r3",
+     "question": "What are guardrail metrics?"
+    }
+   ],
+   "title": "3. Defining metrics: measure what the task actually needs"
+  },
+  {
+   "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold",
+   "blocks": [
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-p19",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-end",
+   "keyTerms": [
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-p01",
+     "definition": "A fixed set of inputs with known good answers, curated by hand.",
+     "term": "golden dataset"
+    },
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-p02",
+     "definition": "The subset run after every change to prove nothing broke.",
+     "term": "regression suite"
+    },
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-p03",
+     "definition": "Deterministic exact-match tests on the non-generative pipeline parts.",
+     "term": "functional checks"
+    },
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-aside05",
+     "definition": "Test cases leaking into prompts or training data, inflating scores.",
+     "term": "contamination"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-p04",
+     "answer": "Functional checks first on every commit, then the golden dataset, then the test framework harness that runs and scores it.",
+     "id": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-r1",
+     "question": "What are the three eval layers, in order?"
+    },
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-p19",
+     "answer": "Test cases leaking into prompts, few-shot examples, or fine-tuning data inflates scores and hides real weakness. Keep them strictly separate.",
+     "id": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-r2",
+     "question": "What is the contamination rule?"
+    },
+    {
+     "anchor": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-p16",
+     "answer": "200 to 500 cases covering every segment. At 90% on 200 cases the confidence interval is roughly plus or minus 4 points.",
+     "id": "4-eval-datasets-and-test-frameworks-checks-first-then-gold-r3",
+     "question": "How big should the golden set be?"
+    }
+   ],
+   "title": "4. Eval datasets and test frameworks: checks first, then gold"
+  },
+  {
+   "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly",
+   "blocks": [
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-p14",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-end",
+   "keyTerms": [
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-p02",
+     "definition": "Using one model to grade another's output against a rubric.",
+     "term": "LLM-as-judge"
+    },
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-p02",
+     "definition": "The scoring guide given to the judge with the input and output.",
+     "term": "rubric"
+    },
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-p01",
+     "definition": "Checking the judge against human graders on a shared sample.",
+     "term": "calibration"
+    },
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-p10",
+     "definition": "Agreement beyond chance; above 0.8 is strong for a judge.",
+     "term": "Cohen's kappa"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-p02",
+     "answer": "One language model grades another's output with a rubric, returning a score plus reasoning. Cheap at scale, untrustworthy uncalibrated.",
+     "id": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-r1",
+     "question": "What is LLM-as-judge?"
+    },
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-fig02",
+     "answer": "Self preference, verbosity bias, position bias, and drift over time.",
+     "id": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-r2",
+     "question": "Name the four judge biases."
+    },
+    {
+     "anchor": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-p10",
+     "answer": "Score 100 to 200 outputs with humans and the judge on the same rubric, then compute Cohen's kappa. Above 0.8 is strong; below 0.6 needs work.",
+     "id": "5-llm-as-judge-a-powerful-grader-you-must-not-trust-blindly-r3",
+     "question": "How do you calibrate a judge?"
+    }
+   ],
+   "title": "5. LLM-as-judge: a powerful grader you must not trust blindly"
+  },
+  {
+   "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo",
+   "blocks": [
+    {
+     "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-p15",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-end",
+   "keyTerms": [
+    {
+     "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-p01",
+     "definition": "Stating false or unverifiable things as fact, with full confidence.",
+     "term": "hallucination"
+    },
+    {
+     "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-p01",
+     "definition": "The model misunderstands or ignores instructions it could follow.",
+     "term": "prompt failure"
+    },
+    {
+     "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-p01",
+     "definition": "The task exceeds what the chosen model can do.",
+     "term": "model mismatch"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-p02",
+     "answer": "Hallucination: invents facts confidently. Prompt failure: ignores instructions. Model mismatch: the task exceeds the model.",
+     "id": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-r1",
+     "question": "Name the three causes and their signatures."
+    },
+    {
+     "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-p10",
+     "answer": "Ground it with retrieval and citations. A bigger model hallucinates too, just more fluently.",
+     "id": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-r2",
+     "question": "The model invents case law. What is the fix?"
+    },
+    {
+     "anchor": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-p15",
+     "answer": "The claim that bad output means a better model. Model upgrades do not cure prompt failures or ungrounded generation.",
+     "id": "6-diagnosing-system-issues-hallucination-vs-prompt-failure-vs-mo-r3",
+     "question": "What is the most expensive distractor?"
+    }
+   ],
+   "title": "6. Diagnosing system issues: hallucination vs prompt failure vs model mismatch"
+  },
+  {
+   "anchor": "7-a-b-testing-and-iterative-improvement",
+   "blocks": [
+    {
+     "anchor": "7-a-b-testing-and-iterative-improvement-p12",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "7-a-b-testing-and-iterative-improvement-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "7-a-b-testing-and-iterative-improvement-end",
+   "keyTerms": [
+    {
+     "anchor": "7-a-b-testing-and-iterative-improvement-p02",
+     "definition": "Splitting live traffic randomly between control and variant, then comparing.",
+     "term": "A/B test"
+    },
+    {
+     "anchor": "7-a-b-testing-and-iterative-improvement-p10",
+     "definition": "Checking results early and stopping when B looks good; it inflates false wins.",
+     "term": "peeking"
+    },
+    {
+     "anchor": "7-a-b-testing-and-iterative-improvement-aside03",
+     "definition": "Randomizing by user so each user stays in one arm.",
+     "term": "sticky bucketing"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "7-a-b-testing-and-iterative-improvement-p02",
+     "answer": "Split live traffic randomly between the current system and a changed version, then compare them on the same metrics.",
+     "id": "7-a-b-testing-and-iterative-improvement-r1",
+     "question": "What is an A/B test?"
+    },
+    {
+     "anchor": "7-a-b-testing-and-iterative-improvement-p10",
+     "answer": "Checking results daily and stopping the moment B looks good inflates false wins. Decide the runtime or sample target in advance.",
+     "id": "7-a-b-testing-and-iterative-improvement-r2",
+     "question": "What is peeking and why is it banned?"
+    },
+    {
+     "anchor": "7-a-b-testing-and-iterative-improvement-p12",
+     "answer": "The claim that a quality win alone means ship. Not until the guardrails clear: a better answer that leaks PII fails the test.",
+     "id": "7-a-b-testing-and-iterative-improvement-r3",
+     "question": "What is the guardrail rule?"
+    }
+   ],
+   "title": "7. A/B testing and iterative improvement"
+  },
+  {
+   "anchor": "8-token-latency-and-cost-optimization",
+   "blocks": [
+    {
+     "anchor": "8-token-latency-and-cost-optimization-p19",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "8-token-latency-and-cost-optimization-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "8-token-latency-and-cost-optimization-end",
+   "keyTerms": [
+    {
+     "anchor": "8-token-latency-and-cost-optimization-fig02",
+     "definition": "Reusing a prompt's processed prefix across requests at a tenth of the price.",
+     "term": "prompt caching"
+    },
+    {
+     "anchor": "8-token-latency-and-cost-optimization-aside05",
+     "definition": "Grouping delay-tolerant work for roughly half-price processing.",
+     "term": "batching"
+    },
+    {
+     "anchor": "8-token-latency-and-cost-optimization-aside06",
+     "definition": "Summarizing old turns so growing conversations stay affordable.",
+     "term": "compaction"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "8-token-latency-and-cost-optimization-p15",
+     "answer": "Caching first, output discipline and retrieval right-sizing second, routing third, batching fourth, model downgrade last.",
+     "id": "8-token-latency-and-cost-optimization-r1",
+     "question": "What is the optimization order?"
+    },
+    {
+     "anchor": "8-token-latency-and-cost-optimization-p12",
+     "answer": "Cache writes cost 1.25x, reads cost 0.1x. The first reuse of the prefix repays the write premium.",
+     "id": "8-token-latency-and-cost-optimization-r2",
+     "question": "What are the cache price numbers?"
+    },
+    {
+     "anchor": "8-token-latency-and-cost-optimization-p19",
+     "answer": "Retries are the hidden multiplier: a cheap model with a 30% retry rate can cost more than an expensive model that nails it first try.",
+     "id": "8-token-latency-and-cost-optimization-r3",
+     "question": "Why can a bigger model beat a cheaper one on cost?"
+    }
+   ],
+   "title": "8. Token, latency and cost optimization"
+  },
+  {
+   "anchor": "9-observability-and-monitoring-seeing-the-system-in-production",
+   "blocks": [
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-p14",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "9-observability-and-monitoring-seeing-the-system-in-production-end",
+   "keyTerms": [
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-p03",
+     "definition": "The story of one request, told as nested spans.",
+     "term": "trace"
+    },
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-p03",
+     "definition": "One timed operation inside a trace, nested inside its parent.",
+     "term": "span"
+    },
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-p07",
+     "definition": "Personally identifiable information: names, emails, account numbers, health details.",
+     "term": "PII"
+    },
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-fig04",
+     "definition": "Removing or masking PII before storing or shipping logs.",
+     "term": "redaction"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-p02",
+     "answer": "Logging records events. Observability reconstructs the full story of a request from data collected in advance.",
+     "id": "9-observability-and-monitoring-seeing-the-system-in-production-r1",
+     "question": "Logging versus observability?"
+    },
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-p07",
+     "answer": "Log structure, timing, versions, tokens, and cost. Redact PII, credentials, and raw user content.",
+     "id": "9-observability-and-monitoring-seeing-the-system-in-production-r2",
+     "question": "What gets logged and what gets redacted?"
+    },
+    {
+     "anchor": "9-observability-and-monitoring-seeing-the-system-in-production-p12",
+     "answer": "Dashboards segmented by version and segment, then traces of failing requests, then the eval suite to confirm.",
+     "id": "9-observability-and-monitoring-seeing-the-system-in-production-r3",
+     "question": "Quality dropped in production. What is the credited path?"
+    }
+   ],
+   "title": "9. Observability and monitoring: seeing the system in production"
+  },
+  {
+   "anchor": "exam-checklist-d4-in-one-page",
+   "blocks": [
+    {
+     "anchor": "exam-checklist-d4-in-one-page-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "exam-checklist-d4-in-one-page-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "exam-checklist-d4-in-one-page-end",
+   "keyTerms": [
+    {
+     "anchor": "exam-checklist-d4-in-one-page-p02",
+     "definition": "Trusting one aggregate number instead of sliced evidence.",
+     "term": "single number"
+    },
+    {
+     "anchor": "exam-checklist-d4-in-one-page-p02",
+     "definition": "Metrics that must not regress: safety, latency, cost.",
+     "term": "guardrails"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "exam-checklist-d4-in-one-page-p02",
+     "answer": "Measure before you act, and distrust the single number.",
+     "id": "exam-checklist-d4-in-one-page-r1",
+     "question": "What instinct does D4 reward above all?"
+    },
+    {
+     "anchor": "exam-checklist-d4-in-one-page-p03",
+     "answer": "Properties over exact matches, the eval flywheel, metrics matched to tasks, calibrated judges, disciplined A/B tests, optimization in order.",
+     "id": "exam-checklist-d4-in-one-page-r2",
+     "question": "What is the D4 toolkit in one line?"
+    }
+   ],
+   "title": "Exam checklist: D4 in one page"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

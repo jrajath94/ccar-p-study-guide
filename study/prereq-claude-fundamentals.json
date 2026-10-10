@@ -1,0 +1,1128 @@
+{
+ "itemId": "prereq-claude-fundamentals",
+ "itemKind": "lesson",
+ "revision": "7e5c02dc856e95c3fdfd4df4e9ba3f7a2ec8c775ef710485887992d1d0dcbf70",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "prereq-claude-fundamentals-intro",
+   "blocks": [
+    {
+     "anchor": "prereq-claude-fundamentals-intro-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "prereq-claude-fundamentals-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "prereq-claude-fundamentals-intro-p01",
+     "definition": "The one endpoint everything else in this volume builds on.",
+     "term": "Messages"
+    },
+    {
+     "anchor": "prereq-claude-fundamentals-intro-p01",
+     "definition": "The permanent place for the rules Claude follows.",
+     "term": "system prompts"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prereq-claude-fundamentals-intro-p01",
+     "answer": "The Claude API for a CCAR-P candidate: keys, Messages, system prompts, tools, thinking, caching, batches, embeddings, safety, prompt engineering.",
+     "id": "prereq-claude-fundamentals-intro-r1",
+     "question": "What does this volume cover?"
+    }
+   ],
+   "title": "PREREQUISITE: CLAUDE DEVELOPER FUNDAMENTALS"
+  },
+  {
+   "anchor": "how-to-use-this-volume",
+   "blocks": [
+    {
+     "anchor": "how-to-use-this-volume-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "how-to-use-this-volume-end",
+   "keyTerms": [
+    {
+     "anchor": "how-to-use-this-volume-p01",
+     "definition": "Each topic taught rung by rung, one layer of depth at a time.",
+     "term": "visual ladder"
+    },
+    {
+     "anchor": "how-to-use-this-volume-p02",
+     "definition": "The unit quiz; answer from memory before looking at answers.",
+     "term": "knowledge check"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "how-to-use-this-volume-p02",
+     "answer": "Read it once front to back; answer each unit's knowledge check from memory before looking at answers.",
+     "id": "how-to-use-this-volume-r1",
+     "question": "How do you study this volume?"
+    }
+   ],
+   "title": "HOW TO USE THIS VOLUME"
+  },
+  {
+   "anchor": "what-claude-is-predictions-over-tokens",
+   "blocks": [
+    {
+     "anchor": "what-claude-is-predictions-over-tokens-p10",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "what-claude-is-predictions-over-tokens-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "what-claude-is-predictions-over-tokens-end",
+   "keyTerms": [
+    {
+     "anchor": "what-claude-is-predictions-over-tokens-p01",
+     "definition": "A chunk of text, roughly four characters; the interface and billing unit.",
+     "term": "token"
+    },
+    {
+     "anchor": "what-claude-is-predictions-over-tokens-p04",
+     "definition": "How many tokens fit in one request: 200K to 1M on current models.",
+     "term": "context window"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "what-claude-is-predictions-over-tokens-p01",
+     "answer": "A large language model that predicts the most probable next token, over and over, until it stops.",
+     "id": "what-claude-is-predictions-over-tokens-r1",
+     "question": "What is Claude, in one sentence?"
+    },
+    {
+     "anchor": "what-claude-is-predictions-over-tokens-p07",
+     "answer": "Context window, max_tokens, and price per token in and out.",
+     "id": "what-claude-is-predictions-over-tokens-r2",
+     "question": "What are the three numbers that run this volume?"
+    }
+   ],
+   "title": "WHAT CLAUDE IS: PREDICTIONS OVER TOKENS"
+  },
+  {
+   "anchor": "your-api-key-is-the-front-door",
+   "blocks": [
+    {
+     "anchor": "your-api-key-is-the-front-door-p05",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "your-api-key-is-the-front-door-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "your-api-key-is-the-front-door-end",
+   "keyTerms": [
+    {
+     "anchor": "your-api-key-is-the-front-door-p01",
+     "definition": "The credential every API call needs; a password that buys answers.",
+     "term": "API key"
+    },
+    {
+     "anchor": "your-api-key-is-the-front-door-p05",
+     "definition": "Where the key lives: ANTHROPIC_API_KEY, loaded by the SDK.",
+     "term": "environment variable"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "your-api-key-is-the-front-door-p05",
+     "answer": "In an environment variable, ANTHROPIC_API_KEY, loaded by the SDK. Never in code or git.",
+     "id": "your-api-key-is-the-front-door-r1",
+     "question": "Where does the key live?"
+    },
+    {
+     "anchor": "your-api-key-is-the-front-door-p03",
+     "answer": "Anyone with the key spends your money. Rotate it at console.anthropic.com immediately.",
+     "id": "your-api-key-is-the-front-door-r2",
+     "question": "What do you do if the key leaks?"
+    }
+   ],
+   "title": "Your API key is the front door"
+  },
+  {
+   "anchor": "your-first-api-call-the-messages-api",
+   "blocks": [
+    {
+     "anchor": "your-first-api-call-the-messages-api-p06",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "your-first-api-call-the-messages-api-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "your-first-api-call-the-messages-api-end",
+   "keyTerms": [
+    {
+     "anchor": "your-first-api-call-the-messages-api-fig01",
+     "definition": "Why the process stopped: end_turn, max_tokens, tool_use, stop_sequence.",
+     "term": "stop_reason"
+    },
+    {
+     "anchor": "your-first-api-call-the-messages-api-p06",
+     "definition": "The API remembers nothing between calls; each request stands alone.",
+     "term": "stateless"
+    },
+    {
+     "anchor": "your-first-api-call-the-messages-api-p08",
+     "definition": "Ending with an assistant message so Claude continues from that text.",
+     "term": "prefill"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "your-first-api-call-the-messages-api-p06",
+     "answer": "It remembers nothing between calls; each request stands alone.",
+     "id": "your-first-api-call-the-messages-api-r1",
+     "question": "What makes the Messages API stateless?"
+    },
+    {
+     "anchor": "your-first-api-call-the-messages-api-p03",
+     "answer": "Model, max_tokens, and the messages array.",
+     "id": "your-first-api-call-the-messages-api-r2",
+     "question": "What three items does the first call send?"
+    }
+   ],
+   "title": "Your first API call: the Messages API"
+  },
+  {
+   "anchor": "system-prompts-the-rules-behind-the-curtain",
+   "blocks": [
+    {
+     "anchor": "system-prompts-the-rules-behind-the-curtain-p07",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "system-prompts-the-rules-behind-the-curtain-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "system-prompts-the-rules-behind-the-curtain-end",
+   "keyTerms": [
+    {
+     "anchor": "system-prompts-the-rules-behind-the-curtain-p01",
+     "definition": "The permanent place for the rules Claude follows.",
+     "term": "system prompt"
+    },
+    {
+     "anchor": "system-prompts-the-rules-behind-the-curtain-fig01",
+     "definition": "Persona, rules, format: what belongs in the system prompt.",
+     "term": "stable contract"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "system-prompts-the-rules-behind-the-curtain-p07",
+     "answer": "The stable contract: persona, rules, format. Per-request data goes in messages.",
+     "id": "system-prompts-the-rules-behind-the-curtain-r1",
+     "question": "What goes in the system prompt?"
+    },
+    {
+     "anchor": "system-prompts-the-rules-behind-the-curtain-p08",
+     "answer": "Volatile content changes the prefix on every call and kills the cache hit rate silently.",
+     "id": "system-prompts-the-rules-behind-the-curtain-r2",
+     "question": "Why does volatile content not belong in the system prompt?"
+    }
+   ],
+   "title": "System prompts: the rules behind the curtain"
+  },
+  {
+   "anchor": "multi-turn-you-are-the-memory",
+   "blocks": [
+    {
+     "anchor": "multi-turn-you-are-the-memory-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "multi-turn-you-are-the-memory-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "multi-turn-you-are-the-memory-end",
+   "keyTerms": [
+    {
+     "anchor": "multi-turn-you-are-the-memory-p08",
+     "definition": "Summarizing old turns into one block for long conversations.",
+     "term": "compaction"
+    },
+    {
+     "anchor": "multi-turn-you-are-the-memory-p08",
+     "definition": "Tool outputs, riding inside user-role messages in the same array.",
+     "term": "tool_result"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "multi-turn-you-are-the-memory-p05",
+     "answer": "Resend the whole history plus the new turn; your application owns the messages array.",
+     "id": "multi-turn-you-are-the-memory-r1",
+     "question": "How do you hold a conversation?"
+    },
+    {
+     "anchor": "multi-turn-you-are-the-memory-p08",
+     "answer": "Summarizing old turns into one block, or keeping only a recent window, for long conversations.",
+     "id": "multi-turn-you-are-the-memory-r2",
+     "question": "What is compaction?"
+    }
+   ],
+   "title": "Multi-turn: You Are The Memory"
+  },
+  {
+   "anchor": "sampling-parameters-temperature-top-p-top-k",
+   "blocks": [
+    {
+     "anchor": "sampling-parameters-temperature-top-p-top-k-p06",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "sampling-parameters-temperature-top-p-top-k-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "sampling-parameters-temperature-top-p-top-k-end",
+   "keyTerms": [
+    {
+     "anchor": "sampling-parameters-temperature-top-p-top-k-p01",
+     "definition": "A dial from 0.0 to 1.0 controlling randomness; 0 is deterministic.",
+     "term": "temperature"
+    },
+    {
+     "anchor": "sampling-parameters-temperature-top-p-top-k-p01",
+     "definition": "Samples from the smallest token set whose combined probability passes the value.",
+     "term": "top_p"
+    },
+    {
+     "anchor": "sampling-parameters-temperature-top-p-top-k-p07",
+     "definition": "Sampling from the nucleus of most probable tokens.",
+     "term": "nucleus sampling"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "sampling-parameters-temperature-top-p-top-k-p06",
+     "answer": "Deterministic, reproducible output for graded or structured work.",
+     "id": "sampling-parameters-temperature-top-p-top-k-r1",
+     "question": "What does temperature=0 give you?"
+    },
+    {
+     "anchor": "sampling-parameters-temperature-top-p-top-k-p07",
+     "answer": "One or the other, not both at the same time.",
+     "id": "sampling-parameters-temperature-top-p-top-k-r2",
+     "question": "Temperature or top_p: which do you tune?"
+    }
+   ],
+   "title": "Sampling parameters: temperature, top_p, top_k"
+  },
+  {
+   "anchor": "tool-use-giving-claude-hands",
+   "blocks": [
+    {
+     "anchor": "tool-use-giving-claude-hands-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "tool-use-giving-claude-hands-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "tool-use-giving-claude-hands-end",
+   "keyTerms": [
+    {
+     "anchor": "tool-use-giving-claude-hands-fig01",
+     "definition": "The block Claude emits to request a tool; your code runs it.",
+     "term": "tool_use"
+    },
+    {
+     "anchor": "tool-use-giving-claude-hands-fig01",
+     "definition": "The block you return with the tool's output and matching ID.",
+     "term": "tool_result"
+    },
+    {
+     "anchor": "tool-use-giving-claude-hands-p11",
+     "definition": "The mandatory loop cap stopping a confused agent from looping forever.",
+     "term": "MAX_TURNS"
+    },
+    {
+     "anchor": "tool-use-giving-claude-hands-p09",
+     "definition": "Auto, any, tool, or none: controlling tool behavior for a turn.",
+     "term": "tool_choice"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "tool-use-giving-claude-hands-p03",
+     "answer": "Your code. Claude only emits tool_use requests; you execute and return tool_result blocks.",
+     "id": "tool-use-giving-claude-hands-r1",
+     "question": "Who runs the tools?"
+    },
+    {
+     "anchor": "tool-use-giving-claude-hands-p23",
+     "answer": "An agent calling tools repeatedly bills you for each lap; the cap stops infinite loops.",
+     "id": "tool-use-giving-claude-hands-r2",
+     "question": "Why is MAX_TURNS mandatory?"
+    }
+   ],
+   "title": "Tool use: giving Claude hands"
+  },
+  {
+   "anchor": "thinking-letting-claude-reason-before-it-speaks",
+   "blocks": [
+    {
+     "anchor": "thinking-letting-claude-reason-before-it-speaks-p07",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "thinking-letting-claude-reason-before-it-speaks-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "thinking-letting-claude-reason-before-it-speaks-end",
+   "keyTerms": [
+    {
+     "anchor": "thinking-letting-claude-reason-before-it-speaks-p01",
+     "definition": "Claude reasoning in a private scratchpad before answering.",
+     "term": "thinking"
+    },
+    {
+     "anchor": "thinking-letting-claude-reason-before-it-speaks-p07",
+     "definition": "The integrity seal on thinking blocks; must round-trip unmodified.",
+     "term": "signature"
+    },
+    {
+     "anchor": "thinking-letting-claude-reason-before-it-speaks-p04",
+     "definition": "On 5.x models, the model decides how much reasoning a task needs.",
+     "term": "adaptive thinking"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "thinking-letting-claude-reason-before-it-speaks-p03",
+     "answer": "A private scratchpad where Claude reasons before answering; reasoning quality drives answer quality.",
+     "id": "thinking-letting-claude-reason-before-it-speaks-r1",
+     "question": "What is thinking?"
+    },
+    {
+     "anchor": "thinking-letting-claude-reason-before-it-speaks-p07",
+     "answer": "Pass the thinking block's signature back unmodified; tampering makes the API reject the call.",
+     "id": "thinking-letting-claude-reason-before-it-speaks-r2",
+     "question": "What is the signature rule?"
+    }
+   ],
+   "title": "Thinking: letting Claude reason before it speaks"
+  },
+  {
+   "anchor": "prompt-caching-pay-for-the-prefix-once",
+   "blocks": [
+    {
+     "anchor": "prompt-caching-pay-for-the-prefix-once-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "prompt-caching-pay-for-the-prefix-once-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "prompt-caching-pay-for-the-prefix-once-end",
+   "keyTerms": [
+    {
+     "anchor": "prompt-caching-pay-for-the-prefix-once-p04",
+     "definition": "The request starts with exactly the cached bytes, in order.",
+     "term": "cache hit"
+    },
+    {
+     "anchor": "prompt-caching-pay-for-the-prefix-once-p04",
+     "definition": "The checkpoint marking what stays cached in the request.",
+     "term": "cache_control"
+    },
+    {
+     "anchor": "prompt-caching-pay-for-the-prefix-once-fig01",
+     "definition": "How long the cached prefix lives: five minutes by default.",
+     "term": "TTL"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "prompt-caching-pay-for-the-prefix-once-p04",
+     "answer": "The request starts with exactly the cached bytes, in order.",
+     "id": "prompt-caching-pay-for-the-prefix-once-r1",
+     "question": "What is a cache hit?"
+    },
+    {
+     "anchor": "prompt-caching-pay-for-the-prefix-once-p13",
+     "answer": "About 2 reads pay back a 5-minute write; about 3 reads pay back a 1-hour write.",
+     "id": "prompt-caching-pay-for-the-prefix-once-r2",
+     "question": "What is the break-even?"
+    }
+   ],
+   "title": "Prompt caching: pay for the prefix once"
+  },
+  {
+   "anchor": "the-batches-api-half-price-next-day",
+   "blocks": [
+    {
+     "anchor": "the-batches-api-half-price-next-day-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "the-batches-api-half-price-next-day-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "the-batches-api-half-price-next-day-end",
+   "keyTerms": [
+    {
+     "anchor": "the-batches-api-half-price-next-day-p01",
+     "definition": "50% off standard prices, answers within 24 hours.",
+     "term": "Batches API"
+    },
+    {
+     "anchor": "the-batches-api-half-price-next-day-p06",
+     "definition": "Your 1-to-64-character request ID, returned with its result.",
+     "term": "custom_id"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "the-batches-api-half-price-next-day-p03",
+     "answer": "Latency does not matter and volume is high: 50% off, results within 24 hours.",
+     "id": "the-batches-api-half-price-next-day-r1",
+     "question": "When do you use the Batches API?"
+    },
+    {
+     "anchor": "the-batches-api-half-price-next-day-p06",
+     "answer": "100,000 requests or 256 MB per batch; results kept 29 days; no streaming.",
+     "id": "the-batches-api-half-price-next-day-r2",
+     "question": "What are the limits?"
+    }
+   ],
+   "title": "The Batches API: Half Price, Next Day"
+  },
+  {
+   "anchor": "embeddings-the-gap-you-must-know-about",
+   "blocks": [
+    {
+     "anchor": "embeddings-the-gap-you-must-know-about-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "embeddings-the-gap-you-must-know-about-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "embeddings-the-gap-you-must-know-about-end",
+   "keyTerms": [
+    {
+     "anchor": "embeddings-the-gap-you-must-know-about-p01",
+     "definition": "Text turned into number lists so you can search by meaning.",
+     "term": "embeddings"
+    },
+    {
+     "anchor": "embeddings-the-gap-you-must-know-about-p05",
+     "definition": "Anthropic's recommended embeddings provider.",
+     "term": "Voyage AI"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "embeddings-the-gap-you-must-know-about-p04",
+     "answer": "None exists. Anthropic has no embeddings API.",
+     "id": "embeddings-the-gap-you-must-know-about-r1",
+     "question": "Which Anthropic endpoint returns embeddings?"
+    },
+    {
+     "anchor": "embeddings-the-gap-you-must-know-about-p05",
+     "answer": "A third-party provider such as Voyage AI, stored in your vector database.",
+     "id": "embeddings-the-gap-you-must-know-about-r2",
+     "question": "What is the documented path?"
+    }
+   ],
+   "title": "Embeddings: The gap you must know about"
+  },
+  {
+   "anchor": "the-model-lineup-practitioner-level",
+   "blocks": [
+    {
+     "anchor": "the-model-lineup-practitioner-level-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "the-model-lineup-practitioner-level-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "the-model-lineup-practitioner-level-end",
+   "keyTerms": [
+    {
+     "anchor": "the-model-lineup-practitioner-level-fig01",
+     "definition": "The price and intelligence step: Haiku, Sonnet, Opus, Fable.",
+     "term": "tier"
+    },
+    {
+     "anchor": "the-model-lineup-practitioner-level-p05",
+     "definition": "IDs like claude-sonnet-5 that track the latest snapshot automatically.",
+     "term": "family ids"
+    },
+    {
+     "anchor": "the-model-lineup-practitioner-level-p05",
+     "definition": "IDs like claude-haiku-4-5-20251001 that pin one exact snapshot.",
+     "term": "dated ids"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "the-model-lineup-practitioner-level-p03",
+     "answer": "By task, not prestige: Haiku for extraction, Sonnet for reasoning, Opus or Fable where being wrong is expensive.",
+     "id": "the-model-lineup-practitioner-level-r1",
+     "question": "How do you pick a tier?"
+    },
+    {
+     "anchor": "the-model-lineup-practitioner-level-p05",
+     "answer": "Family ids track the latest snapshot; dated ids pin one exact snapshot for reproducibility.",
+     "id": "the-model-lineup-practitioner-level-r2",
+     "question": "Family ids versus dated ids?"
+    }
+   ],
+   "title": "The model lineup: practitioner level"
+  },
+  {
+   "anchor": "mcp-the-universal-connector",
+   "blocks": [
+    {
+     "anchor": "mcp-the-universal-connector-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "mcp-the-universal-connector-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "mcp-the-universal-connector-end",
+   "keyTerms": [
+    {
+     "anchor": "mcp-the-universal-connector-p01",
+     "definition": "The standard that turns N x M integrations into N + M.",
+     "term": "MCP"
+    },
+    {
+     "anchor": "mcp-the-universal-connector-p04",
+     "definition": "The application the user touches; controls conversation and permissions.",
+     "term": "host"
+    },
+    {
+     "anchor": "mcp-the-universal-connector-p10",
+     "definition": "MCP inside the API: connectors Anthropic runs on its infrastructure.",
+     "term": "server tools"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "mcp-the-universal-connector-p02",
+     "answer": "The N x M integration problem: each app and each tool implements the standard once.",
+     "id": "mcp-the-universal-connector-r1",
+     "question": "What does MCP solve?"
+    },
+    {
+     "anchor": "mcp-the-universal-connector-p04",
+     "answer": "Host, client, server. The host holds one client for each server.",
+     "id": "mcp-the-universal-connector-r2",
+     "question": "What are the three roles?"
+    }
+   ],
+   "title": "MCP: The Universal Connector"
+  },
+  {
+   "anchor": "claude-code-and-the-agent-sdk-user-level",
+   "blocks": [
+    {
+     "anchor": "claude-code-and-the-agent-sdk-user-level-p09",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "claude-code-and-the-agent-sdk-user-level-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "claude-code-and-the-agent-sdk-user-level-end",
+   "keyTerms": [
+    {
+     "anchor": "claude-code-and-the-agent-sdk-user-level-p01",
+     "definition": "Anthropic's terminal agent: edits code, runs shell, reads your repo.",
+     "term": "Claude Code"
+    },
+    {
+     "anchor": "claude-code-and-the-agent-sdk-user-level-p01",
+     "definition": "The toolkit for building your own agents in Python or TypeScript.",
+     "term": "Agent SDK"
+    },
+    {
+     "anchor": "claude-code-and-the-agent-sdk-user-level-p05",
+     "definition": "Allow, Ask, Deny: what runs automatically, what needs approval, what stays blocked.",
+     "term": "permission gate"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "claude-code-and-the-agent-sdk-user-level-p06",
+     "answer": "Claude Code to work on a codebase; the Agent SDK to embed an agent inside your product.",
+     "id": "claude-code-and-the-agent-sdk-user-level-r1",
+     "question": "Claude Code or Agent SDK: which one?"
+    },
+    {
+     "anchor": "claude-code-and-the-agent-sdk-user-level-p05",
+     "answer": "Allow, Ask, Deny: your rules decide the setting for each action.",
+     "id": "claude-code-and-the-agent-sdk-user-level-r2",
+     "question": "What are the permission settings?"
+    }
+   ],
+   "title": "Claude Code and the Agent SDK: User Level"
+  },
+  {
+   "anchor": "streaming-tokens-as-they-arrive",
+   "blocks": [
+    {
+     "anchor": "streaming-tokens-as-they-arrive-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "streaming-tokens-as-they-arrive-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "streaming-tokens-as-they-arrive-end",
+   "keyTerms": [
+    {
+     "anchor": "streaming-tokens-as-they-arrive-p01",
+     "definition": "Delivering tokens as they arrive instead of waiting for the full response.",
+     "term": "streaming"
+    },
+    {
+     "anchor": "streaming-tokens-as-they-arrive-fig01",
+     "definition": "How tokens travel while Claude is still generating.",
+     "term": "server-sent events"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "streaming-tokens-as-they-arrive-p05",
+     "answer": "When a human watches: chat UIs and long generations where perceived latency matters.",
+     "id": "streaming-tokens-as-they-arrive-r1",
+     "question": "When do you stream?"
+    },
+    {
+     "anchor": "streaming-tokens-as-they-arrive-p06",
+     "answer": "As error events, not HTTP error codes; your handler must watch for them.",
+     "id": "streaming-tokens-as-they-arrive-r2",
+     "question": "How do mid-stream failures arrive?"
+    }
+   ],
+   "title": "Streaming: tokens as they arrive"
+  },
+  {
+   "anchor": "rate-limits-rpm-itpm-otpm",
+   "blocks": [
+    {
+     "anchor": "rate-limits-rpm-itpm-otpm-p06",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "rate-limits-rpm-itpm-otpm-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "rate-limits-rpm-itpm-otpm-end",
+   "keyTerms": [
+    {
+     "anchor": "rate-limits-rpm-itpm-otpm-p01",
+     "definition": "Requests per minute: one of the three usage measures.",
+     "term": "RPM"
+    },
+    {
+     "anchor": "rate-limits-rpm-itpm-otpm-p01",
+     "definition": "Input tokens per minute: one of the three usage measures.",
+     "term": "ITPM"
+    },
+    {
+     "anchor": "rate-limits-rpm-itpm-otpm-fig01",
+     "definition": "How long to wait before retrying; its absence means a spend cap.",
+     "term": "retry-after"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "rate-limits-rpm-itpm-otpm-p02",
+     "answer": "RPM, ITPM, OTPM; limits increase with your usage tier.",
+     "id": "rate-limits-rpm-itpm-otpm-r1",
+     "question": "What are the three measures?"
+    },
+    {
+     "anchor": "rate-limits-rpm-itpm-otpm-p06",
+     "answer": "A rate-limit 429 carries retry-after: wait and retry. A tier-cap 429 has none: stop retrying, raise the cap.",
+     "id": "rate-limits-rpm-itpm-otpm-r2",
+     "question": "Two kinds of 429: how do they differ?"
+    }
+   ],
+   "title": "Rate limits: RPM, ITPM, OTPM"
+  },
+  {
+   "anchor": "errors-and-retries-important-codes",
+   "blocks": [
+    {
+     "anchor": "errors-and-retries-important-codes-p08",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "errors-and-retries-important-codes-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "errors-and-retries-important-codes-end",
+   "keyTerms": [
+    {
+     "anchor": "errors-and-retries-important-codes-fig01",
+     "definition": "Repeating the call causes no damage: the retry-safety property.",
+     "term": "idempotent"
+    },
+    {
+     "anchor": "errors-and-retries-important-codes-p06",
+     "definition": "The holding area where failed requests wait for inspection and replay.",
+     "term": "dead-letter path"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "errors-and-retries-important-codes-p02",
+     "answer": "4xx is your fault: fix the request. 5xx is their fault: retry with backoff.",
+     "id": "errors-and-retries-important-codes-r1",
+     "question": "4xx versus 5xx: what is the rule?"
+    },
+    {
+     "anchor": "errors-and-retries-important-codes-p05",
+     "answer": "Only when the repeated call is harmless: tool functions must be idempotent.",
+     "id": "errors-and-retries-important-codes-r2",
+     "question": "When are retries safe?"
+    }
+   ],
+   "title": "Errors and Retries: Important Codes"
+  },
+  {
+   "anchor": "eval-basics-measure-then-trust",
+   "blocks": [
+    {
+     "anchor": "eval-basics-measure-then-trust-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "eval-basics-measure-then-trust-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "eval-basics-measure-then-trust-end",
+   "keyTerms": [
+    {
+     "anchor": "eval-basics-measure-then-trust-p02",
+     "definition": "Telling you if the prompt is good enough: a number, not a feeling.",
+     "term": "evaluation"
+    },
+    {
+     "anchor": "eval-basics-measure-then-trust-fig01",
+     "definition": "A model scoring outputs for the fuzzy parts deterministic checks miss.",
+     "term": "model grader"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "eval-basics-measure-then-trust-p06",
+     "answer": "Engineering edits the instruction; evaluation measures the behavior across many inputs.",
+     "id": "eval-basics-measure-then-trust-r1",
+     "question": "Prompt engineering versus evaluation: what is the difference?"
+    },
+    {
+     "anchor": "eval-basics-measure-then-trust-p04",
+     "answer": "Draft the prompt, build data, run it over the dataset, score with deterministic checks then a model grader.",
+     "id": "eval-basics-measure-then-trust-r2",
+     "question": "What is the four-step eval loop?"
+    }
+   ],
+   "title": "Eval basics: measure, then trust"
+  },
+  {
+   "anchor": "safety-and-guardrails-short-version",
+   "blocks": [
+    {
+     "anchor": "safety-and-guardrails-short-version-p09",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "safety-and-guardrails-short-version-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "safety-and-guardrails-short-version-end",
+   "keyTerms": [
+    {
+     "anchor": "safety-and-guardrails-short-version-p04",
+     "definition": "Anthropic's safety approach: helpful, honest, and harmless.",
+     "term": "constitutional AI"
+    },
+    {
+     "anchor": "safety-and-guardrails-short-version-p06",
+     "definition": "Removing data your app must not forward: injections, absurd payloads, malformed arguments.",
+     "term": "input validation"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "safety-and-guardrails-short-version-p06",
+     "answer": "Input validation, model-level safety, output checks, audit trail.",
+     "id": "safety-and-guardrails-short-version-r1",
+     "question": "What are the four layers?"
+    },
+    {
+     "anchor": "safety-and-guardrails-short-version-p09",
+     "answer": "Do not trust a single layer; the model is one guardrail and your architecture holds the others.",
+     "id": "safety-and-guardrails-short-version-r2",
+     "question": "What is the safety mindset?"
+    }
+   ],
+   "title": "Safety and Guardrails: Short Version"
+  },
+  {
+   "anchor": "prompt-engineering-fundamentals-the-five-moves",
+   "blocks": [
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "prompt-engineering-fundamentals-the-five-moves-end",
+   "keyTerms": [
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-p06",
+     "definition": "Input-output pairs teaching format and tone faster than description.",
+     "term": "few-shot"
+    },
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-p09",
+     "definition": "Adding phrases because someone said they help, with no measurement.",
+     "term": "prompt superstition"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-p03",
+     "answer": "Be specific, show one example, constrain the output, name the audience, demand the steps.",
+     "id": "prompt-engineering-fundamentals-the-five-moves-r1",
+     "question": "What are the five moves?"
+    },
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-p09",
+     "answer": "Adding phrases because someone said they help, with no measurement; delete any edit that does not move your score.",
+     "id": "prompt-engineering-fundamentals-the-five-moves-r2",
+     "question": "What is prompt superstition?"
+    }
+   ],
+   "title": "Prompt engineering fundamentals: the five moves"
+  },
+  {
+   "anchor": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod",
+   "blocks": [
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    },
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod-takeaway01",
+     "kind": "summary",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod-end",
+   "keyTerms": [
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod-p01",
+     "definition": "One production application built rung by rung from every unit.",
+     "term": "capstone"
+    },
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod-p04",
+     "definition": "The example app: it grows from one call to full production.",
+     "term": "support copilot"
+    }
+   ],
+   "minutes": 4,
+   "recall": [
+    {
+     "anchor": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod-takeaway01",
+     "answer": "That you can trace a request through the whole diagram and name the unit behind every arrow.",
+     "id": "prompt-engineering-fundamentals-the-five-moves-capstone-one-prod-r1",
+     "question": "What does the capstone prove?"
+    }
+   ],
+   "title": "Prompt engineering fundamentals: the five moves. Capstone: one production application, built rung by rung"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

@@ -1,0 +1,686 @@
+{
+ "itemId": "08-question-bank",
+ "itemKind": "lesson",
+ "revision": "028e891f3a244f854b1c493cdd73529f76c2ca9a631f87c3733e7fb99ad183b3",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "08-question-bank-intro",
+   "blocks": [
+    {
+     "anchor": "08-question-bank-intro-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "08-question-bank-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "08-question-bank-intro-p01",
+     "definition": "Scenario questions weighted like the real exam.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "08-question-bank-intro-p01",
+     "definition": "Panels hiding answers so you can self-test first.",
+     "term": "expandable panels"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "08-question-bank-intro-p01",
+     "answer": "106 practice items across all 7 domains, weighted like the real exam, with answers behind expandable panels.",
+     "id": "08-question-bank-intro-r1",
+     "question": "What does the bank cover?"
+    }
+   ],
+   "title": "CCAR-P Practice Question Bank"
+  },
+  {
+   "anchor": "exam-facts-from-the-official-exam-guide-v1-0",
+   "blocks": [
+    {
+     "anchor": "exam-facts-from-the-official-exam-guide-v1-0-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "exam-facts-from-the-official-exam-guide-v1-0-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "exam-facts-from-the-official-exam-guide-v1-0-end",
+   "keyTerms": [
+    {
+     "anchor": "exam-facts-from-the-official-exam-guide-v1-0-fig01",
+     "definition": "720 is a standard to meet, not a count of right answers.",
+     "term": "criterion-referenced"
+    },
+    {
+     "anchor": "exam-facts-from-the-official-exam-guide-v1-0-p02",
+     "definition": "About 1 minute 54 seconds per item across 63 items.",
+     "term": "per-item budget"
+    },
+    {
+     "anchor": "exam-facts-from-the-official-exam-guide-v1-0-p02",
+     "definition": "First pass for all items, second pass for the flagged ones.",
+     "term": "two passes"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "exam-facts-from-the-official-exam-guide-v1-0-p02",
+     "answer": "63 items in 120 minutes: two passes, a per-item budget of about 1 minute 54 seconds, and no blanks.",
+     "id": "exam-facts-from-the-official-exam-guide-v1-0-r1",
+     "question": "What does the exam format demand?"
+    },
+    {
+     "anchor": "exam-facts-from-the-official-exam-guide-v1-0-fig01",
+     "answer": "The exam is criterion-referenced: 720 is a standard, not a count, so you aim at the standard.",
+     "id": "exam-facts-from-the-official-exam-guide-v1-0-r2",
+     "question": "Why not chase a raw count of right answers?"
+    }
+   ],
+   "title": "Exam facts (from the official exam guide v1.0)"
+  },
+  {
+   "anchor": "how-to-use-this-bank",
+   "blocks": [
+    {
+     "anchor": "how-to-use-this-bank-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "how-to-use-this-bank-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "how-to-use-this-bank-end",
+   "keyTerms": [
+    {
+     "anchor": "how-to-use-this-bank-p01",
+     "definition": "The stated rule in the scenario; the scoring key.",
+     "term": "constraint box"
+    },
+    {
+     "anchor": "how-to-use-this-bank-p04",
+     "definition": "An option that is good engineering but breaks the constraint.",
+     "term": "distractor"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "how-to-use-this-bank-p03",
+     "answer": "Scenario, constraint box, ask, options. The constraint is the scoring key.",
+     "id": "how-to-use-this-bank-r1",
+     "question": "What is the reading order for each item?"
+    },
+    {
+     "anchor": "how-to-use-this-bank-p04",
+     "answer": "Picking first trains judgment; peeking trains recognition, and the exam tests judgment.",
+     "id": "how-to-use-this-bank-r2",
+     "question": "Why pick your answer before opening the explanation?"
+    }
+   ],
+   "title": "How to use this bank"
+  },
+  {
+   "anchor": "key-terms-used-in-this-bank",
+   "blocks": [
+    {
+     "anchor": "key-terms-used-in-this-bank-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "key-terms-used-in-this-bank-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "key-terms-used-in-this-bank-end",
+   "keyTerms": [
+    {
+     "anchor": "key-terms-used-in-this-bank-p04",
+     "definition": "Matching the chunk size to the data shape: sections, rows, functions.",
+     "term": "chunking"
+    },
+    {
+     "anchor": "key-terms-used-in-this-bank-p05",
+     "definition": "The contract judges latency on the 95th ticket, not the median.",
+     "term": "SLA"
+    },
+    {
+     "anchor": "key-terms-used-in-this-bank-aside04",
+     "definition": "Prevent, detect, respond, govern: layers of protection.",
+     "term": "defense in depth"
+    },
+    {
+     "anchor": "key-terms-used-in-this-bank-p10",
+     "definition": "Proof that controls work, produced when the auditor asks.",
+     "term": "compliance evidence"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "key-terms-used-in-this-bank-p02",
+     "answer": "One definition per term before first use; every term appears in at least one question.",
+     "id": "key-terms-used-in-this-bank-r1",
+     "question": "What does this section give you?"
+    },
+    {
+     "anchor": "key-terms-used-in-this-bank-p05",
+     "answer": "The 95th ticket, not the median.",
+     "id": "key-terms-used-in-this-bank-r2",
+     "question": "What does the SLA judge on latency?"
+    }
+   ],
+   "title": "Key terms used in this bank"
+  },
+  {
+   "anchor": "d3-integration-19-of-the-exam-about-12-items",
+   "blocks": [
+    {
+     "anchor": "d3-integration-19-of-the-exam-about-12-items-p05",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d3-integration-19-of-the-exam-about-12-items-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d3-integration-19-of-the-exam-about-12-items-end",
+   "keyTerms": [
+    {
+     "anchor": "d3-integration-19-of-the-exam-about-12-items-p03",
+     "definition": "Trading response speed against answer quality.",
+     "term": "accuracy-latency trade-offs"
+    },
+    {
+     "anchor": "d3-integration-19-of-the-exam-about-12-items-p03",
+     "definition": "Fetching only relevant files on demand instead of loading everything.",
+     "term": "progressive discovery"
+    },
+    {
+     "anchor": "d3-integration-19-of-the-exam-about-12-items-p03",
+     "definition": "Protocols for task handoff and negotiation between separate agents.",
+     "term": "agent-to-agent"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "d3-integration-19-of-the-exam-about-12-items-p03",
+     "answer": "Integration: tools and agents, auth, accuracy-latency trade-offs, observability, RAG, retrieval strategies, MCP versus API, CLI, and agent-to-agent.",
+     "id": "d3-integration-19-of-the-exam-about-12-items-r1",
+     "question": "What does D3 cover?"
+    },
+    {
+     "anchor": "d3-integration-19-of-the-exam-about-12-items-p05",
+     "answer": "When a lookup would do: you pay agent prices for lookup answers.",
+     "id": "d3-integration-19-of-the-exam-about-12-items-r2",
+     "question": "When is an agent the wrong tool?"
+    }
+   ],
+   "title": "D3. Integration (19% of the exam, about 12 items)"
+  },
+  {
+   "anchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item",
+   "blocks": [
+    {
+     "anchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-end",
+   "keyTerms": [
+    {
+     "anchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-aside01",
+     "definition": "Workflows for fixed paths, augmented calls for one decision, agents for open-ended work.",
+     "term": "pattern selector"
+    },
+    {
+     "anchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-p04",
+     "definition": "Coordinating several agents with contracts and an orchestrator.",
+     "term": "multi-agent orchestration"
+    },
+    {
+     "anchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-p04",
+     "definition": "Efficiency, transformation, productivity, cost, performance: the business case pillars.",
+     "term": "value pillars"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-p01",
+     "answer": "Design decisions before connection: choosing models, shaping context, structuring the whole solution.",
+     "id": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-r1",
+     "question": "What does D1 cover?"
+    },
+    {
+     "anchor": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-p02",
+     "answer": "Workflows for fixed paths, augmented calls for one decision, agents for open-ended work.",
+     "id": "d1-solution-design-and-architecture-17-of-the-exam-about-11-item-r2",
+     "question": "Workflows, augmented calls, agents: when is each right?"
+    }
+   ],
+   "title": "D1. Solution Design and Architecture (17% of the exam, about 11 items)"
+  },
+  {
+   "anchor": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i",
+   "blocks": [
+    {
+     "anchor": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-end",
+   "keyTerms": [
+    {
+     "anchor": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-aside01",
+     "definition": "The frozen dataset you test fixes and changes against.",
+     "term": "golden set"
+    },
+    {
+     "anchor": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-p04",
+     "definition": "Automated tests plus judges plus human review, each covering different gaps.",
+     "term": "mixed methods"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-p01",
+     "answer": "How do you know it works: evaluation design, testing strategy, optimization under constraints.",
+     "id": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-r1",
+     "question": "What does D4 ask?"
+    },
+    {
+     "anchor": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-p02",
+     "answer": "Define the rubric, build the golden set, run the harness, turn failures into fixtures.",
+     "id": "d4-evaluation-testing-and-optimization-16-of-the-exam-about-10-i-r2",
+     "question": "What is the eval loop?"
+    }
+   ],
+   "title": "D4. Evaluation, Testing and Optimization (16% of the exam, about 10 items)"
+  },
+  {
+   "anchor": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9",
+   "blocks": [
+    {
+     "anchor": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-end",
+   "keyTerms": [
+    {
+     "anchor": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-aside01",
+     "definition": "Approval follows the stakes, from read-only to irreversible.",
+     "term": "HITL tiers"
+    },
+    {
+     "anchor": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-p04",
+     "definition": "GDPR, HIPAA, FedRAMP: rules binding what the system may do.",
+     "term": "regulatory compliance"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-p01",
+     "answer": "What the rules allow: safety, compliance, risk management, the guardrails binding every design.",
+     "id": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-r1",
+     "question": "What does D5 ask?"
+    },
+    {
+     "anchor": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-p02",
+     "answer": "Approval follows the stakes, from read-only to irreversible.",
+     "id": "d5-governance-safety-and-risk-management-14-of-the-exam-about-9-r2",
+     "question": "How do HITL tiers work?"
+    }
+   ],
+   "title": "D5. Governance, Safety and Risk Management (14% of the exam, about 9 items)"
+  },
+  {
+   "anchor": "d6-stakeholder-communication-and-lifecycle-management-14-of-the",
+   "blocks": [
+    {
+     "anchor": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-end",
+   "keyTerms": [
+    {
+     "anchor": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-aside01",
+     "definition": "Six lifecycle stages; the traps live in the transitions.",
+     "term": "lifecycle loop"
+    },
+    {
+     "anchor": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-p04",
+     "definition": "Planned conversations that turn vague asks into signed requirements.",
+     "term": "structured discovery"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-p01",
+     "answer": "The human side: explaining decisions, managing the lifecycle from pilot to production, communicating risk.",
+     "id": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-r1",
+     "question": "What does D6 cover?"
+    },
+    {
+     "anchor": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-p02",
+     "answer": "In the transitions between the six stages.",
+     "id": "d6-stakeholder-communication-and-lifecycle-management-14-of-the-r2",
+     "question": "Where do lifecycle traps live?"
+    }
+   ],
+   "title": "D6. Stakeholder Communication and Lifecycle Management (14% of the exam, about 9 items)"
+  },
+  {
+   "anchor": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa",
+   "blocks": [
+    {
+     "anchor": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-end",
+   "keyTerms": [
+    {
+     "anchor": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-aside01",
+     "definition": "Reuse, length, stability, TTL fit; the first no ends the analysis.",
+     "term": "caching decisions"
+    },
+    {
+     "anchor": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-p04",
+     "definition": "Caching, modular prompts, Skills: reusing work instead of rebuilding it.",
+     "term": "prompt reuse"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-p01",
+     "answer": "The model level: choosing models, writing prompts, engineering context.",
+     "id": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-r1",
+     "question": "What does D2 cover?"
+    },
+    {
+     "anchor": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-p02",
+     "answer": "Reuse, length, stability, TTL fit; the first no ends the analysis.",
+     "id": "d2-claude-models-prompting-and-context-engineering-13-of-the-exa-r2",
+     "question": "What is the caching decision order?"
+    }
+   ],
+   "title": "D2. Claude Models, Prompting and Context Engineering (13% of the exam, about 8 items)"
+  },
+  {
+   "anchor": "d7-developer-productivity-and-operational-enablement-7-of-the-ex",
+   "blocks": [
+    {
+     "anchor": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-end",
+   "keyTerms": [
+    {
+     "anchor": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-aside01",
+     "definition": "The managed layer: the only settings the platform enforces against override.",
+     "term": "managed"
+    },
+    {
+     "anchor": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-aside01",
+     "definition": "A short, easy section to close the domain overviews.",
+     "term": "cool-down"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-p01",
+     "answer": "The smallest domain: configuring Claude tools for teams, AI-assisted workflows, debugging, runbooks.",
+     "id": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-r1",
+     "question": "What does D7 cover?"
+    },
+    {
+     "anchor": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-p02",
+     "answer": "Managed beats project, project beats local, local beats user.",
+     "id": "d7-developer-productivity-and-operational-enablement-7-of-the-ex-r2",
+     "question": "What is the D7 settings order?"
+    }
+   ],
+   "title": "D7. Developer Productivity and Operational Enablement (7% of the exam, about 4 items)"
+  },
+  {
+   "anchor": "question-bank-106-items-in-number-order",
+   "blocks": [
+    {
+     "anchor": "question-bank-106-items-in-number-order-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "question-bank-106-items-in-number-order-end",
+   "keyTerms": [
+    {
+     "anchor": "question-bank-106-items-in-number-order-p01",
+     "definition": "Which exam domain an item belongs to, D1 through D7.",
+     "term": "domain tag"
+    },
+    {
+     "anchor": "question-bank-106-items-in-number-order-p01",
+     "definition": "Easy, Medium, or Hard: how demanding the item is.",
+     "term": "difficulty pill"
+    },
+    {
+     "anchor": "question-bank-106-items-in-number-order-p01",
+     "definition": "Why the answer is correct and why each distractor loses.",
+     "term": "explanation"
+    }
+   ],
+   "minutes": 114,
+   "recall": [
+    {
+     "anchor": "question-bank-106-items-in-number-order-p01",
+     "answer": "Number order Q1 to Q106, not grouped by domain or difficulty, each with a domain tag and difficulty pill.",
+     "id": "question-bank-106-items-in-number-order-r1",
+     "question": "How are the 106 items organized?"
+    },
+    {
+     "anchor": "question-bank-106-items-in-number-order-p01",
+     "answer": "The answer and the full explanation: why it is correct and why each distractor loses.",
+     "id": "question-bank-106-items-in-number-order-r2",
+     "question": "What does each item reveal?"
+    }
+   ],
+   "title": "Question bank: 106 items in number order"
+  },
+  {
+   "anchor": "exam-day-strategy",
+   "blocks": [
+    {
+     "anchor": "exam-day-strategy-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "exam-day-strategy-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "exam-day-strategy-end",
+   "keyTerms": [
+    {
+     "anchor": "exam-day-strategy-p02",
+     "definition": "Find the rule in the scenario before reading the options.",
+     "term": "constraint-first method"
+    },
+    {
+     "anchor": "exam-day-strategy-p03",
+     "definition": "94.5 minutes for pass one, about 25 minutes for pass two.",
+     "term": "two-pass budget"
+    },
+    {
+     "anchor": "exam-day-strategy-fig06",
+     "definition": "Study time follows exam weight: D3 at 19% down to D7 at 7%.",
+     "term": "domain-weighted triage"
+    }
+   ],
+   "minutes": 8,
+   "recall": [
+    {
+     "anchor": "exam-day-strategy-p03",
+     "answer": "120 minutes over 63 items: about 1 minute 54 seconds each; 94.5 minutes for pass one, about 25 for pass two.",
+     "id": "exam-day-strategy-r1",
+     "question": "What is the per-item budget?"
+    },
+    {
+     "anchor": "exam-day-strategy-p02",
+     "answer": "Find the rule in the scenario before reading the options.",
+     "id": "exam-day-strategy-r2",
+     "question": "What is the constraint-first method?"
+    },
+    {
+     "anchor": "exam-day-strategy-fig07",
+     "answer": "Re-read the constraint, name what you optimized for, eliminate two, guess and move on.",
+     "id": "exam-day-strategy-r3",
+     "question": "Stuck on an item: what is the move?"
+    }
+   ],
+   "title": "Exam-Day Strategy"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

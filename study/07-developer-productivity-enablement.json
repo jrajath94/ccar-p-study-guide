@@ -1,0 +1,623 @@
+{
+ "itemId": "07-developer-productivity-enablement",
+ "itemKind": "lesson",
+ "revision": "42f0bfd92c087088f35833dd412eab3e849142c2c181311753e5f2dc4e65d96b",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "07-developer-productivity-enablement-intro",
+   "blocks": [
+    {
+     "anchor": "07-developer-productivity-enablement-intro-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "07-developer-productivity-enablement-intro-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "07-developer-productivity-enablement-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "07-developer-productivity-enablement-intro-p02",
+     "definition": "Anthropic's agentic coding tool: reads repos, runs commands, edits files.",
+     "term": "Claude Code"
+    },
+    {
+     "anchor": "07-developer-productivity-enablement-intro-p02",
+     "definition": "Choices and trade-offs the exam tests, not memorized config flags.",
+     "term": "design decisions"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "07-developer-productivity-enablement-intro-p02",
+     "answer": "Configure Claude Code consistently for the org, design AI-assisted workflows with gates, debug production Claude systems and write runbooks.",
+     "id": "07-developer-productivity-enablement-intro-r1",
+     "question": "What three jobs does the D7 architect have?"
+    },
+    {
+     "anchor": "07-developer-productivity-enablement-intro-p02",
+     "answer": "Design decisions and trade-offs, not memorized config flags.",
+     "id": "07-developer-productivity-enablement-intro-r2",
+     "question": "What does the exam test here?"
+    }
+   ],
+   "title": "D7: Developer Productivity & Operational Enablement"
+  },
+  {
+   "anchor": "1-the-developer-productivity-problem-what-slows-a-team-down",
+   "blocks": [
+    {
+     "anchor": "1-the-developer-productivity-problem-what-slows-a-team-down-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "1-the-developer-productivity-problem-what-slows-a-team-down-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "1-the-developer-productivity-problem-what-slows-a-team-down-end",
+   "keyTerms": [
+    {
+     "anchor": "1-the-developer-productivity-problem-what-slows-a-team-down-fig01",
+     "definition": "Machines behaving differently, so the same prompt produces different code.",
+     "term": "drift"
+    },
+    {
+     "anchor": "1-the-developer-productivity-problem-what-slows-a-team-down-fig02",
+     "definition": "Five layers that fix the three drags: config, guardrails, gates, debugging, runbooks.",
+     "term": "developer-productivity stack"
+    },
+    {
+     "anchor": "1-the-developer-productivity-problem-what-slows-a-team-down-p04",
+     "definition": "A stack where each layer assumes the one below it.",
+     "term": "dependency chain"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "1-the-developer-productivity-problem-what-slows-a-team-down-p02",
+     "answer": "Drift, unsafe speed, invisible failures.",
+     "id": "1-the-developer-productivity-problem-what-slows-a-team-down-r1",
+     "question": "What are the three drags?"
+    },
+    {
+     "anchor": "1-the-developer-productivity-problem-what-slows-a-team-down-p04",
+     "answer": "Climb from the bottom: configuration layers first, since nothing else is enforceable on a drifting fleet.",
+     "id": "1-the-developer-productivity-problem-what-slows-a-team-down-r2",
+     "question": "What do you fix first when a scenario asks?"
+    }
+   ],
+   "title": "1. The developer-productivity problem: what slows a team down"
+  },
+  {
+   "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers",
+   "blocks": [
+    {
+     "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-p11",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-end",
+   "keyTerms": [
+    {
+     "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-fig01",
+     "definition": "Stacked settings sources where a higher layer overrides a lower one.",
+     "term": "configuration layers"
+    },
+    {
+     "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-fig01",
+     "definition": "Enterprise settings no developer can override; the only enforceable layer.",
+     "term": "managed policy"
+    },
+    {
+     "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-p10",
+     "definition": "Persistent agent instructions, checked in at project scope.",
+     "term": "CLAUDE.md"
+    },
+    {
+     "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-aside03",
+     "definition": "When permission layers conflict, deny wins over allow.",
+     "term": "deny-first"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-p16",
+     "answer": "In managed policy, the only layer a developer cannot override, even by editing local files.",
+     "id": "2-rolling-out-claude-code-across-an-org-configuration-layers-r1",
+     "question": "Where does a compliance rule belong?"
+    },
+    {
+     "anchor": "2-rolling-out-claude-code-across-an-org-configuration-layers-p11",
+     "answer": "Permissions merge with deny winning; nothing in a lower layer can touch managed policy.",
+     "id": "2-rolling-out-claude-code-across-an-org-configuration-layers-r2",
+     "question": "What happens when permission layers conflict?"
+    }
+   ],
+   "title": "2. Rolling out Claude Code across an org: configuration layers"
+  },
+  {
+   "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks",
+   "blocks": [
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-p17",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-end",
+   "keyTerms": [
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-aside02",
+     "definition": "The amount of damage one bad agent action can do.",
+     "term": "blast radius"
+    },
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-fig01",
+     "definition": "A speed bump: pauses for approval, but humans click through.",
+     "term": "ask"
+    },
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-fig01",
+     "definition": "The only hard control: blocks and logs the action.",
+     "term": "deny"
+    },
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-fig01",
+     "definition": "Shell commands fired at lifecycle moments like PreToolUse; the programmatic gate.",
+     "term": "hooks"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-p04",
+     "answer": "Allow runs silently, ask pauses for approval, deny blocks and logs.",
+     "id": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-r1",
+     "question": "What are the three permission outcomes?"
+    },
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-p17",
+     "answer": "Ask is a speed bump: developers under deadline click through prompts. Deny is the only hard control.",
+     "id": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-r2",
+     "question": "Why is ask not a safety control?"
+    },
+    {
+     "anchor": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-p18",
+     "answer": "A deny rule at the managed layer; whenever a guarantee is demanded, ask is the trap.",
+     "id": "3-permissions-and-guardrails-allow-ask-deny-plus-hooks-r3",
+     "question": "A scenario demands 'must never.' What is the answer?"
+    }
+   ],
+   "title": "3. Permissions and guardrails: allow, ask, deny, plus hooks"
+  },
+  {
+   "anchor": "4-distributing-mcp-servers-to-teams",
+   "blocks": [
+    {
+     "anchor": "4-distributing-mcp-servers-to-teams-p10",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "4-distributing-mcp-servers-to-teams-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "4-distributing-mcp-servers-to-teams-end",
+   "keyTerms": [
+    {
+     "anchor": "4-distributing-mcp-servers-to-teams-fig01",
+     "definition": "Small services connecting Claude to external tools and data.",
+     "term": "MCP servers"
+    },
+    {
+     "anchor": "4-distributing-mcp-servers-to-teams-p10",
+     "definition": "What a compromised or malicious server can reach.",
+     "term": "attack surface"
+    },
+    {
+     "anchor": "4-distributing-mcp-servers-to-teams-p12",
+     "definition": "Credentials scoped to each user, revocable in one place.",
+     "term": "per-user OAuth"
+    },
+    {
+     "anchor": "4-distributing-mcp-servers-to-teams-fig01",
+     "definition": "Each credential limited to the smallest access it needs.",
+     "term": "least-privilege"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "4-distributing-mcp-servers-to-teams-p06",
+     "answer": "Unvetted servers, shared keys, no inventory: nobody knows which tools the agents can touch right now.",
+     "id": "4-distributing-mcp-servers-to-teams-r1",
+     "question": "Why is ad-hoc MCP sprawl dangerous?"
+    },
+    {
+     "anchor": "4-distributing-mcp-servers-to-teams-p10",
+     "answer": "Capabilities, attack surface, and token cost, all at once. The tool list is an architecture decision, not plumbing.",
+     "id": "4-distributing-mcp-servers-to-teams-r2",
+     "question": "What does adding an MCP server cost?"
+    }
+   ],
+   "title": "4. Distributing MCP servers to teams"
+  },
+  {
+   "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans",
+   "blocks": [
+    {
+     "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-p08",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-end",
+   "keyTerms": [
+    {
+     "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-p08",
+     "definition": "What ungated AI assistance produces: fast, fluent, wrong code.",
+     "term": "defects at machine speed"
+    },
+    {
+     "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-aside04",
+     "definition": "Green, yellow, red task tiers with review matched to risk.",
+     "term": "tiered review gates"
+    },
+    {
+     "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-aside04",
+     "definition": "Reviewing what the code does at boundaries, not how much of it.",
+     "term": "behavior-level review"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-p08",
+     "answer": "You do not get faster engineering; you get defects at machine speed.",
+     "id": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-r1",
+     "question": "What goes wrong with no gates?"
+    },
+    {
+     "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-p09",
+     "answer": "The AI drafts; deterministic systems and humans verify, each layer catching a different class of mistake.",
+     "id": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-r2",
+     "question": "What is the split of responsibilities?"
+    },
+    {
+     "anchor": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-p17",
+     "answer": "Generated tests can encode the same misunderstanding as the generated code. Tests are only as good as the spec they encode.",
+     "id": "5-ai-assisted-development-workflows-where-ai-helps-where-humans-r3",
+     "question": "Why does 'the AI wrote tests' not mean tested?"
+    }
+   ],
+   "title": "5. AI-assisted development workflows: where AI helps, where humans gate"
+  },
+  {
+   "anchor": "6-secrets-and-data-governance-in-ai-tooling",
+   "blocks": [
+    {
+     "anchor": "6-secrets-and-data-governance-in-ai-tooling-p08",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "6-secrets-and-data-governance-in-ai-tooling-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "6-secrets-and-data-governance-in-ai-tooling-end",
+   "keyTerms": [
+    {
+     "anchor": "6-secrets-and-data-governance-in-ai-tooling-aside02",
+     "definition": "What may cross into AI tools and what must never cross.",
+     "term": "data boundary"
+    },
+    {
+     "anchor": "6-secrets-and-data-governance-in-ai-tooling-fig01",
+     "definition": "Credentials like API keys, passwords, private keys, and tokens.",
+     "term": "secrets"
+    },
+    {
+     "anchor": "6-secrets-and-data-governance-in-ai-tooling-aside04",
+     "definition": "The vendor retains nothing; it does not cover your laptop or logs.",
+     "term": "zero data retention"
+    },
+    {
+     "anchor": "6-secrets-and-data-governance-in-ai-tooling-p05",
+     "definition": "A hook that blocks secret-shaped input before the model sees it.",
+     "term": "PreToolUse hook"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "6-secrets-and-data-governance-in-ai-tooling-p04",
+     "answer": "What may cross into AI tools and what must never cross the organization's boundary.",
+     "id": "6-secrets-and-data-governance-in-ai-tooling-r1",
+     "question": "What is the data boundary?"
+    },
+    {
+     "anchor": "6-secrets-and-data-governance-in-ai-tooling-p13",
+     "answer": "Rotate the credential immediately, then add a PreToolUse hook blocking secret-shaped input.",
+     "id": "6-secrets-and-data-governance-in-ai-tooling-r2",
+     "question": "An engineer pastes a production password; the vendor has zero data retention. What two moves?"
+    }
+   ],
+   "title": "6. Secrets and data governance in AI tooling"
+  },
+  {
+   "anchor": "7-debugging-production-claude-systems-trace-forensics",
+   "blocks": [
+    {
+     "anchor": "7-debugging-production-claude-systems-trace-forensics-p08",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "7-debugging-production-claude-systems-trace-forensics-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "7-debugging-production-claude-systems-trace-forensics-end",
+   "keyTerms": [
+    {
+     "anchor": "7-debugging-production-claude-systems-trace-forensics-fig01",
+     "definition": "The complete record of a request: messages, tool calls, results, reasons.",
+     "term": "trace"
+    },
+    {
+     "anchor": "7-debugging-production-claude-systems-trace-forensics-p07",
+     "definition": "Why the model stopped: tool_use, end_turn, or max_tokens.",
+     "term": "stop_reason"
+    },
+    {
+     "anchor": "7-debugging-production-claude-systems-trace-forensics-fig01",
+     "definition": "Reproducing a bug with every input frozen, replaying canned tool results.",
+     "term": "frozen replay"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "7-debugging-production-claude-systems-trace-forensics-p06",
+     "answer": "System prompt, every message, tool_use inputs, tool_result outputs, stop reasons, token counts, latencies, correlation ID.",
+     "id": "7-debugging-production-claude-systems-trace-forensics-r1",
+     "question": "What does a production trace hold?"
+    },
+    {
+     "anchor": "7-debugging-production-claude-systems-trace-forensics-p13",
+     "answer": "Tool definitions and their change history, meaning schema drift, then the contents of the tool results.",
+     "id": "7-debugging-production-claude-systems-trace-forensics-r2",
+     "question": "Identical prompts fail differently. What do you check before touching the prompt?"
+    },
+    {
+     "anchor": "7-debugging-production-claude-systems-trace-forensics-p13",
+     "answer": "Reproducing a bug with temperature, model version, prompt, schemas, and canned tool results all frozen.",
+     "id": "7-debugging-production-claude-systems-trace-forensics-r3",
+     "question": "What is frozen replay?"
+    }
+   ],
+   "title": "7. Debugging production Claude systems: trace forensics"
+  },
+  {
+   "anchor": "8-operational-runbooks-for-llm-apps",
+   "blocks": [
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-p19",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "8-operational-runbooks-for-llm-apps-end",
+   "keyTerms": [
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-p06",
+     "definition": "The written procedure the on-call engineer follows when something breaks.",
+     "term": "runbook"
+    },
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-p12",
+     "definition": "Stops calling a failing service for a while, halting retry storms.",
+     "term": "circuit breaker"
+    },
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-aside04",
+     "definition": "Stop the bleed first, then diagnose the root cause.",
+     "term": "stop the bleed first"
+    },
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-p16",
+     "definition": "The lasting change so the failure cannot recur.",
+     "term": "hardening"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-p07",
+     "answer": "Runaway agentic loops, cost spikes, prompt-injection attempts, context-window overflow, behavior drift.",
+     "id": "8-operational-runbooks-for-llm-apps-r1",
+     "question": "Name the five LLM failure modes."
+    },
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-p19",
+     "answer": "Stop the bleed first, then diagnose: kill the sessions and enforce an iteration cap.",
+     "id": "8-operational-runbooks-for-llm-apps-r2",
+     "question": "Spend spikes 40x at 2am. What is the first move?"
+    },
+    {
+     "anchor": "8-operational-runbooks-for-llm-apps-p20",
+     "answer": "The runbook buys time; mitigation stops the damage; the fix is the code change; hardening prevents recurrence.",
+     "id": "8-operational-runbooks-for-llm-apps-r3",
+     "question": "Runbook versus fix: what is the difference?"
+    }
+   ],
+   "title": "8. Operational runbooks for LLM apps"
+  },
+  {
+   "anchor": "exam-day-notes-for-d7",
+   "blocks": [
+    {
+     "anchor": "exam-day-notes-for-d7-p05",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "exam-day-notes-for-d7-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "exam-day-notes-for-d7-end",
+   "keyTerms": [
+    {
+     "anchor": "exam-day-notes-for-d7-p05",
+     "definition": "When options are all partly right, stronger guarantees win.",
+     "term": "priority ladder"
+    },
+    {
+     "anchor": "exam-day-notes-for-d7-fig01",
+     "definition": "An option that helps but cannot guarantee the outcome.",
+     "term": "distractor"
+    },
+    {
+     "anchor": "exam-day-notes-for-d7-p05",
+     "definition": "A control that must hold under the stated constraint.",
+     "term": "stronger guarantees"
+    }
+   ],
+   "minutes": 3,
+   "recall": [
+    {
+     "anchor": "exam-day-notes-for-d7-p05",
+     "answer": "When options are all partly right, stronger guarantees win.",
+     "id": "exam-day-notes-for-d7-r1",
+     "question": "What is the D7 priority ladder?"
+    },
+    {
+     "anchor": "exam-day-notes-for-d7-p06",
+     "answer": "The most correct distractor: an option that helps but does not guarantee the outcome under the constraint.",
+     "id": "exam-day-notes-for-d7-r2",
+     "question": "What is the classic D7 trap?"
+    }
+   ],
+   "title": "Exam-day notes for D7"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

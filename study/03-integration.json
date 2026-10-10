@@ -1,0 +1,840 @@
+{
+ "itemId": "03-integration",
+ "itemKind": "lesson",
+ "revision": "8754254c67d37a86c332667d762cdcdac9446a510dbddf83b9032fd2e24cef45",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "03-integration-intro",
+   "blocks": [
+    {
+     "anchor": "03-integration-intro-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "03-integration-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "03-integration-intro-p01",
+     "definition": "The forced balancing of accuracy, latency, and cost in a design.",
+     "term": "trade-offs"
+    },
+    {
+     "anchor": "03-integration-intro-p01",
+     "definition": "A story plus a constraint that an exam item asks you to resolve.",
+     "term": "scenario"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "03-integration-intro-p01",
+     "answer": "Nineteen percent, about 12 of the 63 questions. Every question is a scenario about connecting Claude to real systems.",
+     "id": "03-integration-intro-r1",
+     "question": "How big is the Integration domain on the exam?"
+    }
+   ],
+   "title": "CCAR-P Volume 3: Integration (D3)"
+  },
+  {
+   "anchor": "the-integration-domain-in-one-picture",
+   "blocks": [
+    {
+     "anchor": "the-integration-domain-in-one-picture-p03",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "the-integration-domain-in-one-picture-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "the-integration-domain-in-one-picture-end",
+   "keyTerms": [
+    {
+     "anchor": "the-integration-domain-in-one-picture-p02",
+     "definition": "The think, call, read cycle wiring the model to tools and data.",
+     "term": "agent loop"
+    },
+    {
+     "anchor": "the-integration-domain-in-one-picture-p03",
+     "definition": "A stated limit the answer must satisfy: accuracy, latency, compliance, or cost.",
+     "term": "constraint"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "the-integration-domain-in-one-picture-p03",
+     "answer": "A scenario plus a constraint: an accuracy target, a latency budget, a compliance rule, or a cost ceiling.",
+     "id": "the-integration-domain-in-one-picture-r1",
+     "question": "What does every Integration item give you?"
+    },
+    {
+     "anchor": "the-integration-domain-in-one-picture-p03",
+     "answer": "The one that satisfies the constraint with the least machinery, not the fanciest architecture.",
+     "id": "the-integration-domain-in-one-picture-r2",
+     "question": "What does the credited answer usually look like?"
+    }
+   ],
+   "title": "The Integration domain in one picture"
+  },
+  {
+   "anchor": "the-first-wire-one-call-to-the-messages-api",
+   "blocks": [
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p14",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "the-first-wire-one-call-to-the-messages-api-end",
+   "keyTerms": [
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p02",
+     "definition": "The front door every integration walks through: request in, reply out.",
+     "term": "Messages API"
+    },
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p07",
+     "definition": "The API remembers nothing between calls; your code resends history.",
+     "term": "stateless"
+    },
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p10",
+     "definition": "The standard retry rhythm: wait 1s, then 2, 4, 8, with jitter.",
+     "term": "exponential backoff"
+    },
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p11",
+     "definition": "A unique token letting the provider recognize a repeated request.",
+     "term": "idempotency key"
+    },
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p10",
+     "definition": "A small random delay so retries do not hammer the provider in lockstep.",
+     "term": "jitter"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p02",
+     "answer": "The front door every integration walks through. Your code sends a structured request and reads a structured reply over HTTPS and JSON.",
+     "id": "the-first-wire-one-call-to-the-messages-api-r1",
+     "question": "What is the Messages API?"
+    },
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p14",
+     "answer": "400/401 means fix your side. 429/5xx means wait and retry with backoff and jitter. Timeouts bound every call. Keys never touch logs.",
+     "id": "the-first-wire-one-call-to-the-messages-api-r2",
+     "question": "State the retry rule."
+    },
+    {
+     "anchor": "the-first-wire-one-call-to-the-messages-api-p07",
+     "answer": "The API is stateless: your code resends the full history with every request, and history is re-read and re-billed each time.",
+     "id": "the-first-wire-one-call-to-the-messages-api-r3",
+     "question": "Why does a 20-turn conversation cost more per turn than a 2-turn one?"
+    }
+   ],
+   "title": "The first wire: one call to the Messages API"
+  },
+  {
+   "anchor": "streaming-answers-as-they-arrive",
+   "blocks": [
+    {
+     "anchor": "streaming-answers-as-they-arrive-p12",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "streaming-answers-as-they-arrive-fig03",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "streaming-answers-as-they-arrive-end",
+   "keyTerms": [
+    {
+     "anchor": "streaming-answers-as-they-arrive-p04",
+     "definition": "Time to first token: the wait before the first visible word.",
+     "term": "TTFT"
+    },
+    {
+     "anchor": "streaming-answers-as-they-arrive-p05",
+     "definition": "Server-Sent Events: the server pushes text events over one HTTP connection.",
+     "term": "SSE"
+    },
+    {
+     "anchor": "streaming-answers-as-they-arrive-p02",
+     "definition": "Sending each answer piece the moment it is ready.",
+     "term": "streaming"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "streaming-answers-as-they-arrive-p04",
+     "answer": "Delivery, not generation. The server sends each piece the moment it is ready. Total time is identical, but TTFT collapses.",
+     "id": "streaming-answers-as-they-arrive-r1",
+     "question": "What does streaming change?"
+    },
+    {
+     "anchor": "streaming-answers-as-they-arrive-p09",
+     "answer": "When a human watches: chat, copilots, interfaces where waiting feels like failure. Not for batch jobs or eval harnesses.",
+     "id": "streaming-answers-as-they-arrive-r2",
+     "question": "When do you stream?"
+    },
+    {
+     "anchor": "streaming-answers-as-they-arrive-p12",
+     "answer": "Enable streaming. The generation is not the problem; the delivery is.",
+     "id": "streaming-answers-as-they-arrive-r3",
+     "question": "Support chat feels slow: 20s total, first token at 19s. What is the fix?"
+    }
+   ],
+   "title": "Streaming: answers as they arrive"
+  },
+  {
+   "anchor": "tool-use-giving-the-model-hands",
+   "blocks": [
+    {
+     "anchor": "tool-use-giving-the-model-hands-p10",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "tool-use-giving-the-model-hands-fig03",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "tool-use-giving-the-model-hands-end",
+   "keyTerms": [
+    {
+     "anchor": "tool-use-giving-the-model-hands-p03",
+     "definition": "Declaring named functions the model may request, also called function calling.",
+     "term": "tool use"
+    },
+    {
+     "anchor": "tool-use-giving-the-model-hands-p07",
+     "definition": "Treat everything the model emits as untrusted input to your systems.",
+     "term": "trust rule"
+    },
+    {
+     "anchor": "tool-use-giving-the-model-hands-p08",
+     "definition": "Every turn of the loop re-sends every tool schema.",
+     "term": "cost rule"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "tool-use-giving-the-model-hands-p05",
+     "answer": "Think, call a tool, read the result, think again. The model asks in structured form; your code decides what actually runs.",
+     "id": "tool-use-giving-the-model-hands-r1",
+     "question": "What is the tool-use loop?"
+    },
+    {
+     "anchor": "tool-use-giving-the-model-hands-p07",
+     "answer": "Trust rule: treat everything the model emits as untrusted input. Cost rule: every turn re-sends every tool schema.",
+     "id": "tool-use-giving-the-model-hands-r2",
+     "question": "State the two rules governing every tool integration."
+    },
+    {
+     "anchor": "tool-use-giving-the-model-hands-p10",
+     "answer": "Ground the argument and validate arguments against the schema server-side before execution.",
+     "id": "tool-use-giving-the-model-hands-r3",
+     "question": "The agent invents a city the user never mentioned. What are the fixes?"
+    }
+   ],
+   "title": "Tool use: giving the model hands"
+  },
+  {
+   "anchor": "capability-bloat-when-tools-hurt",
+   "blocks": [
+    {
+     "anchor": "capability-bloat-when-tools-hurt-p13",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "capability-bloat-when-tools-hurt-fig03",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "capability-bloat-when-tools-hurt-end",
+   "keyTerms": [
+    {
+     "anchor": "capability-bloat-when-tools-hurt-p02",
+     "definition": "Giving an agent more tools than it can use well.",
+     "term": "capability bloat"
+    },
+    {
+     "anchor": "capability-bloat-when-tools-hurt-aside03",
+     "definition": "Schema tokens re-sent every turn: tools times tokens per schema.",
+     "term": "schema tax"
+    },
+    {
+     "anchor": "capability-bloat-when-tools-hurt-p12",
+     "definition": "Splitting a bloated agent into focused agents with fewer tools each.",
+     "term": "specialist subagents"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "capability-bloat-when-tools-hurt-p03",
+     "answer": "Giving an agent more tools than it can use well. Each new tool makes it slower, more expensive, and more likely to pick the wrong tool.",
+     "id": "capability-bloat-when-tools-hurt-r1",
+     "question": "What is capability bloat?"
+    },
+    {
+     "anchor": "capability-bloat-when-tools-hurt-p08",
+     "answer": "17,500 schema tokens per turn, about $0.035 at $2 per million input tokens, paid whether the tools run or not.",
+     "id": "capability-bloat-when-tools-hurt-r2",
+     "question": "What is the schema tax on 50 tools at 350 tokens each?"
+    },
+    {
+     "anchor": "capability-bloat-when-tools-hurt-p12",
+     "answer": "Split into specialist subagents or trim and merge tools, plus measure tool-call accuracy per tool. Never just a bigger model.",
+     "id": "capability-bloat-when-tools-hurt-r3",
+     "question": "60 tools, wrong calls, over budget. What is the fix?"
+    }
+   ],
+   "title": "Capability bloat: when tools hurt"
+  },
+  {
+   "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent",
+   "blocks": [
+    {
+     "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-p15",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-end",
+   "keyTerms": [
+    {
+     "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-p02",
+     "definition": "Model Context Protocol: the open standard plug for tools and data.",
+     "term": "MCP"
+    },
+    {
+     "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-p02",
+     "definition": "Agent-to-Agent protocol: agents delegating tasks to peer agents.",
+     "term": "A2A"
+    },
+    {
+     "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-p10",
+     "definition": "Machine-readable descriptions of what an agent can do.",
+     "term": "agent cards"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-p04",
+     "answer": "MCP, the open standard plug. Direct API or CLI, the custom wire. Agent-to-agent via A2A, peer agents delegating to each other.",
+     "id": "integration-mechanisms-mcp-api-cli-agent-to-agent-r1",
+     "question": "Name the three integration mechanisms."
+    },
+    {
+     "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-p14",
+     "answer": "Direct API for the proprietary ERP, MCP for the standard CMS, A2A for the peer dispatch agent.",
+     "id": "integration-mechanisms-mcp-api-cli-agent-to-agent-r2",
+     "question": "Retailer: custom ERP, CMS articles, carrier dispatch agent. Which mechanism per connection?"
+    },
+    {
+     "anchor": "integration-mechanisms-mcp-api-cli-agent-to-agent-p16",
+     "answer": "No. MCP standardizes tool and data connections; the Messages API is still how you talk to the model. Most systems use both.",
+     "id": "integration-mechanisms-mcp-api-cli-agent-to-agent-r3",
+     "question": "Are MCP and the API substitutes?"
+    }
+   ],
+   "title": "Integration mechanisms: MCP, API/CLI, agent-to-agent"
+  },
+  {
+   "anchor": "authentication-and-authorization-finding-the-security-gaps",
+   "blocks": [
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p19",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "authentication-and-authorization-finding-the-security-gaps-end",
+   "keyTerms": [
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p02",
+     "definition": "Answering who calls: identity for users, apps, and agents.",
+     "term": "authentication"
+    },
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p02",
+     "definition": "Answering what the caller may do: scopes and permissions.",
+     "term": "authorization"
+    },
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p09",
+     "definition": "The delegated-authorization standard behind remote MCP auth.",
+     "term": "OAuth 2.1"
+    },
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p10",
+     "definition": "Requesting the narrowest scopes that do the job.",
+     "term": "least privilege"
+    },
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p10",
+     "definition": "A named permission baked into the token.",
+     "term": "scope"
+    }
+   ],
+   "minutes": 8,
+   "recall": [
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p03",
+     "answer": "Authentication answers who calls. Authorization answers what they may do. Both apply at three layers: user to app, app to model API, agent to tools.",
+     "id": "authentication-and-authorization-finding-the-security-gaps-r1",
+     "question": "Authentication versus authorization?"
+    },
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p08",
+     "answer": "Streamable HTTP needs real authentication, because the network is not a trust boundary. STDIO relies on the OS process boundary.",
+     "id": "authentication-and-authorization-finding-the-security-gaps-r2",
+     "question": "Which MCP transport needs real auth, and why?"
+    },
+    {
+     "anchor": "authentication-and-authorization-finding-the-security-gaps-p19",
+     "answer": "Per-user identity, per-call scope checks, least-privilege service accounts, human approval on irreversible actions, and full audit logs.",
+     "id": "authentication-and-authorization-finding-the-security-gaps-r3",
+     "question": "What is the gap-hunt checklist?"
+    }
+   ],
+   "title": "Authentication and authorization: finding the security gaps"
+  },
+  {
+   "anchor": "designing-a-rag-pipeline-chunking-and-indexing",
+   "blocks": [
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-p16",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-fig02",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "designing-a-rag-pipeline-chunking-and-indexing-end",
+   "keyTerms": [
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-p02",
+     "definition": "Fetching passages into the prompt so the model answers from documents.",
+     "term": "RAG"
+    },
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-p02",
+     "definition": "Cutting documents into pieces small enough to embed and retrieve.",
+     "term": "chunking"
+    },
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-p04",
+     "definition": "A vector of numbers representing a chunk's meaning.",
+     "term": "embedding"
+    },
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-p09",
+     "definition": "Token overlap between neighboring chunks so split ideas survive.",
+     "term": "overlap"
+    }
+   ],
+   "minutes": 8,
+   "recall": [
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-p03",
+     "answer": "Before the model answers, the system fetches relevant passages from your documents into the prompt. Two halves: offline indexing and online query.",
+     "id": "designing-a-rag-pipeline-chunking-and-indexing-r1",
+     "question": "What is RAG?"
+    },
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-p09",
+     "answer": "Each chunk shares 10 to 20 percent of its tokens with the next, so an idea split across the cut survives. 50 tokens on 512-token chunks is a common start.",
+     "id": "designing-a-rag-pipeline-chunking-and-indexing-r2",
+     "question": "What is overlap and the standard setting?"
+    },
+    {
+     "anchor": "designing-a-rag-pipeline-chunking-and-indexing-p15",
+     "answer": "Switch to a boundary-respecting chunker with overlap, and move to streaming index updates, plus metadata for filtering.",
+     "id": "designing-a-rag-pipeline-chunking-and-indexing-r3",
+     "question": "Legal assistant: wrong clauses, mid-sentence cuts, hourly arrivals. What are the two fixes?"
+    }
+   ],
+   "title": "Designing a RAG pipeline: chunking and indexing"
+  },
+  {
+   "anchor": "retrieval-strategies-matched-to-data-shape",
+   "blocks": [
+    {
+     "anchor": "retrieval-strategies-matched-to-data-shape-p10",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "retrieval-strategies-matched-to-data-shape-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "retrieval-strategies-matched-to-data-shape-end",
+   "keyTerms": [
+    {
+     "anchor": "retrieval-strategies-matched-to-data-shape-p04",
+     "definition": "Keyword scoring by term frequency discounted by corpus rarity.",
+     "term": "BM25"
+    },
+    {
+     "anchor": "retrieval-strategies-matched-to-data-shape-p05",
+     "definition": "A cross-encoder scoring query plus passage precisely, on the top candidates.",
+     "term": "reranker"
+    },
+    {
+     "anchor": "retrieval-strategies-matched-to-data-shape-p07",
+     "definition": "Dense plus keyword retrieval together, covering the mixed middle.",
+     "term": "hybrid retrieval"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "retrieval-strategies-matched-to-data-shape-p04",
+     "answer": "BM25 scores by term frequency discounted by rarity, matching rare strings exactly. Embeddings blur rare strings into approximate meaning.",
+     "id": "retrieval-strategies-matched-to-data-shape-r1",
+     "question": "Why does BM25 beat embeddings on exact identifiers?"
+    },
+    {
+     "anchor": "retrieval-strategies-matched-to-data-shape-p05",
+     "answer": "A cross-encoder that reads the query and each passage together. Run on the top 20 to 50 only; gains 5 to 15 precision points at 100 to 300 ms.",
+     "id": "retrieval-strategies-matched-to-data-shape-r2",
+     "question": "What is a reranker and what does it cost?"
+    },
+    {
+     "anchor": "retrieval-strategies-matched-to-data-shape-p10",
+     "answer": "The claim that vector search made keyword search obsolete. Dense retrieval is worse at exact identifiers, rare terms, and short queries.",
+     "id": "retrieval-strategies-matched-to-data-shape-r3",
+     "question": "What is always a distractor here?"
+    }
+   ],
+   "title": "Retrieval strategies matched to data shape"
+  },
+  {
+   "anchor": "accuracy-latency-cost-trade-offs",
+   "blocks": [
+    {
+     "anchor": "accuracy-latency-cost-trade-offs-p24",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "accuracy-latency-cost-trade-offs-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "accuracy-latency-cost-trade-offs-end",
+   "keyTerms": [
+    {
+     "anchor": "accuracy-latency-cost-trade-offs-p04",
+     "definition": "The latency 95% of requests beat: the number SLAs target.",
+     "term": "p95"
+    },
+    {
+     "anchor": "accuracy-latency-cost-trade-offs-p09",
+     "definition": "Extra output tokens for reasoning, billed as output.",
+     "term": "extended thinking"
+    },
+    {
+     "anchor": "accuracy-latency-cost-trade-offs-p19",
+     "definition": "Real examples with known-good answers, scored before any change ships.",
+     "term": "eval set"
+    }
+   ],
+   "minutes": 8,
+   "recall": [
+    {
+     "anchor": "accuracy-latency-cost-trade-offs-p13",
+     "answer": "Cost equals input tokens over 1M times input price, plus output tokens over 1M times output price.",
+     "id": "accuracy-latency-cost-trade-offs-r1",
+     "question": "What is the cost formula per request?"
+    },
+    {
+     "anchor": "accuracy-latency-cost-trade-offs-p20",
+     "answer": "Haiku resolves 95% at 900 ms p95; Sonnet takes 5%. Blended p95 is about 1,400 ms, cost $0.009 per ticket, accuracy 91%. It wins on all three constraints.",
+     "id": "accuracy-latency-cost-trade-offs-r2",
+     "question": "Why does Design B win?"
+    },
+    {
+     "anchor": "accuracy-latency-cost-trade-offs-p18",
+     "answer": "A weighted average of p95s is not a p95 of anything. Compute percentiles on the mixture, never across the percentiles.",
+     "id": "accuracy-latency-cost-trade-offs-r3",
+     "question": "What is the percentile trap?"
+    }
+   ],
+   "title": "Accuracy-latency-cost trade-offs"
+  },
+  {
+   "anchor": "observability-at-scale",
+   "blocks": [
+    {
+     "anchor": "observability-at-scale-p20",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "observability-at-scale-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "observability-at-scale-end",
+   "keyTerms": [
+    {
+     "anchor": "observability-at-scale-p02",
+     "definition": "A record of one request's journey, broken into spans.",
+     "term": "traces"
+    },
+    {
+     "anchor": "observability-at-scale-p03",
+     "definition": "One timed operation inside a trace, like an LLM call or tool span.",
+     "term": "spans"
+    },
+    {
+     "anchor": "observability-at-scale-fig04",
+     "definition": "Deciding after completion: keep all errors and slow requests, sample the rest.",
+     "term": "tail-based sampling"
+    },
+    {
+     "anchor": "observability-at-scale-p07",
+     "definition": "Scheduled scoring of sampled production traffic against the eval set.",
+     "term": "eval hooks"
+    }
+   ],
+   "minutes": 8,
+   "recall": [
+    {
+     "anchor": "observability-at-scale-p04",
+     "answer": "Traces: one request's journey in spans. Metrics: numbers aggregated over many requests. Logs: per-event detail.",
+     "id": "observability-at-scale-r1",
+     "question": "Name the three pillars of observability."
+    },
+    {
+     "anchor": "observability-at-scale-p12",
+     "answer": "Head-based decides at request start: cheap but can miss rare failures. Tail-based decides after: keeps 100% of errors and slow requests plus 1% of the rest.",
+     "id": "observability-at-scale-r2",
+     "question": "Head-based versus tail-based sampling?"
+    },
+    {
+     "anchor": "observability-at-scale-p10",
+     "answer": "Eval hooks: run a sample of production traffic through your eval set on a schedule, such as 50 conversations every hour.",
+     "id": "observability-at-scale-r3",
+     "question": "How do you catch quality drift?"
+    }
+   ],
+   "title": "Observability at scale"
+  },
+  {
+   "anchor": "progressive-discovery-vs-monolithic-context",
+   "blocks": [
+    {
+     "anchor": "progressive-discovery-vs-monolithic-context-p15",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "progressive-discovery-vs-monolithic-context-fig02",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "progressive-discovery-vs-monolithic-context-end",
+   "keyTerms": [
+    {
+     "anchor": "progressive-discovery-vs-monolithic-context-p02",
+     "definition": "Loading each piece of context only when the step demands it.",
+     "term": "progressive discovery"
+    },
+    {
+     "anchor": "progressive-discovery-vs-monolithic-context-p03",
+     "definition": "Loading everything the agent might need up front.",
+     "term": "monolithic context"
+    },
+    {
+     "anchor": "progressive-discovery-vs-monolithic-context-p05",
+     "definition": "Models attend best to the start and end of long contexts, ignoring the middle.",
+     "term": "lost-in-the-middle effect"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "progressive-discovery-vs-monolithic-context-p03",
+     "answer": "Start with a small core prompt. Load each piece of context only when the agent asks for it or the task demands it.",
+     "id": "progressive-discovery-vs-monolithic-context-r1",
+     "question": "What is progressive discovery?"
+    },
+    {
+     "anchor": "progressive-discovery-vs-monolithic-context-p05",
+     "answer": "Cost: you pay for every token every turn. Lost-in-the-middle: buried instructions get ignored. Context rot: stale results pollute reasoning.",
+     "id": "progressive-discovery-vs-monolithic-context-r2",
+     "question": "What are the three monolith failures?"
+    },
+    {
+     "anchor": "progressive-discovery-vs-monolithic-context-p16",
+     "answer": "Fits is not the same as works. A 150k prompt inside a 200k window obeys the ceiling and still loses.",
+     "id": "progressive-discovery-vs-monolithic-context-r3",
+     "question": "What is the sentence to carry?"
+    }
+   ],
+   "title": "Progressive discovery vs monolithic context"
+  },
+  {
+   "anchor": "exam-drills-and-the-constraint-first-method",
+   "blocks": [
+    {
+     "anchor": "exam-drills-and-the-constraint-first-method-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "exam-drills-and-the-constraint-first-method-end",
+   "keyTerms": [
+    {
+     "anchor": "exam-drills-and-the-constraint-first-method-p02",
+     "definition": "An exam item resolved by reading the constraint before the options.",
+     "term": "constraint puzzle"
+    },
+    {
+     "anchor": "exam-drills-and-the-constraint-first-method-p11",
+     "definition": "Dense plus keyword retrieval together for mixed lookup needs.",
+     "term": "hybrid"
+    }
+   ],
+   "minutes": 4,
+   "recall": [
+    {
+     "anchor": "exam-drills-and-the-constraint-first-method-p04",
+     "answer": "Split into specialist subagents or trim and merge tools. Measure tool-call accuracy per tool first so evidence drives the trim.",
+     "id": "exam-drills-and-the-constraint-first-method-r1",
+     "question": "70 tools, wrong calls, $0.61 against a $0.20 budget. What is the fix?"
+    },
+    {
+     "anchor": "exam-drills-and-the-constraint-first-method-p11",
+     "answer": "Streaming index updates for freshness; hybrid BM25 plus dense retrieval for exact SKU lookups.",
+     "id": "exam-drills-and-the-constraint-first-method-r2",
+     "question": "RAG rebuilds nightly, prices change hourly, SKU misses. What are the fixes?"
+    }
+   ],
+   "title": "Exam drills and the constraint-first method"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

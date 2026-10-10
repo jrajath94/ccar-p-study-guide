@@ -1,0 +1,645 @@
+{
+ "itemId": "05-governance-safety-risk",
+ "itemKind": "lesson",
+ "revision": "f5b234518c96d62ab4e4e162d03285b90bb649dd551e78157a47873aab91151e",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "05-governance-safety-risk-intro",
+   "blocks": [
+    {
+     "anchor": "05-governance-safety-risk-intro-takeaway01",
+     "kind": "summary",
+     "reveal": "fade"
+    },
+    {
+     "anchor": "05-governance-safety-risk-intro-p05",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "05-governance-safety-risk-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "05-governance-safety-risk-intro-takeaway01",
+     "definition": "The one-paragraph model of the domain: resist tricks, human in charge, follow the law, treat people fairly.",
+     "term": "mental model"
+    },
+    {
+     "anchor": "05-governance-safety-risk-intro-takeaway01",
+     "definition": "A stated limit the design must satisfy: latency, compliance, or risk.",
+     "term": "constraint"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "05-governance-safety-risk-intro-p03",
+     "answer": "A system that resists tricks, keeps a human in charge of key decisions, follows the law where the data lives, and treats people fairly while showing its work.",
+     "id": "05-governance-safety-risk-intro-r1",
+     "question": "What is the domain's mental model in four parts?"
+    },
+    {
+     "anchor": "05-governance-safety-risk-intro-p05",
+     "answer": "It does not ask you to recite regulation articles. It puts you in a scenario and asks which choice best satisfies the stated constraint.",
+     "id": "05-governance-safety-risk-intro-r2",
+     "question": "What does the exam not ask?"
+    }
+   ],
+   "title": "D5: Governance, Safety and Risk Management"
+  },
+  {
+   "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations",
+   "blocks": [
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-takeaway01",
+     "kind": "summary",
+     "reveal": "fade"
+    },
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-p19",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-end",
+   "keyTerms": [
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-p06",
+     "definition": "A specific way the system goes wrong.",
+     "term": "failure mode"
+    },
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-p06",
+     "definition": "The chance and cost of a failure happening in your deployment.",
+     "term": "risk"
+    },
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-p06",
+     "definition": "A built-in weakness of the technology that no prompt trick fixes.",
+     "term": "limitation"
+    },
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-p09",
+     "definition": "Attacker instructions smuggled into content the agent reads.",
+     "term": "indirect prompt injection"
+    },
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-p13",
+     "definition": "Bypassing refusal training with a clever fictional frame.",
+     "term": "jailbreak"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-p06",
+     "answer": "Failure mode: a specific way the system goes wrong. Risk: the chance and cost of it happening. Limitation: a built-in weakness no prompt trick fixes.",
+     "id": "1-what-can-go-wrong-failure-modes-risks-and-limitations-r1",
+     "question": "Distinguish failure mode, risk, and limitation."
+    },
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-p19",
+     "answer": "Injection is attacker instructions smuggled into content; the fix is structural. Jailbreak bypasses refusal training with framing; mitigate with classifiers and monitoring.",
+     "id": "1-what-can-go-wrong-failure-modes-risks-and-limitations-r2",
+     "question": "Injection versus jailbreak?"
+    },
+    {
+     "anchor": "1-what-can-go-wrong-failure-modes-risks-and-limitations-aside05",
+     "answer": "Human confirmation before external sends. The attack stops at a review queue instead of succeeding silently.",
+     "id": "1-what-can-go-wrong-failure-modes-risks-and-limitations-r3",
+     "question": "An agent reads a vendor page and emails the inbox to an attacker. What stops it?"
+    }
+   ],
+   "title": "1. What can go wrong: failure modes, risks, and limitations"
+  },
+  {
+   "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli",
+   "blocks": [
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-p11",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-end",
+   "keyTerms": [
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-p02",
+     "definition": "Anthropic's training method: the model applies written principles to itself.",
+     "term": "Constitutional AI"
+    },
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-fig03",
+     "definition": "Anthropic's published list of forbidden uses of Claude systems.",
+     "term": "usage policy"
+    },
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-p06",
+     "definition": "Anthropic's safety ladder: higher capability demands stronger safeguards.",
+     "term": "AI Safety Levels"
+    },
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-aside04",
+     "definition": "The false belief that an aligned model makes your application safe.",
+     "term": "alignment-inheritance trap"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-p02",
+     "answer": "Anthropic's method for training Claude to be helpful, honest, and harmless: written principles in a constitution, applied by the model itself during training.",
+     "id": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-r1",
+     "question": "What is Constitutional AI?"
+    },
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-p11",
+     "answer": "The claim that an aligned model makes your application safe. Alignment reduces the base rate; it does not cover your system's specific risks.",
+     "id": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-r2",
+     "question": "What is the alignment-inheritance trap?"
+    },
+    {
+     "anchor": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-p12",
+     "answer": "Anthropic owns model-level alignment. You own system-level safety: guardrails, HITL, compliance, monitoring.",
+     "id": "2-what-the-model-already-brings-constitutional-ai-and-usage-poli-r3",
+     "question": "Who owns what?"
+    }
+   ],
+   "title": "2. What the model already brings: Constitutional AI and usage policies"
+  },
+  {
+   "anchor": "3-guardrails-and-safety-controls",
+   "blocks": [
+    {
+     "anchor": "3-guardrails-and-safety-controls-p14",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "3-guardrails-and-safety-controls-fig02",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "3-guardrails-and-safety-controls-end",
+   "keyTerms": [
+    {
+     "anchor": "3-guardrails-and-safety-controls-p02",
+     "definition": "A control around the model blocking bad inputs and outputs.",
+     "term": "guardrail"
+    },
+    {
+     "anchor": "3-guardrails-and-safety-controls-fig02",
+     "definition": "Layered guardrails so each catches what the others miss.",
+     "term": "defense in depth"
+    },
+    {
+     "anchor": "3-guardrails-and-safety-controls-aside05",
+     "definition": "A deterministic rule engine for rules that must always hold.",
+     "term": "policy engine"
+    },
+    {
+     "anchor": "3-guardrails-and-safety-controls-aside05",
+     "definition": "The risk left after controls, accepted by the business with monitoring.",
+     "term": "residual risk"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "3-guardrails-and-safety-controls-p02",
+     "answer": "A control around the model that blocks bad inputs at the door and inspects outputs at the exit. Prompt text is the weakest layer.",
+     "id": "3-guardrails-and-safety-controls-r1",
+     "question": "What is a guardrail?"
+    },
+    {
+     "anchor": "3-guardrails-and-safety-controls-p09",
+     "answer": "200,000 gate calls at $0.0002 is $40 per day. 300 ms per round trip is 15% of a 2,000 ms SLA budget.",
+     "id": "3-guardrails-and-safety-controls-r2",
+     "question": "What does a classifier gate cost?"
+    },
+    {
+     "anchor": "3-guardrails-and-safety-controls-p14",
+     "answer": "No. They reduce specific risks to an accepted level. Pair them with monitoring, human review for high-risk cases, and a defined residual risk.",
+     "id": "3-guardrails-and-safety-controls-r3",
+     "question": "Do guardrails make the system fully safe?"
+    }
+   ],
+   "title": "3. Guardrails and safety controls"
+  },
+  {
+   "anchor": "4-human-in-the-loop-validation-strategies",
+   "blocks": [
+    {
+     "anchor": "4-human-in-the-loop-validation-strategies-p15",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "4-human-in-the-loop-validation-strategies-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "4-human-in-the-loop-validation-strategies-end",
+   "keyTerms": [
+    {
+     "anchor": "4-human-in-the-loop-validation-strategies-p02",
+     "definition": "A person reviews output before the system acts on it.",
+     "term": "human-in-the-loop"
+    },
+    {
+     "anchor": "4-human-in-the-loop-validation-strategies-p02",
+     "definition": "A human watches actions and can intervene, but actions do not wait.",
+     "term": "human-on-the-loop"
+    },
+    {
+     "anchor": "4-human-in-the-loop-validation-strategies-aside05",
+     "definition": "Human approval required before irreversible or legally binding acts.",
+     "term": "review-before-release"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "4-human-in-the-loop-validation-strategies-p02",
+     "answer": "In the loop: the action pauses until a human approves. On the loop: the human watches and can intervene, but actions do not wait.",
+     "id": "4-human-in-the-loop-validation-strategies-r1",
+     "question": "Human-in-the-loop versus human-on-the-loop?"
+    },
+    {
+     "anchor": "4-human-in-the-loop-validation-strategies-p15",
+     "answer": "The claim that sampled review suffices for high-stakes actions. Sampling measures quality; it does not prevent individual harm.",
+     "id": "4-human-in-the-loop-validation-strategies-r2",
+     "question": "What is the sampling trap?"
+    },
+    {
+     "anchor": "4-human-in-the-loop-validation-strategies-p10",
+     "answer": "15,000 review-minutes divided by 480 is about 32 reviewer-shifts per day. Review-everything at this volume is a staffing fantasy.",
+     "id": "4-human-in-the-loop-validation-strategies-r3",
+     "question": "5,000 risky outputs a day at 3 minutes each. What is the staffing math?"
+    }
+   ],
+   "title": "4. Human-in-the-loop validation strategies"
+  },
+  {
+   "anchor": "5-compliance-gdpr-general-data-protection-regulation",
+   "blocks": [
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-p10",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "5-compliance-gdpr-general-data-protection-regulation-end",
+   "keyTerms": [
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-p02",
+     "definition": "The EU data-protection law for personal data of people in the EU or EEA.",
+     "term": "GDPR"
+    },
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-p02",
+     "definition": "Anything identifying a person, directly or indirectly.",
+     "term": "personal data"
+    },
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-fig01",
+     "definition": "The right to have your data deleted from every store.",
+     "term": "right to erasure"
+    },
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-aside04",
+     "definition": "The assessment run before high-risk AI processing of EU personal data.",
+     "term": "DPIA"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-p03",
+     "answer": "Every copy of personal data in prompts, logs, and caches needs a legal basis, a purpose, and a retention limit.",
+     "id": "5-compliance-gdpr-general-data-protection-regulation-r1",
+     "question": "What does GDPR require of LLM data copies?"
+    },
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-p12",
+     "answer": "Hashing is pseudonymization, not anonymization. True anonymization must be irreversible. The model memorizing a fact is not deletion.",
+     "id": "5-compliance-gdpr-general-data-protection-regulation-r2",
+     "question": "What is the anonymization trap?"
+    },
+    {
+     "anchor": "5-compliance-gdpr-general-data-protection-regulation-p07",
+     "answer": "Every store: database, vector store, and live logs within 30 days. Backups age out on schedule and stay out of active processing.",
+     "id": "5-compliance-gdpr-general-data-protection-regulation-r3",
+     "question": "A user invokes erasure. What must you name?"
+    }
+   ],
+   "title": "5. Compliance: GDPR (General Data Protection Regulation)"
+  },
+  {
+   "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention",
+   "blocks": [
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-p14",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-end",
+   "keyTerms": [
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-fig01",
+     "definition": "The US law protecting health information.",
+     "term": "HIPAA"
+    },
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-p02",
+     "definition": "Protected Health Information: health data identifying a person.",
+     "term": "PHI"
+    },
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-fig01",
+     "definition": "The contract required with any vendor touching PHI for you.",
+     "term": "BAA"
+    },
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-fig02",
+     "definition": "The US federal program authorizing cloud products for agencies.",
+     "term": "FedRAMP"
+    },
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-p06",
+     "definition": "An arrangement where the provider stores nothing after serving.",
+     "term": "Zero Data Retention"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-p03",
+     "answer": "The BAA: no BAA with a vendor touching PHI means no PHI in that system. The design is non-compliant regardless of technical merits.",
+     "id": "6-compliance-hipaa-fedramp-and-zero-data-retention-r1",
+     "question": "What is the single most tested HIPAA fact?"
+    },
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-p14",
+     "answer": "The claim that ZDR removes the need for audit logs. It means the opposite: the provider keeps nothing, so the audit burden moves entirely to you.",
+     "id": "6-compliance-hipaa-fedramp-and-zero-data-retention-r2",
+     "question": "What is the ZDR trap?"
+    },
+    {
+     "anchor": "6-compliance-hipaa-fedramp-and-zero-data-retention-p04",
+     "answer": "A procurement gate: if the agency requires FedRAMP Moderate, it eliminates unauthorized architectures regardless of features or price.",
+     "id": "6-compliance-hipaa-fedramp-and-zero-data-retention-r3",
+     "question": "What is FedRAMP on the exam?"
+    }
+   ],
+   "title": "6. Compliance: HIPAA, FedRAMP, and Zero Data Retention"
+  },
+  {
+   "anchor": "7-ethical-ai-bias-fairness-and-transparency",
+   "blocks": [
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-p15",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "7-ethical-ai-bias-fairness-and-transparency-end",
+   "keyTerms": [
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-p02",
+     "definition": "A systematic skew in how the system treats different groups.",
+     "term": "bias"
+    },
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-p02",
+     "definition": "Decisions must not unjustly disadvantage a protected group.",
+     "term": "fairness"
+    },
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-aside02",
+     "definition": "Lower group rate over highest group rate; flagged below 0.80.",
+     "term": "disparate impact ratio"
+    },
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-fig01",
+     "definition": "The EEOC 0.80 bar for the disparate impact ratio.",
+     "term": "four-fifths rule"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-p02",
+     "answer": "Bias is a systematic skew in how the system treats groups of people. Fairness is the requirement that decisions do not unjustly disadvantage a protected group.",
+     "id": "7-ethical-ai-bias-fairness-and-transparency-r1",
+     "question": "Define bias and fairness."
+    },
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-p04",
+     "answer": "20 over 30 is 0.67, below the 0.80 four-fifths threshold. The test flags the system.",
+     "id": "7-ethical-ai-bias-fairness-and-transparency-r2",
+     "question": "Resume screener: 30% versus 20% advancement. Flagged?"
+    },
+    {
+     "anchor": "7-ethical-ai-bias-fairness-and-transparency-p05",
+     "answer": "No. Proxies like zip code carry the signal anyway. You must test outcomes, not inputs.",
+     "id": "7-ethical-ai-bias-fairness-and-transparency-r3",
+     "question": "Does removing the group label fix it?"
+    }
+   ],
+   "title": "7. Ethical AI: bias, fairness and transparency"
+  },
+  {
+   "anchor": "8-exam-drill-five-scenarios-and-the-decision-matrix",
+   "blocks": [
+    {
+     "anchor": "8-exam-drill-five-scenarios-and-the-decision-matrix-takeaway01",
+     "kind": "summary",
+     "reveal": "fade"
+    },
+    {
+     "anchor": "8-exam-drill-five-scenarios-and-the-decision-matrix-p20",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "8-exam-drill-five-scenarios-and-the-decision-matrix-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "8-exam-drill-five-scenarios-and-the-decision-matrix-end",
+   "keyTerms": [
+    {
+     "anchor": "8-exam-drill-five-scenarios-and-the-decision-matrix-p02",
+     "definition": "The law, irreversibility, or budget that decides the answer.",
+     "term": "binding constraint"
+    },
+    {
+     "anchor": "8-exam-drill-five-scenarios-and-the-decision-matrix-fig01",
+     "definition": "The table turning any D5 scenario into the same four-beat answer.",
+     "term": "decision matrix"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "8-exam-drill-five-scenarios-and-the-decision-matrix-p20",
+     "answer": "Name the binding constraint before you read the options.",
+     "id": "8-exam-drill-five-scenarios-and-the-decision-matrix-r1",
+     "question": "What is the D5 exam habit?"
+    },
+    {
+     "anchor": "8-exam-drill-five-scenarios-and-the-decision-matrix-p22",
+     "answer": "Binding constraint, then the failure mode or risk, then the matching control, then the residual risk with monitoring.",
+     "id": "8-exam-drill-five-scenarios-and-the-decision-matrix-r2",
+     "question": "What is the four-beat answer?"
+    }
+   ],
+   "title": "8. Exam drill: five scenarios and the decision matrix"
+  },
+  {
+   "anchor": "appendix-glossary-and-honesty-notes",
+   "blocks": [
+    {
+     "anchor": "appendix-glossary-and-honesty-notes-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "appendix-glossary-and-honesty-notes-end",
+   "keyTerms": [
+    {
+     "anchor": "appendix-glossary-and-honesty-notes-p01",
+     "definition": "Reference material pinning down every term.",
+     "term": "reference material"
+    },
+    {
+     "anchor": "appendix-glossary-and-honesty-notes-p01",
+     "definition": "Notes marking what is verified, reconstructed, or illustrative.",
+     "term": "honesty notes"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "appendix-glossary-and-honesty-notes-p01",
+     "answer": "Reference material with every term pinned down, plus the honesty notes that keep the guide trustworthy.",
+     "id": "appendix-glossary-and-honesty-notes-r1",
+     "question": "What remains in the appendix?"
+    }
+   ],
+   "title": "Appendix: glossary and honesty notes"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

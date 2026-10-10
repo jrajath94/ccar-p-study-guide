@@ -1,0 +1,646 @@
+{
+ "itemId": "02-models-prompting-context",
+ "itemKind": "lesson",
+ "revision": "2671fbef622c58e66967203d56e60e13eacc6fff98bbba59fa7dba9f1099b7d2",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "02-models-prompting-context-intro",
+   "blocks": [
+    {
+     "anchor": "02-models-prompting-context-intro-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "02-models-prompting-context-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "02-models-prompting-context-intro-p01",
+     "definition": "A price or spec table tied to one verification date.",
+     "term": "dated snapshot"
+    },
+    {
+     "anchor": "02-models-prompting-context-intro-p01",
+     "definition": "Choices like start cheap, measure on evals, and cache static prefixes.",
+     "term": "decision patterns"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "02-models-prompting-context-intro-p01",
+     "answer": "Treat every price table as a dated snapshot. The decision patterns do not change when prices do.",
+     "id": "02-models-prompting-context-intro-r1",
+     "question": "How should you treat the price tables in this volume?"
+    }
+   ],
+   "title": "D2: Claude Models, Prompting & Context Engineering"
+  },
+  {
+   "anchor": "u1",
+   "blocks": [
+    {
+     "anchor": "u1-p08",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "u1-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "u1-end",
+   "keyTerms": [
+    {
+     "anchor": "u1-p02",
+     "definition": "A chunk of text the model reads and writes, roughly four characters.",
+     "term": "token"
+    },
+    {
+     "anchor": "u1-p01",
+     "definition": "Everything sent in one request: system instructions, messages, tools, documents.",
+     "term": "prompt"
+    },
+    {
+     "anchor": "u1-p04",
+     "definition": "A system trained to predict the next token, over and over.",
+     "term": "LLM"
+    },
+    {
+     "anchor": "u1-p08",
+     "definition": "A request with no memory: you re-send history and pay for the whole prompt.",
+     "term": "stateless request"
+    }
+   ],
+   "minutes": 4,
+   "recall": [
+    {
+     "anchor": "u1-p03",
+     "answer": "The system instructions, the conversation messages, the tool definitions, and any retrieved documents. It is the model's entire world for that request.",
+     "id": "u1-r1",
+     "question": "What is a prompt made of?"
+    },
+    {
+     "anchor": "u1-p04",
+     "answer": "A large language model predicts the next token repeatedly until the answer is complete. A token is a chunk of text, roughly three to four characters of English.",
+     "id": "u1-r2",
+     "question": "Define a token and a language model in one sentence each."
+    },
+    {
+     "anchor": "u1-p08",
+     "answer": "You re-send history, you pay for the whole prompt, and nothing outside the prompt exists for the model.",
+     "id": "u1-r3",
+     "question": "Why does a follow-up message 'forget' earlier context?"
+    }
+   ],
+   "title": "Unit 1. What a prompt is and how Claude reads it"
+  },
+  {
+   "anchor": "u2",
+   "blocks": [
+    {
+     "anchor": "u2-p14",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "u2-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "u2-end",
+   "keyTerms": [
+    {
+     "anchor": "u2-p01",
+     "definition": "The four Claude models, each tuned for a different job and price.",
+     "term": "tiers"
+    },
+    {
+     "anchor": "u2-p05",
+     "definition": "The total tokens the model can consider in one request.",
+     "term": "context window"
+    },
+    {
+     "anchor": "u2-p07",
+     "definition": "Per million tokens: the unit for model prices.",
+     "term": "MTok"
+    },
+    {
+     "anchor": "u2-p11",
+     "definition": "Tokens the model writes; they cost five times input tokens on every model.",
+     "term": "output tokens"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "u2-p09",
+     "answer": "Haiku fits high-volume simple work. Sonnet is the everyday default. Opus fits sustained agentic coding. Fable fits the hardest reasoning.",
+     "id": "u2-r1",
+     "question": "Name the four tiers and the job each is built for."
+    },
+    {
+     "anchor": "u2-p11",
+     "answer": "Output tokens cost exactly five times input tokens on every model. Anything that makes the model write more pays the 5x rate.",
+     "id": "u2-r2",
+     "question": "What is the output-to-input price ratio?"
+    },
+    {
+     "anchor": "u2-p14",
+     "answer": "Test Haiku or Sonnet against the bar first. The credited answer is the tier whose measured quality clears the bar at the lowest cost and latency.",
+     "id": "u2-r3",
+     "question": "A triage bot on Opus hits 94% against a 90% requirement. What next?"
+    }
+   ],
+   "title": "Unit 2. The Claude model family: who is who"
+  },
+  {
+   "anchor": "u3",
+   "blocks": [
+    {
+     "anchor": "u3-p13",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "u3-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "u3-end",
+   "keyTerms": [
+    {
+     "anchor": "u3-p01",
+     "definition": "Asking directly with no examples.",
+     "term": "zero-shot"
+    },
+    {
+     "anchor": "u3-p01",
+     "definition": "Showing input-output examples first so the model copies the pattern.",
+     "term": "few-shot"
+    },
+    {
+     "anchor": "u3-p01",
+     "definition": "Asking the model to reason step by step before answering.",
+     "term": "chain-of-thought"
+    },
+    {
+     "anchor": "u3-p10",
+     "definition": "Built-in reasoning controlled by an effort or budget setting.",
+     "term": "extended thinking"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "u3-p04",
+     "answer": "Zero-shot asks directly with no examples. Few-shot shows examples first. Chain-of-thought asks for step-by-step reasoning. Move right only when difficulty demands it.",
+     "id": "u3-r1",
+     "question": "What are the three prompting techniques, in order of cost?"
+    },
+    {
+     "anchor": "u3-p08",
+     "answer": "CoT generates reasoning as output tokens, and output costs 5x input. On tasks where zero-shot already works, CoT adds cost and latency for no quality gain.",
+     "id": "u3-r2",
+     "question": "Why is chain-of-thought the costliest technique?"
+    },
+    {
+     "anchor": "u3-p12",
+     "answer": "Drop CoT and verify with the eval. The cost comes from output tokens that caching cannot discount, and accuracy is unchanged.",
+     "id": "u3-r3",
+     "question": "Extraction runs 99.1% with or without CoT, but the bill tripled. What is the credited move?"
+    }
+   ],
+   "title": "Unit 3. Zero-shot, few-shot, chain-of-thought"
+  },
+  {
+   "anchor": "u4",
+   "blocks": [
+    {
+     "anchor": "u4-p15",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "u4-fig02",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "u4-end",
+   "keyTerms": [
+    {
+     "anchor": "u4-p01",
+     "definition": "Standing instructions sent with every request, before the conversation.",
+     "term": "system prompt"
+    },
+    {
+     "anchor": "u4-p10",
+     "definition": "A system prompt with slots filled in per request or deployment.",
+     "term": "prompt template"
+    },
+    {
+     "anchor": "u4-p03",
+     "definition": "Behavioral rules written in the prompt: refuse, escalate, validate shape.",
+     "term": "guardrails"
+    },
+    {
+     "anchor": "u4-p04",
+     "definition": "The dedicated request field carrying standing orders, separate from messages.",
+     "term": "system field"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "u4-p05",
+     "answer": "Without one you paste the same instructions into every user message, which is error-prone, wasteful, and hard to cache. A system prompt centralizes the constants in one versioned place.",
+     "id": "u4-r1",
+     "question": "Why not just paste instructions into every user message?"
+    },
+    {
+     "anchor": "u4-p11",
+     "answer": "A slot that changes per request changes the prompt prefix and can silently kill the cache hit rate. Put volatile slots at the end.",
+     "id": "u4-r2",
+     "question": "Where do volatile template slots go, and why?"
+    },
+    {
+     "anchor": "u4-p14",
+     "answer": "A prompt instruction is not a security control. Prompt injection can argue with guardrails, so real safety boundaries need system-level controls outside the prompt.",
+     "id": "u4-r3",
+     "question": "Where do prompt guardrails stop being enough?"
+    }
+   ],
+   "title": "Unit 4. System prompts: the constitution of your application"
+  },
+  {
+   "anchor": "u5",
+   "blocks": [
+    {
+     "anchor": "u5-p16",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "u5-fig03",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "u5-end",
+   "keyTerms": [
+    {
+     "anchor": "u5-p01",
+     "definition": "The total tokens the model can consider in one request, input plus output.",
+     "term": "context window"
+    },
+    {
+     "anchor": "u5-p07",
+     "definition": "Spare window capacity kept so a session survives growth.",
+     "term": "headroom"
+    },
+    {
+     "anchor": "u5-p15",
+     "definition": "Summarizing old turns so a long conversation keeps working.",
+     "term": "compaction"
+    },
+    {
+     "anchor": "u5-p04",
+     "definition": "The token cap on what the model may write in one request.",
+     "term": "max output"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "u5-p07",
+     "answer": "600,000 history plus 128,000 max output is 728,000, inside 1,000,000. Adding 400,000 retrieved tokens pushes it to 1,128,000, which fails.",
+     "id": "u5-r1",
+     "question": "Does 600K of history plus 128K max output fit a 1M window? What breaks it?"
+    },
+    {
+     "anchor": "u5-p10",
+     "answer": "Each turn's input plus output becomes the next turn's input. Tool results, retrieved documents, and examples stack up fast.",
+     "id": "u5-r2",
+     "question": "Why does turn 20 cost more than turn 1?"
+    },
+    {
+     "anchor": "u5-p15",
+     "answer": "Compact old turns and prune tool results. The problem is unbounded history growth, not the window size.",
+     "id": "u5-r3",
+     "question": "A coding agent slows down and forgets early instructions by turn 30. What is the credited fix?"
+    }
+   ],
+   "title": "Unit 5. Context window management: budget it like money"
+  },
+  {
+   "anchor": "u6",
+   "blocks": [
+    {
+     "anchor": "u6-p21",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "u6-fig03",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "u6-end",
+   "keyTerms": [
+    {
+     "anchor": "u6-p01",
+     "definition": "Reusing work the API already did on an identical prompt prefix.",
+     "term": "prompt caching"
+    },
+    {
+     "anchor": "u6-p01",
+     "definition": "The identical start of the prompt that caching can reuse.",
+     "term": "prefix"
+    },
+    {
+     "anchor": "u6-p16",
+     "definition": "The marked point in the prompt where caching starts.",
+     "term": "breakpoint"
+    },
+    {
+     "anchor": "u6-p20",
+     "definition": "How long a cache entry lives: 5 minutes or 1 hour.",
+     "term": "TTL"
+    },
+    {
+     "anchor": "u6-p20",
+     "definition": "The share of requests served from cache instead of recomputed.",
+     "term": "hit rate"
+    }
+   ],
+   "minutes": 9,
+   "recall": [
+    {
+     "anchor": "u6-p05",
+     "answer": "When the prompt prefix is identical to a recent request, the model skips reprocessing it. You pay a small fraction of the input price, cutting input spend 70 to 90 percent.",
+     "id": "u6-r1",
+     "question": "How does prompt caching work?"
+    },
+    {
+     "anchor": "u6-p20",
+     "answer": "Move the breakpoint to the end of the static prefix, before the session ID. The changing session ID poisons the prefix hash on every request.",
+     "id": "u6-r2",
+     "question": "A cached prompt has a 2% hit rate with a breakpoint after a per-request session ID. What is the fix?"
+    },
+    {
+     "anchor": "u6-p10",
+     "answer": "512 tokens for Fable 5.1 and Opus 5.5, 1,024 for Sonnet 5, and 4,096 for Haiku 4.5. Shorter prompts silently skip caching.",
+     "id": "u6-r3",
+     "question": "What are the minimum cacheable lengths per model?"
+    }
+   ],
+   "title": "Unit 6. Prompt caching: the cheapest big lever"
+  },
+  {
+   "anchor": "u7",
+   "blocks": [
+    {
+     "anchor": "u7-p12",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "u7-fig02",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "u7-end",
+   "keyTerms": [
+    {
+     "anchor": "u7-p04",
+     "definition": "Instructions broken into small versioned pieces composed per task.",
+     "term": "modular prompts"
+    },
+    {
+     "anchor": "u7-p06",
+     "definition": "A packaged unit of expertise: a SKILL.md plus scripts and resources.",
+     "term": "Skill"
+    },
+    {
+     "anchor": "u7-p06",
+     "definition": "The file carrying a Skill's name, description, and instructions.",
+     "term": "SKILL.md"
+    },
+    {
+     "anchor": "u7-p01",
+     "definition": "One giant prompt doing everything: unmaintainable and taxed every request.",
+     "term": "mega-prompt"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "u7-p05",
+     "answer": "Five copies of the same instructions become five slightly different instructions within a quarter, and nobody knows which one is canonical.",
+     "id": "u7-r1",
+     "question": "Why do copy-paste prompts rot?"
+    },
+    {
+     "anchor": "u7-p10",
+     "answer": "A tool is a function the model can call; it does something. A Skill packages knowledge about how to do something well.",
+     "id": "u7-r2",
+     "question": "Skill versus tool?"
+    },
+    {
+     "anchor": "u7-p12",
+     "answer": "Extract the shared instructions into versioned modules or a Skill, and place the stable shared content at the front so it forms a cacheable prefix.",
+     "id": "u7-r3",
+     "question": "Twelve agents share compliance instructions via copy-paste. What is the credited pair?"
+    }
+   ],
+   "title": "Unit 7. Prompt reuse: modular prompts and Skills"
+  },
+  {
+   "anchor": "u8",
+   "blocks": [
+    {
+     "anchor": "u8-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "u8-fig02",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "u8-end",
+   "keyTerms": [
+    {
+     "anchor": "u8-p01",
+     "definition": "Start at Haiku, climb only on measured failure, stop when a tier passes.",
+     "term": "selection framework"
+    },
+    {
+     "anchor": "u8-p10",
+     "definition": "Latency and cost limits that can disqualify a model that passes quality.",
+     "term": "side constraints"
+    },
+    {
+     "anchor": "u8-p12",
+     "definition": "Settings letting a model spend more compute thinking before answering.",
+     "term": "effort levels"
+    },
+    {
+     "anchor": "u8-p09",
+     "definition": "The maximum the solution may spend: the binding constraint in batch jobs.",
+     "term": "cost ceiling"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "u8-p04",
+     "answer": "Rank candidates by cost and speed, start at Haiku, climb only when measurements say the cheaper tier fails, and stop the moment a tier passes.",
+     "id": "u8-r1",
+     "question": "State the selection framework."
+    },
+    {
+     "anchor": "u8-p09",
+     "answer": "An extra $31,500 every month for one million turns, for nothing. Cost gaps between tiers are multiples, not percentages.",
+     "id": "u8-r2",
+     "question": "If Haiku clears the quality bar, what does choosing Fable cost?"
+    },
+    {
+     "anchor": "u8-p14",
+     "answer": "Test Haiku on the summarization eval. No latency constraint forces a faster tier, and the cost ceiling is the binding constraint.",
+     "id": "u8-r3",
+     "question": "An overnight batch job has a $2,000 budget; the Sonnet prototype costs $4,800. What now?"
+    }
+   ],
+   "title": "Unit 8. The selection framework: the cheapest model that passes"
+  },
+  {
+   "anchor": "practice",
+   "blocks": [
+    {
+     "anchor": "practice-p05",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "practice-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-p05",
+     "definition": "Start at Haiku, climb only on measured failure, stop when a tier passes.",
+     "term": "selection framework"
+    },
+    {
+     "anchor": "practice-p08",
+     "definition": "Pinning the cache start at the end of the static prefix.",
+     "term": "explicit breakpoint"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "practice-p05",
+     "answer": "The selection framework says to check the cheaper tier before committing. Haiku at 3M requests a month could roughly halve the bill.",
+     "id": "practice-r1",
+     "question": "Sonnet prototype passes every constraint. Why is D still the answer?"
+    },
+    {
+     "anchor": "practice-p06",
+     "answer": "Pin an explicit breakpoint at the end of the static prefix, and move the volatile customer record after it.",
+     "id": "practice-r2",
+     "question": "Automatic caching never hits on a prompt with a changing customer record. What are the two fixes?"
+    }
+   ],
+   "title": "Practice scenarios"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

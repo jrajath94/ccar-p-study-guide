@@ -1,0 +1,554 @@
+{
+ "itemId": "06-stakeholder-communication-lifecycle",
+ "itemKind": "lesson",
+ "revision": "9c0694e7858eeb072efa9fa0633864f2209e544eddbfd809d4855b673383a24f",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "06-stakeholder-communication-lifecycle-intro",
+   "blocks": [
+    {
+     "anchor": "06-stakeholder-communication-lifecycle-intro-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "06-stakeholder-communication-lifecycle-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "06-stakeholder-communication-lifecycle-intro-p01",
+     "definition": "Deciding what to build and explaining the choices.",
+     "term": "architect's craft"
+    },
+    {
+     "anchor": "06-stakeholder-communication-lifecycle-intro-p01",
+     "definition": "Systems that are sometimes wrong, needing honest contracts.",
+     "term": "probabilistic systems"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "06-stakeholder-communication-lifecycle-intro-p01",
+     "answer": "The architect's craft: what to build, how to explain choices, how to write honest contracts for probabilistic systems, how to keep the system healthy after handoff.",
+     "id": "06-stakeholder-communication-lifecycle-intro-r1",
+     "question": "What is this volume about?"
+    }
+   ],
+   "title": "D6. Stakeholder Communication and Lifecycle Management"
+  },
+  {
+   "anchor": "how-d6-questions-are-built",
+   "blocks": [
+    {
+     "anchor": "how-d6-questions-are-built-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "how-d6-questions-are-built-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "how-d6-questions-are-built-end",
+   "keyTerms": [
+    {
+     "anchor": "how-d6-questions-are-built-p04",
+     "definition": "Reading the stakeholders, agreements, measures, and owners before the options.",
+     "term": "constraint-first"
+    },
+    {
+     "anchor": "how-d6-questions-are-built-p04",
+     "definition": "An option that sounds clever but ignores a stakeholder or constraint.",
+     "term": "distractor"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "how-d6-questions-are-built-p02",
+     "answer": "How you run the whole engagement: discovery, decision, documentation, handoff, monitoring, iteration.",
+     "id": "how-d6-questions-are-built-r1",
+     "question": "What does D6 test that other domains do not?"
+    },
+    {
+     "anchor": "how-d6-questions-are-built-p04",
+     "answer": "Constraint-first: who are the stakeholders, what did they agree to, what does the item measure, who owns it.",
+     "id": "how-d6-questions-are-built-r2",
+     "question": "How do you read a D6 item?"
+    }
+   ],
+   "title": "How D6 questions are built"
+  },
+  {
+   "anchor": "unit-1-who-the-stakeholders-are",
+   "blocks": [
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-p13",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-1-who-the-stakeholders-are-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-p02",
+     "definition": "Anyone who can affect the project or feels its effects.",
+     "term": "stakeholder"
+    },
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-p05",
+     "definition": "How much power a stakeholder has over the project.",
+     "term": "influence"
+    },
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-p05",
+     "definition": "How much a stakeholder cares day to day.",
+     "term": "interest"
+    },
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-p03",
+     "definition": "The funder who can kill the project; cares about cost, risk, outcome.",
+     "term": "executive sponsor"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-p03",
+     "answer": "Executive sponsor, product owner, end users, legal and compliance, engineering team, IT and support.",
+     "id": "unit-1-who-the-stakeholders-are-r1",
+     "question": "Who are the six stakeholder types?"
+    },
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-p05",
+     "answer": "On influence, power over the project, and interest, day-to-day care. The quadrant decides your cadence with them.",
+     "id": "unit-1-who-the-stakeholders-are-r2",
+     "question": "How do you sort stakeholders?"
+    },
+    {
+     "anchor": "unit-1-who-the-stakeholders-are-p13",
+     "answer": "Plot the blocker in the keep-satisfied quadrant: consult early, consult on risk, never drown in detail.",
+     "id": "unit-1-who-the-stakeholders-are-r3",
+     "question": "Compliance blocks rollout two weeks before go-live; nobody consulted them. What was missed?"
+    }
+   ],
+   "title": "Unit 1. Who the stakeholders are"
+  },
+  {
+   "anchor": "unit-2-structured-discovery-and-requirement-gathering",
+   "blocks": [
+    {
+     "anchor": "unit-2-structured-discovery-and-requirement-gathering-p13",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-2-structured-discovery-and-requirement-gathering-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-2-structured-discovery-and-requirement-gathering-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-2-structured-discovery-and-requirement-gathering-p02",
+     "definition": "Planned conversations and document reviews before any architecture is drawn.",
+     "term": "structured discovery"
+    },
+    {
+     "anchor": "unit-2-structured-discovery-and-requirement-gathering-p02",
+     "definition": "A single testable statement of what the system must do.",
+     "term": "requirement"
+    },
+    {
+     "anchor": "unit-2-structured-discovery-and-requirement-gathering-p06",
+     "definition": "Explicit stakeholder approval of the requirements document.",
+     "term": "signoff"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "unit-2-structured-discovery-and-requirement-gathering-p02",
+     "answer": "A planned series of conversations and document reviews before any architecture is drawn, producing signed measurable requirements.",
+     "id": "unit-2-structured-discovery-and-requirement-gathering-r1",
+     "question": "What is structured discovery?"
+    },
+    {
+     "anchor": "unit-2-structured-discovery-and-requirement-gathering-p03",
+     "answer": "A single testable statement of what the system must do, like extract the termination clause with at least 95% precision.",
+     "id": "unit-2-structured-discovery-and-requirement-gathering-r2",
+     "question": "What is a requirement?"
+    },
+    {
+     "anchor": "unit-2-structured-discovery-and-requirement-gathering-p04",
+     "answer": "Refuse the premature solution and dig for the problem underneath: what it costs today and what fixed looks like in numbers.",
+     "id": "unit-2-structured-discovery-and-requirement-gathering-r3",
+     "question": "Stakeholders say 'we want RAG.' What do you do?"
+    }
+   ],
+   "title": "Unit 2. Structured discovery and requirement gathering"
+  },
+  {
+   "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs",
+   "blocks": [
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-p17",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-3-communicating-architectural-decisions-and-trade-offs-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-p03",
+     "definition": "A choice where improving one dimension costs you another.",
+     "term": "trade-off"
+    },
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-p21",
+     "definition": "Options in business terms, a recommendation, and the tripwire.",
+     "term": "decision memo"
+    },
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-p03",
+     "definition": "The architect picks; the stakeholder nods without understanding.",
+     "term": "black box decision"
+    },
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-p04",
+     "definition": "Twenty minutes of mechanism detail the executive stops hearing.",
+     "term": "detail dump"
+    }
+   ],
+   "minutes": 7,
+   "recall": [
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-p01",
+     "answer": "Not picking the best technology, but making the trade-offs visible so the business can choose knowingly.",
+     "id": "unit-3-communicating-architectural-decisions-and-trade-offs-r1",
+     "question": "What is the architect's real job here?"
+    },
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-p03",
+     "answer": "The black box decision, where the stakeholder nods without understanding, and the detail dump, where the executive stops listening.",
+     "id": "unit-3-communicating-architectural-decisions-and-trade-offs-r2",
+     "question": "What are the two communication failure modes?"
+    },
+    {
+     "anchor": "unit-3-communicating-architectural-decisions-and-trade-offs-p17",
+     "answer": "The trade-off in the stakeholder's currency, one recommendation, and the fact that would change the call.",
+     "id": "unit-3-communicating-architectural-decisions-and-trade-offs-r3",
+     "question": "What does the credited answer contain?"
+    }
+   ],
+   "title": "Unit 3. Communicating architectural decisions and trade-offs"
+  },
+  {
+   "anchor": "unit-4-architecture-documentation-and-implementation-guidance",
+   "blocks": [
+    {
+     "anchor": "unit-4-architecture-documentation-and-implementation-guidance-p17",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-4-architecture-documentation-and-implementation-guidance-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-4-architecture-documentation-and-implementation-guidance-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-4-architecture-documentation-and-implementation-guidance-p03",
+     "definition": "A short numbered record of one decision: title, context, decision, consequences, status.",
+     "term": "ADR"
+    },
+    {
+     "anchor": "unit-4-architecture-documentation-and-implementation-guidance-p03",
+     "definition": "The operational playbook: deploy, monitor, and answer each alert.",
+     "term": "runbook"
+    },
+    {
+     "anchor": "unit-4-architecture-documentation-and-implementation-guidance-p06",
+     "definition": "Five handoff items, each with a named owner and a date.",
+     "term": "handoff package"
+    }
+   ],
+   "minutes": 8,
+   "recall": [
+    {
+     "anchor": "unit-4-architecture-documentation-and-implementation-guidance-p03",
+     "answer": "A short numbered document capturing one decision: title, context, decision, consequences, status. Never delete; supersede when it changes.",
+     "id": "unit-4-architecture-documentation-and-implementation-guidance-r1",
+     "question": "What is an ADR?"
+    },
+    {
+     "anchor": "unit-4-architecture-documentation-and-implementation-guidance-p10",
+     "answer": "Can a competent engineer who was not in the room make a safe change? If yes, you have enough documentation.",
+     "id": "unit-4-architecture-documentation-and-implementation-guidance-r2",
+     "question": "What is the handoff test?"
+    },
+    {
+     "anchor": "unit-4-architecture-documentation-and-implementation-guidance-p17",
+     "answer": "Restore ownership and measurement first: assign the eval owner, reinstate the review cadence, diagnose the failing segment.",
+     "id": "unit-4-architecture-documentation-and-implementation-guidance-r3",
+     "question": "An inherited system drifts; no eval set, no runbook, no eval owner. What first?"
+    }
+   ],
+   "title": "Unit 4. Architecture documentation and implementation guidance"
+  },
+  {
+   "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas",
+   "blocks": [
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-p31",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-5-feedback-loops-expectation-alignment-and-slas-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-p02",
+     "definition": "A contract about performance: level, window, and remedy.",
+     "term": "SLA"
+    },
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-p02",
+     "definition": "The thing you actually measure, like the fraction of successful requests.",
+     "term": "SLI"
+    },
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-p02",
+     "definition": "The target you set for the indicator, like 99.9%.",
+     "term": "SLO"
+    },
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-p15",
+     "definition": "The failure the contract allows before consequences kick in.",
+     "term": "error budget"
+    }
+   ],
+   "minutes": 11,
+   "recall": [
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-p02",
+     "answer": "The SLI is the thing measured, the SLO is the target, the SLA is the contract referencing the SLO with a remedy.",
+     "id": "unit-5-feedback-loops-expectation-alignment-and-slas-r1",
+     "question": "SLA versus SLI versus SLO?"
+    },
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-p13",
+     "answer": "An availability SLA never covers quality. Write both, separately, measured separately.",
+     "id": "unit-5-feedback-loops-expectation-alignment-and-slas-r2",
+     "question": "What is the single most tested idea in D6?"
+    },
+    {
+     "anchor": "unit-5-feedback-loops-expectation-alignment-and-slas-p31",
+     "answer": "Say we cannot promise 100%. Replace it with at least 95% measured weekly, human review on low-confidence outputs, and a written remedy.",
+     "id": "unit-5-feedback-loops-expectation-alignment-and-slas-r3",
+     "question": "A stakeholder demands 100% accuracy in the contract. What do you say?"
+    }
+   ],
+   "title": "Unit 5. Feedback loops, expectation alignment, and SLAs"
+  },
+  {
+   "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration",
+   "blocks": [
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-p17",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-p02",
+     "definition": "Discover, design, build, hand off, monitor, iterate: the six phases.",
+     "term": "lifecycle"
+    },
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-p03",
+     "definition": "Continuous collection of quality, latency, cost, and safety signals.",
+     "term": "monitoring"
+    },
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-p02",
+     "definition": "Detect, diagnose, fix, re-evaluate, and ship, on purpose.",
+     "term": "iteration"
+    },
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-fig01",
+     "definition": "Calendar events forcing an architecture review: new models, doubled cost, new markets.",
+     "term": "revisit triggers"
+    }
+   ],
+   "minutes": 6,
+   "recall": [
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-p02",
+     "answer": "Discover, design, build, hand off, monitor, iterate. The eval set steers the whole loop.",
+     "id": "unit-6-lifecycle-management-handoff-monitoring-iteration-r1",
+     "question": "Name the six lifecycle phases."
+    },
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-p03",
+     "answer": "Quality, latency, cost, and safety.",
+     "id": "unit-6-lifecycle-management-handoff-monitoring-iteration-r2",
+     "question": "What are the four production signals?"
+    },
+    {
+     "anchor": "unit-6-lifecycle-management-handoff-monitoring-iteration-p16",
+     "answer": "Detect, diagnose the segment, fix narrowly, re-evaluate. Model switching is a guess, not a diagnosis.",
+     "id": "unit-6-lifecycle-management-handoff-monitoring-iteration-r3",
+     "question": "Quality drops three months after launch. What is the professional loop?"
+    }
+   ],
+   "title": "Unit 6. Lifecycle management: handoff, monitoring, iteration"
+  },
+  {
+   "anchor": "d6-exam-tactics",
+   "blocks": [
+    {
+     "anchor": "d6-exam-tactics-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d6-exam-tactics-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d6-exam-tactics-end",
+   "keyTerms": [
+    {
+     "anchor": "d6-exam-tactics-p01",
+     "definition": "Moves that turn D6 scenarios into checkable answers.",
+     "term": "tactics"
+    },
+    {
+     "anchor": "d6-exam-tactics-p01",
+     "definition": "Answers verifiable against stakeholders, agreements, and measures.",
+     "term": "checkable answers"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "d6-exam-tactics-p02",
+     "answer": "Five rules that turn D6 scenarios into checkable answers.",
+     "id": "d6-exam-tactics-r1",
+     "question": "What are D6 exam tactics?"
+    }
+   ],
+   "title": "D6 exam tactics"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

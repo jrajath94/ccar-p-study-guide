@@ -1,0 +1,551 @@
+{
+ "itemId": "01-solution-design-architecture",
+ "itemKind": "lesson",
+ "revision": "34e886146bdfc3307fbda040996bde23a624b06f8641601d7e943bacd8a5a2a2",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "01-solution-design-architecture-intro",
+   "blocks": [
+    {
+     "anchor": "01-solution-design-architecture-intro-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "01-solution-design-architecture-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "01-solution-design-architecture-intro-p02",
+     "definition": "A stated limit the design must satisfy, such as cost, accuracy, or latency.",
+     "term": "constraint"
+    },
+    {
+     "anchor": "01-solution-design-architecture-intro-p02",
+     "definition": "Adding machinery beyond what the constraint requires.",
+     "term": "over-engineering"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "01-solution-design-architecture-intro-p02",
+     "answer": "They reward the narrowest design that satisfies the stated constraint. They punish over-engineering.",
+     "id": "01-solution-design-architecture-intro-r1",
+     "question": "What do D1 items reward and what do they punish?"
+    }
+   ],
+   "title": "Domain 1: Solution Design & Architecture"
+  },
+  {
+   "anchor": "unit-1-translating-business-problems-into-claude-based-solutions",
+   "blocks": [
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p08",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-1-translating-business-problems-into-claude-based-solutions-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p08",
+     "definition": "Baseline plus target plus instrument: the number the design must move.",
+     "term": "success number"
+    },
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p13",
+     "definition": "A moment where a human reads unstructured input and applies judgment.",
+     "term": "decision point"
+    },
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p15",
+     "definition": "A task with messy input, no writable rule, needed judgment, and checkable cost.",
+     "term": "AI-shaped"
+    },
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p09",
+     "definition": "Pain becomes a number, the number becomes a decision, the decision becomes a pattern.",
+     "term": "translation funnel"
+    },
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p16",
+     "definition": "A human reviewer or machine check that can spot and fix a wrong answer.",
+     "term": "verifier"
+    }
+   ],
+   "minutes": 10,
+   "recall": [
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p02",
+     "answer": "What hurts, who it hurts, and what limits you must respect. Ask until you can write all three down.",
+     "id": "unit-1-translating-business-problems-into-claude-based-solutions-r1",
+     "question": "What three facts must you extract from a vague ask before designing?"
+    },
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p15",
+     "answer": "Messy language input, no writable if-statement rule, needed judgment, and a wrong answer with bounded checkable cost.",
+     "id": "unit-1-translating-business-problems-into-claude-based-solutions-r2",
+     "question": "What are the four conditions of an AI-shaped task?"
+    },
+    {
+     "anchor": "unit-1-translating-business-problems-into-claude-based-solutions-p21",
+     "answer": "When the rule can be written as code. Every model call must defend a decision point; if a call defends none, delete it.",
+     "id": "unit-1-translating-business-problems-into-claude-based-solutions-r3",
+     "question": "When is the credited answer 'no LLM needed'?"
+    }
+   ],
+   "title": "Unit 1: Translating business problems into Claude-based solutions"
+  },
+  {
+   "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback",
+   "blocks": [
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p07",
+     "definition": "Turns the messy world into material the model can safely read.",
+     "term": "input stage"
+    },
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p11",
+     "definition": "The safety boundary that validates the result before any real-world action.",
+     "term": "output stage"
+    },
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p15",
+     "definition": "A path carrying what happened back into the system so it improves.",
+     "term": "feedback loop"
+    },
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p17",
+     "definition": "The latency that 95% of requests beat; it measures the slow tail.",
+     "term": "p95"
+    },
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p20",
+     "definition": "Malicious input that tries to override the system's instructions.",
+     "term": "prompt injection"
+    }
+   ],
+   "minutes": 11,
+   "recall": [
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p03",
+     "answer": "Input, processing, output, and feedback loops. Input prepares, processing thinks, output validates, feedback keeps it honest.",
+     "id": "unit-2-end-to-end-architectures-input-processing-output-feedback-r1",
+     "question": "Name the four stages of every Claude system."
+    },
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p12",
+     "answer": "An agent acting directly on model output with no validation step. The fix is output validation, an allowlist, or a human gate.",
+     "id": "unit-2-end-to-end-architectures-input-processing-output-feedback-r2",
+     "question": "What is the exam's favorite output-stage failure?"
+    },
+    {
+     "anchor": "unit-2-end-to-end-architectures-input-processing-output-feedback-p18",
+     "answer": "It absorbs retrieval slowdowns and model variance. A design with zero headroom fails the SLA on a busy day.",
+     "id": "unit-2-end-to-end-architectures-input-processing-output-feedback-r3",
+     "question": "Why keep 1,000 ms headroom inside a 5-second p95 latency budget?"
+    }
+   ],
+   "title": "Unit 2: End-to-end architectures: input, processing, output, feedback loops"
+  },
+  {
+   "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents",
+   "blocks": [
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p39",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p01",
+     "definition": "One model call with retrieval, tools, and memory attached.",
+     "term": "augmented LLM"
+    },
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p03",
+     "definition": "A pattern where code fixes the steps and the model adds judgment inside them.",
+     "term": "workflow"
+    },
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p03",
+     "definition": "A model in a loop that plans its own path through tools.",
+     "term": "agent"
+    },
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p26",
+     "definition": "A planner model that splits work across worker models in isolated contexts.",
+     "term": "orchestrator-workers"
+    },
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-fig09",
+     "definition": "A loop where one model generates and another checks until the output passes.",
+     "term": "evaluator-optimizer"
+    },
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p15",
+     "definition": "Classifying input once, then sending it to the cheapest adequate specialist.",
+     "term": "routing"
+    }
+   ],
+   "minutes": 15,
+   "recall": [
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p39",
+     "answer": "Known steps point to a workflow. Varied inputs point to routing. Independent pieces point to parallelization. An unknowable path points to an agent with caps and gates.",
+     "id": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-r1",
+     "question": "State the pattern selection rule."
+    },
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p21",
+     "answer": "Voting buys reliability: the majority of 5 calls at 80% each is right about 94%. It costs 5 times the calls and only amplifies an already-decent call.",
+     "id": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-r2",
+     "question": "What does voting buy and at what price?"
+    },
+    {
+     "anchor": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-p28",
+     "answer": "When checking is easier than doing. It needs a clear stop condition, an iteration cap, and an independently tested evaluator.",
+     "id": "unit-3-the-three-pattern-families-augmented-llm-workflows-agents-r3",
+     "question": "When is evaluator-optimizer worth it?"
+    }
+   ],
+   "title": "Unit 3: The three pattern families: augmented LLM, workflows, agents"
+  },
+  {
+   "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies",
+   "blocks": [
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-p21",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-4-multi-agent-systems-and-orchestration-strategies-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-p12",
+     "definition": "A worker agent spawned by a main agent with its own context window.",
+     "term": "subagent"
+    },
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-p07",
+     "definition": "Top-down coordination: one orchestrator plans, spawns, and synthesizes.",
+     "term": "harness"
+    },
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-p08",
+     "definition": "Bottom-up coordination: peer agents hand work to each other directly.",
+     "term": "swarm"
+    },
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-fig05",
+     "definition": "Each subagent works in a fresh window, keeping the main window clean.",
+     "term": "context isolation"
+    },
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-p07",
+     "definition": "The agent that decomposes work, assigns subagents, and synthesizes results.",
+     "term": "orchestrator"
+    }
+   ],
+   "minutes": 9,
+   "recall": [
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-p07",
+     "answer": "The harness. One orchestrator plans, spawns subagents, and synthesizes. It is debuggable because every decision is visible in one place.",
+     "id": "unit-4-multi-agent-systems-and-orchestration-strategies-r1",
+     "question": "Harness or swarm: which is the default and why?"
+    },
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-p14",
+     "answer": "Better attention and parallelism. Total tokens usually go up; the main agent's window stays small because only summaries return.",
+     "id": "unit-4-multi-agent-systems-and-orchestration-strategies-r2",
+     "question": "What does multi-agent buy: fewer tokens or better attention?"
+    },
+    {
+     "anchor": "unit-4-multi-agent-systems-and-orchestration-strategies-p17",
+     "answer": "An Opus 4 lead with Sonnet 4 subagents beat single-agent Opus 4 by 90.2% on their internal research eval.",
+     "id": "unit-4-multi-agent-systems-and-orchestration-strategies-r3",
+     "question": "What did Anthropic's multi-agent research system demonstrate?"
+    }
+   ],
+   "title": "Unit 4: Multi-agent systems and orchestration strategies"
+  },
+  {
+   "anchor": "unit-5-decomposition-techniques-for-complex-problems",
+   "blocks": [
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-5-decomposition-techniques-for-complex-problems-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-p01",
+     "definition": "Splitting a complex problem into pieces with clean boundaries.",
+     "term": "decomposition"
+    },
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-p08",
+     "definition": "Parallel split by data: independent pieces run at once for speed.",
+     "term": "sectioning"
+    },
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-p08",
+     "definition": "Running the same task N times and taking the majority for reliability.",
+     "term": "voting"
+    },
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-p18",
+     "definition": "The lines where decisions separate; the right places to cut pieces.",
+     "term": "decision boundaries"
+    }
+   ],
+   "minutes": 8,
+   "recall": [
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-p04",
+     "answer": "One call, one decision, one checkable output. Then you can test it, measure it, price it, and replace it.",
+     "id": "unit-5-decomposition-techniques-for-complex-problems-r1",
+     "question": "State the decomposition principle."
+    },
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-p08",
+     "answer": "Sectioning buys speed on independent pieces. Voting buys reliability at N times the cost. They are not interchangeable.",
+     "id": "unit-5-decomposition-techniques-for-complex-problems-r2",
+     "question": "Sectioning versus voting: what does each buy?"
+    },
+    {
+     "anchor": "unit-5-decomposition-techniques-for-complex-problems-p11",
+     "answer": "Where the decisions separate, not every N characters. Each piece must be independently judgeable.",
+     "id": "unit-5-decomposition-techniques-for-complex-problems-r3",
+     "question": "Where should chunk boundaries fall?"
+    }
+   ],
+   "title": "Unit 5: Decomposition techniques for complex problems"
+  },
+  {
+   "anchor": "unit-6-business-value-pillars-and-performance-slas",
+   "blocks": [
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-p05",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "unit-6-business-value-pillars-and-performance-slas-end",
+   "keyTerms": [
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-p01",
+     "definition": "One of efficiency, transformation, productivity, or cost.",
+     "term": "value pillars"
+    },
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-p01",
+     "definition": "A promise with a measurement method and a consequence, written before launch.",
+     "term": "SLA"
+    },
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-p07",
+     "definition": "A tighter internal target that warns before the SLA breaches.",
+     "term": "SLO"
+    },
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-p17",
+     "definition": "A latency measure over the distribution tail, such as p95, not the average.",
+     "term": "percentile"
+    }
+   ],
+   "minutes": 9,
+   "recall": [
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-p03",
+     "answer": "Efficiency, transformation, productivity, and cost. Underneath all four sits the performance SLA.",
+     "id": "unit-6-business-value-pillars-and-performance-slas-r1",
+     "question": "Name the four value pillars."
+    },
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-p07",
+     "answer": "The SLA is the promise to the stakeholder, with consequences. The SLO is the tighter internal early-warning target.",
+     "id": "unit-6-business-value-pillars-and-performance-slas-r2",
+     "question": "SLA versus SLO?"
+    },
+    {
+     "anchor": "unit-6-business-value-pillars-and-performance-slas-p16",
+     "answer": "An aggregate can hide an 80% segment. Measure per segment and per percentile, and fix weak segments before go-live.",
+     "id": "unit-6-business-value-pillars-and-performance-slas-r3",
+     "question": "Why is '96% accuracy' not an SLA?"
+    }
+   ],
+   "title": "Unit 6: Business value pillars and performance SLAs"
+  },
+  {
+   "anchor": "d1-cheat-sheet-and-practice-items",
+   "blocks": [
+    {
+     "anchor": "d1-cheat-sheet-and-practice-items-p02",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "d1-cheat-sheet-and-practice-items-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "d1-cheat-sheet-and-practice-items-end",
+   "keyTerms": [
+    {
+     "anchor": "d1-cheat-sheet-and-practice-items-p06",
+     "definition": "Judging by the overall number while a weak segment hides inside it.",
+     "term": "aggregate trap"
+    },
+    {
+     "anchor": "d1-cheat-sheet-and-practice-items-p01",
+     "definition": "A cap, gate, or check that bounds a pattern's signature risk.",
+     "term": "guardrail"
+    }
+   ],
+   "minutes": 5,
+   "recall": [
+    {
+     "anchor": "d1-cheat-sheet-and-practice-items-p04",
+     "answer": "B: a routing workflow with a small classifier, specialists per queue, and a human-review lane for low-confidence chats.",
+     "id": "d1-cheat-sheet-and-practice-items-r1",
+     "question": "Bank triage, $40/day cap, 90% per queue: which design fits?"
+    },
+    {
+     "anchor": "d1-cheat-sheet-and-practice-items-p06",
+     "answer": "Hold the launch. Measure per type and add a human-review lane for the weak segment, then re-measure that segment.",
+     "id": "d1-cheat-sheet-and-practice-items-r2",
+     "question": "Pilot scores 96% overall but 81% on merger agreements: what now?"
+    }
+   ],
+   "title": "D1 cheat sheet and practice items"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}

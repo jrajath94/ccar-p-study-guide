@@ -1,0 +1,447 @@
+{
+ "itemId": "question-bank",
+ "itemKind": "lesson",
+ "revision": "c4b67e032f74c568413cf3fe91f609f000313d4ab15e383e0c5c47a1e3a4339a",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "question-bank-intro",
+   "blocks": [
+    {
+     "anchor": "question-bank-intro-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "question-bank-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "question-bank-intro-p01",
+     "definition": "Practice questions written for this guide, not taken from the exam.",
+     "term": "original questions"
+    },
+    {
+     "anchor": "question-bank-intro-p02",
+     "definition": "Stolen exam content; this bank contains none of it.",
+     "term": "exam dumps"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "question-bank-intro-p01",
+     "answer": "477 original questions, 52 counterfactual drills, and 4 full mocks. All practice questions are original; no exam dumps.",
+     "id": "question-bank-intro-r1",
+     "question": "What does this file contain?"
+    }
+   ],
+   "title": "CCAR-P Crash Course: Question Bank"
+  },
+  {
+   "anchor": "contents",
+   "blocks": [],
+   "endAnchor": "contents-end",
+   "keyTerms": [
+    {
+     "anchor": "contents",
+     "definition": "The section map listing every bank, drill set, and mock exam.",
+     "term": "contents"
+    },
+    {
+     "anchor": "contents",
+     "definition": "A table of contents linking to each part of the page.",
+     "term": "table of contents"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "contents",
+     "answer": "The contents section listing every domain bank, the mixed bank, drills, and mock exams.",
+     "id": "contents-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Contents"
+  },
+  {
+   "anchor": "sec-bank-key",
+   "blocks": [
+    {
+     "anchor": "sec-bank-key-p25",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "sec-bank-key-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "sec-bank-key-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-key-p25",
+     "definition": "The credited response for a diagnostic item.",
+     "term": "expected answer"
+    },
+    {
+     "anchor": "sec-bank-key-p25",
+     "definition": "The rule an item tests, cited as V2-Dx.y.",
+     "term": "principle"
+    },
+    {
+     "anchor": "sec-bank-key-p25",
+     "definition": "The lesson section to review after a missed item.",
+     "term": "re-read"
+    }
+   ],
+   "minutes": 13,
+   "recall": [
+    {
+     "anchor": "sec-bank-key-p25",
+     "answer": "Sixteen expected answers: the expected answer, the reason it holds, the principle it tests, and the lesson section to re-read on a miss.",
+     "id": "sec-bank-key-r1",
+     "question": "What does the prerequisite diagnostic answer key give?"
+    }
+   ],
+   "title": "Prerequisite diagnostic: answer key"
+  },
+  {
+   "anchor": "sec-bank-d1",
+   "blocks": [
+    {
+     "anchor": "sec-bank-d1-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-d1-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-d1-p01",
+     "definition": "The official exam guide v1.0, July 2026, defining what is tested.",
+     "term": "blueprint"
+    },
+    {
+     "anchor": "sec-bank-d1-p02",
+     "definition": "Fast, Balanced, Capable, Most capable: lesson toys for model choice.",
+     "term": "tier names"
+    }
+   ],
+   "minutes": 60,
+   "recall": [
+    {
+     "anchor": "sec-bank-d1-p01",
+     "answer": "25 original questions for objectives V2-D1.1 through V2-D1.6, scoped to blueprint v1.0.",
+     "id": "sec-bank-d1-r1",
+     "question": "What does the D1 bank cover?"
+    }
+   ],
+   "title": "Domain 1 Question Bank: Solution Design and Architecture"
+  },
+  {
+   "anchor": "sec-bank-d2",
+   "blocks": [
+    {
+     "anchor": "sec-bank-d2-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-d2-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-d2-p01",
+     "definition": "The official exam guide v1.0, July 2026, defining what is tested.",
+     "term": "blueprint"
+    },
+    {
+     "anchor": "sec-bank-d2-p02",
+     "definition": "Fast, Balanced, Capable, Most capable: lesson toys for model choice.",
+     "term": "tier names"
+    }
+   ],
+   "minutes": 57,
+   "recall": [
+    {
+     "anchor": "sec-bank-d2-p01",
+     "answer": "25 original questions for objectives V2-D2.1 through V2-D2.5, scoped to blueprint v1.0.",
+     "id": "sec-bank-d2-r1",
+     "question": "What does the D2 bank cover?"
+    }
+   ],
+   "title": "Domain 2 Question Bank: Claude Models, Prompting and Context Engineering"
+  },
+  {
+   "anchor": "sec-bank-d3",
+   "blocks": [
+    {
+     "anchor": "sec-bank-d3-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-d3-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-d3-p01",
+     "definition": "The official exam guide v1.0, July 2026, defining what is tested.",
+     "term": "blueprint"
+    },
+    {
+     "anchor": "sec-bank-d3-p04",
+     "definition": "The damage one bad tool call can cause; cap it with scoping.",
+     "term": "blast radius"
+    }
+   ],
+   "minutes": 57,
+   "recall": [
+    {
+     "anchor": "sec-bank-d3-p01",
+     "answer": "25 original questions for objectives V2-D3.1 through V2-D3.8, scoped to blueprint v1.0.",
+     "id": "sec-bank-d3-r1",
+     "question": "What does the D3 bank cover?"
+    }
+   ],
+   "title": "Domain 3 Question Bank: Integration"
+  },
+  {
+   "anchor": "sec-bank-d4",
+   "blocks": [
+    {
+     "anchor": "sec-bank-d4-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-d4-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-d4-p01",
+     "definition": "The official exam guide v1.0, July 2026, defining what is tested.",
+     "term": "blueprint"
+    },
+    {
+     "anchor": "sec-bank-d4-p02",
+     "definition": "The number and threshold defining good; without it no team can start.",
+     "term": "metric"
+    }
+   ],
+   "minutes": 55,
+   "recall": [
+    {
+     "anchor": "sec-bank-d4-p01",
+     "answer": "25 original questions for objectives V2-D4.1 through V2-D4.6, scoped to blueprint v1.0.",
+     "id": "sec-bank-d4-r1",
+     "question": "What does the D4 bank cover?"
+    }
+   ],
+   "title": "Domain 4 Question Bank: Evaluation, Testing and Optimization"
+  },
+  {
+   "anchor": "sec-bank-d5",
+   "blocks": [
+    {
+     "anchor": "sec-bank-d5-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-d5-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-d5-p01",
+     "definition": "The official exam guide v1.0, July 2026, defining what is tested.",
+     "term": "blueprint"
+    },
+    {
+     "anchor": "sec-bank-d5-p03",
+     "definition": "The service holding payout limits; its failure is a scenario in the bank.",
+     "term": "policy service"
+    }
+   ],
+   "minutes": 59,
+   "recall": [
+    {
+     "anchor": "sec-bank-d5-p01",
+     "answer": "25 original questions for objectives V2-D5.1 through V2-D5.5, scoped to blueprint v1.0.",
+     "id": "sec-bank-d5-r1",
+     "question": "What does the D5 bank cover?"
+    }
+   ],
+   "title": "Domain 5 Question Bank: Governance, Safety and Risk Management"
+  },
+  {
+   "anchor": "sec-bank-d6",
+   "blocks": [
+    {
+     "anchor": "sec-bank-d6-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-d6-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-d6-p01",
+     "definition": "The official exam guide v1.0, July 2026, defining what is tested.",
+     "term": "blueprint"
+    },
+    {
+     "anchor": "sec-bank-d6-p03",
+     "definition": "The failure allowance the design must name before launch.",
+     "term": "error budget"
+    }
+   ],
+   "minutes": 55,
+   "recall": [
+    {
+     "anchor": "sec-bank-d6-p01",
+     "answer": "25 original questions for objectives V2-D6.1 through V2-D6.5, scoped to blueprint v1.0.",
+     "id": "sec-bank-d6-r1",
+     "question": "What does the D6 bank cover?"
+    }
+   ],
+   "title": "Domain 6 Question Bank: Stakeholder Communication and Lifecycle Management"
+  },
+  {
+   "anchor": "sec-bank-d7",
+   "blocks": [
+    {
+     "anchor": "sec-bank-d7-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-d7-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-d7-p01",
+     "definition": "The official exam guide v1.0, July 2026, defining what is tested.",
+     "term": "blueprint"
+    },
+    {
+     "anchor": "sec-bank-d7-p04",
+     "definition": "A hook firing after a tool runs, used here to lint every edit.",
+     "term": "PostToolUse hook"
+    }
+   ],
+   "minutes": 53,
+   "recall": [
+    {
+     "anchor": "sec-bank-d7-p01",
+     "answer": "25 original questions for objectives V2-D7.1 through V2-D7.3, scoped to blueprint v1.0.",
+     "id": "sec-bank-d7-r1",
+     "question": "What does the D7 bank cover?"
+    }
+   ],
+   "title": "Domain 7 Question Bank: Developer Productivity and Operational Enablement"
+  },
+  {
+   "anchor": "sec-bank-mixed",
+   "blocks": [
+    {
+     "anchor": "sec-bank-mixed-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-mixed-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-mixed-p01",
+     "definition": "The official exam guide v1.0, July 2026, defining what is tested.",
+     "term": "blueprint"
+    },
+    {
+     "anchor": "sec-bank-mixed-p01",
+     "definition": "Items where more than one option must be selected.",
+     "term": "multiple-response"
+    }
+   ],
+   "minutes": 100,
+   "recall": [
+    {
+     "anchor": "sec-bank-mixed-p01",
+     "answer": "50 original scenario questions across all seven domains, weighted to the blueprint, IDs Q-M-01 through Q-M-50.",
+     "id": "sec-bank-mixed-r1",
+     "question": "What is the mixed bank?"
+    }
+   ],
+   "title": "Mixed-domain question bank: 50 original scenario questions"
+  },
+  {
+   "anchor": "sec-bank-drills",
+   "blocks": [
+    {
+     "anchor": "sec-bank-drills-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-drills-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-drills-p01",
+     "definition": "Base scenario plus one changed requirement; the flipped answer is the lesson.",
+     "term": "drills"
+    },
+    {
+     "anchor": "sec-bank-drills-p01",
+     "definition": "The starting scenario before the requirement changes.",
+     "term": "base scenario"
+    }
+   ],
+   "minutes": 28,
+   "recall": [
+    {
+     "anchor": "sec-bank-drills-p01",
+     "answer": "A base scenario, one changed requirement, the flipped answer, and one paragraph explaining why the flip happens.",
+     "id": "sec-bank-drills-r1",
+     "question": "What is a counterfactual drill?"
+    }
+   ],
+   "title": "Counterfactual drills: 18 comparisons"
+  },
+  {
+   "anchor": "sec-bank-mocks",
+   "blocks": [
+    {
+     "anchor": "sec-bank-mocks-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "sec-bank-mocks-end",
+   "keyTerms": [
+    {
+     "anchor": "sec-bank-mocks-p01",
+     "definition": "63-item practice exams matching the verified exam format.",
+     "term": "mock exams"
+    },
+    {
+     "anchor": "sec-bank-mocks-p03",
+     "definition": "Passing is 720 as a standard, not a raw percentage.",
+     "term": "criterion-referenced"
+    }
+   ],
+   "minutes": 125,
+   "recall": [
+    {
+     "anchor": "sec-bank-mocks-p01",
+     "answer": "The verified format: 63 items, single-answer plus multiple-response, no partial credit, domain mix per blueprint weights.",
+     "id": "sec-bank-mocks-r1",
+     "question": "What do the mocks match?"
+    },
+    {
+     "anchor": "sec-bank-mocks-p03",
+     "answer": "No: passing is 720 criterion-referenced with no published raw-percentage mapping; use mocks to find weak domains.",
+     "id": "sec-bank-mocks-r2",
+     "question": "Can a mock percentage predict a pass?"
+    }
+   ],
+   "title": "Four full-length mock exams: CCAR-P v2"
+  }
+ ]
+}

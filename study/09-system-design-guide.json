@@ -1,0 +1,635 @@
+{
+ "itemId": "09-system-design-guide",
+ "itemKind": "lesson",
+ "revision": "2475d2d0adc20062c691cfe05516cc247262e998c8b06e83b1e0f33f9a29a9d5",
+ "schemaVersion": 1,
+ "sections": [
+  {
+   "anchor": "09-system-design-guide-intro",
+   "blocks": [
+    {
+     "anchor": "09-system-design-guide-intro-p01",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    }
+   ],
+   "endAnchor": "09-system-design-guide-intro-end",
+   "keyTerms": [
+    {
+     "anchor": "09-system-design-guide-intro-p01",
+     "definition": "End-to-end Claude architectures taught from zero for the exam.",
+     "term": "reference designs"
+    },
+    {
+     "anchor": "09-system-design-guide-intro-p01",
+     "definition": "Why this component, not that one, for each part of the design.",
+     "term": "component decision"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "09-system-design-guide-intro-p01",
+     "answer": "Problem, architecture, every component decision, failure modes, real numbers, and exactly how the exam will test it.",
+     "id": "09-system-design-guide-intro-r1",
+     "question": "What does each design teach?"
+    }
+   ],
+   "title": "CCAR-P System Design Guide"
+  },
+  {
+   "anchor": "how-to-use-this-guide",
+   "blocks": [
+    {
+     "anchor": "how-to-use-this-guide-p04",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "how-to-use-this-guide-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "how-to-use-this-guide-end",
+   "keyTerms": [
+    {
+     "anchor": "how-to-use-this-guide-p02",
+     "definition": "Problem, architecture, decisions, failures, math, exam angle: the six parts.",
+     "term": "spine"
+    },
+    {
+     "anchor": "how-to-use-this-guide-p04",
+     "definition": "Find the stated constraint first, then pick the option that satisfies it.",
+     "term": "constraint-first reading"
+    }
+   ],
+   "minutes": 2,
+   "recall": [
+    {
+     "anchor": "how-to-use-this-guide-p02",
+     "answer": "Problem statement, architecture with walkthrough, component decisions, failure modes, cost and latency math, exam angle.",
+     "id": "how-to-use-this-guide-r1",
+     "question": "What is the six-part spine?"
+    },
+    {
+     "anchor": "how-to-use-this-guide-p04",
+     "answer": "Find the stated constraint, like an accuracy SLA or cost ceiling, then pick the option that best satisfies it.",
+     "id": "how-to-use-this-guide-r2",
+     "question": "What is constraint-first reading?"
+    }
+   ],
+   "title": "How to use this guide"
+  },
+  {
+   "anchor": "design-1-production-rag-system",
+   "blocks": [
+    {
+     "anchor": "design-1-production-rag-system-p22",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "design-1-production-rag-system-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "design-1-production-rag-system-end",
+   "keyTerms": [
+    {
+     "anchor": "design-1-production-rag-system-p02",
+     "definition": "Splitting documents into retrievable pieces; must match the data shape.",
+     "term": "chunking"
+    },
+    {
+     "anchor": "design-1-production-rag-system-p19",
+     "definition": "BM25 and vectors in parallel, fused, then a cross-encoder picks top-k.",
+     "term": "hybrid retrieval"
+    },
+    {
+     "anchor": "design-1-production-rag-system-p20",
+     "definition": "The re-scoring stage that lifts faithfulness 10 to 20 points.",
+     "term": "reranker"
+    },
+    {
+     "anchor": "design-1-production-rag-system-p24",
+     "definition": "The frozen dataset every change is tested against.",
+     "term": "golden set"
+    }
+   ],
+   "minutes": 12,
+   "recall": [
+    {
+     "anchor": "design-1-production-rag-system-p11",
+     "answer": "Match the strategy to the data shape: prose by section, tables as rows, code by function.",
+     "id": "design-1-production-rag-system-r1",
+     "question": "What is the chunking rule?"
+    },
+    {
+     "anchor": "design-1-production-rag-system-p22",
+     "answer": "It lifts faithfulness 10 to 20 points for a few hundred milliseconds: the best quality-per-millisecond trade.",
+     "id": "design-1-production-rag-system-r2",
+     "question": "Why add a reranker?"
+    },
+    {
+     "anchor": "design-1-production-rag-system-p38",
+     "answer": "Section-aware hierarchical chunking with hybrid retrieval; fixed-size chunking splits clauses from their definitions.",
+     "id": "design-1-production-rag-system-r3",
+     "question": "Contracts with cross-references: which chunking wins?"
+    }
+   ],
+   "title": "Design 1 Production RAG System"
+  },
+  {
+   "anchor": "design-2-tool-using-agent-in-production",
+   "blocks": [
+    {
+     "anchor": "design-2-tool-using-agent-in-production-p41",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "design-2-tool-using-agent-in-production-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "design-2-tool-using-agent-in-production-end",
+   "keyTerms": [
+    {
+     "anchor": "design-2-tool-using-agent-in-production-p16",
+     "definition": "Too many tools: accuracy falls past 15 to 20 as similar tools confuse the model.",
+     "term": "capability bloat"
+    },
+    {
+     "anchor": "design-2-tool-using-agent-in-production-p11",
+     "definition": "The box between tool call and tool runs; the most important box.",
+     "term": "approval gate"
+    },
+    {
+     "anchor": "design-2-tool-using-agent-in-production-p08",
+     "definition": "Every tool declares how its failures look and who retries.",
+     "term": "error contract"
+    },
+    {
+     "anchor": "design-2-tool-using-agent-in-production-p30",
+     "definition": "A hard bound on loop turns; without it one stuck agent is an unbounded invoice.",
+     "term": "iteration cap"
+    }
+   ],
+   "minutes": 12,
+   "recall": [
+    {
+     "anchor": "design-2-tool-using-agent-in-production-p16",
+     "answer": "Too many tools: accuracy falls past 15 to 20 tools as the model confuses similar ones.",
+     "id": "design-2-tool-using-agent-in-production-r1",
+     "question": "What is capability bloat?"
+    },
+    {
+     "anchor": "design-2-tool-using-agent-in-production-p41",
+     "answer": "No gate for read-only, approval gate for writes, hard gate for destructive actions; friction follows blast radius.",
+     "id": "design-2-tool-using-agent-in-production-r2",
+     "question": "What is tiered HITL?"
+    },
+    {
+     "anchor": "design-2-tool-using-agent-in-production-p35",
+     "answer": "Tool definitions in the prompt: 40 tools at 150 tokens each waste $0.018 per turn.",
+     "id": "design-2-tool-using-agent-in-production-r3",
+     "question": "Where does the agent money actually go?"
+    }
+   ],
+   "title": "Design 2 Tool-Using Agent in Production"
+  },
+  {
+   "anchor": "design-3-multi-agent-orchestration",
+   "blocks": [
+    {
+     "anchor": "design-3-multi-agent-orchestration-p18",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "design-3-multi-agent-orchestration-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "design-3-multi-agent-orchestration-end",
+   "keyTerms": [
+    {
+     "anchor": "design-3-multi-agent-orchestration-p05",
+     "definition": "The coordinator that breaks the job into pieces and holds shared state.",
+     "term": "orchestrator"
+    },
+    {
+     "anchor": "design-3-multi-agent-orchestration-p04",
+     "definition": "Single agent, supervisor, or pipeline: picked by task shape.",
+     "term": "topology"
+    },
+    {
+     "anchor": "design-3-multi-agent-orchestration-p16",
+     "definition": "Each agent gets its own window; the core quality mechanism.",
+     "term": "context isolation"
+    },
+    {
+     "anchor": "design-3-multi-agent-orchestration-p20",
+     "definition": "List first, read the promising one, search only when needed.",
+     "term": "progressive discovery"
+    }
+   ],
+   "minutes": 9,
+   "recall": [
+    {
+     "anchor": "design-3-multi-agent-orchestration-p02",
+     "answer": "When the task outgrows one context window or one skill set.",
+     "id": "design-3-multi-agent-orchestration-r1",
+     "question": "When do you need multi-agent?"
+    },
+    {
+     "anchor": "design-3-multi-agent-orchestration-p14",
+     "answer": "Each subagent gets its own window with only what it needs; only structured summaries return.",
+     "id": "design-3-multi-agent-orchestration-r2",
+     "question": "What is context isolation?"
+    },
+    {
+     "anchor": "design-3-multi-agent-orchestration-p28",
+     "answer": "Independent parallel research goes to orchestrator-workers; a draft needing judging goes to evaluator-optimizer.",
+     "id": "design-3-multi-agent-orchestration-r3",
+     "question": "How do you match the topology?"
+    }
+   ],
+   "title": "Design 3 Multi-Agent Orchestration"
+  },
+  {
+   "anchor": "design-4-production-mcp-deployment",
+   "blocks": [
+    {
+     "anchor": "design-4-production-mcp-deployment-p16",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "design-4-production-mcp-deployment-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "design-4-production-mcp-deployment-end",
+   "keyTerms": [
+    {
+     "anchor": "design-4-production-mcp-deployment-aside01",
+     "definition": "How client messages travel: stdio for local tools, HTTP for remote services.",
+     "term": "transport"
+    },
+    {
+     "anchor": "design-4-production-mcp-deployment-p16",
+     "definition": "The transport for shared production MCP servers behind the corporate network.",
+     "term": "Streamable HTTP"
+    },
+    {
+     "anchor": "design-4-production-mcp-deployment-aside01",
+     "definition": "The industry standard for delegated, scoped authorization.",
+     "term": "OAuth 2.1"
+    },
+    {
+     "anchor": "design-4-production-mcp-deployment-aside08",
+     "definition": "The server acting on its own broad permissions instead of the user's.",
+     "term": "confused deputy"
+    }
+   ],
+   "minutes": 10,
+   "recall": [
+    {
+     "anchor": "design-4-production-mcp-deployment-p16",
+     "answer": "Local single-user goes stdio; shared production goes Streamable HTTP.",
+     "id": "design-4-production-mcp-deployment-r1",
+     "question": "What is the transport choice rule?"
+    },
+    {
+     "anchor": "design-4-production-mcp-deployment-aside08",
+     "answer": "The server acts on its own broad permissions instead of the user's narrow ones; fix with identity propagation.",
+     "id": "design-4-production-mcp-deployment-r2",
+     "question": "What is the confused deputy?"
+    }
+   ],
+   "title": "Design 4 Production MCP Deployment"
+  },
+  {
+   "anchor": "design-5-prompt-caching-economics",
+   "blocks": [
+    {
+     "anchor": "design-5-prompt-caching-economics-p21",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "design-5-prompt-caching-economics-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "design-5-prompt-caching-economics-end",
+   "keyTerms": [
+    {
+     "anchor": "design-5-prompt-caching-economics-p09",
+     "definition": "The processed prefix the API stores and reuses across requests.",
+     "term": "cacheable prefix"
+    },
+    {
+     "anchor": "design-5-prompt-caching-economics-aside03",
+     "definition": "The extra 1.25x cost of the first cache write, repaid by one hit.",
+     "term": "write premium"
+    },
+    {
+     "anchor": "design-5-prompt-caching-economics-p04",
+     "definition": "The point where caching savings repay the write cost.",
+     "term": "break-even"
+    },
+    {
+     "anchor": "design-5-prompt-caching-economics-p11",
+     "definition": "How long the cached prefix lives; five minutes by default.",
+     "term": "TTL"
+    }
+   ],
+   "minutes": 9,
+   "recall": [
+    {
+     "anchor": "design-5-prompt-caching-economics-p21",
+     "answer": "After the very first cache hit; after that it is pure savings.",
+     "id": "design-5-prompt-caching-economics-r1",
+     "question": "When does the write premium repay?"
+    },
+    {
+     "anchor": "design-5-prompt-caching-economics-p22",
+     "answer": "Traffic of one request per hour with a 5-minute TTL: every request pays the 1.25x write premium and never reads.",
+     "id": "design-5-prompt-caching-economics-r2",
+     "question": "When does caching lose money?"
+    },
+    {
+     "anchor": "design-5-prompt-caching-economics-p26",
+     "answer": "Most stable to most dynamic, breakpoints at stability boundaries; dynamic content early poisons the cache.",
+     "id": "design-5-prompt-caching-economics-r3",
+     "question": "What is the prompt ordering rule?"
+    }
+   ],
+   "title": "Design 5 Prompt Caching Economics"
+  },
+  {
+   "anchor": "design-6-multi-cloud-failover",
+   "blocks": [
+    {
+     "anchor": "design-6-multi-cloud-failover-p20",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "design-6-multi-cloud-failover-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "design-6-multi-cloud-failover-end",
+   "keyTerms": [
+    {
+     "anchor": "design-6-multi-cloud-failover-p09",
+     "definition": "A contractual promise: no request or response data retained after serving.",
+     "term": "ZDR"
+    },
+    {
+     "anchor": "design-6-multi-cloud-failover-p14",
+     "definition": "What the system does when the primary is down, decided before 2am.",
+     "term": "degraded mode"
+    },
+    {
+     "anchor": "design-6-multi-cloud-failover-p01",
+     "definition": "Moving traffic to a second provider when the first is sick.",
+     "term": "failover"
+    }
+   ],
+   "minutes": 8,
+   "recall": [
+    {
+     "anchor": "design-6-multi-cloud-failover-p09",
+     "answer": "A contractual promise: the provider stores none of your request or response data after serving it.",
+     "id": "design-6-multi-cloud-failover-r1",
+     "question": "What is ZDR?"
+    },
+    {
+     "anchor": "design-6-multi-cloud-failover-p20",
+     "answer": "Bedrock or Vertex in an EU region, not the direct API.",
+     "id": "design-6-multi-cloud-failover-r2",
+     "question": "A German bank requires customer data to stay in the EU. Which door?"
+    },
+    {
+     "anchor": "design-6-multi-cloud-failover-p21",
+     "answer": "No: after failover, input costs spike until caches rewarm.",
+     "id": "design-6-multi-cloud-failover-r3",
+     "question": "Is failover free?"
+    }
+   ],
+   "title": "Design 6 Multi-Cloud Failover"
+  },
+  {
+   "anchor": "design-7-evals-as-code-pipeline",
+   "blocks": [
+    {
+     "anchor": "design-7-evals-as-code-pipeline-p08",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "design-7-evals-as-code-pipeline-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "design-7-evals-as-code-pipeline-end",
+   "keyTerms": [
+    {
+     "anchor": "design-7-evals-as-code-pipeline-fig01",
+     "definition": "The frozen dataset every change is tested against.",
+     "term": "golden set"
+    },
+    {
+     "anchor": "design-7-evals-as-code-pipeline-p30",
+     "definition": "Agreement with human graders: what makes judge scores trustworthy.",
+     "term": "human-agreement calibration"
+    },
+    {
+     "anchor": "design-7-evals-as-code-pipeline-p34",
+     "definition": "A model scoring outputs; an opinion with a score until calibrated.",
+     "term": "LLM judge"
+    },
+    {
+     "anchor": "design-7-evals-as-code-pipeline-fig01",
+     "definition": "Four checks on every pull request that block a bad merge.",
+     "term": "CI gates"
+    }
+   ],
+   "minutes": 10,
+   "recall": [
+    {
+     "anchor": "design-7-evals-as-code-pipeline-p08",
+     "answer": "Evals live in the repo, run in CI, block bad merges, and get the same review rigor as application code.",
+     "id": "design-7-evals-as-code-pipeline-r1",
+     "question": "What is evals-as-code?"
+    },
+    {
+     "anchor": "design-7-evals-as-code-pipeline-p34",
+     "answer": "A rubric plus human-agreement calibration; without them the scores are noise.",
+     "id": "design-7-evals-as-code-pipeline-r2",
+     "question": "What makes an LLM judge trustworthy?"
+    },
+    {
+     "anchor": "design-7-evals-as-code-pipeline-p29",
+     "answer": "Per-segment measurement; fix the weak segment before go-live.",
+     "id": "design-7-evals-as-code-pipeline-r3",
+     "question": "The aggregate metric looks fine but one segment fails. What is the move?"
+    }
+   ],
+   "title": "Design 7 Evals-as-Code Pipeline"
+  },
+  {
+   "anchor": "design-8-cost-latency-quality-the-master-framework",
+   "blocks": [
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-p18",
+     "kind": "keyIdea",
+     "reveal": "rise"
+    },
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-fig01",
+     "kind": "figure",
+     "reveal": "fade"
+    }
+   ],
+   "endAnchor": "design-8-cost-latency-quality-the-master-framework-end",
+   "keyTerms": [
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-aside01",
+     "definition": "Cost, latency, quality: optimize any two and the third pays.",
+     "term": "trilemma"
+    },
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-p06",
+     "definition": "The one requirement that decides the tier and the design.",
+     "term": "binding constraint"
+    },
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-aside05",
+     "definition": "Cheap models for the bulk, strong models for the hard slice.",
+     "term": "tier the workload"
+    },
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-p14",
+     "definition": "Daily cost ceiling divided by volume: what each request may spend.",
+     "term": "per-request budgets"
+    }
+   ],
+   "minutes": 9,
+   "recall": [
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-p07",
+     "answer": "Cost, latency, quality: optimize any two comfortably and the third pays.",
+     "id": "design-8-cost-latency-quality-the-master-framework-r1",
+     "question": "What is the trilemma?"
+    },
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-p18",
+     "answer": "Find the binding constraint, buy the cheapest tier that satisfies it, tier the workload, cache stable prefixes, batch, measure per segment, gate every change.",
+     "id": "design-8-cost-latency-quality-the-master-framework-r2",
+     "question": "What is the one-paragraph trilemma summary?"
+    },
+    {
+     "anchor": "design-8-cost-latency-quality-the-master-framework-p24",
+     "answer": "A small model filters and routes, a mid-tier model with caching handles standard cases, a flagship takes only escalated hard cases.",
+     "id": "design-8-cost-latency-quality-the-master-framework-r3",
+     "question": "10,000 daily requests, a $0.02 ceiling, a 95% SLA: what shape?"
+    }
+   ],
+   "title": "Design 8 Cost / Latency / Quality: The Master Framework"
+  },
+  {
+   "anchor": "prerequisites",
+   "blocks": [],
+   "endAnchor": "prerequisites-end",
+   "keyTerms": [
+    {
+     "anchor": "prerequisites",
+     "definition": "Material the guide assumes you know before this volume.",
+     "term": "prerequisite"
+    },
+    {
+     "anchor": "prerequisites",
+     "definition": "The recommended order for working through the volumes.",
+     "term": "study path"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "prerequisites",
+     "answer": "The volumes to complete before this one, starting with Claude Developer Fundamentals.",
+     "id": "prerequisites-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Prerequisites"
+  },
+  {
+   "anchor": "domain-volumes",
+   "blocks": [],
+   "endAnchor": "domain-volumes-end",
+   "keyTerms": [
+    {
+     "anchor": "domain-volumes",
+     "definition": "One volume of the study guide covering one exam domain.",
+     "term": "domain volume"
+    },
+    {
+     "anchor": "domain-volumes",
+     "definition": "Claude Certified Architect, Professional: the exam this guide targets.",
+     "term": "CCAR-P"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "domain-volumes",
+     "answer": "The study guide volumes for each exam domain, with links to each.",
+     "id": "domain-volumes-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Domain volumes"
+  },
+  {
+   "anchor": "practice-and-reference",
+   "blocks": [],
+   "endAnchor": "practice-and-reference-end",
+   "keyTerms": [
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Scenario questions with credited answers for exam rehearsal.",
+     "term": "practice items"
+    },
+    {
+     "anchor": "practice-and-reference",
+     "definition": "Cheat sheets and guides kept for quick review.",
+     "term": "reference"
+    }
+   ],
+   "minutes": 1,
+   "recall": [
+    {
+     "anchor": "practice-and-reference",
+     "answer": "Links to practice material and reference guides for this domain.",
+     "id": "practice-and-reference-r1",
+     "question": "What does this section list?"
+    }
+   ],
+   "title": "Practice and reference"
+  }
+ ]
+}
