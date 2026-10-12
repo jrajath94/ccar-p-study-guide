@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Claude Fundamentals Companion: The Prerequisite Volume · CCAR-P</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow+Semi+Condensed:ital,wght@0,400;0,500;0,600;1,400&amp;family=Libre+Caslon+Display&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&amp;display=swap" rel="stylesheet"/><style id="template-theme">
+/* =====================================================================
+   Companion template theme — extracted verbatim from the reference artifact
+   (~/workspace/companions/reference/index.html), with two additions:
+     (a) provenance components the reference lacks: .src-legend, provenance
+         tag pills, .quote-count, and the colophon block styles;
+     (b) a clearly-marked LEGACY section carrying forward old pilot content
+         classes (pull quotes, stat cards, toys) so build.py can swap the
+         <style> block without orphaning existing content.
+   Per-course accent override is NOT in this file: build.py injects a second
+   <style id="course-accent"> after this one, setting only --apron,
+   --apron-wash, --apron-text (+ dark variants). Later rules win.
+   ===================================================================== */
+
+/* ---------- design tokens (reference §a, verbatim) ---------- */
+:root {
+  --paper: #F7F2E8;        /* page = the watercolor paper */
+  --print: #F7F2E8;        /* paintings always sit on paper, in both themes */
+  --surface: #FFFCF5;      /* shelf tags, cards */
+  --ink: #2A231E;          /* sepia-black, same as the pen in the paintings */
+  --ink-2: #5C534A;
+  --muted: #7E7469;
+  --rule: #DDD3C3;
+  --rule-2: #ECE4D6;
+  --apron: #D9581A;        /* the accent: marks, never body text */
+  --apron-wash: rgba(217, 88, 26, .12);
+  --apron-text: #A6400B;   /* accent that clears contrast as text on paper */
+  --on-apron: #FFFFFF;
+  --blue: #2462A6;         /* blueprint blue: the second series */
+  --blue-wash: rgba(36, 98, 166, .12);
+  --grey: #7E786F;         /* neutral benchmark series */
+  --tape: #F0C537;
+  --tape-ink: #2A231E;
+  --frame-pad: 0px;
+  --frame-shadow: none;
+  --frame-radius: 0px;
+  --stage-bg: #EEE6D6;      /* full-screen chart panels on phones */
+  --f-display: "Libre Caslon Display", "Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --f-body: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-ui: "Barlow Semi Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-sign: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --col: 37rem;
+  --wide: 68rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #181512; --surface: #221D19; --ink: #EEE6DA; --ink-2: #C3B9AC; --muted: #978D81;
+    --rule: #3B342D; --rule-2: #2A2520; --apron: #D8612A; --apron-wash: rgba(216, 97, 42, .2);
+    --apron-text: #F2925A; --on-apron: #FFFFFF; --blue: #4F8DD6; --blue-wash: rgba(79, 141, 214, .2);
+    --grey: #938D84; --tape: #D9B12E; --tape-ink: #1A1611;
+    --frame-pad: 14px; --frame-shadow: 0 18px 44px rgba(0, 0, 0, .5); --frame-radius: 3px; --stage-bg: #211D19;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #181512; --surface: #221D19; --ink: #EEE6DA; --ink-2: #C3B9AC; --muted: #978D81;
+  --rule: #3B342D; --rule-2: #2A2520; --apron: #D8612A; --apron-wash: rgba(216, 97, 42, .2);
+  --apron-text: #F2925A; --on-apron: #FFFFFF; --blue: #4F8DD6; --blue-wash: rgba(79, 141, 214, .2);
+  --grey: #938D84; --tape: #D9B12E; --tape-ink: #1A1611;
+  --frame-pad: 14px; --frame-shadow: 0 18px 44px rgba(0, 0, 0, .5); --frame-radius: 3px; --stage-bg: #211D19;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 6rem; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.125rem/1.62 var(--f-body);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; text-decoration-color: var(--apron); text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+a:hover { color: var(--apron-text); }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 2px; }
+.wrap { padding-inline: 20px; padding-block: 0 4rem; }
+.col { max-width: var(--col); margin-inline: auto; }
+.wide { max-width: var(--wide); margin-inline: auto; }
+.col > p { margin: 0 0 1.05em; }
+.col > p + p { text-indent: 0; }
+em { font-style: italic; }
+.ui { font-family: var(--f-ui); }
+
+/* ---------- tape measure bar ---------- */
+.tapebar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  display: grid; grid-template-columns: minmax(11rem, 15rem) 1fr; align-items: center; gap: 14px;
+  padding: 8px 20px 6px;
+}
+.tape-read { font-family: var(--f-ui); line-height: 1.15; min-width: 0; }
+.tape-time { font: 600 1.15rem var(--f-sign); letter-spacing: .02em; font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; }
+.tape-time small { font: 500 .78rem var(--f-ui); color: var(--muted); letter-spacing: .04em; margin-left: .35rem; }
+.tape-ch { font-size: .86rem; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#tape { display: block; width: 100%; height: 42px; cursor: pointer; touch-action: pan-y; }
+#tape:focus-visible { outline-offset: 1px; }
+.tape-hint { position: absolute; right: 22px; bottom: -1.35rem; font: 500 .72rem var(--f-ui); color: var(--muted); }
+@media (max-width: 640px) {
+  .tapebar { grid-template-columns: 1fr; gap: 2px; padding: 6px 16px 4px; }
+  .tape-read { display: flex; gap: .6rem; align-items: baseline; }
+  #tape { height: 36px; }
+}
+
+/* ---------- hero ---------- */
+.hero { padding-block: 3.2rem 1rem; }
+.kicker { font: 600 .8rem var(--f-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--apron-text); margin: 0 0 1.2rem; }
+h1 {
+  font: 400 clamp(2.8rem, 7.6vw, 5.6rem)/0.98 var(--f-display);
+  letter-spacing: -.012em; margin: 0 0 1.4rem; text-wrap: balance;
+}
+.dek { font: italic 400 clamp(1.2rem, 2.4vw, 1.5rem)/1.42 var(--f-body); color: var(--ink-2); margin: 0 0 1.6rem; text-wrap: pretty; max-width: 34rem; }
+.byline { font: 500 .88rem/1.5 var(--f-ui); color: var(--muted); letter-spacing: .02em; display: flex; flex-wrap: wrap; gap: .25rem 1.1rem; }
+.byline b { color: var(--ink-2); font-weight: 600; }
+
+/* ---------- paintings ---------- */
+figure { margin: 0; }
+.paint { margin-block: 2.2rem 2.6rem; }
+.paint .frame {
+  background: var(--print); padding: var(--frame-pad); box-shadow: var(--frame-shadow);
+  border-radius: var(--frame-radius); isolation: isolate;
+}
+/* each painting: a static base on paper, plus separately painted layers that move */
+.stage { position: relative; background: var(--print); isolation: isolate; overflow: hidden; }
+.stage img.base { display: block; width: 100%; height: auto; max-width: 100%; mix-blend-mode: multiply; }
+.stage .ly { position: absolute; display: block; max-width: none; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.stage .ly.mul { mix-blend-mode: multiply; }
+.stage .ly[hidden] { display: none; }
+.stage .ov { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.stage .spark { fill: #FFF8E2; transform-box: fill-box; transform-origin: center; }
+.stage .ripple { fill: none; stroke: #5F7F96; stroke-width: 2.5; }
+.stage .ov.glow-screen { mix-blend-mode: screen; }
+.stage .ring path { fill: none; stroke: #2A231E; stroke-width: 4; stroke-linecap: round; }
+/* first arrival, second kind: the picture develops from a pencil sketch into colour */
+.paint .stage.sketch { filter: grayscale(1) sepia(.3) contrast(1.12); }
+.paint .stage.sketch.develop { filter: grayscale(0) sepia(0) contrast(1); transition: filter 2.4s cubic-bezier(.45, .05, .35, 1) .15s; }
+/* first arrival: the picture blooms onto the paper like a wet wash.
+   The reference used an external bleed.png; the template embeds an organic
+   turbulence-edged mask as a data URI so the effect works on ANY image with
+   zero external files (single-file, file://-clean). */
+.paint .bleed {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='b' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.016' numOctaves='3' seed='7' result='n'/%3E%3CfeColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0.85 0.85 0 -0.72'/%3E%3CfeComposite operator='in' in2='SourceGraphic'/%3E%3C/filter%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='52%25' stop-color='black'/%3E%3Cstop offset='80%25' stop-color='black' stop-opacity='0'/%3E%3C/radialGradient%3E%3Crect width='400' height='400' fill='url(%23g)' filter='url(%23b)'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat; -webkit-mask-position: 50% 50%; -webkit-mask-size: 1% auto;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='b' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.016' numOctaves='3' seed='7' result='n'/%3E%3CfeColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.85 0.85 0.85 0 -0.72'/%3E%3CfeComposite operator='in' in2='SourceGraphic'/%3E%3C/filter%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='52%25' stop-color='black'/%3E%3Cstop offset='80%25' stop-color='black' stop-opacity='0'/%3E%3C/radialGradient%3E%3Crect width='400' height='400' fill='url(%23g)' filter='url(%23b)'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat; mask-position: 50% 50%; mask-size: 1% auto;
+}
+.paint .bleed.bloom {
+  -webkit-mask-size: 270% auto; mask-size: 270% auto;
+  transition: -webkit-mask-size 1.9s cubic-bezier(.5, .05, .4, 1), mask-size 1.9s cubic-bezier(.5, .05, .4, 1);
+}
+.pinbox { position: relative; }
+/* phones: each painting takes the screen and the view travels across it as you scroll */
+@media (max-width: 700px) {
+  figure.paint.pin, figure.paint.drift { margin: 1.6rem -20px 1.8rem; max-width: none; }
+  figure.paint.pin { height: 200vh; height: 200svh; }
+  figure.paint.drift { scroll-snap-align: start; }
+  figure.paint.pin .pinbox { position: sticky; top: var(--barH, 60px); }
+  figure.paint.pin .pinbox, figure.paint.drift .pinbox { height: calc(100vh - var(--barH, 60px)); height: calc(100svh - var(--barH, 60px)); display: flex; flex-direction: column; }
+  figure.paint.pin .frame, figure.paint.drift .frame { flex: 1 1 auto; min-height: 0; position: relative; overflow: hidden; padding: 0; box-shadow: none; border-radius: 0; background: var(--print); }
+  figure.paint.pin .stage, figure.paint.drift .stage { position: absolute; left: 0; top: 0; height: 100%; width: auto; max-width: none; aspect-ratio: var(--ar); transform-origin: 0 0; }
+  figure.paint.pin .stage img.base, figure.paint.drift .stage img.base { width: 100%; height: 100%; max-width: none; }
+  figure.paint.pin figcaption, figure.paint.drift figcaption { margin: 0; padding: .6rem 20px .75rem; max-width: none; background: var(--paper); border-top: 1px solid var(--rule); }
+}
+.paint figcaption, .fig-note {
+  font: italic 400 .92rem/1.45 var(--f-body); color: var(--muted); margin-top: .7rem; max-width: var(--col);
+}
+.paint.wide figcaption { margin-inline: auto; }
+.paint.inset { max-width: 46rem; margin-inline: auto; }
+/* breakout: figures that stay in-flow inside the 37rem column can still
+   open up to inset/wide widths on large screens (Phase 1 may hoist them
+   to true siblings instead; visually identical). */
+@media (min-width: 50rem) {
+  .col > figure.paint.inset, .col > figure.photo.inset { width: 46rem; max-width: none; margin-inline: calc((var(--col) - 46rem) / 2); }
+}
+@media (min-width: 74rem) {
+  .col > figure.paint.wide, .col > figure.photo.wide, .col > section.fig.wide { width: var(--wide); max-width: none; margin-inline: calc((var(--col) - var(--wide)) / 2); }
+}
+/* real photographs: no watercolor entrance, honest framing */
+.photo { margin-block: 2.2rem 2.6rem; }
+.photo img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 3px; }
+.photo.inset { max-width: 46rem; margin-inline: auto; }
+.photo figcaption { font: italic 400 .92rem/1.45 var(--f-body); color: var(--muted); margin-top: .7rem; }
+.photo figcaption .credit { font-style: normal; font-family: var(--f-ui); font-size: .8rem; color: var(--ink-2); }
+
+/* ---------- chapter heads: hanging aisle signs ---------- */
+.chapter { padding-top: 3.4rem; }
+.ch-head { display: flex; gap: 1.2rem; align-items: flex-start; margin-bottom: 1.5rem; }
+.aisle {
+  flex: none; position: relative; margin-top: 1.5rem;
+  width: 4.4rem; padding: .35rem 0 .45rem; text-align: center;
+  background: var(--apron); color: var(--on-apron); border-radius: 2px;
+  font-family: var(--f-sign); line-height: 1;
+}
+.aisle::before, .aisle::after {
+  content: ""; position: absolute; bottom: 100%; width: 1px; height: 1.5rem; background: var(--muted);
+}
+.aisle::before { left: 22%; } .aisle::after { right: 22%; }
+.aisle .l { display: block; font-size: .68rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+.aisle .n { display: block; font-size: 2.35rem; font-weight: 700; margin-top: .12rem; }
+.aisle.analysis { background: var(--ink); }
+.ch-meta { font: 600 .8rem var(--f-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: .2rem 0 .4rem; }
+.ch-meta .ts { color: var(--apron-text); font-variant-numeric: tabular-nums; }
+.ch-meta .dec { text-transform: none; }
+h2 { font: 400 clamp(2rem, 4.8vw, 3.15rem)/1.02 var(--f-display); margin: 0; text-wrap: balance; letter-spacing: -.005em; }
+h3.sub { font: 400 1.7rem/1.1 var(--f-display); margin: 2.4rem 0 .8rem; text-wrap: balance; }
+.part-break { text-align: center; margin: 5rem 0 0; font: 600 .82rem var(--f-ui); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.part-break span { display: inline-block; padding: 0 1rem; background: var(--paper); position: relative; }
+.part-break::before { content: ""; display: block; height: 1px; background: var(--rule); position: relative; top: .62rem; }
+
+/* ---------- lesson tags: shelf labels ---------- */
+aside.tag {
+  display: grid; grid-template-columns: minmax(8.4rem, 10.5rem) 1fr;
+  background: var(--surface); border: 1px solid var(--rule); border-top: 6px solid var(--apron);
+  border-radius: 3px; margin: 2.1rem 0 2.3rem; box-shadow: 0 1px 0 var(--rule);
+}
+.tag-price { padding: 1rem .9rem 1rem 1rem; border-right: 1px dashed var(--rule); display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.tag-big { font: 700 2.3rem/1 var(--f-sign); color: var(--ink); letter-spacing: -.01em; white-space: nowrap; }
+.tag-big.tight { font-size: 1.55rem; }
+.tag-unit { font: 500 .82rem/1.25 var(--f-ui); color: var(--ink-2); margin-top: .35rem; }
+.tag-body { padding: .95rem 1.15rem 1rem; min-width: 0; }
+.tag-eye { font: 600 .74rem var(--f-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--apron-text); }
+.tag-body p { margin: .3rem 0 .6rem; font: 500 1.08rem/1.45 var(--f-body); text-wrap: pretty; }
+.tag-sku { display: flex; align-items: center; gap: .7rem; font: 500 .74rem var(--f-ui); color: var(--muted); letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+.bars { display: inline-block; height: 15px; width: 78px; }
+@media (max-width: 520px) {
+  aside.tag { grid-template-columns: 1fr; }
+  .tag-price { border-right: 0; border-bottom: 1px dashed var(--rule); flex-direction: row; align-items: baseline; gap: .7rem; padding-bottom: .8rem; }
+  .tag-unit { margin-top: 0; }
+}
+
+/* ---------- figures / charts ---------- */
+.fig { margin-block: 2.4rem 2.8rem; }
+.fig-head { margin-bottom: .9rem; }
+.fig-title { font: 600 1.12rem/1.3 var(--f-ui); margin: 0; letter-spacing: .005em; }
+.fig-sub { font: 400 .95rem/1.4 var(--f-ui); color: var(--ink-2); margin: .2rem 0 0; }
+.fig-note { font-style: normal; font-family: var(--f-ui); font-size: .82rem; }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--f-ui); fill: var(--ink-2); font-size: 12px; }
+.chart .tick text { fill: var(--muted); font-variant-numeric: tabular-nums; }
+.chart .grid { stroke: var(--rule); stroke-width: 1; shape-rendering: crispEdges; }
+.chart .axis { stroke: var(--muted); stroke-width: 1; shape-rendering: crispEdges; }
+.chart .lbl-strong { fill: var(--ink); font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; font: 500 .85rem var(--f-ui); color: var(--ink-2); margin: .3rem 0 .6rem; }
+.legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: .4rem; }
+.legend i.sq { height: 10px; width: 10px; border-radius: 2px; }
+.ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.2rem; margin: .4rem 0 1rem; font: 500 .9rem var(--f-ui); color: var(--ink-2); }
+.ctrl label { display: flex; align-items: center; gap: .55rem; }
+.ctrl output { font: 600 1rem var(--f-sign); color: var(--ink); min-width: 3.2rem; font-variant-numeric: tabular-nums; }
+input[type="range"] { accent-color: var(--apron); width: 11rem; max-width: 100%; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 2px; background: var(--surface); }
+.seg button, .btn {
+  font: 600 .86rem var(--f-ui); color: var(--ink-2); background: transparent; border: 0; border-radius: 999px;
+  padding: .32rem .85rem; cursor: pointer; letter-spacing: .02em;
+}
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.btn { border: 1px solid var(--rule); background: var(--surface); color: var(--ink); }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--apron); border-color: var(--apron); color: var(--on-apron); }
+details.table { margin-top: .8rem; font: 400 .88rem var(--f-ui); color: var(--ink-2); }
+details.table summary { cursor: pointer; color: var(--muted); font-weight: 600; letter-spacing: .03em; }
+.tbl-wrap { overflow-x: auto; max-height: 22rem; margin-top: .5rem; border: 1px solid var(--rule); border-radius: 3px; }
+.tbl-wrap table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.tbl-wrap th, .tbl-wrap td { padding: .3rem .7rem; text-align: right; border-bottom: 1px solid var(--rule-2); white-space: nowrap; }
+.tbl-wrap th:first-child, .tbl-wrap td:first-child { text-align: left; }
+.tbl-wrap th { position: sticky; top: 0; background: var(--surface); color: var(--ink); font-weight: 600; }
+
+#tip {
+  position: fixed; z-index: 50; pointer-events: none; max-width: 17rem;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--rule); border-radius: 4px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .14); padding: .5rem .7rem; font: 400 .85rem/1.35 var(--f-ui);
+}
+#tip b { display: block; font: 600 1.05rem/1.2 var(--f-sign); font-variant-numeric: tabular-nums; }
+#tip .k { display: inline-block; width: 12px; height: 2px; vertical-align: middle; margin-right: .35rem; border-radius: 1px; }
+#tip .row { display: flex; justify-content: space-between; gap: 1rem; }
+#tip .row span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* hero number */
+.hero-num { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem 2.5rem; margin: 1.6rem 0 .6rem; }
+.hero-num .lab { font: 600 .78rem var(--f-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.hero-num .val { font: 600 clamp(2.2rem, 4.4vw, 3rem)/1 var(--f-ui); letter-spacing: -.01em; margin-top: .35rem; white-space: nowrap; }
+.hero-num .val.hd { color: var(--ink); }
+.hero-num .val.sp { color: var(--ink-2); }
+.hero-num .val.tick { animation: valtick .45s cubic-bezier(.2, 1.6, .4, 1); transform-origin: left center; }
+@keyframes valtick { from { transform: scale(1.08); color: var(--apron-text); } }
+.hero-num .mark { display: inline-block; width: 22px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: .5rem; }
+.hero-num .note { font: 400 .9rem var(--f-ui); color: var(--ink-2); margin-top: .35rem; }
+
+/* cast badges */
+.cast { display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); gap: 1rem; margin: 1.6rem 0 1rem; }
+.badge { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; }
+.badge-top { background: var(--apron); color: var(--on-apron); font: 600 .72rem var(--f-ui); letter-spacing: .16em; text-transform: uppercase; padding: .35rem .8rem; }
+.badge-body { padding: .7rem .9rem .9rem; display: flex; flex-direction: column; gap: .15rem; flex: 1; }
+.badge-name { font: 400 1.5rem/1.1 var(--f-display); }
+.badge-role { font: 600 .78rem var(--f-ui); letter-spacing: .1em; text-transform: uppercase; color: var(--apron-text); }
+.badge-body p { margin: .35rem 0 0; font: 400 .95rem/1.4 var(--f-ui); color: var(--ink-2); }
+.cameos { font: 400 .92rem/1.5 var(--f-ui); color: var(--ink-2); }
+.cameos b { color: var(--ink); font-weight: 600; }
+
+/* playbook */
+.playbook { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: .9rem; margin-top: 1.4rem; }
+.pb { display: block; text-decoration: none; background: var(--surface); border: 1px solid var(--rule); border-top: 4px solid var(--apron); border-radius: 3px; padding: .75rem .9rem .8rem; color: var(--ink); }
+.pb:hover { border-color: var(--muted); border-top-color: var(--apron); color: var(--ink); }
+.pb .a { font: 600 .72rem var(--f-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--apron-text); }
+.pb .big { font: 700 1.5rem/1.05 var(--f-sign); margin: .25rem 0 .15rem; }
+.pb p { margin: 0; font: 400 .95rem/1.4 var(--f-body); color: var(--ink-2); }
+
+.sources { font: 400 .9rem/1.5 var(--f-ui); color: var(--ink-2); }
+.sources h3 { font: 600 .82rem var(--f-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 2rem 0 .5rem; }
+.sources ul { padding-left: 1.1rem; margin: 0; }
+.sources li { margin: .2rem 0; }
+footer.colophon { border-top: 1px solid var(--rule); margin-top: 4rem; padding-top: 1.5rem; }
+
+/* ---------- chart motion ---------- */
+.chart g.pop { transition: opacity .35s ease, transform .5s cubic-bezier(.2, 1.5, .4, 1); transform-box: fill-box; transform-origin: center; }
+.chart g.pop.off { opacity: 0; transform: scale(.2); }
+.era-lab { transition: opacity .45s ease; }
+.score .sl { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 1.1s cubic-bezier(.4, 0, .2, 1) .25s; }
+.score .sl-end { transition: opacity .35s ease 1.2s; }
+.score .score-card { transition: opacity .5s ease, transform .5s ease; }
+.score.pre .score-card { opacity: 0; transform: translateY(12px); transition: none; }
+.score.pre .sl { stroke-dashoffset: 1; transition: none; }
+.score.pre .sl-end { opacity: 0; transition: none; }
+.cap-seg { transition: transform .9s cubic-bezier(.2, .8, .2, 1); transform-origin: left center; }
+.cap-bar.pre .cap-seg { transform: scaleX(0); transition: none; }
+.eq > * { transition: opacity .45s ease, transform .45s ease; }
+.eq.pre > * { opacity: 0; transform: translateY(10px); transition: none; }
+.eq-result { transition: opacity .7s ease; }
+.eq-result.pre { opacity: 0; transition: none; }
+/* phones: charts take the whole screen, and the page settles onto them */
+@media (max-width: 700px) {
+  html { scroll-snap-type: y proximity; scroll-padding-top: var(--barH, 60px); }
+  .fig.fs {
+    min-height: calc(100vh - var(--barH, 60px)); min-height: calc(100svh - var(--barH, 60px));
+    margin: 2rem -20px; padding: 1.4rem 20px 1.5rem; background: var(--stage-bg);
+    display: flex; flex-direction: column; justify-content: center; scroll-snap-align: start;
+  }
+  .fig.fs > * { margin-left: 0 !important; margin-right: 0 !important; width: 100%; max-width: none !important; }
+  .fig.fs .chart { max-width: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; scroll-snap-type: none !important; }
+  .pyr-g { transition: none; }
+  .paint .bleed { -webkit-mask: none; mask: none; }
+  .paint .stage.sketch { filter: none; }
+}
+
+/* =====================================================================
+   PROVENANCE COMPONENTS — the reference lacks these; the template carries
+   them for every artifact (COMPANION_PROMPT.md honesty laws).
+   ===================================================================== */
+/* SOURCE / INTERPRETATION legend */
+.src-legend {
+  border: 1px solid var(--rule); background: var(--surface); border-radius: 6px;
+  padding: 1rem 1.2rem; margin: 1.8rem 0; font: 400 .95rem/1.5 var(--f-ui); color: var(--ink-2);
+}
+.src-legend p { margin: .35rem 0; }
+.src-legend .lede { font: 600 .78rem var(--f-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: .5rem; }
+/* provenance tag pills (inline, element-qualified so they never clash with aside.tag) */
+span.ptag, .ptag {
+  display: inline-block; font: 700 .68rem var(--f-ui); letter-spacing: .1em; text-transform: uppercase;
+  padding: .18rem .6rem; border-radius: 999px; margin-right: .5rem; vertical-align: .12em; white-space: nowrap;
+}
+.ptag-src { background: var(--ink); color: var(--paper); }
+.ptag-illustration { background: transparent; color: var(--apron-text); border: 1.5px solid var(--apron); }
+.ptag-companion { background: transparent; color: var(--muted); border: 1.5px solid var(--muted); }
+.ptag-ref { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .72rem; font-weight: 500; color: var(--muted); margin-left: .4rem; letter-spacing: 0; text-transform: none; }
+/* mechanical quote-count footer block */
+.quote-count {
+  border: 1px dashed var(--rule); border-radius: 6px; padding: .9rem 1.1rem; margin: 2rem 0;
+  font: 400 .9rem/1.5 var(--f-ui); color: var(--ink-2); background: transparent;
+}
+.quote-count b { color: var(--ink); }
+.quote-count .n { font: 700 1.3rem var(--f-sign); color: var(--apron-text); font-variant-numeric: tabular-nums; }
+/* colophon: "About this page" + sources + provenance wording */
+.colophon .about p { font: 400 .95rem/1.55 var(--f-ui); color: var(--ink-2); }
+.colophon .about .prov-line { border-left: 3px solid var(--apron); padding-left: .9rem; }
+
+/* =====================================================================
+   LEGACY pilot content classes — carried forward so the build.py <style>
+   swap never orphans existing content. New artifacts should use the
+   reference components above instead.
+   ===================================================================== */
+.pull { margin: 2rem 0; padding: 1.2rem 1.4rem; border-left: 4px solid var(--apron); background: var(--surface); border-radius: 0 6px 6px 0; }
+.pull blockquote { margin: 0; font: italic 400 1.35rem/1.4 var(--f-display); color: var(--ink); text-wrap: pretty; }
+.pull .who { margin: .6rem 0 0; font: 500 .85rem var(--f-ui); color: var(--muted); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem; margin: 1.6rem 0; }
+.stat { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: .8rem 1rem; }
+.stat .n { font: 700 1.9rem/1.1 var(--f-sign); color: var(--ink); font-variant-numeric: tabular-nums; }
+.stat .l { font: 500 .9rem/1.35 var(--f-ui); color: var(--ink-2); margin-top: .25rem; }
+.stat .s { font: 500 .75rem var(--f-ui); color: var(--muted); margin-top: .3rem; letter-spacing: .04em; }
+.caption { font: italic 400 .92rem/1.45 var(--f-body); color: var(--muted); margin-top: .6rem; }
+.eyebrow { font: 600 .78rem var(--f-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--apron-text); margin: 0 0 .4rem; }
+.video { position: relative; width: 100%; aspect-ratio: 16 / 9; margin: 2rem 0; background: var(--stage-bg); border-radius: 6px; overflow: hidden; }
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+.takeaways { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 1.1rem 1.3rem; margin: 2rem 0; }
+.takeaways h3 { font: 400 1.4rem/1.2 var(--f-display); margin: 0 0 .6rem; }
+.takeaways ol { margin: 0; padding-left: 1.2rem; font-size: 1rem; }
+.takeaways li { margin: .35rem 0; }
+.prose-narrow { max-width: var(--col); }
+.secnum { font: 600 .8rem var(--f-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 .5rem; }
+.chips, .stepdots { display: flex; flex-wrap: wrap; gap: .45rem; }
+.toy { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem 1.2rem; margin: 1.6rem 0; }
+.toy .data { font-variant-numeric: tabular-nums; }
+.wisdom ol { font-size: 1rem; }
+.nugget-legacy { border: 1px solid var(--rule); border-radius: 6px; padding: 1rem 1.2rem; margin: 1.6rem 0; background: var(--surface); }
+
+</style><style id="course-accent">
+/* course accent: Anthropic clay plum #8A4B6B (ccar-p) */
+:root{--apron:#8A4B6B;--apron-wash:rgba(138,75,107,.12);--apron-text:#7E4261;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--apron:#C48AA6;--apron-wash:rgba(196,138,166,.2);--apron-text:#CE9AB4;}}
+:root[data-theme="dark"]{--apron:#C48AA6;--apron-wash:rgba(196,138,166,.2);--apron-text:#CE9AB4;}
+</style></head>
+<body><div class="tapebar" data-mode="progress" data-sign-label="Chapter" id="tapebar"><div aria-live="off" class="tape-read"><div class="tape-time" id="tapeTime"></div><div class="tape-ch" id="tapeCh"></div></div><svg aria-label="Position in the companion. Use arrow keys to move between sections." aria-valuemax="23" aria-valuemin="1" aria-valuenow="1" id="tape" role="slider" tabindex="0"></svg></div><div hidden="" id="tip"></div><div class="wrap">
+<header class="hero"><p class="kicker">Companion · CCAR-P Prerequisite · Claude Developer Fundamentals</p><h1>Claude fundamentals: tokens, keys, calls, and craft</h1><p class="dek">The prerequisite volume builds the Claude vocabulary the whole CCAR-P guide assumes. This companion walks it in source order: tokens, the API key, the first call, system prompts, memory, sample controls, tools, think work, cache work, batches, the embeddings gap, the model lineup, MCP, products, stream work, limits, errors, evals, safety, and the five prompt moves, up one capstone ladder.</p><div class="byline"><span>Companion to the Claude Developer Fundamentals prerequisite volume in the CCAR-P study guide. No transcript exists. The page narrates the lesson volume and the study plan for the volume.</span></div></header>
+<div class="legend src-legend">
+<p class="lede">SOURCE / INTERPRETATION: HOW TO READ THE TAGS</p>
+<p><span class="ptag ptag-src">From the lesson</span> SOURCE: the idea, and every number beside it, comes from the cited section of the source. The phrasing is the companion's.</p>
+<p><span class="ptag ptag-illustration">Illustration</span> INTERPRETATION: invented by the companion: an analogy, a toy with made-up values, or a what-if. Never source content.</p>
+<p><span class="ptag ptag-companion">companion</span> INTERPRETATION: companion voice: the idea above the tag is from the source. The generalization below it is the companion's.</p>
+</div>
+<figure class="paint inset" data-entrance="bloom"><div class="frame"><div class="stage"><img alt="The fundamentals workshop" class="base" loading="lazy" src="assets/prereq-claude-fundamentals-hero.webp"/></div></div><figcaption>Watercolor: The fundamentals workshop. Original AI watercolor illustration made for this page.</figcaption></figure>
+<section class="block col" data-chapter="1" data-title="HOW TO USE THIS VOLUME" id="s1"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">1</span></div><div><p class="ch-meta"><span class="ts">Chapter 1</span> · Start</p><h2>HOW TO USE THIS VOLUME</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">How to use</span></p><p>This volume covers the Claude API for a CCAR-P candidate: what Claude is, keys, Messages, system prompts, multi-turn work, sample controls, and tool use. It adds think work, cache work, batches, and embeddings. It shows the model lineup, MCP, and Claude Code. It closes with stream work, rate limits, errors, evals, safety, prompt engineer fundamentals, and a capstone that connects all parts into one production application.</p><p>Read the volume once, front to back. Every topic is a visual ladder. Rung 1 gives the plainest mental model in one short paragraph. Each rung then adds exactly one layer of depth, until the full production-grade picture stands. A diagram sits at every rung. Each unit ends with a knowledge check: answer from memory before a look at the answers. All code is Python code on the Anthropic SDK, with real API shapes only. CCAR-P has no formal prerequisites. The exam guide, version 1.0 of July 2026 per the volume, recommends a software engineer foundation, about three years of systems architecture experience, and six months of hands-on production work with Claude. This volume covers the Claude part of that list. It does not teach software engineer work or systems architecture.</p></div><aside class="tag" data-chapter="s1" data-sign-label="Chapter" data-sign-num="1" id="nugget-ladder"><div class="tag-price"><span class="tag-big">3 years</span><span class="tag-unit">of architecture experience the exam guide recommends, plus 6 months with Claude</span></div><div class="tag-body"><div class="tag-title">Nugget 1 · One layer per rung From the lesson How to use</div><div class="tag-eye">The lesson</div><p class="">Each topic climbs rung by rung: a plain model first, then one layer of depth at a time, with a knowledge check from memory at the end.</p><p><b>Why it matters. </b>The ladder is a study method as much as a book shape. A check answered from memory proves the layer held.</p><p><b>Transfer. </b>Learn any hard system in layers, and test each layer before the next one lands.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<section class="block col" data-chapter="1" data-title="WHAT CLAUDE IS: PREDICTIONS OVER TOKENS" id="s2"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">2</span></div><div><p class="ch-meta"><span class="ts">Chapter 2</span> · Core idea</p><h2>WHAT CLAUDE IS: PREDICTIONS OVER TOKENS</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Tokens</span></p><p>Claude is a large language model. It does one task: given text, it predicts the most probable next token, then the next token, and it continues until it decides to stop. A token is a piece of text: a word, part of a word, or punctuation. About four characters make one token. The word unbelievable splits into three tokens: un, believ, able. Context windows and prices count tokens, not words. A budget in words overflows the window you thought you had.</p><p>Everything you send becomes one long sequence of input tokens: your instructions, the conversation so far, the documents, and the tool definitions. Claude reads the whole sequence, predicts the next token, appends it, and repeats. The finished text is the output tokens. No other input channel and no other output channel exists. Tokens are the whole interface. Three numbers run the volume. The context window is how many tokens fit in one request: 200K to 1M tokens on current models. Max tokens is your limit on reply length. Price is the cost per token in and per token out, and output costs about 5 times more than input. Every knob in this volume buys more quality per token, or fewer tokens per task.</p></div><aside class="tag" data-chapter="s2" data-sign-label="Chapter" data-sign-num="2" id="nugget-token"><div class="tag-price"><span class="tag-big">4 chars</span><span class="tag-unit">per token, as the rule of thumb for English text</span></div><div class="tag-body"><div class="tag-title">Nugget 2 · Tokens are the atoms From the lesson Tokens</div><div class="tag-eye">The lesson</div><p class="">About four characters make one token. Claude reads and writes in tokens, and windows and prices count tokens, not words.</p><p><b>Why it matters. </b>Every later unit is token math in a costume: cache work, batches, rate limits, and cost all denominate in tokens.</p><p><b>Transfer. </b>Find the atomic unit of any system and count in that unit. Budgets in the wrong unit fail in silence.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside><aside class="tag" data-chapter="s2" data-sign-label="Chapter" data-sign-num="2" id="nugget-window"><div class="tag-price"><span class="tag-big">200K to 1M</span><span class="tag-unit">tokens of context window on current models</span></div><div class="tag-body"><div class="tag-title">Nugget 3 · The window is a ceiling, not a target From the lesson Tokens</div><div class="tag-eye">The lesson</div><p class="">Current models hold 200K to 1M tokens per request. A full window is legal and still a poor design in most cases.</p><p><b>Why it matters. </b>Cache cost and latency grow with the amount you send. The capstone and the domain volumes punish window stuff work on cost and on accuracy.</p><p><b>Transfer. </b>Treat every capacity limit as a ceiling to stay under with margin, not a quota to fill.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<section class="block col" data-chapter="1" data-title="Your API key is the front door" id="s3"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">3</span></div><div><p class="ch-meta"><span class="ts">Chapter 3</span> · Access</p><h2>Your API key is the front door</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">API key</span></p><p>Your API key is a password that buys Claude answers. You show the key with every request, in the x-api-key header, and Anthropic bills your account for the use. The gateway checks the key first. A wrong key means the request does not run. A valid key opens the door, the request runs, and the response comes back.</p><p>The key lives in an environment variable, ANTHROPIC_API_KEY, and the SDK picks it up on its own. The key never sits in code, in a repository, or in chat. A leaked key lets anyone spend your money, so rotate the key at the Anthropic console the moment you suspect exposure. Some enterprise teams skip the direct API and call Claude through AWS Bedrock or Google Vertex AI with IAM roles in place of an Anthropic key. The request shape is the same. The front door differs. The exam cares that you know both paths exist.</p></div><aside class="tag" data-chapter="s3" data-sign-label="Chapter" data-sign-num="3" id="nugget-key"><div class="tag-price"><span class="tag-big">1 header</span><span class="tag-unit">the x-api-key header carries the key on every call</span></div><div class="tag-body"><div class="tag-title">Nugget 4 · The key lives outside the code From the lesson API key</div><div class="tag-eye">The lesson</div><p class="">The API key sits in an environment variable and never in source code or git. A leaked key is a spend license for strangers.</p><p><b>Why it matters. </b>Key hygiene recurs in the domain volumes as a scored gap: keys in client apps and keys in logs are exam findings.</p><p><b>Transfer. </b>Treat every secret as a door key: one home outside the code, rotation on suspicion, and no copies in logs.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<section class="block col" data-chapter="1" data-title="Your first API call: the Messages API" id="s4"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">4</span></div><div><p class="ch-meta"><span class="ts">Chapter 4</span> · First call</p><h2>Your first API call: the Messages API</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Messages API</span></p><p>The Messages API is the one endpoint all else in this volume builds on. A first call sends three required items: model, max_tokens, and messages. Model names the engine. Max tokens caps the reply length. Messages carries the conversation, as user and assistant turns in alternation. All else, system, tools, temperature, and cache work, is optional. The API is stateless: it remembers nothing between calls, and each request stands alone. The system merges two same-role messages in a row and does not reject them, and the volume warns that you must not rely on that behavior. No system role exists: system instructions are a top-level parameter. A prefill trick exists as well: end the array with an assistant message and Claude continues from that text, which steers exact formats such as JSON.</p><p>Read the response like a production engineer. Content is a list of blocks: text, tool_use, and thinking. Stop_reason tells you why the process stopped: end_turn means a finish, max_tokens means your cap cut the answer, tool_use means the model wants a tool call, and stop_sequence means a hit on your custom stop string. Usage carries the token counts you need for cost track work. The API accepts up to 100,000 messages per request. You will not hit that limit. You manage the context yourself.</p></div><aside class="tag" data-chapter="s4" data-sign-label="Chapter" data-sign-num="4" id="nugget-stateless"><div class="tag-price"><span class="tag-big">100,000</span><span class="tag-unit">messages accepted per request, as the stated API limit</span></div><div class="tag-body"><div class="tag-title">Nugget 5 · You are the memory From the lesson Messages API</div><div class="tag-eye">The lesson</div><p class="">The API remembers nothing between calls. Your application owns the messages array and resends it on every turn.</p><p><b>Why it matters. </b>Statelessness explains multi-turn cost growth, cache design, and compaction. Half the volume is consequence management for this one fact.</p><p><b>Transfer. </b>When a service holds no state, find where the state lives instead. Every design answer changes once you name the owner.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<section class="block col" data-chapter="1" data-title="System prompts: the rules behind the curtain" id="s5"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">5</span></div><div><p class="ch-meta"><span class="ts">Chapter 5</span> · Rules</p><h2>System prompts: the rules behind the curtain</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">System prompts</span></p><p>A system prompt is the job description for Claude: the role, the rules it must follow, and the exact output format, given before the user speaks. Instruction layers run three deep: system, developer, and user, and each layer overrides the layer under it. A plain string works for simple instructions. A list of blocks permits per-block controls, such as cache marks on a system block.</p><p>Content splits into two kinds. The stable contract, persona, rules, and format, belongs in the system prompt, where it almost never changes. Data that changes per request, dates, user names, and request IDs, belongs in messages. The production rule: volatile content in the system prompt changes the prefix on every call and kills the cache hit rate in silence. A split done right makes cache work near free in the later unit. If user input can override system rules, a prompt injection is a polite request away.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Multi-turn: You Are The Memory" id="s6"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">6</span></div><div><p class="ch-meta"><span class="ts">Chapter 6</span> · Memory</p><h2>Multi-turn: You Are The Memory</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Multi-turn</span></p><p>One message gets one answer. The API remembers nothing between calls, so a conversation is you as the memory: you resend the full messages array every turn, with the new turn at the end. Turn 1 is one exchange. Turn 2 is the full turn 1 plus the new exchange. Turn 3 is all of it plus the next exchange. Send only the latest turn and the model loses the thread and contradicts itself.</p><p>Two consequences follow. Cost grows with history, because every turn resends every earlier token as input, so turn 50 costs more than turn 1. The prefill trick ends the array with an assistant message, and Claude continues the message, the cleanest way to force JSON output. The production fix for long conversations is compaction: summarize old turns into one block, or keep only a recent window. Tool results also travel in this array: tool_result blocks ride inside user-role messages, in the loop the tool unit builds.</p></div><aside class="tag" data-chapter="s6" data-sign-label="Chapter" data-sign-num="6" id="nugget-output"><div class="tag-price"><span class="tag-big">5x</span><span class="tag-unit">output price against input price, per token</span></div><div class="tag-body"><div class="tag-title">Nugget 6 · Output costs about five times input From the lesson Tokens and multi-turn</div><div class="tag-eye">The lesson</div><p class="">Output tokens cost about 5 times input tokens on the volume price pattern, and a resent history bills as input on every turn.</p><p><b>Why it matters. </b>Long conversations tax both sides: the history grows the input bill, and verbose answers grow the expensive side.</p><p><b>Transfer. </b>Price both directions of any metered exchange. The return trip often costs more than the trip out.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<section class="block col" data-chapter="1" data-title="Sampling parameters: temperature, top_p, top_k" id="s7"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">7</span></div><div><p class="ch-meta"><span class="ts">Chapter 7</span> · Controls</p><h2>Sampling parameters: temperature, top_p, top_k</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Sampling</span></p><p>Three knobs shape each answer. Temperature is a dial from 0.0 to 1.0, with a default of 1.0. At 0, Claude picks the most probable token almost every time: deterministic and reproducible output. Near 1, Claude samples in free form: varied and creative output. Use 0 for facts, extraction, and JSON. Use 0.7 to 1.0 for brainstorm work. Top_p, nucleus sample work, samples from the smallest token set whose combined probability passes the top_p value, with 0.9 as a common default. Top_k cuts candidates to the K most probable tokens: a small K gives safe, predictable output. Tune temperature or top_p. Do not tune both at the same time.</p><p>For exams and graded work, set temperature near 0. The 5.x generation caution closes the unit: those models use adaptive think work, their reason quality is set for default sample values, and extra randomness adds noise to the plan rather than brilliance to the answer. Leave sample values at default for these models unless the task requires a change. A high temperature on a factual task gives a different answer on every run.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Tool use: giving Claude hands" id="s8"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">8</span></div><div><p class="ch-meta"><span class="ts">Chapter 8</span> · Tools</p><h2>Tool use: giving Claude hands</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Tool use</span></p><p>A model without tools can only talk. Tool use lets it act: query your database, call your APIs, and read your files. The key insight the exam probes: Claude never runs your tools. It only asks. Your code runs them and hands the results back. You describe tools as JSON Schema. Claude emits a tool_use block when it needs data. You execute and return a tool_result block with the exact match ID. You repeat until stop_reason is no longer tool_use. One turn can hold several tool_use blocks: run independent calls at the same time and return all results at once.</p><p>Two tool families exist. Client tools run in your application: you define them, Claude requests them, and you execute them. Server tools run on the Anthropic side: web_search, web_fetch, code_execution, MCP connectors, and tool_search. You declare them and Anthropic executes them, and results arrive inside the response. The tool_choice parameter controls behavior: auto is the default, any forces at least one call, tool forces a specific tool, and none means pure text for the turn. Tool definitions count as input tokens on every call, so a system with 40 tools raises the cost of every request. Three classic failures close the unit. A loop omitted means the first tool request never becomes an answer. A tool_use_id mismatch gets a rejection from the API. An absent turn cap means a confused agent bills per lap forever. The client-tool diagram sets MAX_TURNS at 20 as the billing seatbelt. Build a client tool when the logic is yours: your database, your internal API, your business rules. Use an MCP server when the integration is standard: files, git, Postgres, Slack, and web search, where a maintainer already exists.</p></div><aside class="tag" data-chapter="s8" data-sign-label="Chapter" data-sign-num="8" id="nugget-tools"><div class="tag-price"><span class="tag-big">20 turns</span><span class="tag-unit">the MAX_TURNS guard in the client-tool loop diagram</span></div><div class="tag-body"><div class="tag-title">Nugget 9 · Claude asks, your code runs From the lesson Tool use</div><div class="tag-eye">The lesson</div><p class="">Claude emits a tool_use request. Your loop runs the function and returns a tool_result with the match ID. A turn cap is mandatory.</p><p><b>Why it matters. </b>The loop, the ID match, and the cap are the three production facts. Each absent one is a named failure in the volume.</p><p><b>Transfer. </b>At any model to system seam, name who proposes, who executes, and what stops the cycle. All three answers belong in the design.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<figure class="paint inset" data-entrance="sketch"><div class="frame"><div class="stage"><img alt="The tool bench" class="base" loading="lazy" src="assets/prereq-claude-fundamentals-p1.webp"/></div></div><figcaption>Watercolor: The tool bench. Original AI watercolor illustration made for this page.</figcaption></figure>
+<section class="block col" data-chapter="1" data-title="Thinking: letting Claude reason before it speaks" id="s9"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">9</span></div><div><p class="ch-meta"><span class="ts">Chapter 9</span> · Reason work</p><h2>Thinking: letting Claude reason before it speaks</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Thinking</span></p><p>Some models think in a private scratchpad before they answer. You see the final answer. The scratchpad stays hidden, and you can ask for a summary of it. On the 5.x generation, adaptive think work means the model decides how much reason work a task needs, and you do not set a token budget. The volume reports, as of September 2026, that Opus 4.6 through 4.8 and Sonnet 4.6 support it, that it is off by default on 4.7 and 4.8 and must be set in explicit form, that the API rejects a manual budget_tokens value with a 400 error on those models, and that Fable 5 and Mythos 5 always run adaptive think work with no off switch. Models in the 5.x line also show effort levels, from low through xhigh, as a simpler control.</p><p>Production rules: think blocks carry a signature, an integrity seal that must pass back unmodified in later turns, or the API rejects the call. Think work costs output tokens, so long reason work on simple tasks wastes money. A display value of summarized gives users a readable summary of the reason work in user-facing products, never the raw scratchpad. Skip think work on a hard task and the answer is a guess in a confident tone.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Prompt caching: pay for the prefix once" id="s10"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">10</span></div><div><p class="ch-meta"><span class="ts">Chapter 10</span> · Cache work</p><h2>Prompt caching: pay for the prefix once</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Prompt caching</span></p><p>Every request reprocesses its input tokens. Prompt cache work lets you pay the full price to process a long, stable prefix once, then pay only 10 percent of the input price to reuse it for five minutes. A cache hit needs the request to start with the exact cached bytes, in order. Any content above your cache_control checkpoint stays cached, and the API processes content under it fresh. Reorder the content or change one byte in the prefix and the result is a miss. Match work is positional, not by content. The order is the contract. Design rule: stable content first, system prompt, tool definitions, and reference documents, and volatile content last, time stamps and user input. Never change tools or models mid-conversation, because a new tool list is a new prefix.</p><p>The numbers: a maximum of 4 breakpoints per request. Write price is 1.25 times base input for a 5-minute TTL, and 2 times for a 1-hour TTL. Read price is 0.10 times base input. Break-even sits at about 2 reads for a 5-minute write and about 3 reads for a 1-hour write. The minimum cacheable prefix is 512 tokens on the newest models and up to 4,096 tokens on some older ones, with Opus 4.6 and 4.5 and Haiku 4.5 at 4,096 per the volume. Measure TTL from the start of the request that wrote the cache. The verification habit: check the cache read token count in usage on every call. A count near zero means your prefix shifts and you pay write prices for no gain. Cache a prefix when the same long prefix repeats across requests. Skip cache work when each request is new, when the prefix is shorter than the minimum, or when traffic is so sparse that the 5-minute TTL always expires between calls.</p></div><aside class="tag" data-chapter="s10" data-sign-label="Chapter" data-sign-num="10" id="nugget-cache"><div class="tag-price"><span class="tag-big">0.10x</span><span class="tag-unit">cache read price against base input price</span></div><div class="tag-body"><div class="tag-title">Nugget 10 · Pay for the prefix once From the lesson Prompt caching</div><div class="tag-eye">The lesson</div><p class="">A cache write costs 1.25 times base input. A read costs one tenth. About 2 reads pay back a 5-minute write.</p><p><b>Why it matters. </b>Cache economics drive system prompt design, tool list stability, and message order across the whole volume.</p><p><b>Transfer. </b>Find the repeated prefix in any workload and price its reuse. Repetition is where the savings live.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<section class="block col" data-chapter="1" data-title="The Batches API: Half Price, Next Day" id="s11"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">11</span></div><div><p class="ch-meta"><span class="ts">Chapter 11</span> · Batches</p><h2>The Batches API: Half Price, Next Day</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Batches API</span></p><p>Some workloads do not need an answer now: nightly evaluations, bulk classification, and backfill work for labels. The Batches API processes your requests within 24 hours and charges 50 percent of standard prices. One million input tokens on Sonnet 5 cost $2.00 at the standard rate of $2 per million. A batch of the same tokens costs $1.00. Same tokens, same model, half the bill, in exchange for a wait of one day.</p><p>The mechanics: one batch holds up to 100,000 requests or 256 MB. Each request carries your custom_id, 1 to 64 characters: letters, digits, hyphen, and the low line mark, and the ID returns with its result so you can match requests to results. Poll the process status as it moves from in progress to ended. Each result is succeeded, errored, canceled, or expired. The system keeps results for 29 days, then deletes them, so download them. Batches do not support stream work, and cache behavior in batches is best effort. A batch check in the volume: 40,000 requests sit under the 100,000 limit with room to spare.</p></div><aside class="tag" data-chapter="s11" data-sign-label="Chapter" data-sign-num="11" id="nugget-batch"><div class="tag-price"><span class="tag-big">50%</span><span class="tag-unit">of standard price, for results within 24 hours</span></div><div class="tag-body"><div class="tag-title">Nugget 11 · Half price for a one-day wait From the lesson Batches API</div><div class="tag-eye">The lesson</div><p class="">The Batches API charges 50 percent of standard price with results inside 24 hours, up to 100,000 requests or 256 MB per batch.</p><p><b>Why it matters. </b>Delay tolerance is a cost lever. Nightly evals and bulk classification pay full price for speed they never use if you let them run live.</p><p><b>Transfer. </b>Ask of every workload what its real deadline is. Work that can wait a day should never pay the instant price.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<figure class="paint inset" data-entrance="bloom"><div class="frame"><div class="stage"><img alt="The slow conveyor" class="base" loading="lazy" src="assets/prereq-claude-fundamentals-p2.webp"/></div></div><figcaption>Watercolor: The slow conveyor. Original AI watercolor illustration made for this page.</figcaption></figure>
+<section class="block col" data-chapter="1" data-title="Embeddings: The gap you must know about" id="s12"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">12</span></div><div><p class="ch-meta"><span class="ts">Chapter 12</span> · Gap</p><h2>Embeddings: The gap you must know about</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Embeddings</span></p><p>Embeddings change text into lists of numbers, vectors you can search by meaning rather than by keywords. Embeddings power RAG retrieval, semantic search, and cluster work. The gap: Anthropic has no embeddings API. The Claude API returns text. It returns no vectors, and no endpoint makes embeddings from your documents. The official documents direct you to Voyage AI, the recommended embeddings provider in the volume account. You call Voyage for embeddings, store the embeddings in your vector database, retrieve the relevant chunks, and feed those chunks to Claude as context. The exam trap is direct: any question that asks which Anthropic endpoint returns embeddings has one correct answer. None exists.</p></div><aside class="tag" data-chapter="s12" data-sign-label="Chapter" data-sign-num="12" id="nugget-embed"><div class="tag-price"><span class="tag-big">0 endpoints</span><span class="tag-unit">Anthropic endpoints that return embeddings</span></div><div class="tag-body"><div class="tag-title">Nugget 7 · No Anthropic endpoint returns embeddings From the lesson Embeddings</div><div class="tag-eye">The lesson</div><p class="">Embeddings live outside the Claude API. The documented path is a third-party provider such as Voyage AI, plus your own vector store.</p><p><b>Why it matters. </b>This is a favorite exam trap because the rest of the retrieval stack feels like one product. The seam is real and it shapes the architecture.</p><p><b>Transfer. </b>Verify the boundary of every platform claim. A gap at a seam becomes a design error if you assume it away.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<section class="block col" data-chapter="1" data-title="The model lineup: practitioner level" id="s13"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">13</span></div><div><p class="ch-meta"><span class="ts">Chapter 13</span> · Models</p><h2>The model lineup: practitioner level</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Model lineup</span></p><p>The lineup has four tiers, from the cheapest to the most expensive, and the price pattern tracks capability. You do not need benchmark scores for the exam. You need the selection logic. Route by task, not by prestige: Haiku handles extraction and format work, Sonnet handles reason steps, and Opus or Fable handles the few decisions where error is expensive. A model that hits a 429 at step 4 of a 12-step pipeline is not a genius. It is a bottleneck.</p><p>Family IDs, such as claude-sonnet-5, track the latest snapshot on their own. Dated IDs pin one exact snapshot. Pin the snapshot for reproducibility in evals. Track the family for freshness in production chat. A 1M context window means you can send a million tokens, not that you should: cache creation cost and latency grow with the amount you send. Effort levels on 5.x models, low through xhigh, give coarse control over reason depth. The price math compounds: batches cost 50 percent of list, cache reads cost 10 percent of input price, and a Haiku batch call with a warm cache runs about two hundred times cheaper than a cold Fable call, per the volume estimate. The honesty notes at the end of the volume give the price table as of September 28, 2026: Fable at $10 in and $50 out per million tokens, Opus at $4 and $20, Sonnet at $2 and $10, and Haiku at $1 and $5.</p></div></section>
+<section class="block col" data-chapter="1" data-title="MCP: The Universal Connector" id="s14"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">14</span></div><div><p class="ch-meta"><span class="ts">Chapter 14</span> · Connector</p><h2>MCP: The Universal Connector</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">MCP</span></p><p>Without a standard, every app rebuilds the same integrations: N apps times M tools, with every pair built by hand. The Model Context Protocol turns N times M into N plus M. Each app speaks MCP once. Each tool does the same. Any pair connects. MCP is an open standard, published by Anthropic in November 2024 per the volume, and it runs on JSON-RPC 2.0.</p><p>Three roles and three primitives carry the protocol. The host is the application the user touches, such as Claude Code or your chat UI, and it controls the conversation and the permissions. The client lives inside the host, one client per server, and speaks the protocol for the host. The server exposes capability: tools the model can call, resources the model can read, and prompts as reusable instruction templates. Add a third integration and you add one client and one server, and the pairs in place do not change. Inside the Claude API, MCP appears as server tools, called MCP connectors: you declare the connector and Anthropic runs it on its infrastructure, and results arrive in the response. Client tools run your code by contrast. Build a client tool when the logic is yours. Use an MCP server when the integration is standard and a maintainer already exists.</p></div><aside class="tag" data-chapter="s14" data-sign-label="Chapter" data-sign-num="14" id="nugget-mcp"><div class="tag-price"><span class="tag-big">N + M</span><span class="tag-unit">implementations under MCP, against N times M hand-built pairs</span></div><div class="tag-body"><div class="tag-title">Nugget 12 · N plus M beats N times M From the lesson MCP</div><div class="tag-eye">The lesson</div><p class="">One MCP implementation per app and per tool replaces a hand-built wire for every app and tool pair.</p><p><b>Why it matters. </b>Standards work is the cheapest integration work. The exam rewards a standard fit over custom glue wherever a server already exists.</p><p><b>Transfer. </b>Count integrations as pairs before you adopt a standard, and as sums after. The arithmetic makes the case.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<section class="block col" data-chapter="1" data-title="Claude Code and the Agent SDK: User Level" id="s15"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">15</span></div><div><p class="ch-meta"><span class="ts">Chapter 15</span> · Products</p><h2>Claude Code and the Agent SDK: User Level</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Claude Code and Agent SDK</span></p><p>Two ways give you agents without a hand-built tool loop. Claude Code is the Anthropic terminal agent: it edits code, runs shell commands, and reads your repo on its own. The Agent SDK is the toolkit to build your own agents in Python or TypeScript, on the same loop primitives. The CLI is the finished product. The SDK is the build block. Use Code when a human drives. Use the SDK when your code drives. A script of the CLI as if it were an SDK inherits a human interface: prompts, waits, and surprises.</p><p>Claude Code runs every action through a permission gate with three settings. Allow means routine reads run in free form. Ask means destructive commands need approval. Deny means the system blocks the command. Your rules decide the setting for each action, in the same gate pattern the volume draws between a tool choice and its execution: plan, choose, gate, execute, observe, decide. Both products rest on the same Messages API mechanics you already hold: stateless turns, tool_use loops, and prompt cache work as the heavy cost lift. Skills, reusable instruction packs for specific task types, feed the plan step. MCP expands the tool step. Hooks, deterministic code that intercepts a tool call before it runs, can veto or modify the execution step.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Streaming: tokens as they arrive" id="s16"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">16</span></div><div><p class="ch-meta"><span class="ts">Chapter 16</span> · Delivery</p><h2>Streaming: tokens as they arrive</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Streaming</span></p><p>By default, the API waits until the full response is ready. Stream work changes that: tokens arrive as server-sent events while Claude generates them, and your UI renders text word by word, like a chat application. Stream work changes delivery. It changes neither cost nor quality. Each token chunk arrives as a content_block_delta event, and the SDK reassembles the chunks. A get_final_message call returns the same message object as a non-stream call. Think blocks stream as thinking_delta and signature_delta events.</p><p>Stream when a human watches: a chat UI and long generations where perceived latency matters. Do not stream when no one watches: batch jobs, tool-use loops that need only the final object, and evaluations. If a failure hits mid-stream, it arrives as an error event, not as an HTTP error code, and your handler must watch for that event. Batches do not support stream work in any case.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Rate limits: RPM, ITPM, OTPM" id="s17"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">17</span></div><div><p class="ch-meta"><span class="ts">Chapter 17</span> · Limits</p><h2>Rate limits: RPM, ITPM, OTPM</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Rate limits</span></p><p>Anthropic controls use with three measures: RPM, requests per minute, ITPM, input tokens per minute, and OTPM, output tokens per minute. The limits rise with your usage tier. A hit on a limit returns a 429 error. The production pattern is mandatory: catch the 429, wait the advertised time in the retry-after header, and retry with backoff. A second request push does not change the limit.</p><p>Two 429 responses mean different things. A rate-limit 429 carries a retry-after header: wait and retry on its own. A tier-cap 429 arrives with no retry-after header: you hit a spend cap, not a speed limit, and a retry is pointless. Raise the cap or wait for the reset. If your own spend limit trips, the API returns a 400 invalid_request_error, not a 429. A 400 that appears after weeks of sound code usually means money, not syntax.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Errors and Retries: Important Codes" id="s18"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">18</span></div><div><p class="ch-meta"><span class="ts">Chapter 18</span> · Errors</p><h2>Errors and Retries: Important Codes</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Errors and retries</span></p><p>Error codes divide in two. A 4xx code means your fault: fix the request. A 5xx code means their fault: retry with backoff. The SDK already retries transient failures twice, for 429, 500, and 529, with exponential backoff that honors retry-after. Retries are safe only when the repeated call is harmless. Tool functions must be idempotent: a retried charge must not double-bill a customer.</p><p>Build a dead-letter path for requests that fail after retries: a hold area where failed requests wait for later inspection and manual replay. Alert on 4xx spikes, because they show your bug, not an Anthropic bug. Size limits close the unit: 32 MB per Messages request, 256 MB per batch, and 500 MB for file uploads. A breach of those limits returns a 413. Chunk the data to fix the problem.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Eval basics: measure, then trust" id="s19"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">19</span></div><div><p class="ch-meta"><span class="ts">Chapter 19</span> · Evals</p><h2>Eval basics: measure, then trust</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Eval basics</span></p><p>Prompt engineer work makes a prompt better. Evaluation tells you if the prompt is good enough. It gives a number, not a feel. Test the prompt like you test code: run it against known cases and score it. The four-step loop: draft the prompt, build data as inputs with known-good outputs, run the prompt over the dataset, and score. Score with a deterministic check first, exact match, JSON parse, or regex, then use a model grader for the fuzzy parts. Change the prompt and run the loop again. A dataset of 50 to a few hundred examples beats vibes. Manual spot checks lie to you: you remember the wins and forget the failures.</p><p>The Batches API is the eval workhorse: 50 percent off, and evals do not need low latency. The exam-ready distinction: prompt engineer work edits the instruction, and evaluation measures the behavior across many inputs. Teams that skip the second ship prompts that work on the five examples the author tried and fail on the five thousandth user. Five hand-picked cases prove nothing. Run both prompt versions over a real dataset and compare scores.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Safety and Guardrails: Short Version" id="s20"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">20</span></div><div><p class="ch-meta"><span class="ts">Chapter 20</span> · Safety</p><h2>Safety and Guardrails: Short Version</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Safety</span></p><p>Claude takes a safety-first approach the volume names as Constitutional AI, with the aim of helpful, honest, and harmless behavior. The API refuses some content. Model-level safety is one layer only. The exam treats safety as an architecture concern, not a model feature. Safety runs in layers that prevent, detect, and respond. One layer fails with no warning. Three layers fail with a warning.</p><p>Four layers carry the short version. Input validation removes data your app must not forward: prompt-injection attempts in user fields, absurd payloads, and malformed tool arguments. System prompts state refusal and escalation rules and the correct model for the risk level. Output checks validate structure, scan for disallowed content, and route high-stakes outputs, such as refunds, medical information, and legal information, to human review before they reach the user. An audit trail logs prompts, tool calls, and outputs, so you can replay the exact sequence of an event. Detection alone is the weak design: you learn when the leak happened and cannot stop it. Domain 5 builds the full version of this chapter.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Prompt engineering fundamentals: the five moves" id="s21"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">21</span></div><div><p class="ch-meta"><span class="ts">Chapter 21</span> · Prompt craft</p><h2>Prompt engineering fundamentals: the five moves</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Five moves</span></p><p>Five moves apply anywhere. Move 1: be specific. Name the task, the input, and the bar for done. A wish gets what the model provides. An instruction gets what you ask for. Move 2: show one example. One input-output pair beats three paragraphs of description, and two or three pairs teach format and tone faster than prose rules. Move 3: constrain the output. Set the format, the length, and what to leave out, or the model invents a format and your parser meets it in production. Move 4: name the audience. A junior developer needs different words than a staff engineer. Move 5: demand the steps. Ask for the reason work, not just the answer, and structure long prompts with XML tags as parseable landmarks.</p><p>Rung 3 adds the discipline: reason, then measure. Iterate with evals and measure every edit on the dataset. An edit with no measure did not happen. The failure mode is prompt superstition: phrases added because a person heard they help, with no measure behind them. An edit that does not change your eval score gets a delete. Shorter prompts are cheaper, faster, and easier to cache, so unmeasured prompt weight is pure cost.</p></div></section>
+<section class="block col" data-chapter="1" data-title="Prompt engineering fundamentals: the five moves. Capstone: one production application, built rung by rung" id="s22"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">22</span></div><div><p class="ch-meta"><span class="ts">Chapter 22</span> · Capstone</p><h2>Prompt engineering fundamentals: the five moves. Capstone: one production application, built rung by rung</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Capstone</span></p><p>The capstone connects all pieces into one production application: a support copilot that grows from the simplest version to the full production picture, rung by rung. Open the step-through below for the five rungs. The full picture at rung 3 of the source ladder holds seventeen of the twenty-one units in this volume in one app: tokens, keys, Messages, system, multi-turn, sample defaults, tool use, think work, cache work, batches, models, MCP, stream work, rate limits, errors, evals, and safety. The four units outside the diagram still work in the app: embeddings feed the knowledge base the tools search, Claude Code built the app, and prompt engineer work wrote the prompts the evals grade. Escalation in the capstone routes money questions and angry enterprise accounts to Opus with adaptive think work, and think summaries show for escalations while the raw scratchpad never reaches the user.</p><p>The volume closes with source and honesty notes. API shapes, parameters, prices, limits, and model facts carry a verification date of September 28, 2026 against platform documents, and the volume warns that model lineup and prices drift and need a fresh check before the exam. Video and diagram credits sit in the source page: three video embeds with transcripts read in full in September 2026, and diagrams from named external sources, downloaded local and never hotlinked, per the source notes. If you can trace a request through the capstone diagram and name the unit behind every arrow, you close the Claude half of your prerequisite gap.</p></div><div class="toy"><p><span class="ptag ptag-companion">companion</span> Step through the sequence. Open one step at a time.</p></div><details><summary>Rung 1: a work call</summary><p>One call, one answer. A user asks a question, you send the system prompt and the message, and Claude replies.</p></details><details><summary>Rung 2: a real conversation</summary><p>Your application owns the messages array across turns. Answers stream so users see words at once. A client tool lets Claude find orders. Haiku sorts the requests and Sonnet gives the answers.</p></details><details><summary>Rung 3: the tool loop at work</summary><p>Claude asks for order status, your code runs the tool, and the result returns with the match ID. The CRM lookup uses the MCP connector, configuration only. The loop repeats until end_turn, with a maximum of 20 turns.</p></details><details><summary>Rung 4: evals prove it works</summary><p>Nightly, 500 labeled tickets run through the Batches API at half price. A score drop reverts the prompt change behind it. No ship on vibes.</p></details><details><summary>Rung 5: a deployed system</summary><p>Guardrails wrap all of it: injection attempts stop at input validation, refund decisions queue for human review, rate-limit 429 responses back off on their own, tier-cap 429 responses alert a human, tool functions stay idempotent, and every turn logs token use and cache hits for a full audit replay.</p></details><figure class="fig"><div class="fig-head"><p class="fig-title">Model lineup: input price per million tokens</p><p class="fig-sub">The four tiers, from the volume honesty notes of September 28, 2026</p></div><div class="legend src-legend"><span>Bars show dollars per million input tokens.</span></div><svg aria-label="Bar chart. dollars per million input tokens" role="img" style="width:100%;height:auto" viewbox="0 0 760 136"><text fill="#2A231E" font-size="13" x="0" y="25">Fable</text><rect fill="#8A4B6B" height="16" width="430" x="300" y="11"></rect><text fill="#2A231E" font-size="13" x="738" y="25">10</text><text fill="#2A231E" font-size="13" x="0" y="55">Opus</text><rect fill="#2462A6" height="16" width="172" x="300" y="41"></rect><text fill="#2A231E" font-size="13" x="480" y="55">4</text><text fill="#2A231E" font-size="13" x="0" y="85">Sonnet</text><rect fill="#7E786F" height="16" width="86" x="300" y="71"></rect><text fill="#2A231E" font-size="13" x="394" y="85">2</text><text fill="#2A231E" font-size="13" x="0" y="115">Haiku</text><rect fill="#8A4B6B" height="16" width="43" x="300" y="101"></rect><text fill="#2A231E" font-size="13" x="351" y="115">1</text></svg><details class="table"><summary>Data table</summary><table class="data"><tr><th>Item</th><th>Value</th></tr><tr><td>Fable</td><td class="num">10</td></tr><tr><td>Opus</td><td class="num">4</td></tr><tr><td>Sonnet</td><td class="num">2</td></tr><tr><td>Haiku</td><td class="num">1</td></tr></table></details><p class="fig-note">Source: honesty notes in prereq-claude-fundamentals.html in the source repo, verified against platform documents on September 28, 2026 per the volume. Output prices per million tokens: Fable $50, Opus $20, Sonnet $10, Haiku $5. Prices drift, so re-check before the exam.</p></figure><aside class="tag" data-chapter="s22" data-sign-label="Chapter" data-sign-num="22" id="nugget-capstone"><div class="tag-price"><span class="tag-big">17 of 21</span><span class="tag-unit">units of the volume inside the capstone application</span></div><div class="tag-body"><div class="tag-title">Nugget 8 · Seventeen units in one app From the lesson Capstone</div><div class="tag-eye">The lesson</div><p class="">The capstone support copilot runs seventeen of the twenty-one units of this volume in a single production design.</p><p><b>Why it matters. </b>The capstone is the exam in miniature: a request crosses keys, cache, route work, tools, stream work, limits, and evals before it counts as done.</p><p><b>Transfer. </b>Learn parts in isolation, then rehearse the whole path end to end. Integration is a separate skill from the parts.</p><div class="tag-sku"><svg aria-hidden="true" class="bars"></svg><span>PREREQ · CCAR-P</span></div></div></aside></section>
+<figure class="paint inset" data-entrance="sketch"><div class="frame"><div class="stage"><img alt="The capstone ladder" class="base" loading="lazy" src="assets/prereq-claude-fundamentals-p3.webp"/></div></div><figcaption>Watercolor: The capstone ladder. Original AI watercolor illustration made for this page.</figcaption></figure>
+<section class="block col" data-chapter="1" data-title="Prerequisites" id="s23"><div class="ch-head"><div class="aisle"><span class="l">Chapter</span><span class="n">23</span></div><div><p class="ch-meta"><span class="ts">Chapter 23</span> · Close</p><h2>Prerequisites</h2></div></div><div class="prose-narrow"><p><span class="ptag ptag-src">From the lesson</span> <span class="tag-ref">Guide close</span></p><p>The guide closes each volume with three link sections. This chapter covers all three in source order.</p><h3 class="sub">Domain volumes</h3><p>The seven domain weights are: Solution Design and Architecture 17 percent, Models, Prompting and Context 13 percent, Integration 19 percent, Evaluation, Testing and Optimization 16 percent, Governance, Safety and Risk 14 percent, Stakeholder Communication and Lifecycle 14 percent, and Developer Productivity and Enablement 7 percent. This prerequisite volume stands before Domain 1 in the read order of the guide.</p><h3 class="sub">Practice and reference</h3><p>The practice side holds a practice question bank of 106 questions and a system design guide with 8 reference designs.</p></div><figure class="fig"><div class="fig-head"><p class="fig-title">Study plan minutes by section</p><p class="fig-sub">The study plan for the Prerequisite volume, from the study JSON</p></div><div class="legend src-legend"><span>Bars show study minutes per section.</span></div><svg aria-label="Bar chart. study minutes per section" role="img" style="width:100%;height:auto" viewbox="0 0 760 706"><text fill="#2A231E" font-size="13" x="0" y="25">Volume intro</text><rect fill="#8A4B6B" height="16" width="71" x="300" y="11"></rect><text fill="#2A231E" font-size="13" x="379" y="25">1</text><text fill="#2A231E" font-size="13" x="0" y="55">How to use</text><rect fill="#2462A6" height="16" width="143" x="300" y="41"></rect><text fill="#2A231E" font-size="13" x="451" y="55">2</text><text fill="#2A231E" font-size="13" x="0" y="85">Tokens</text><rect fill="#7E786F" height="16" width="215" x="300" y="71"></rect><text fill="#2A231E" font-size="13" x="523" y="85">3</text><text fill="#2A231E" font-size="13" x="0" y="115">API key</text><rect fill="#8A4B6B" height="16" width="215" x="300" y="101"></rect><text fill="#2A231E" font-size="13" x="523" y="115">3</text><text fill="#2A231E" font-size="13" x="0" y="145">First call</text><rect fill="#2462A6" height="16" width="430" x="300" y="131"></rect><text fill="#2A231E" font-size="13" x="738" y="145">6</text><text fill="#2A231E" font-size="13" x="0" y="175">System prompts</text><rect fill="#7E786F" height="16" width="215" x="300" y="161"></rect><text fill="#2A231E" font-size="13" x="523" y="175">3</text><text fill="#2A231E" font-size="13" x="0" y="205">Multi-turn</text><rect fill="#8A4B6B" height="16" width="215" x="300" y="191"></rect><text fill="#2A231E" font-size="13" x="523" y="205">3</text><text fill="#2A231E" font-size="13" x="0" y="235">Sample controls</text><rect fill="#2462A6" height="16" width="215" x="300" y="221"></rect><text fill="#2A231E" font-size="13" x="523" y="235">3</text><text fill="#2A231E" font-size="13" x="0" y="265">Tool use</text><rect fill="#7E786F" height="16" width="430" x="300" y="251"></rect><text fill="#2A231E" font-size="13" x="738" y="265">6</text><text fill="#2A231E" font-size="13" x="0" y="295">Think work</text><rect fill="#8A4B6B" height="16" width="215" x="300" y="281"></rect><text fill="#2A231E" font-size="13" x="523" y="295">3</text><text fill="#2A231E" font-size="13" x="0" y="325">Cache work</text><rect fill="#2462A6" height="16" width="358" x="300" y="311"></rect><text fill="#2A231E" font-size="13" x="666" y="325">5</text><text fill="#2A231E" font-size="13" x="0" y="355">Batches</text><rect fill="#7E786F" height="16" width="215" x="300" y="341"></rect><text fill="#2A231E" font-size="13" x="523" y="355">3</text><text fill="#2A231E" font-size="13" x="0" y="385">Embeddings</text><rect fill="#8A4B6B" height="16" width="143" x="300" y="371"></rect><text fill="#2A231E" font-size="13" x="451" y="385">2</text><text fill="#2A231E" font-size="13" x="0" y="415">Model lineup</text><rect fill="#2462A6" height="16" width="215" x="300" y="401"></rect><text fill="#2A231E" font-size="13" x="523" y="415">3</text><text fill="#2A231E" font-size="13" x="0" y="445">MCP</text><rect fill="#7E786F" height="16" width="215" x="300" y="431"></rect><text fill="#2A231E" font-size="13" x="523" y="445">3</text><text fill="#2A231E" font-size="13" x="0" y="475">Code and SDK</text><rect fill="#8A4B6B" height="16" width="143" x="300" y="461"></rect><text fill="#2A231E" font-size="13" x="451" y="475">2</text><text fill="#2A231E" font-size="13" x="0" y="505">Stream work</text><rect fill="#2462A6" height="16" width="215" x="300" y="491"></rect><text fill="#2A231E" font-size="13" x="523" y="505">3</text><text fill="#2A231E" font-size="13" x="0" y="535">Rate limits</text><rect fill="#7E786F" height="16" width="143" x="300" y="521"></rect><text fill="#2A231E" font-size="13" x="451" y="535">2</text><text fill="#2A231E" font-size="13" x="0" y="565">Errors</text><rect fill="#8A4B6B" height="16" width="215" x="300" y="551"></rect><text fill="#2A231E" font-size="13" x="523" y="565">3</text><text fill="#2A231E" font-size="13" x="0" y="595">Eval basics</text><rect fill="#2462A6" height="16" width="143" x="300" y="581"></rect><text fill="#2A231E" font-size="13" x="451" y="595">2</text><text fill="#2A231E" font-size="13" x="0" y="625">Safety</text><rect fill="#7E786F" height="16" width="143" x="300" y="611"></rect><text fill="#2A231E" font-size="13" x="451" y="625">2</text><text fill="#2A231E" font-size="13" x="0" y="655">Five moves</text><rect fill="#8A4B6B" height="16" width="215" x="300" y="641"></rect><text fill="#2A231E" font-size="13" x="523" y="655">3</text><text fill="#2A231E" font-size="13" x="0" y="685">Capstone</text><rect fill="#2462A6" height="16" width="286" x="300" y="671"></rect><text fill="#2A231E" font-size="13" x="594" y="685">4</text></svg><details class="table"><summary>Data table</summary><table class="data"><tr><th>Item</th><th>Value</th></tr><tr><td>Volume intro</td><td class="num">1</td></tr><tr><td>How to use</td><td class="num">2</td></tr><tr><td>Tokens</td><td class="num">3</td></tr><tr><td>API key</td><td class="num">3</td></tr><tr><td>First call</td><td class="num">6</td></tr><tr><td>System prompts</td><td class="num">3</td></tr><tr><td>Multi-turn</td><td class="num">3</td></tr><tr><td>Sample controls</td><td class="num">3</td></tr><tr><td>Tool use</td><td class="num">6</td></tr><tr><td>Think work</td><td class="num">3</td></tr><tr><td>Cache work</td><td class="num">5</td></tr><tr><td>Batches</td><td class="num">3</td></tr><tr><td>Embeddings</td><td class="num">2</td></tr><tr><td>Model lineup</td><td class="num">3</td></tr><tr><td>MCP</td><td class="num">3</td></tr><tr><td>Code and SDK</td><td class="num">2</td></tr><tr><td>Stream work</td><td class="num">3</td></tr><tr><td>Rate limits</td><td class="num">2</td></tr><tr><td>Errors</td><td class="num">3</td></tr><tr><td>Eval basics</td><td class="num">2</td></tr><tr><td>Safety</td><td class="num">2</td></tr><tr><td>Five moves</td><td class="num">3</td></tr><tr><td>Capstone</td><td class="num">4</td></tr></table></details><p class="fig-note">Source: study/prereq-claude-fundamentals.json in the source repo. Lesson sections sum to 70 minutes. The full plan totals 73 minutes with the three link sections at 1 minute each.</p></figure></section>
+<section class="col" id="playbook-sec">
+<h3 class="sub">The playbook</h3>
+<p>Every lesson on this page, in order. Tap one to return to its chapter.</p>
+</section><div class="wide"><div class="playbook" id="playbook"></div></div><footer class="colophon col"><div class="sources"><h3>About this page</h3><p class="prov-line">This companion narrates the Claude Developer Fundamentals prerequisite volume of the CCAR-P study guide in source order, with every number traced to the volume or its study plan. Original AI watercolor illustrations made for this page. Historical photographs are real and attributed in their captions.</p><div class="quote-count"><b>On quotes. </b>Mechanical recount of every quoted phrase on this page: <span class="n">0</span> words (blockquote elements and straight or curly quoted strings, footer excluded). This counts the page's own quoted technical terms and toy inputs too, not only source quotes. Everything else is original paraphrase and analysis.</div></div></footer></div><script>
+/* =====================================================================
+   Companion template engine — runtime behavior shared by every artifact.
+   Ported from the reference artifact (~/workspace/companions/reference/index.html),
+   generalized: no per-page data, everything driven by DOM + data attributes.
+   Plain script, no modules, no dependencies. Works from file://.
+
+   DOM contract (see README.md):
+     #tapebar[data-mode="timestamp"|"progress"][data-total][data-sign-label]
+       > .tape-read > #tapeTime + #tapeCh ; svg#tape (built by this engine)
+     section[data-chapter][data-time][data-title]   (timestamp mode)
+     section[data-chapter][data-title]              (progress mode)
+     figure.paint[data-entrance="bloom"|"sketch"|"none"][data-scroll="pin"]
+       > .frame > .stage > img.base (+ optional img.ly layers)
+     aside.tag[data-sign-label][data-sign-num][data-chapter]
+       > .tag-price > .tag-big + .tag-unit ; .tag-body > .tag-eye + p + .tag-sku > svg.bars
+     #playbook (populated from aside.tag), #tip (created if absent)
+   ===================================================================== */
+(function () {
+  'use strict';
+  var NS = 'http://www.w3.org/2000/svg';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mqMobile = window.matchMedia('(max-width: 700px)');
+  var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* ---------------- helpers ---------------- */
+  function S(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    if (attrs) for (var k in attrs) if (attrs[k] !== undefined && attrs[k] !== null) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function T(parent, x, y, str, attrs) {
+    var t = S('text', { x: x, y: y }, parent);
+    for (var k in (attrs || {})) t.setAttribute(k, attrs[k]);
+    t.textContent = str;
+    return t;
+  }
+  function H(tag, cls, text, parent) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined && text !== null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function lin(d0, d1, r0, r1) { return function (v) { return r0 + (v - d0) / (d1 - d0) * (r1 - r0); }; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function fmt(n, d) { return n.toLocaleString('en-US', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function easeInOut(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function smoothstep(a, b, v) { var t = clamp((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); }
+  /* Run fn(k) for k 0..1 over dur ms. Reduced motion jumps straight to the end. */
+  function tween(dur, fn, done) {
+    var stopped = false, id = 0, t0 = null;
+    if (reduce || !dur) { fn(1); if (done) done(); return { stop: function () {} }; }
+    function step(now) {
+      if (stopped) return;
+      if (t0 === null) t0 = now;
+      var k = Math.min(1, (now - t0) / dur);
+      fn(k);
+      if (k < 1) id = requestAnimationFrame(step); else if (done) done();
+    }
+    id = requestAnimationFrame(step);
+    return { stop: function () { stopped = true; cancelAnimationFrame(id); } };
+  }
+
+  /* ---------------- reveal choreography ----------------
+     An element is only reset to its "before" state (prep) when it is about
+     to scroll in from below, and plays once it is meaningfully on screen.
+     Anything already on screen, or reached from above, is left as is.
+     beforeprint finishes everything instantly. */
+  var revealers = [];
+  function reveal(el, prep, play, ratio) {
+    if (!el) return;
+    if (reduce || !('IntersectionObserver' in window)) { return; }
+    var state = 0;
+    var R = { el: el, finish: function () { if (state === 1) { state = 2; play(true); } } };
+    revealers.push(R);
+    var near = new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (state === 0 && en.isIntersecting && en.boundingClientRect.top > window.innerHeight) { state = 1; prep(); }
+      });
+    }, { rootMargin: '0px 0px 140% 0px' });
+    var vis = new IntersectionObserver(function (es) {
+      es.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var need = Math.min(en.boundingClientRect.height * (ratio || 0.3), window.innerHeight * 0.35);
+        if (en.intersectionRect.height < need) return;
+        if (state === 1) { state = 2; play(false); }
+        else if (state === 0) state = 2;
+        if (state === 2) { near.disconnect(); vis.disconnect(); }
+      });
+    }, { threshold: [0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1] });
+    near.observe(el);
+    vis.observe(el);
+  }
+
+  /* ---------------- tooltip ---------------- */
+  var tip = document.getElementById('tip');
+  if (!tip) { tip = H('div', null, null, document.body); tip.id = 'tip'; tip.hidden = true; }
+  function placeTip(x, y) {
+    var pad = 14, r = tip.getBoundingClientRect();
+    var tx = x + pad, ty = y + pad;
+    if (tx + r.width > window.innerWidth - 8) tx = x - r.width - pad;
+    if (ty + r.height > window.innerHeight - 8) ty = y - r.height - pad;
+    tip.style.left = Math.max(8, tx) + 'px';
+    tip.style.top = Math.max(8, ty) + 'px';
+  }
+  function showTip(x, y, build) {
+    tip.replaceChildren();
+    build(tip);
+    tip.hidden = false;
+    tip.style.opacity = '1';   /* pilot tooltip code may have left it at 0 */
+    placeTip(x, y);
+  }
+  function showTipAt(el, build) {
+    var r = el.getBoundingClientRect();
+    showTip(r.left + r.width / 2, r.top + r.height / 2, build);
+  }
+  function hideTip() { tip.hidden = true; tip.style.opacity = ''; }
+  function tipRow(parent, key, label, value) {
+    var row = H('div', 'row', null, parent);
+    var a = H('span', null, null, row);
+    if (key) { var k = H('i', 'k', null, a); k.style.background = key; }
+    a.appendChild(document.createTextNode(label));
+    H('span', null, value, row);
+  }
+  window.addEventListener('scroll', hideTip, { passive: true });
+
+  /* ---------------- barcodes on shelf tags (seeded RNG, stable per page) ---------------- */
+  document.querySelectorAll('svg.bars').forEach(function (svg, i) {
+    var seed = 17 + i * 101;
+    function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    svg.setAttribute('viewBox', '0 0 78 15');
+    var x = 0;
+    while (x < 76) {
+      var w = rnd() < 0.3 ? 2 : 1;
+      S('rect', { x: x, y: 0, width: w, height: 15, fill: 'var(--ink)' }, svg);
+      x += w + (rnd() < 0.5 ? 1 : 2);
+    }
+  });
+
+  /* ---------------- tape measure ---------------- */
+  function parseTime(v) {
+    if (v === undefined || v === null || v === '') return null;
+    // leading "~" is the page-stated approximate-time marker; strip it
+    var s0 = String(v).trim().replace(/^~\s*/, '');
+    if (s0 === '') return null;
+    if (/^\d+(\.\d+)?$/.test(s0)) return +s0;
+    var p = s0.split(':').map(Number);
+    if (p.some(isNaN)) return null;
+    var s = 0;
+    for (var i = 0; i < p.length; i++) s = s * 60 + p[i];
+    return s;
+  }
+  function hms(t) {
+    t = Math.round(t);
+    var h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
+    return h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  (function tape() {
+    var bar = document.getElementById('tapebar');
+    var tapeEl = document.getElementById('tape');
+    if (!bar || !tapeEl) return;
+    var timeEl = document.getElementById('tapeTime');
+    var chEl = document.getElementById('tapeCh');
+    var mode = bar.dataset.mode === 'progress' ? 'progress' : 'timestamp';
+    var label0 = bar.dataset.signLabel || (mode === 'progress' ? 'Unit' : 'Aisle');
+    var TOTAL, secs;
+    var raw = Array.prototype.slice.call(document.querySelectorAll('section[data-chapter]'));
+    if (mode === 'timestamp') {
+      TOTAL = parseTime(bar.dataset.total);
+      secs = raw.map(function (el) {
+        return { el: el, t: parseTime(el.dataset.time) || 0, label: el.dataset.title || '' };
+      }).sort(function (a, b) { return a.t - b.t; });
+      if (!TOTAL) TOTAL = (secs.length ? secs[secs.length - 1].t : 0) + 480;
+    } else {
+      secs = raw.map(function (el, i) {
+        return { el: el, t: i * 100, label: el.dataset.title || (label0 + ' ' + (i + 1)) };
+      });
+      TOTAL = secs.length * 100;
+    }
+    if (!secs.length) { bar.style.display = 'none'; return; }
+    secs.forEach(function (s, i) { s.t1 = i < secs.length - 1 ? secs[i + 1].t : TOTAL; s.i = i; });
+    var X = null, ph = null, hl = null, current = 0, curT = 0;
+    function draw() {
+      var W = tapeEl.clientWidth, Hh = tapeEl.clientHeight;
+      if (!W) return;
+      tapeEl.setAttribute('viewBox', '0 0 ' + W + ' ' + Hh);
+      tapeEl.replaceChildren();
+      var x0 = 6, x1 = W - 6, top = 6, bot = Hh - 4;
+      X = lin(0, TOTAL, x0, x1);
+      S('rect', { x: x0 - 3, y: top, width: x1 - x0 + 6, height: bot - top, rx: 3, fill: 'var(--tape)' }, tapeEl);
+      secs.forEach(function (s, i) {
+        if (i % 2) S('rect', { x: X(s.t), y: top, width: Math.max(0, X(s.t1) - X(s.t)), height: bot - top, fill: 'var(--tape-ink)', 'fill-opacity': 0.07 }, tapeEl);
+      });
+      hl = S('rect', { x: 0, y: top, width: 0, height: bot - top, fill: 'var(--apron)', 'fill-opacity': 0.32 }, tapeEl);
+      if (mode === 'timestamp') {
+        var ppm = (x1 - x0) / (TOTAL / 60);
+        for (var m = 0; m * 60 <= TOTAL; m++) {
+          var hgt = 0, x = X(m * 60);
+          if (m % 30 === 0) hgt = (bot - top) * 0.5;
+          else if (m % 5 === 0) hgt = (bot - top) * 0.28;
+          else if (ppm >= 3) hgt = (bot - top) * 0.15;
+          if (!hgt) continue;
+          S('line', { x1: x, x2: x, y1: top, y2: top + hgt, stroke: 'var(--tape-ink)', 'stroke-width': m % 30 === 0 ? 1.4 : 1, 'stroke-opacity': m % 30 === 0 ? 0.95 : 0.6 }, tapeEl);
+          if (m % 30 === 0 && m > 0) {
+            var lab = m % 60 === 0 ? (m / 60) + 'h' : (ppm > 2.2 ? (Math.floor(m / 60) ? Math.floor(m / 60) + 'h30' : '30m') : '');
+            if (lab) T(tapeEl, x + 3, bot - 4, lab, { 'font-family': 'Barlow Condensed, Arial Narrow, sans-serif', 'font-weight': 600, 'font-size': 11, fill: 'var(--tape-ink)' });
+          }
+        }
+      } else {
+        secs.forEach(function (s) {
+          var x = X(s.t);
+          S('line', { x1: x, x2: x, y1: top, y2: bot, stroke: 'var(--tape-ink)', 'stroke-width': s.i === 0 ? 1.6 : 1, 'stroke-opacity': 0.75 }, tapeEl);
+          if (W > 560) T(tapeEl, x + 4, bot - 4, String(s.i + 1), { 'font-family': 'Barlow Condensed, Arial Narrow, sans-serif', 'font-weight': 600, 'font-size': 11, fill: 'var(--tape-ink)' });
+        });
+      }
+      /* chapter-start teeth */
+      secs.forEach(function (s) {
+        var x = X(s.t);
+        S('path', { d: 'M' + (x - 3.5) + ',' + bot + ' L' + (x + 3.5) + ',' + bot + ' L' + x + ',' + (bot - 6) + ' Z', fill: 'var(--tape-ink)', 'fill-opacity': 0.6 }, tapeEl);
+      });
+      ph = S('g', null, tapeEl);
+      S('line', { x1: 0, x2: 0, y1: 1, y2: Hh - 1, stroke: 'var(--apron)', 'stroke-width': 2.5 }, ph);
+      S('rect', { x: -6, y: 0, width: 12, height: 6, rx: 1.5, fill: 'var(--apron)' }, ph);
+      update(curT);
+    }
+    function update(t) {
+      curT = t;
+      var i = 0;
+      for (var k = 0; k < secs.length; k++) if (t >= secs[k].t) i = k;
+      current = i;
+      if (X && ph) {
+        ph.setAttribute('transform', 'translate(' + X(t).toFixed(1) + ',0)');
+        hl.setAttribute('x', X(secs[i].t));
+        hl.setAttribute('width', Math.max(0, X(secs[i].t1) - X(secs[i].t)));
+      }
+      if (mode === 'timestamp') {
+        if (timeEl) timeEl.innerHTML = '';
+        if (timeEl) { timeEl.appendChild(document.createTextNode(hms(t))); var sm = H('small', null, 'of ' + hms(TOTAL), timeEl); }
+        if (chEl) chEl.textContent = secs[i].label;
+        tapeEl.setAttribute('aria-valuenow', Math.round(t));
+        tapeEl.setAttribute('aria-valuetext', hms(t) + ', ' + secs[i].label);
+      } else {
+        if (timeEl) { timeEl.innerHTML = ''; timeEl.appendChild(document.createTextNode((i + 1) + ' of ' + secs.length)); H('small', null, label0.toLowerCase(), timeEl); }
+        if (chEl) chEl.textContent = secs[i].label;
+        tapeEl.setAttribute('aria-valuenow', i + 1);
+        tapeEl.setAttribute('aria-valuetext', label0 + ' ' + (i + 1) + ' of ' + secs.length + ', ' + secs[i].label);
+      }
+    }
+    function anchorY() { return window.scrollY + bar.offsetHeight + window.innerHeight * 0.3; }
+    function tops() {
+      var arr = secs.map(function (s) { return s.el.getBoundingClientRect().top + window.scrollY; });
+      var foot = document.querySelector('footer.colophon');
+      arr.push(foot ? foot.getBoundingClientRect().top + window.scrollY : document.body.scrollHeight);
+      return arr;
+    }
+    function fromScroll() {
+      var a = anchorY(), tp = tops();
+      if (a < tp[0]) { update(0); return; }
+      for (var i = 0; i < secs.length; i++) {
+        if (a >= tp[i] && a < tp[i + 1]) {
+          var p = (a - tp[i]) / (tp[i + 1] - tp[i]);
+          update(secs[i].t + p * (secs[i].t1 - secs[i].t));
+          return;
+        }
+      }
+      update(TOTAL);
+    }
+    function jump(t) {
+      t = clamp(t, 0, TOTAL);
+      var i = 0;
+      for (var k = 0; k < secs.length; k++) if (t >= secs[k].t) i = k;
+      var tp = tops();
+      var p = (t - secs[i].t) / (secs[i].t1 - secs[i].t || 1);
+      var y = tp[i] + p * (tp[i + 1] - tp[i]) - bar.offsetHeight - window.innerHeight * 0.3 + 2;
+      window.scrollTo({ top: Math.max(0, y), behavior: reduce ? 'auto' : 'smooth' });
+    }
+    var ticking = false, pending = null, pendTimer = null;
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(function () { ticking = false; if (pending === null) fromScroll(); }); }
+    }, { passive: true });
+    function tAt(ev) {
+      var r = tapeEl.getBoundingClientRect();
+      return clamp((ev.clientX - r.left - 6) / (r.width - 12), 0, 1) * TOTAL;
+    }
+    function labelAt(t) { var i = 0; for (var k = 0; k < secs.length; k++) if (t >= secs[k].t) i = k; return i; }
+    // click or drag jumps: pointerdown starts a potential drag and jumps to
+    // the press point, pointermove while down jumps live, pointerup ends it.
+    // A press without movement behaves exactly like the old click handler.
+    var dragging = false;
+    tapeEl.addEventListener('pointerdown', function (ev) {
+      if (ev.pointerType === 'mouse' && ev.button !== 0) return;
+      dragging = true;
+      try { tapeEl.setPointerCapture(ev.pointerId); } catch (e) {}
+      hideTip();
+      jump(tAt(ev));
+    });
+    tapeEl.addEventListener('pointermove', function (ev) {
+      if (dragging) { jump(tAt(ev)); return; }
+      if (ev.pointerType !== 'mouse') return;
+      var t = tAt(ev), i = labelAt(t);
+      showTip(ev.clientX, ev.clientY, function (el) {
+        H('b', null, mode === 'timestamp' ? hms(t) : (label0 + ' ' + (i + 1) + ' of ' + secs.length), el);
+        H('div', null, secs[i].label, el);
+      });
+    });
+    tapeEl.addEventListener('pointerup', function (ev) { dragging = false; hideTip(); });
+    tapeEl.addEventListener('pointercancel', function () { dragging = false; });
+    tapeEl.addEventListener('pointerleave', function () { if (!dragging) hideTip(); });
+    function kbJump(i) {
+      pending = clamp(i, 0, secs.length - 1);
+      clearTimeout(pendTimer);
+      pendTimer = setTimeout(function () { pending = null; }, 1400);
+      update(secs[pending].t);
+      jump(secs[pending].t);
+    }
+    tapeEl.addEventListener('keydown', function (ev) {
+      var base = pending !== null ? pending : current;
+      if (ev.key === 'ArrowRight' || ev.key === 'ArrowDown') { ev.preventDefault(); kbJump(base + 1); }
+      else if (ev.key === 'ArrowLeft' || ev.key === 'ArrowUp') {
+        ev.preventDefault();
+        kbJump(pending === null && curT - secs[current].t > (mode === 'timestamp' ? 20 : 1) ? current : base - 1);
+      } else if (ev.key === 'Home') { ev.preventDefault(); kbJump(0); }
+      else if (ev.key === 'End') { ev.preventDefault(); kbJump(secs.length - 1); }
+    });
+    if (window.ResizeObserver) new ResizeObserver(draw).observe(tapeEl); else window.addEventListener('resize', draw);
+    draw();
+    fromScroll();
+    window.addEventListener('load', fromScroll);
+  })();
+
+  /* ---------------- paintings ----------------
+     figure.paint > .frame > .stage > img.base (+ optional img.ly layers).
+     Entrances: data-entrance="bloom" (wet-wash mask, pure CSS, works on ANY
+     image) or "sketch" (grayscale+sepia develop). Layers: img.ly with
+     data-box="x,y,w,h" (pixel rect in the base image) + data-img-w/h on the
+     figure, or plain inline % positioning; class "mul" = multiply blend
+     (Tier 2 two-layer heroes, see README). data-depth enables pointer
+     parallax on fine pointers. Mobile: data-scroll="pin" pins and pans the
+     camera across the painting; everything else drifts gently. */
+  var barH = 0;
+  (function paintings() {
+    var root = document.documentElement, bar = document.getElementById('tapebar');
+    function setBar() { barH = bar ? bar.offsetHeight : 0; root.style.setProperty('--barH', barH + 'px'); }
+    setBar();
+    window.addEventListener('resize', setBar);
+
+    /* caption rides along inside the full-screen box on phones */
+    document.querySelectorAll('figure.paint').forEach(function (fig) {
+      var frame = fig.querySelector('.frame'), stage = fig.querySelector('.stage');
+      if (!frame || !stage) return;
+      var box = H('div', 'pinbox', null, null), cap = fig.querySelector('figcaption');
+      fig.insertBefore(box, frame); box.appendChild(frame); if (cap) box.appendChild(cap);
+    });
+
+    /* Tier-2 layer registration: data-box px rect -> % positioning */
+    var layers = [];
+    document.querySelectorAll('figure.paint .stage img.ly').forEach(function (img) {
+      var fig = img.closest('figure.paint');
+      var base = fig && fig.querySelector('img.base');
+      var W = +(fig.dataset.imgW || (base && base.getAttribute('width')) || 0);
+      var Hh = +(fig.dataset.imgH || (base && base.getAttribute('height')) || 0);
+      var b = (img.dataset.box || '').split(',').map(Number);
+      if (W && Hh && b.length === 4 && b.every(isFinite)) {
+        img.style.left = (b[0] / W * 100).toFixed(3) + '%';
+        img.style.top = (b[1] / Hh * 100).toFixed(3) + '%';
+        img.style.width = (b[2] / W * 100).toFixed(3) + '%';
+        img.style.height = (b[3] / Hh * 100).toFixed(3) + '%';
+      }
+      img.setAttribute('aria-hidden', 'true');
+      if (!img.hasAttribute('alt')) img.setAttribute('alt', '');
+      layers.push({ el: img, depth: +(img.dataset.depth || 0), fig: fig });
+    });
+
+    /* pointer parallax on fine pointers */
+    if (fine && !reduce) {
+      var px = 0, py = 0, raf = 0;
+      function applyPar() {
+        layers.forEach(function (L) {
+          if (!L.depth) return;
+          L.el.style.translate = (L.depth * px).toFixed(1) + 'px ' + (L.depth * py).toFixed(1) + 'px';
+        });
+      }
+      document.querySelectorAll('figure.paint .stage').forEach(function (st) {
+        st.addEventListener('pointermove', function (ev) {
+          var r = st.getBoundingClientRect();
+          px = clamp(((ev.clientX - r.left) / r.width - 0.5) * 2, -1, 1);
+          py = clamp(((ev.clientY - r.top) / r.height - 0.5) * 2, -1, 1);
+          if (!raf) raf = requestAnimationFrame(function () { raf = 0; applyPar(); });
+        });
+        st.addEventListener('pointerleave', function () {
+          px = 0; py = 0;
+          if (!raf) raf = requestAnimationFrame(function () { raf = 0; applyPar(); });
+        });
+      });
+    }
+
+    /* entrances */
+    var entrances = [];
+    var figs = Array.prototype.slice.call(document.querySelectorAll('figure.paint'));
+    figs.forEach(function (fig, fi) {
+      var stage = fig.querySelector('.stage');
+      if (!stage) return;
+      var kind = fig.dataset.entrance || (fi % 2 ? 'sketch' : 'bloom');
+      if (fig.dataset.entrance === 'none') kind = 'none';
+      var isHero = fig.hasAttribute('data-hero');
+      function arm() {
+        if (kind === 'bloom') (mqMobile.matches ? fig.querySelector('.frame') : stage).classList.add('bleed');
+        if (kind === 'sketch') stage.classList.add('sketch');
+      }
+      function play(instant) {
+        if (kind === 'bloom') (mqMobile.matches ? fig.querySelector('.frame') : stage).classList.add('bloom');
+        if (kind === 'sketch') stage.classList.add('develop');
+        if (!instant && kind !== 'none') setTimeout(clear, 3000);
+        else clear();
+      }
+      function clear() {
+        [fig.querySelector('.frame'), stage].forEach(function (e) {
+          if (e) e.classList.remove('bleed', 'bloom', 'sketch', 'develop');
+        });
+      }
+      entrances.push({ clear: clear });
+      if (reduce || kind === 'none') return;   /* still pictures */
+      if (isHero) { arm(); play(false); return; }
+      reveal(fig.querySelector('.frame') || fig,
+        function () { arm(); },
+        function (instant) { play(instant); },
+        0.3);
+    });
+    window.addEventListener('beforeprint', function () { entrances.forEach(function (e) { e.clear(); }); });
+
+    /* mobile camera: pin scenes pan across, the rest drift */
+    if (reduce) return;
+    var cams = figs.map(function (fig) {
+      return { fig: fig, stage: fig.querySelector('.stage'), pin: fig.dataset.scroll === 'pin', q: 0, t0: null };
+    }).filter(function (c) { return c.stage; });
+    if (!cams.length) return;
+    function setModes() {
+      var on = mqMobile.matches;
+      cams.forEach(function (c) {
+        c.fig.classList.toggle('pin', on && c.pin);
+        c.fig.classList.toggle('drift', on && !c.pin);
+        if (!on) c.stage.style.transform = '';
+      });
+    }
+    setModes();
+    if (mqMobile.addEventListener) mqMobile.addEventListener('change', setModes);
+    else if (mqMobile.addListener) mqMobile.addListener(setModes);
+    var running = false;
+    function view(c, q, now) {
+      var st = c.stage, fw = st.parentElement.clientWidth, fh = st.parentElement.clientHeight;
+      var base = st.querySelector('img.base');
+      var W = +(base && base.getAttribute('width')) || 1600, Hh = +(base && base.getAttribute('height')) || 900;
+      var k = st.offsetWidth / W || 1;
+      var z = c.pin ? 1 + 0.12 * q : 1 + 0.05 * (0.5 - 0.5 * Math.cos((now / 1000 / 26) * 2 * Math.PI));
+      var fx = c.pin ? W * (0.28 + 0.44 * q) : W / 2;
+      var sw = W * k * z, sh = Hh * k * z;
+      var tx = sw <= fw ? (fw - sw) / 2 : clamp(fw / 2 - fx * k * z, fw - sw, 0);
+      var ty = sh <= fh ? (fh - sh) / 2 : clamp(fh / 2 - (Hh / 2) * k * z, fh - sh, 0);
+      st.style.transform = 'translate3d(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px,0) scale(' + z.toFixed(4) + ')';
+    }
+    function tick(now) {
+      var vh = window.innerHeight, live = false;
+      cams.forEach(function (c) {
+        if (!mqMobile.matches) return;
+        var r = c.fig.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        live = true;
+        if (c.pin) {
+          var travel = Math.max(1, r.height - (vh - barH));
+          c.q = clamp((barH - r.top) / travel, 0, 1);
+        }
+        view(c, c.q, now);
+      });
+      if (live) requestAnimationFrame(tick); else running = false;
+    }
+    function wake() { if (!running && mqMobile.matches) { running = true; requestAnimationFrame(tick); } }
+    window.addEventListener('scroll', wake, { passive: true });
+    window.addEventListener('resize', wake);
+    wake();
+  })();
+
+  /* ---------------- SVG overlay helpers ----------------
+     Runtime life for paintings: steam curls, lamp glows, ripples, sparkles,
+     dust motes, ring marks. Pure code, zero image cost. Exposed as
+     window.CompanionFX for Phase 2 scene code; CompanionFX.registerScene
+     wires per-scene init/pose functions into a shared rAF driver. */
+  var FX = (function () {
+    function overlay(stage, cls, W, Hh) {
+      var o = document.createElementNS(NS, 'svg');
+      o.setAttribute('class', 'ov ' + cls);
+      o.setAttribute('viewBox', '0 0 ' + W + ' ' + Hh);
+      o.setAttribute('aria-hidden', 'true');
+      stage.appendChild(o);
+      return o;
+    }
+    function steam(stage, W, Hh, x, y, rise, period) {
+      var ov = overlay(stage, 'fx', W, Hh);
+      var paths = [0, 1].map(function (i) {
+        return S('path', { stroke: '#B9C4C9', 'stroke-width': 5, fill: 'none', 'stroke-linecap': 'round', opacity: 0.55 }, ov);
+      });
+      return {
+        tick: function (t) {
+          paths.forEach(function (p, i) {
+            var u = ((t / period) + i / 2) % 1;
+            var yy = y - rise * u, xx = x + 9 * Math.sin(t * 1.3 + i * 2.1);
+            p.setAttribute('d', 'M' + xx.toFixed(1) + ',' + yy.toFixed(1) + ' q 10,-22 0,-44 q -10,-22 0,-44');
+            p.setAttribute('opacity', (0.55 * Math.pow(Math.sin(Math.PI * u), 1.2)).toFixed(2));
+          });
+        }
+      };
+    }
+    function glows(stage, W, Hh, pts, mode, color) {
+      var ov = overlay(stage, 'glow-' + mode, W, Hh);
+      var id = 'gl-' + Math.random().toString(36).slice(2, 8) + '-' + mode;
+      var gr = S('radialGradient', { id: id }, S('defs', null, ov));
+      S('stop', { offset: '0', 'stop-color': color, 'stop-opacity': mode === 'screen' ? 0.85 : 0.55 }, gr);
+      S('stop', { offset: '0.45', 'stop-color': color, 'stop-opacity': mode === 'screen' ? 0.35 : 0.22 }, gr);
+      S('stop', { offset: '1', 'stop-color': color, 'stop-opacity': 0 }, gr);
+      return pts.map(function (p) {
+        var c = S('circle', { cx: p[0], cy: p[1], r: p[2], fill: 'url(#' + id + ')' }, ov);
+        c.style.opacity = 0;
+        return c;
+      });
+    }
+    function ripple(stage, W, Hh, x, y) {
+      var ov = overlay(stage, 'fx', W, Hh);
+      return [0, 1].map(function () {
+        var e = S('ellipse', { class: 'ripple', cx: x, cy: y, rx: 0, ry: 0 }, ov);
+        e.style.opacity = 0;
+        return e;
+      });
+    }
+    function sparkles(stage, W, Hh, pts) {
+      var ov = overlay(stage, 'fx', W, Hh);
+      return pts.map(function (p) {
+        var g = S('g', { transform: 'translate(' + p[0] + ',' + p[1] + ')' }, ov);
+        var R = p[2], r = R * 0.16;
+        var star = S('path', { class: 'spark', d: 'M0,' + (-R) + 'L' + r + ',' + (-r) + 'L' + R + ',0L' + r + ',' + r + 'L0,' + R + 'L' + (-r) + ',' + r + 'L' + (-r) + ',' + (-r) + 'Z' }, g);
+        star.style.transform = 'scale(0)';
+        return star;
+      });
+    }
+    function motes(stage, W, Hh, n, seed) {
+      var ov = overlay(stage, 'glow-screen', W, Hh);
+      var out = [];
+      for (var i = 0; i < n; i++) {
+        seed = (seed * 9301 + 49297) % 233280; var u = seed / 233280;
+        seed = (seed * 9301 + 49297) % 233280; var ph = seed / 233280;
+        seed = (seed * 9301 + 49297) % 233280; var rr = seed / 233280;
+        var c = S('circle', { r: (3 + rr * 4).toFixed(1), fill: '#FFFDF4', cx: u * W, cy: ph * Hh }, ov);
+        c.style.opacity = 0;
+        out.push({ el: c, u: u, ph: ph, sp: 7 + rr * 9 });
+      }
+      return {
+        tick: function (t) {
+          out.forEach(function (m) {
+            var y = Hh - ((t * m.sp + m.ph * Hh) % Hh);
+            var x = m.u * W + 10 * Math.sin(t * 0.4 + m.ph * 9);
+            m.el.setAttribute('cx', x.toFixed(1)); m.el.setAttribute('cy', y.toFixed(1));
+            m.el.style.opacity = (0.35 + 0.4 * Math.pow(Math.sin(t * (0.7 + m.u) + m.ph * 6), 2)).toFixed(3);
+          });
+        }
+      };
+    }
+    function ringMarks(stage, W, Hh, sides) {
+      var ov = overlay(stage, 'fx', W, Hh);
+      return sides.map(function (sd) {
+        var g = S('g', { class: 'ring' }, ov), cx = sd[0], cy = sd[1];
+        var a0 = sd[2] * Math.PI / 180, a1 = sd[3] * Math.PI / 180;
+        [34, 54].forEach(function (r) {
+          S('path', { d: 'M' + (cx + Math.cos(a0) * r).toFixed(1) + ',' + (cy + Math.sin(a0) * r).toFixed(1) + ' A' + r + ',' + r + ' 0 0 1 ' + (cx + Math.cos(a1) * r).toFixed(1) + ',' + (cy + Math.sin(a1) * r).toFixed(1) }, g);
+        });
+        g.style.opacity = 0;
+        return g;
+      });
+    }
+    function flicker(t, k) { return 0.5 * Math.sin(t * 7.3 + k) + 0.3 * Math.sin(t * 13.1 + k * 2.1) + 0.2 * Math.sin(t * 23.7 + k * 3.7); }
+
+    /* per-scene registry (Phase 2): name -> { init(F), pose(S) -> {obj: {x,y,r,s,o}} } */
+    var scenes = {};
+    var live = [];
+    function registerScene(name, spec) {
+      scenes[name] = spec;
+      if (reduce) return;
+      document.querySelectorAll('figure.paint[data-scene="' + name + '"]').forEach(function (fig) {
+        var stage = fig.querySelector('.stage'), base = fig.querySelector('img.base');
+        if (!stage || !base) return;
+        var F = { fig: fig, stage: stage, name: name,
+          W: +(base.getAttribute('width')) || 1600, H: +(base.getAttribute('height')) || 900,
+          enterAt: null };
+        if (spec.init) spec.init(F, FX);
+        live.push({ F: F, spec: spec });
+        wakeFx();
+      });
+    }
+    var fxRunning = false;
+    function applyPose(F, pose) {
+      Object.keys(pose || {}).forEach(function (nm) {
+        var q = pose[nm] || {};
+        F.stage.querySelectorAll('img.ly[data-obj="' + nm + '"]').forEach(function (img) {
+          var tr = 'translate3d(' + (q.x || 0).toFixed(2) + 'px,' + (q.y || 0).toFixed(2) + 'px,0)';
+          if (q.r) tr += ' rotate(' + q.r.toFixed(3) + 'deg)';
+          if (q.s !== undefined && q.s !== 1) tr += ' scale(' + q.s.toFixed(4) + ')';
+          img.style.transform = tr;
+          if (q.o !== undefined) img.style.opacity = clamp(q.o, 0, 1).toFixed(3);
+        });
+      });
+    }
+    function fxTick(now) {
+      var t = now / 1000, any = false;
+      live.forEach(function (L) {
+        var r = L.F.fig.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > window.innerHeight + 200) return;
+        any = true;
+        if (L.F.enterAt === null && r.top < window.innerHeight * 0.8) L.F.enterAt = now;
+        var S_ = { t: t, et: L.F.enterAt === null ? 999 : (now - L.F.enterAt) / 1000, F: L.F };
+        applyPose(L.F, L.spec.pose ? L.spec.pose(S_, FX) : {});
+      });
+      if (any) requestAnimationFrame(fxTick); else fxRunning = false;
+    }
+    function wakeFx() { if (!fxRunning && live.length) { fxRunning = true; requestAnimationFrame(fxTick); } }
+    window.addEventListener('scroll', wakeFx, { passive: true });
+
+    return { overlay: overlay, steam: steam, glows: glows, ripple: ripple,
+      sparkles: sparkles, motes: motes, ringMarks: ringMarks, flicker: flicker,
+      registerScene: registerScene, smoothstep: smoothstep, clamp: clamp };
+  })();
+  window.CompanionFX = FX;
+
+  /* ---------------- playbook: auto-index of every shelf tag ---------------- */
+  (function playbook() {
+    var grid = document.getElementById('playbook');
+    if (!grid) return;
+    var bar = document.getElementById('tapebar');
+    var signLabel = (bar && bar.dataset.signLabel) || 'Aisle';
+    document.querySelectorAll('aside.tag').forEach(function (tag, i) {
+      var a = H('a', 'pb', null, grid);
+      a.href = '#' + (tag.id || tag.dataset.chapter || '');
+      var num = tag.dataset.signNum, lab = tag.dataset.signLabel || signLabel;
+      H('div', 'a', num ? (lab + ' ' + num) : ('Lesson ' + (i + 1)), a);
+      var big = tag.querySelector('.tag-big');
+      H('div', 'big', big ? big.textContent : '', a);
+      var p = tag.querySelector('.tag-body p');
+      H('p', null, p ? p.textContent : '', a);
+    });
+  })();
+
+  /* ---------------- beforeprint: finish everything instantly ---------------- */
+  window.addEventListener('beforeprint', function () {
+    revealers.forEach(function (r) { r.finish(); });
+    document.querySelectorAll('.paint .bleed, .paint .bloom, .paint .stage.sketch, .paint .stage.develop')
+      .forEach(function (e) { e.classList.remove('bleed', 'bloom', 'sketch', 'develop'); });
+  });
+})();
+
+</script></body>
+</html>
