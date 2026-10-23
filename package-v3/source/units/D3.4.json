@@ -1,0 +1,263 @@
+{
+  "id": "D3.4",
+  "domain": "D3",
+  "title": "Observability at scale",
+  "task_statement": "Rebuild any integration run from traces, usage data, and telemetry, without text logs alone. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Request tracing with OpenTelemetry",
+      "first_principle": "A trace records each step of one run with a shared trace ID, so you can rebuild the run from the spans.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app starts the run span", "group": "client"},
+          {"id": "sdk", "label": "Claude SDK spans", "group": "client"},
+          {"id": "api", "label": "Claude API spans with destination", "group": "claude"},
+          {"id": "model", "label": "Model run and tool spans", "group": "claude"},
+          {"id": "collector", "label": "OTLP collector or partner platform", "group": "data"},
+          {"id": "view", "label": "Trace view with token counts", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "sdk", "label": "one span per call"},
+          {"from": "sdk", "to": "api", "label": "traceparent header"},
+          {"from": "api", "to": "model", "label": "model request span"},
+          {"from": "sdk", "to": "collector", "label": "export SDK spans"},
+          {"from": "api", "to": "collector", "label": "export API spans"},
+          {"from": "collector", "to": "view", "label": "rebuild the run"}
+        ]
+      },
+      "steps": [
+        "Set up SDK tracing with a tracer provider in your application.",
+        "Add an API tracing destination in the Claude Console.",
+        "Keep the metadata only content mode for routine exports.",
+        "Choose the full content mode only where your retention rules allow prompt storage.",
+        "Sum token usage from one source only, so each token counts once.",
+        "Check the truncated attribute before you read a long span."
+      ],
+      "pros": [
+        "Each model run and tool use appears in one trace.",
+        "Any platform that accepts OTLP can receive the spans.",
+        "Token attributes on each span support cost per request."
+      ],
+      "cons": [
+        "Full content stores prompts and responses in your observability platform.",
+        "Span delivery is best effort, so a span can be lost.",
+        "Content over the size limit is shortened and marked as truncated."
+      ],
+      "use_when": [
+        "An incident needs the path of one request through several calls.",
+        "Cost per request or per feature must be attributed.",
+        "Your own application traces must link to Claude calls."
+      ],
+      "do_not_use_when": [
+        "Your organization has a HIPAA, FERPA, or K-12 restriction and needs prompt text in API tracing, because those destinations export metadata only.",
+        "A single call with no tools needs only the prompt log.",
+        "The data path must guarantee every span, since delivery is best effort."
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Use metadata only for routine exports.", "combination": "Use full content for a narrow debug set with its own retention rule."},
+        {"family": "data location", "choice": "Use full content with zero data retention, which holds exported content in memory only for Messages API requests.", "combination": "Claude Managed Agents is not eligible for zero data retention."},
+        {"family": "operations", "choice": "Keep the default content limit of 0.75 MB per span.", "combination": "Raise the limit only when your platform accepts larger payloads."},
+        {"family": "cost", "choice": "Sum the API spans for token totals on API tracing.", "combination": "Add compaction tokens when a request has compactions."}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "API tracing is supported. Set up the destination in the Claude Console with Admin permission.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry"},
+        {"service": "Amazon Bedrock", "text": "SDK tracing works on any platform. API tracing lists only Claude Platform and Claude Platform on AWS.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry"},
+        {"service": "Microsoft Foundry", "text": "SDK tracing works on any platform. API tracing lists only Claude Platform and Claude Platform on AWS.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry"}
+      ],
+      "exam_tie": "D3.4. Expect a scenario where a bad outcome cannot be traced to its cause. The credited answer uses traces with one ID and cost per hop, not more text logs. (Inference)",
+      "trap": "More prompt logs or longer retention keeps the blind spot. The logs hold no tool or retrieval hop.",
+      "decision_rule": "Trace each hop that calls a model or a tool, and tie the hops to one trace ID.",
+      "exam_tip": "If the scenario asks which tool call acted, pick the trace spans over the prompt text.",
+      "key_facts": [
+        {"text": "Metadata only is the default content mode.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry", "label": "Fact"},
+        {"text": "Each span holds up to 0.75 MB of content by default.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry", "label": "Fact"},
+        {"text": "Span delivery is best effort, so a span can be lost.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry", "label": "Fact"},
+        {"text": "The gen_ai.usage.input_tokens attribute already includes cache read and write tokens.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry", "label": "Fact"},
+        {"text": "A caller can turn off the sampled flag in the traceparent header to leave out its spans.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry/api", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Retention period for traces in each partner platform. Not in source.",
+        "Span delivery latency in seconds. Not in source."
+      ]
+    },
+    {
+      "name": "Usage, cost, and rate limit reports",
+      "first_principle": "Usage and cost reports group token counts and dollars by workspace, key, and model, and response headers show live capacity.",
+      "architecture": {
+        "nodes": [
+          {"id": "admin", "label": "Admin API key holder", "group": "control"},
+          {"id": "api", "label": "Usage and Cost Admin API", "group": "claude"},
+          {"id": "usage", "label": "Token usage by bucket and group", "group": "data"},
+          {"id": "cost", "label": "Daily cost in USD", "group": "data"},
+          {"id": "app", "label": "Your app reads response headers", "group": "client"},
+          {"id": "dash", "label": "Dashboard or finance reconciliation", "group": "control"}
+        ],
+        "edges": [
+          {"from": "admin", "to": "api", "label": "request with Admin key"},
+          {"from": "api", "to": "usage", "label": "group by model or workspace"},
+          {"from": "api", "to": "cost", "label": "daily buckets"},
+          {"from": "app", "to": "dash", "label": "remaining capacity"},
+          {"from": "usage", "to": "dash", "label": "trend and split"},
+          {"from": "cost", "to": "dash", "label": "reconcile with billing"}
+        ]
+      },
+      "steps": [
+        "Create an Admin API key for the organization.",
+        "Call the usage report endpoint with a bucket width of one hour or one day.",
+        "Add group_by for model, workspace, or API key to split the totals.",
+        "Call the cost report endpoint for daily totals in USD.",
+        "Read the anthropic-ratelimit headers on each response to track capacity left.",
+        "Compare the report totals with the Console Usage page before you reconcile. (Inference)"
+      ],
+      "pros": [
+        "Reports split spend by workspace, API key, model, and service tier.",
+        "Reports suit finance reconciliation with billing.",
+        "Response headers show live capacity without a separate call."
+      ],
+      "cons": [
+        "Individual accounts cannot use the Admin API.",
+        "The cost report offers daily buckets only.",
+        "Claude Platform on AWS has no programmatic usage or cost endpoints."
+      ],
+      "use_when": [
+        "Finance needs a monthly split of spend.",
+        "A team asks what one workspace spent in a week.",
+        "Capacity planning needs a trend of token use."
+      ],
+      "do_not_use_when": [
+        "You need cost for one request in real time, so use the trace spans.",
+        "The platform is Claude Platform on AWS and you need a programmatic report.",
+        "A workspace key must call the report endpoints, which it cannot do."
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Use the cost report for daily totals in USD.", "combination": "Use the usage report with hourly buckets to find spikes."},
+        {"family": "quota", "choice": "Read the anthropic-ratelimit headers on each response.", "combination": "Wait for the retry-after value before the next try on a 429."},
+        {"family": "governance", "choice": "Use an Admin API key or a service account key that is not scoped to a workspace.", "combination": "Keep workspace keys out of report jobs."},
+        {"family": "data location", "choice": "Read usage in the Console on Claude Platform on AWS.", "combination": "Programmatic endpoints are not available there."}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "Programmatic Usage and Cost endpoints are not available. Use the Console pages instead.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"},
+        {"service": "Microsoft Foundry", "text": "Admin API endpoints are not supported. Foundry does not return Anthropic rate limit headers.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"},
+        {"service": "Amazon Bedrock", "text": "The default quota is 2 million input tokens per minute. AWS enforces the requests per minute limits.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Google Cloud manages rate limits and quotas for this platform.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"}
+      ],
+      "exam_tie": "D3.4. Expect a scenario about spend attribution or throttling. The credited answer uses the usage and cost reports or response headers, not estimates from app logs. (Inference)",
+      "trap": "Totals of input_tokens from each response look complete. That field counts only tokens after the last cache breakpoint.",
+      "decision_rule": "Use the usage and cost reports for spend, and response headers for live capacity.",
+      "exam_tip": "A spend-cap 429 has no retry-after header and stays failed until access resumes.",
+      "key_facts": [
+        {"text": "The usage report default is 7 buckets for one-day width, and the maximum is 31.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "The cost report returns USD amounts in cents, with daily buckets only.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "For most models, cache read tokens do not count toward input tokens per minute.", "url": "https://platform.claude.com/docs/en/api/rate-limits", "label": "Fact"},
+        {"text": "A spend-cap 429 response has no retry-after header.", "url": "https://platform.claude.com/docs/en/api/rate-limits", "label": "Fact"},
+        {"text": "Every API response includes a request-id header.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Usage report retention period beyond the documented windows. Not in source.",
+        "Replacement headers for Anthropic rate limit values on Microsoft Foundry. Not in source."
+      ]
+    },
+    {
+      "name": "Claude Code and agent session telemetry",
+      "first_principle": "Claude Code exports its own metrics and events to a destination you set, and managed settings keep that destination fixed.",
+      "architecture": {
+        "nodes": [
+          {"id": "admin", "label": "Managed settings pin the destination", "group": "control"},
+          {"id": "cc", "label": "Claude Code session", "group": "client"},
+          {"id": "otel", "label": "OTLP metrics and logs exporters", "group": "data"},
+          {"id": "backend", "label": "Your telemetry backend", "group": "cloud"},
+          {"id": "session", "label": "Managed Agents session usage", "group": "claude"},
+          {"id": "console", "label": "Console session viewer", "group": "control"}
+        ],
+        "edges": [
+          {"from": "admin", "to": "cc", "label": "endpoint and credentials"},
+          {"from": "cc", "to": "otel", "label": "metrics and events"},
+          {"from": "otel", "to": "backend", "label": "OTLP export"},
+          {"from": "session", "to": "console", "label": "usage totals and threads"}
+        ]
+      },
+      "steps": [
+        "Set CLAUDE_CODE_ENABLE_TELEMETRY to 1.",
+        "Set OTEL_METRICS_EXPORTER and OTEL_LOGS_EXPORTER to otlp.",
+        "Set the OTLP protocol and endpoint for your collector.",
+        "Leave OTEL_LOG_USER_PROMPTS unset unless prompt text is allowed.",
+        "Set OTEL_LOG_TOOL_DETAILS to 1 to capture MCP call arguments.",
+        "Pin the OTLP endpoint and credentials in managed settings.",
+        "Check claude_code.session.count in the backend to confirm the pipeline."
+      ],
+      "pros": [
+        "Standard metrics report cost and token use per session.",
+        "MCP activity events show the server, tool, and decision.",
+        "Managed settings keep the destination fixed for developers."
+      ],
+      "cons": [
+        "Tool details can include call arguments, which may hold sensitive values.",
+        "Sign-in with a Claude account adds user.email to the attributes sent to your endpoint.",
+        "Subprocesses started by Claude Code do not inherit the OTel variables."
+      ],
+      "use_when": [
+        "An organization needs cost and tool audit for developer use of Claude Code.",
+        "MCP call arguments must appear in the audit trail.",
+        "Managed settings can deliver the destination to every developer."
+      ],
+      "do_not_use_when": [
+        "A repository setting must turn telemetry on, because Claude Code ignores OTel variables in project settings.",
+        "A developer needs prompt text in every session, since prompt text is off by default.",
+        "The Bash tool needs its own OTel variables, because Claude Code does not pass them down."
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Pin the endpoint and credentials in managed settings.", "combination": "Set the per-signal variables in managed settings when one signal needs its own collector."},
+        {"family": "data location", "choice": "Send prompt content only to the endpoint you configure.", "combination": "Mask the prompt text attributes in your collector if policy forbids them. (Inference)"},
+        {"family": "operations", "choice": "Use the console exporter for local checks.", "combination": "Set shorter export intervals only for short checks."},
+        {"family": "cost", "choice": "Track claude_code.cost.usage in USD per session.", "combination": "Use claude_code.token.usage for token trends."}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "Telemetry carries only user.id and session.id. Attach user identity with OTEL_RESOURCE_ATTRIBUTES.", "url": "https://code.claude.com/docs/en/monitoring-usage"},
+        {"service": "Microsoft Foundry", "text": "Telemetry carries only user.id and session.id. Attach user identity with OTEL_RESOURCE_ATTRIBUTES.", "url": "https://code.claude.com/docs/en/monitoring-usage"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "With Agent Platform, telemetry carries only user.id and session.id. Attach user identity with OTEL_RESOURCE_ATTRIBUTES.", "url": "https://code.claude.com/docs/en/monitoring-usage"}
+      ],
+      "exam_tie": "D3.4. Expect a scenario about audit of developer tool use. The credited answer uses managed telemetry settings and tool detail events. (Inference)",
+      "trap": "A repository setting that enables telemetry looks simple. Claude Code ignores OTel variables in project settings, so the destination is not controlled.",
+      "decision_rule": "Set telemetry destinations in managed settings, and keep prompt text off by default.",
+      "exam_tip": "If the scenario asks for MCP call arguments, enable tool details and the logs exporter.",
+      "key_facts": [
+        {"text": "The default metric export interval is 60000 milliseconds.", "url": "https://code.claude.com/docs/en/monitoring-usage", "label": "Fact"},
+        {"text": "The default logs export interval is 5000 milliseconds.", "url": "https://code.claude.com/docs/en/monitoring-usage", "label": "Fact"},
+        {"text": "User prompt content is not collected by default, and only prompt length is recorded.", "url": "https://code.claude.com/docs/en/monitoring-usage", "label": "Fact"},
+        {"text": "The metric claude_code.cost.usage reports cost in USD.", "url": "https://code.claude.com/docs/en/monitoring-usage", "label": "Fact"},
+        {"text": "The session object usage field holds cumulative totals, read after the session goes idle.", "url": "https://platform.claude.com/docs/en/managed-agents/session-observability", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Telemetry backend retention and cost in dollars. Not in source.",
+        "Claude Code telemetry on Claude Platform on AWS. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Is the question about one run or many runs?} -->|One run| B{Which hop acted?}\n  A -->|Many runs| C{Is it spend or capacity?}\n  B --> D[Trace spans with one trace ID]\n  C -->|Spend| E[Usage and cost reports]\n  C -->|Capacity| F[Response headers and retry-after]\n  D --> G{Prompt text allowed?}\n  G -->|No| H[Metadata only content mode]\n  G -->|Yes| I[Full content mode within limits]\n  E --> J{Platform is Claude Platform on AWS?}\n  J -->|Yes| K[Console pages only]\n  J -->|No| L[Admin API key report calls]",
+  "cheatsheet": "flowchart LR\n  T[Trace ID per run] --> H[Span per hop]\n  H --> C[Cost and tokens per hop]\n  T --> M[Metadata only default]\n  U[Usage report] --> G[Group by workspace]\n  U --> D[Daily cost in USD]\n  R[Headers] --> Q[Capacity left]\n  E[Claude Code] --> O[Managed OTel settings]\n  O --> A[Tool detail events]",
+  "patterns": [
+    {"wording": "a wrong action fired somewhere in a multi-step run and no one can find which step", "answer_type": "trace spans with one ID and cost per hop", "rule": "Emit one trace per run, with a span for each model and tool hop.", "traps": ["More prompt logs", "Longer log retention"]},
+    {"wording": "finance needs spend split by team and workspace", "answer_type": "usage and cost reports grouped by workspace", "rule": "Call the usage and cost reports with group_by for workspace or key.", "traps": ["App-side estimates", "Console screenshots for a monthly total"]},
+    {"wording": "developer tool use must be audited and the destination must stay fixed", "answer_type": "managed settings with OTel and tool detail events", "rule": "Pin the telemetry destination in managed settings, and enable tool details for MCP audit.", "traps": ["Repository setting for telemetry", "Prompt text logging for every session"]}
+  ],
+  "console_steps": [
+    {"step": "Add a destination in the Claude Console for API tracing.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry/api", "screenshot": null}
+  ],
+  "not_in_source": [
+    "Console steps: Not in source for the usage report beyond the documented Usage page.",
+    "Trace sampling rates for production fleets. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/manage-claude/opentelemetry",
+    "https://platform.claude.com/docs/en/manage-claude/opentelemetry/api",
+    "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+    "https://platform.claude.com/docs/en/api/rate-limits",
+    "https://platform.claude.com/docs/en/api/errors",
+    "https://platform.claude.com/docs/en/managed-agents/session-observability",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://code.claude.com/docs/en/monitoring-usage"
+  ]
+}

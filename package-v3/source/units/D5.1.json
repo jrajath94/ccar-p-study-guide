@@ -1,0 +1,533 @@
+{
+  "id": "D5.1",
+  "domain": "D5",
+  "title": "Guardrails and safety controls",
+  "task_statement": "Enforce guardrails in code with input checks, tool gates, and a sandbox boundary. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Input validation and untrusted-content handling",
+      "first_principle": "A prompt is guidance. Code checks user input and labels third-party content before the model acts on it.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "user",
+            "label": "End user message",
+            "group": "client"
+          },
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "screen",
+            "label": "Harmlessness screen on a lightweight model",
+            "group": "claude"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "doc",
+            "label": "Email, web page, or file content",
+            "group": "data"
+          },
+          {
+            "id": "log",
+            "label": "Verdict log and stop reason",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "user",
+            "to": "app",
+            "label": "user text"
+          },
+          {
+            "from": "app",
+            "to": "screen",
+            "label": "screen request with JSON schema"
+          },
+          {
+            "from": "screen",
+            "to": "app",
+            "label": "verdict: pass or block"
+          },
+          {
+            "from": "app",
+            "to": "api",
+            "label": "pass: send as user turn"
+          },
+          {
+            "from": "doc",
+            "to": "api",
+            "label": "untrusted content in tool_result"
+          },
+          {
+            "from": "api",
+            "to": "log",
+            "label": "stop_reason and usage"
+          }
+        ]
+      },
+      "steps": [
+        "Screen each user message with a lightweight model before the main call.",
+        "Use structured outputs so the screen returns a parseable boolean.",
+        "Treat a refusal stop reason on the screen as a harmful verdict.",
+        "Place third-party content only in tool_result blocks, never in system prompts.",
+        "Label the source of that content so the model can judge how far to trust it.",
+        "State in the system prompt that tool content is untrusted data and must not override instructions.",
+        "Test the workflow with documents that carry injected instructions."
+      ],
+      "pros": [
+        "Blocks many direct injection attempts before the main model call.",
+        "Keeps untrusted content in tool results, where Claude treats embedded instructions with skepticism.",
+        "Produces a verdict that the application can log and count."
+      ],
+      "cons": [
+        "A screen adds a model call and latency to each screened request.",
+        "A screen can miss new attack wording, so it is not a complete control.",
+        "A screen can block a legitimate request."
+      ],
+      "use_when": [
+        "Users type free text that reaches the model.",
+        "The model reads email, web pages, or files from third parties.",
+        "Tool results contain text that other people wrote."
+      ],
+      "do_not_use_when": [
+        "The input is fixed text that your own team wrote.",
+        "The goal is to stop a tool call. Use a deterministic gate instead."
+      ],
+      "constraints": [
+        {
+          "family": "latency",
+          "choice": "Use a small model for the screen, not the main model.",
+          "combination": "Add the screen only to routes that accept untrusted text. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Log each screen verdict with its request ID.",
+          "combination": "Throttle or ban users who repeat the same refusal, after review."
+        },
+        {
+          "family": "operations",
+          "choice": "Monitor screen verdicts and tool-result flags over time.",
+          "combination": "Refine the screen prompt when misses or false positives appear."
+        },
+        {
+          "family": "skill",
+          "choice": "Write the screen prompt with examples of known injection language.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Amazon Bedrock Guardrails filter content for Claude Code. The guardrail headers go in the settings file.",
+          "url": "https://code.claude.com/docs/en/amazon-bedrock"
+        }
+      ],
+      "exam_tie": "D5.1. Expect a scenario where untrusted text reaches the model. The credited answer screens and labels the input. Prompt wording alone does not count. (Inference)",
+      "trap": "A stricter system prompt as the only control. The model can still follow an injected instruction, and no code stops the action.",
+      "decision_rule": "Screen untrusted text before the main call, and keep third-party content in tool_result blocks.",
+      "exam_tip": "If the only defense is prompt wording, add an input screen or a code check.",
+      "key_facts": [
+        {
+          "text": "Harmlessness screens use a lightweight model to pre-screen user input.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "Put untrusted content only in tool_result blocks, never in system prompts or plain user text blocks.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "A screen response with stop_reason refusal counts as a harmful verdict.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 runs safety classifiers that can decline the screen request itself.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "With the computer use or browser use tool, Anthropic runs extra classifiers on what the tools return.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Accuracy rate of the screen or of the built-in classifiers. Not in source.",
+        "Latency that one screen call adds. Not in source."
+      ]
+    },
+    {
+      "name": "Deterministic tool authorization gate",
+      "first_principle": "Code that runs the tool decides whether the call proceeds, so the model cannot override the decision.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "model",
+            "label": "Model proposes tool call",
+            "group": "claude"
+          },
+          {
+            "id": "rules",
+            "label": "Permission rules and PreToolUse hook",
+            "group": "control"
+          },
+          {
+            "id": "tool",
+            "label": "Tool runs",
+            "group": "cloud"
+          },
+          {
+            "id": "deny",
+            "label": "Call blocked",
+            "group": "control"
+          },
+          {
+            "id": "policy",
+            "label": "Permission policy per toolset",
+            "group": "control"
+          },
+          {
+            "id": "app",
+            "label": "Your application or custom tool",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "model",
+            "to": "rules",
+            "label": "tool_use request"
+          },
+          {
+            "from": "policy",
+            "to": "rules",
+            "label": "always_allow, always_ask, or auto"
+          },
+          {
+            "from": "rules",
+            "to": "tool",
+            "label": "every check allows"
+          },
+          {
+            "from": "rules",
+            "to": "deny",
+            "label": "deny rule or exit code 2"
+          },
+          {
+            "from": "tool",
+            "to": "app",
+            "label": "result returns to the app"
+          }
+        ]
+      },
+      "steps": [
+        "The model proposes a tool call with arguments.",
+        "The gate checks the call against rules that live in code or settings.",
+        "Claude Code evaluates deny rules first, then ask rules, then allow rules.",
+        "A PreToolUse hook can block the call before the tool runs.",
+        "A hook that exits with code 2 blocks the call, even when its JSON output allows it.",
+        "The tool runs only when every check allows the call."
+      ],
+      "pros": [
+        "Enforces the rule outside the model, so a prompt cannot override it.",
+        "Puts deny rules before allow rules, so a broad deny wins.",
+        "Runs a custom hook on each tool call that a matcher selects."
+      ],
+      "cons": [
+        "Each rule needs upkeep when tools or limits change.",
+        "A broad deny rule can block legitimate work.",
+        "Hook scripts run outside the sandbox and need their own review."
+      ],
+      "use_when": [
+        "A tool moves money, changes data, or sends messages.",
+        "The limit is a value or a list that code can check.",
+        "The control must hold when the prompt is attacked."
+      ],
+      "do_not_use_when": [
+        "The tool is read-only and public, so no side effect needs a gate.",
+        "The check needs a person to decide each case. Use a review step instead."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Set a bare deny rule for a tool that the workflow never needs.",
+          "combination": "Use a pattern deny rule when only some arguments are unsafe."
+        },
+        {
+          "family": "operations",
+          "choice": "Set disableBypassPermissionsMode to disable in managed settings.",
+          "combination": "Set disableAutoMode the same way when auto mode must stay off."
+        },
+        {
+          "family": "isolation",
+          "choice": "Give each agent only the tool scopes that its task needs.",
+          "combination": "Limit a key's permissions at the service that issued it. (Inference)"
+        },
+        {
+          "family": "scale",
+          "choice": "Set a permission policy for each toolset in the agent configuration.",
+          "combination": "Use a custom tool when your own code must own the check."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source. The permission and hook pages name no cloud platform for this control.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D5.1. Expect a scenario where a tool moves money or data and a prompt is the only control. The credited answer adds a code gate that fails closed. (Inference)",
+      "trap": "A longer prompt that says the model must not call the tool. The model can still propose the call, and only code blocks it.",
+      "decision_rule": "Enforce each limit for a tool with side effects in code, before the call runs.",
+      "exam_tip": "If a system prompt sentence is the only check on a limit, the design needs a code gate.",
+      "key_facts": [
+        {
+          "text": "Claude Code permission rules are enforced by Claude Code, not by the model.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Code evaluates rules in the order deny, then ask, then allow.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "A PreToolUse hook runs before a tool call and can block it.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "A PreToolUse hook that exits with code 2 blocks the tool call.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "The agent toolset defaults to always_allow, and MCP toolsets default to always_ask.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Cloud platform setting that enforces a Managed Agents permission policy outside the API. Not in source."
+      ]
+    },
+    {
+      "name": "Sandbox boundary for shell commands",
+      "first_principle": "A boundary enforced by the host limits what a shell command can reach, even when injected content steers the command.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "agent",
+            "label": "Agent shell command",
+            "group": "claude"
+          },
+          {
+            "id": "box",
+            "label": "Sandbox boundary",
+            "group": "control"
+          },
+          {
+            "id": "files",
+            "label": "Working directory and allowed paths",
+            "group": "data"
+          },
+          {
+            "id": "proxy",
+            "label": "Network proxy with allowed domains",
+            "group": "control"
+          },
+          {
+            "id": "hosts",
+            "label": "External hosts",
+            "group": "cloud"
+          }
+        ],
+        "edges": [
+          {
+            "from": "agent",
+            "to": "box",
+            "label": "shell command starts inside"
+          },
+          {
+            "from": "box",
+            "to": "files",
+            "label": "writes only to allowed paths"
+          },
+          {
+            "from": "box",
+            "to": "proxy",
+            "label": "no direct route out"
+          },
+          {
+            "from": "proxy",
+            "to": "hosts",
+            "label": "allowed domains only"
+          }
+        ]
+      },
+      "steps": [
+        "Run /sandbox in a Claude Code session to turn on the sandbox.",
+        "The sandbox limits writes to the current directory, a per-user temp directory, and added directories.",
+        "The sandbox sends outbound requests through a proxy that checks each host.",
+        "The proxy allows only the hosts on the allowed domain list.",
+        "Read access covers most of the machine by default, so add deny read rules for credential files.",
+        "File tools, MCP servers, and hooks run outside the sandbox, so they need their own rules."
+      ],
+      "pros": [
+        "Limits what a shell command can reach, even after an injection.",
+        "Blocks direct network routes by default.",
+        "Needs no change to the model prompt."
+      ],
+      "cons": [
+        "Covers shell commands only, so file and web tools need permission rules.",
+        "Read access covers most of the machine by default.",
+        "Native Windows runs commands without the sandbox. Use WSL2 instead."
+      ],
+      "use_when": [
+        "The agent runs shell commands on a developer machine or in a container.",
+        "Untrusted input can lead to a shell command.",
+        "The task needs only a few known hosts."
+      ],
+      "do_not_use_when": [
+        "The agent never runs shell commands.",
+        "The host is native Windows without WSL2. Run the agent in a container or VM instead."
+      ],
+      "constraints": [
+        {
+          "family": "isolation",
+          "choice": "Limit writes to the current directory and the directories you add.",
+          "combination": "Add deny write rules for shared configuration files."
+        },
+        {
+          "family": "data location",
+          "choice": "Keep the allowed domain list empty until a task needs a host.",
+          "combination": "Add a host only after a review of its data handling. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Use strict sandbox mode for tasks that touch untrusted input.",
+          "combination": "Set failIfUnavailable so that commands do not run unsandboxed when the sandbox cannot start."
+        },
+        {
+          "family": "operations",
+          "choice": "Review each request to retry a command outside the sandbox.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source. The sandbox pages name no cloud platform setting for this boundary.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D5.1. Expect a scenario where a shell command could reach credentials or an unknown host. The credited answer names a sandbox with an allowed domain list. (Inference)",
+      "trap": "A team turns the sandbox on and believes it covers file tools or hooks. The sandbox wraps shell commands only.",
+      "decision_rule": "Use the sandbox for shell commands, and use permission rules for file and web tools.",
+      "exam_tip": "If the scenario asks about the Read tool, the sandbox does not apply to that tool.",
+      "key_facts": [
+        {
+          "text": "The Claude Code sandbox is off by default.",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "label": "Fact"
+        },
+        {
+          "text": "The sandbox covers shell commands only, and built-in file and web tools run outside it.",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "label": "Fact"
+        },
+        {
+          "text": "The sandbox runs on macOS, Linux, and WSL2.",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "label": "Fact"
+        },
+        {
+          "text": "The network proxy starts with an empty allowed domain list.",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "label": "Fact"
+        },
+        {
+          "text": "Managed Agents gives each cloud session its own isolated Linux container.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-risks",
+          "label": "Fact"
+        },
+        {
+          "text": "Managed Agents keeps vault secrets outside the sandbox.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-risks",
+          "label": "Fact"
+        },
+        {
+          "text": "A sandbox denyRead entry does not stop the Read tool, and allowedDomains does not limit WebFetch.",
+          "url": "https://code.claude.com/docs/en/sandboxing",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Sandbox settings on Claude Platform on AWS or Amazon Bedrock. Not in source.",
+        "Performance cost of the sandbox on each command. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Untrusted text reaches the model?} -->|Yes| B[Screen input and label tool results]\n  A -->|No| C{Action has side effects?}\n  B --> C\n  C -->|Yes| D[Code gate on the tool call]\n  C -->|No| E[Read-only tool with permission rule]\n  D --> F{Shell command involved?}\n  E --> F\n  F -->|Yes| G[Sandbox with empty allowed domain list]\n  F -->|No| H[Deny by default for other tools]",
+  "cheatsheet": "flowchart LR\n  P[Prompt is guidance] --> G[Code gate]\n  G --> R[Deny rule first]\n  R --> K[Hook exit 2 blocks]\n  U[Untrusted content] --> S[Input screen]\n  U --> T[tool_result block]\n  B[Shell command] --> X[Sandbox]\n  X --> D[Empty domain list]",
+  "patterns": [
+    {
+      "wording": "a model follows a prompt sentence that forbids a limited action",
+      "answer_type": "code gate on the tool call",
+      "rule": "Enforce the limit in code. Keep the prompt sentence as guidance only.",
+      "traps": [
+        "Longer system prompt with more warnings",
+        "Remove the tool and lose the function"
+      ]
+    },
+    {
+      "wording": "instructions appear inside a document that the agent reads",
+      "answer_type": "untrusted-content handling plus a tool gate",
+      "rule": "Label and screen the content. Keep the gate on every tool the content could steer.",
+      "traps": [
+        "Trust a document because the company stored it",
+        "Allow all tools for convenience"
+      ]
+    },
+    {
+      "wording": "a shell command could read credentials or reach an unknown host",
+      "answer_type": "sandbox boundary with an empty allowed domain list",
+      "rule": "Limit shell reach by default. Add hosts and paths only when a task needs them.",
+      "traps": [
+        "Add every host to avoid prompts",
+        "Assume the sandbox covers file tools"
+      ]
+    }
+  ],
+  "console_steps": [
+    {
+      "step": "Run /sandbox in a Claude Code session to turn on the sandbox.",
+      "url": "https://code.claude.com/docs/en/sandboxing",
+      "screenshot": null
+    }
+  ],
+  "not_in_source": [
+    "Console steps for input checks and tool gates: Not in source.",
+    "Accuracy rate of model refusals per category. Not in source.",
+    "EU AI Act obligations for guardrails. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+    "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+    "https://platform.claude.com/docs/en/managed-agents/secure-deployment-risks",
+    "https://code.claude.com/docs/en/permissions",
+    "https://code.claude.com/docs/en/hooks",
+    "https://code.claude.com/docs/en/sandboxing",
+    "https://code.claude.com/docs/en/amazon-bedrock"
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "id": "D4.1",
+  "domain": "D4",
+  "title": "Evaluation metrics",
+  "task_statement": "Define a primary metric, guard metrics, and thresholds before you tune a Claude system. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Success criteria and primary metric",
+      "first_principle": "A metric measures the goal only when it names the goal and a threshold before tuning starts.",
+      "architecture": {
+        "nodes": [
+          {"id": "goal", "label": "Business goal and success criteria", "group": "control"},
+          {"id": "set", "label": "Held-out eval set", "group": "data"},
+          {"id": "app", "label": "System under test on Claude", "group": "claude"},
+          {"id": "grader", "label": "Grader: code, LLM, or human", "group": "control"},
+          {"id": "score", "label": "Per-case grades", "group": "data"},
+          {"id": "guard", "label": "Primary metric, guards, and thresholds", "group": "control"}
+        ],
+        "edges": [
+          {"from": "goal", "to": "set", "label": "derive held-out cases"},
+          {"from": "set", "to": "app", "label": "send inputs"},
+          {"from": "app", "to": "grader", "label": "outputs for grading"},
+          {"from": "grader", "to": "score", "label": "grade each case"},
+          {"from": "score", "to": "guard", "label": "compare to thresholds"}
+        ]
+      },
+      "steps": [
+        "Write each success criterion as a specific and measurable statement.",
+        "Set a threshold for each criterion on a held-out test set.",
+        "Name the primary metric from the criterion with the highest business impact. (Inference)",
+        "Add guard metrics for criteria that must not break. (Inference)",
+        "Assign one owner to each threshold before the first run. (Inference)",
+        "Run the same evaluation on each change and compare each score to its threshold."
+      ],
+      "pros": [
+        "Turns vague quality goals into numbers that teams can compare.",
+        "Puts the most important criterion first in every report.",
+        "Gives the release decision a fixed bar."
+      ],
+      "cons": [
+        "Measures only the criteria that someone wrote down.",
+        "Quantitative metrics can miss quality that people judge differently. (Inference)",
+        "Thresholds need review when the task mix changes. (Inference)"
+      ],
+      "use_when": [
+        "The application has a task outcome that code or a grader can check.",
+        "A team must decide whether a prompt or model change ships.",
+        "A stakeholder states a target for quality, cost, or response time."
+      ],
+      "do_not_use_when": [
+        "The system is an early prototype with no users or decisions yet. (Inference)",
+        "No grader can measure the criterion, so the number would not mean anything. (Inference)",
+        "A single spot check serves a demo that has no decision attached. (Inference)"
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Name one owner for each threshold in the evaluation plan. (Inference)", "combination": "Review each threshold when the task mix changes. (Inference)"},
+        {"family": "skill", "choice": "Assign a team member who can write rubrics and read score tables. (Inference)", "combination": ""},
+        {"family": "latency", "choice": "Set an acceptable response time from the real-time needs of the application.", "combination": "Report time to first token separately for streaming responses."},
+        {"family": "cost", "choice": "Set a budget per completed task, not per token.", "combination": "Track the same budget as a guard metric on each release. (Inference)"},
+        {"family": "operations", "choice": "Run the evaluation on every change to the prompt, model, or tools. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D4.1. Expect a scenario where a proxy score looks good and the business outcome looks poor. The credited answer sets the business outcome as the primary metric with a threshold. (Inference)",
+      "trap": "A fluency or length score that rises while task success stays flat. The score looks better, but it does not measure the goal.",
+      "decision_rule": "Make the business outcome the primary metric, and keep proxy scores as diagnostics.",
+      "exam_tip": "A metric with no threshold and no owner cannot decide a release.",
+      "key_facts": [
+        {"text": "Good success criteria are specific, measurable, achievable, and relevant.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs example sets an F1 score of at least 0.85 on a held-out test set of 10,000 posts.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "Operational metrics include response time in milliseconds and uptime in percent.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "Most use cases need multidimensional evaluation along several success criteria.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Numeric thresholds for task success in a production system. Not in source.",
+        "Steps for the evaluation tool in the Claude Console. Not in source."
+      ]
+    },
+    {
+      "name": "Cost and latency metrics",
+      "first_principle": "You pay for completed tasks, so cost per completed task measures value better than cost per token.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app", "group": "client"},
+          {"id": "api", "label": "Messages API", "group": "claude"},
+          {"id": "usage", "label": "Token counts in each response", "group": "data"},
+          {"id": "report", "label": "Usage and Cost API", "group": "cloud"},
+          {"id": "spend", "label": "Daily spend in USD", "group": "data"},
+          {"id": "dash", "label": "Cost per completed task", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "api", "label": "send requests"},
+          {"from": "api", "to": "usage", "label": "usage fields"},
+          {"from": "api", "to": "report", "label": "organization usage data"},
+          {"from": "report", "to": "spend", "label": "daily totals"},
+          {"from": "spend", "to": "dash", "label": "divide by completed tasks"}
+        ]
+      },
+      "steps": [
+        "Read the usage fields in each response to count input and output tokens.",
+        "Count the tasks that pass the primary metric.",
+        "Divide total spend by the count of completed tasks.",
+        "Pull daily organization totals from the Usage and Cost API.",
+        "Measure time to first token and baseline latency for streaming calls."
+      ],
+      "pros": [
+        "Usage fields report token counts for every response.",
+        "The Usage and Cost API reports organization totals in USD by day.",
+        "Cost per completed task links spend to the goal."
+      ],
+      "cons": [
+        "Usage and cost data can appear later than 5 minutes after a request.",
+        "The Cost API supports only daily buckets.",
+        "Claude Platform on AWS has no programmatic Usage and Cost endpoints."
+      ],
+      "use_when": [
+        "Budget binds and the team compares models or prompts.",
+        "A team reports spend against completed outcomes.",
+        "A stakeholder sets a response time target for the application."
+      ],
+      "do_not_use_when": [
+        "A minute-level view of cost is needed, because the Cost API has daily buckets only.",
+        "One response shows the cost of a single call, which is not a rate. (Inference)",
+        "Token counts alone decide the model choice, because the docs advise a per-task comparison."
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Track cost per completed task for each model and prompt version.", "combination": "Use the Usage and Cost API for daily totals in USD."},
+        {"family": "latency", "choice": "Measure time to first token for streaming and baseline latency for other calls.", "combination": "Compare both with the response time target from the application."},
+        {"family": "operations", "choice": "Poll the Usage API no more than once per minute for sustained use.", "combination": "Cache dashboard results between polls."},
+        {"family": "scale", "choice": "Use minute buckets for near-real-time views and daily buckets for reports.", "combination": ""},
+        {"family": "governance", "choice": "Filter usage by workspace and API key to assign spend to owners.", "combination": "Call the endpoints with an Admin API credential, because workspace API keys do not work."}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "The programmatic Usage and Cost API endpoints are not currently available. Use the Usage and Cost pages in the Claude Console.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "Only the usage endpoint is available. Call it with Google Cloud credentials. The only predefined IAM role that allows the call is roles/claude.admin.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"}
+      ],
+      "exam_tie": "D4.1. Expect a scenario where a spend or latency target conflicts with a quality target. The credited answer measures cost per completed task against the quality threshold. (Inference)",
+      "trap": "A lower price per token after a change. Fewer tasks may complete, so the cost per completed task can rise.",
+      "decision_rule": "Report spend next to completed tasks and the quality threshold in the same view.",
+      "exam_tip": "A cost figure without a completed-task count does not answer a cost question.",
+      "key_facts": [
+        {"text": "The Usage API supports 1m, 1h, and 1d time buckets.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "The default limit for 1m buckets is 60, and the maximum is 1,440 buckets.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "Usage and cost data typically appears within 5 minutes of request completion.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "The API supports polling once per minute for sustained use.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "The Cost API reports costs in USD and supports only daily buckets.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "The docs advise a comparison of models on cost per completed task, not on cost per token.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "Time to first token matters most when you use streaming. Baseline latency measures the full response time.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Latency targets for any model or effort level. Not in source.",
+        "Console steps for cost monitoring beyond the Usage and Cost pages. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Goal stated as a measurable outcome?} -->|No| B[Write success criteria with a threshold]\n  A -->|Yes| C{Outcome is the primary metric?}\n  C -->|No| D[Demote the proxy to a diagnostic]\n  C -->|Yes| E{Safety or cost floor at stake?}\n  E -->|Yes| F[Add guard metrics with a threshold]\n  E -->|No| G[Keep one primary metric and track the rest]",
+  "cheatsheet": "flowchart LR\n  G[Business goal] --> P[Primary metric]\n  P --> T[Threshold]\n  T --> O[Owner]\n  P --> R1[Guard: safety at zero]\n  P --> R2[Guard: latency target]\n  P --> R3[Guard: cost per completed task]\n  X[Proxy metric] --> D[Diagnostic only]",
+  "patterns": [
+    {"wording": "a proxy score rises while the business outcome stays flat", "answer_type": "primary metric on the business outcome", "rule": "Make the outcome the primary metric with a threshold. Keep the proxy as a diagnostic.", "traps": ["Tune the proxy harder", "Move to a larger model tier before the measurement"]},
+    {"wording": "the team needs a number for a vague quality goal", "answer_type": "criterion with a threshold and an owner", "rule": "Turn the goal into a measurable criterion, then attach a threshold and an owner.", "traps": ["Report a qualitative impression", "Add more logging with no threshold"]},
+    {"wording": "spend rises after a change that adds more tasks to the queue", "answer_type": "cost per completed task", "rule": "Divide spend by completed tasks and compare that value across versions.", "traps": ["Compare cost per token only", "Cut tokens without a check of the quality threshold"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Evaluation tool in the Claude Console: Not in source.",
+    "Industry benchmark values for task success: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+    "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+    "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency"
+  ]
+}

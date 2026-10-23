@@ -1,0 +1,251 @@
+{
+  "id": "D4.6",
+  "domain": "D4",
+  "title": "Production monitoring",
+  "task_statement": "Watch live quality, cost, and model versions against a baseline, and page a named owner when a line breaks. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Usage and cost monitoring",
+      "first_principle": "Spend becomes a quality signal only when it is divided by completed tasks in the same view.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app", "group": "client"},
+          {"id": "api", "label": "Messages API", "group": "claude"},
+          {"id": "usage", "label": "Token counts per request", "group": "data"},
+          {"id": "report", "label": "Usage and Cost API", "group": "cloud"},
+          {"id": "cache", "label": "Dashboard cache between polls", "group": "data"},
+          {"id": "line", "label": "Cost per completed task line", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "api", "label": "send requests"},
+          {"from": "api", "to": "usage", "label": "usage fields"},
+          {"from": "api", "to": "report", "label": "organization usage data"},
+          {"from": "report", "to": "cache", "label": "poll at most once per minute"},
+          {"from": "cache", "to": "line", "label": "daily and hourly views"}
+        ]
+      },
+      "steps": [
+        "Open the Usage and Cost pages in the Claude Console for a quick check.",
+        "Pull usage buckets from the Usage API for each model and workspace.",
+        "Choose the bucket size: 1m for near-real-time, 1h for daily patterns, 1d for reports.",
+        "Divide spend by completed tasks to get cost per completed task.",
+        "Cache dashboard results between polls to stay within the polling guidance.",
+        "Set an alert line on cost per completed task, with a named owner. (Inference)"
+      ],
+      "pros": [
+        "Usage fields and the Usage API report token counts by model, workspace, and tier.",
+        "The Cost API reports daily cost in USD.",
+        "Cached tokens appear in their own count, so the cache effect is visible."
+      ],
+      "cons": [
+        "Usage and cost data can appear later than 5 minutes after a request.",
+        "The Cost API supports only daily buckets.",
+        "Claude Platform on AWS has no programmatic Usage and Cost endpoints."
+      ],
+      "use_when": [
+        "Spend grows while the number of completed tasks stays flat.",
+        "A team sets a monthly budget for a workload.",
+        "A workspace or API key needs its own spend view."
+      ],
+      "do_not_use_when": [
+        "A single request needs a cost figure, because the usage fields already give it. (Inference)",
+        "The team needs a daily cost report only, and the Cost API already covers it. (Inference)"
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Track cost per completed task next to total spend.", "combination": "Set the budget alert on the per-task value. (Inference)"},
+        {"family": "operations", "choice": "Poll the Usage API no more than once per minute for sustained use.", "combination": "Cache dashboard results between polls."},
+        {"family": "scale", "choice": "Use the 1m bucket for up to 1,440 buckets in a near-real-time view.", "combination": "Use the 1d bucket for up to 31 buckets in a report."},
+        {"family": "governance", "choice": "Filter usage by workspace and API key to assign spend to owners.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "The programmatic Usage and Cost API endpoints are not currently available. Use the Usage and Cost pages in the Claude Console.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "Only the usage endpoint is available. Call it with Google Cloud credentials. The only predefined IAM role that allows the call is roles/claude.admin.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"}
+      ],
+      "exam_tie": "D4.6. Expect a scenario where spend looks stable but outcomes fall. The credited answer watches cost per completed task with a named alert owner. (Inference)",
+      "trap": "A dashboard of total tokens with no completed-task count. Total spend looks normal while the outcome rate falls.",
+      "decision_rule": "Show spend next to completed tasks, and alert on the per-task line.",
+      "exam_tip": "A cost alert with no owner is a notification, not a control. (Inference)",
+      "key_facts": [
+        {"text": "The Usage API supports 1m, 1h, and 1d time buckets.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "The default limit for 1h buckets is 24, and the maximum is 168 buckets.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "Usage and cost data typically appears within 5 minutes of request completion.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "The Cost API reports costs in USD and supports only daily buckets.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"},
+        {"text": "The Usage API measures uncached input, cached input, cache creation, and output tokens.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Alert threshold values for cost per completed task. Not in source.",
+        "Usage and Cost API availability on Amazon Bedrock or Microsoft Foundry. Not in source."
+      ]
+    },
+    {
+      "name": "Traces and telemetry",
+      "first_principle": "A trace shows the order and timing of each hop in one request, which logs alone do not show.",
+      "architecture": {
+        "nodes": [
+          {"id": "sdk", "label": "Claude SDK client spans", "group": "client"},
+          {"id": "api", "label": "Messages API spans", "group": "claude"},
+          {"id": "dest", "label": "OpenTelemetry destination", "group": "control"},
+          {"id": "obs", "label": "Observability platform", "group": "cloud"},
+          {"id": "trace", "label": "Per-hop traces", "group": "data"},
+          {"id": "evals", "label": "Eval cases from traces", "group": "data"}
+        ],
+        "edges": [
+          {"from": "sdk", "to": "obs", "label": "SDK spans"},
+          {"from": "api", "to": "dest", "label": "API spans"},
+          {"from": "dest", "to": "obs", "label": "OTLP export"},
+          {"from": "obs", "to": "trace", "label": "one trace per request"},
+          {"from": "trace", "to": "evals", "label": "full content only"}
+        ]
+      },
+      "steps": [
+        "Add an OpenTelemetry destination in the Claude Console for API spans.",
+        "Choose the content mode for each destination that your data rules allow.",
+        "Set up SDK tracing for each client that sends Claude requests.",
+        "Read the trace of a failed or slow request to find the hop that failed.",
+        "Build eval cases from real traces when the destination stores full content."
+      ],
+      "pros": [
+        "Traces cover Messages API requests, tool uses, and Managed Agents sessions.",
+        "Full content shows prompts and responses for each span.",
+        "Admins control the destinations, and developers can view them."
+      ],
+      "cons": [
+        "Full content stores prompts and responses in the observability platform.",
+        "HIPAA, FERPA, and K-12 restrictions limit each destination to metadata.",
+        "API tracing works only on Claude Platform and Claude Platform on AWS, and OpenTelemetry export is in beta."
+      ],
+      "use_when": [
+        "A team needs per-hop evidence for a failed or slow request.",
+        "A team builds an eval set from real production requests.",
+        "Several services must share one trace for each user request."
+      ],
+      "do_not_use_when": [
+        "The data rules forbid content and metadata alone cannot answer the question. (Inference)",
+        "The API spans are needed on Amazon Bedrock, Claude Models on Google Cloud, or Microsoft Foundry, which the docs do not list for API tracing.",
+        "One log line answers the question, so no trace is needed. (Inference)"
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Assign the admin role to the person who adds destinations.", "combination": "Give developers view access to the destinations."},
+        {"family": "operations", "choice": "Shorten the Claude Code export interval only during a fault check.", "combination": "Reset the interval to the default for production use."},
+        {"family": "data location", "choice": "Use metadata-only export when HIPAA, FERPA, or K-12 restrictions apply.", "combination": "Check the retention settings of the observability platform for full content."},
+        {"family": "scale", "choice": "Set a maximum content size per span for full content destinations.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "API tracing is supported in beta on Claude Platform on AWS. SDK tracing supports any cloud platform.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry"}
+      ],
+      "exam_tie": "D4.6. Expect a scenario where a multi-step fault cannot be located from application logs. The credited answer uses per-hop traces for the request that broke. (Inference)",
+      "trap": "Application logs alone. They record events, but they do not show the order and timing of each hop.",
+      "decision_rule": "Add a destination per data rule, and choose the content mode that the rule allows.",
+      "exam_tip": "Full content gives the most detail, and it stores prompts and responses in the destination.",
+      "key_facts": [
+        {"text": "The API emits spans for Messages API requests and Managed Agents sessions.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry/api", "label": "Fact"},
+        {"text": "The admin role adds and changes destinations, and the developer role views them.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry/api", "label": "Fact"},
+        {"text": "OpenTelemetry export is in beta on the Claude API and on Claude Platform on AWS.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry/api", "label": "Fact"},
+        {"text": "With Full content, each span holds up to 0.75 MB of content by default.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry", "label": "Fact"},
+        {"text": "Full content spans include model prompts and responses.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry", "label": "Fact"},
+        {"text": "HIPAA, FERPA, or K-12 restrictions make destinations export only metadata.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry", "label": "Fact"},
+        {"text": "Claude Code exports metrics every 60000 ms by default.", "url": "https://code.claude.com/docs/en/monitoring-usage", "label": "Fact"},
+        {"text": "Claude Code emits the claude_code.session.count metric when a session starts.", "url": "https://code.claude.com/docs/en/monitoring-usage", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Trace retention periods for any observability platform. Not in source.",
+        "Maximum content size default for each provider. Not in source."
+      ]
+    },
+    {
+      "name": "Model version lock and drift",
+      "first_principle": "A pinned model ID fixes the weights, so a behavior shift points to infrastructure, prompts, or data.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app with model ID", "group": "client"},
+          {"id": "id", "label": "Dateless model ID as pinned snapshot", "group": "claude"},
+          {"id": "infra", "label": "Serving infrastructure", "group": "cloud"},
+          {"id": "live", "label": "Live quality metrics", "group": "data"},
+          {"id": "base", "label": "Baseline from before the change", "group": "data"},
+          {"id": "owner", "label": "Named on-call owner", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "id", "label": "request with model ID"},
+          {"from": "id", "to": "infra", "label": "served by"},
+          {"from": "infra", "to": "live", "label": "possible behavior shift"},
+          {"from": "live", "to": "base", "label": "compare"},
+          {"from": "base", "to": "owner", "label": "page when line breaks"}
+        ]
+      },
+      "steps": [
+        "Use the dateless model ID for the 4.6 generation and later.",
+        "Note the deprecation and retirement schedule for each model ID in use.",
+        "Keep a baseline of live metrics from before each model change.",
+        "Compare live metrics with the baseline after an infrastructure update.",
+        "Check prompt and data changes before you blame the model. (Inference)",
+        "Test a new model ID on the eval set before you change the production ID. (Inference)"
+      ],
+      "pros": [
+        "A dateless ID for the 4.6 generation and later maps to one fixed snapshot.",
+        "Each model ID has a deprecation schedule, so teams can plan migrations.",
+        "A model ID change appears in the request, so the change is visible."
+      ],
+      "cons": [
+        "Infrastructure updates can shift behavior even when the model ID stays the same.",
+        "Aliases for earlier models move to the newest snapshot of that minor version.",
+        "A retirement date forces a migration on the schedule of that ID."
+      ],
+      "use_when": [
+        "Behavior changed on a stable model ID with no code change.",
+        "A team plans a model migration and needs a baseline.",
+        "A quality line moved without a prompt or data change."
+      ],
+      "do_not_use_when": [
+        "The shift has a known prompt or data change, so diagnosis comes first. (Inference)",
+        "The monitor covers a model that the production system does not use. (Inference)"
+      ],
+      "constraints": [
+        {"family": "operations", "choice": "Record the model ID with every request and every metric.", "combination": "Compare the model ID in each metric with the release log. (Inference)"},
+        {"family": "governance", "choice": "Track the deprecation date of each model ID in the release plan.", "combination": ""},
+        {"family": "scale", "choice": "Use a dated snapshot ID for earlier models when fixed behavior matters.", "combination": "Use an alias only when the team accepts moves to the newest snapshot. (Inference)"},
+        {"family": "skill", "choice": "Assign one owner to read model deprecation notices. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D4.6. Expect a scenario where behavior shifts on an unchanged model ID. The credited answer compares live metrics with the baseline before it changes the model. (Inference)",
+      "trap": "A belief that a model ID guarantees identical output at all times. The weights stay fixed, but infrastructure updates can shift observable behavior.",
+      "decision_rule": "Pin the model ID, keep a baseline, and compare live metrics with that baseline after each change.",
+      "exam_tip": "A stable model ID does not rule out a behavior shift from infrastructure.",
+      "key_facts": [
+        {"text": "For the 4.6 generation and later, the dateless model ID maps to a single fixed snapshot.", "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions", "label": "Fact"},
+        {"text": "Anthropic does not update the weights or configuration of a released model ID.", "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions", "label": "Fact"},
+        {"text": "Every model ID, dated or dateless, has its own deprecation and retirement schedule.", "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions", "label": "Fact"},
+        {"text": "Infrastructure updates can cause minor differences in behavior even when the model ID and weights do not change.", "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions", "label": "Fact"},
+        {"text": "Aliases for earlier models point to the most recent dated snapshot for that minor version.", "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Frequency of infrastructure updates. Not in source.",
+        "Notice period for each model retirement. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Live metric below its line?} -->|No| X[No action needed]\n  A -->|Yes| B{Offline eval set also dropped?}\n  B -->|No| C[Refresh eval set from production samples]\n  B -->|Yes| D{Model ID changed?}\n  D -->|Yes| E[Compare with pinned baseline]\n  D -->|No| F[Check prompt and data changes]",
+  "cheatsheet": "flowchart LR\n  U[Usage and Cost API] --> C[Cost per completed task]\n  O[OpenTelemetry traces] --> H[Per-hop evidence]\n  H --> D[Diagnosis]\n  M[Pinned model ID] --> B[Baseline]\n  B --> L[Alert line]\n  L --> P[Named owner]\n  O --> E[Eval cases from traces]",
+  "patterns": [
+    {"wording": "usage totals rise while completed tasks stay flat", "answer_type": "cost per completed task line with an owner", "rule": "Show spend next to completed tasks, and alert on the per-task line with a named owner.", "traps": ["Alert on total spend only", "Cut the model tier before the data check"]},
+    {"wording": "live quality slides while the offline eval set still scores well", "answer_type": "alert with a refreshed production sample", "rule": "Page the named owner, then refresh the eval set from production samples.", "traps": ["Trust the offline score", "Roll back the model tier before diagnosis"]},
+    {"wording": "behavior shifts on a stable model ID with no code change", "answer_type": "baseline comparison and layer check", "rule": "Compare live metrics with the baseline, then check prompts, data, and the model ID.", "traps": ["Assume a model ID fixes all output", "Change the prompt before the evidence"]}
+  ],
+  "console_steps": [
+    {"step": "Open the Usage and Cost pages in the Claude Console.", "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api", "screenshot": null},
+    {"step": "Open the OpenTelemetry settings in the Claude Console and click Add destination.", "url": "https://platform.claude.com/docs/en/manage-claude/opentelemetry/api", "screenshot": null}
+  ],
+  "not_in_source": [
+    "Alert line and window values for production metrics. Not in source.",
+    "Named on-call owner process for model drift. Not in source.",
+    "Console steps for model version monitoring. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+    "https://platform.claude.com/docs/en/manage-claude/opentelemetry",
+    "https://platform.claude.com/docs/en/manage-claude/opentelemetry/api",
+    "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+    "https://code.claude.com/docs/en/monitoring-usage"
+  ]
+}

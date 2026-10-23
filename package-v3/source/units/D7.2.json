@@ -1,0 +1,545 @@
+{
+  "id": "D7.2",
+  "domain": "D7",
+  "title": "AI-assisted workflows with Claude Code",
+  "task_statement": "Run Claude Code in scripts and CI with bounded tools, checkable results, and a clear trigger. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Headless runs",
+      "first_principle": "A print mode run returns a result and an exit status, so a script can decide whether the job passes.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "ci",
+            "label": "CI job or script",
+            "group": "client"
+          },
+          {
+            "id": "cli",
+            "label": "claude -p run",
+            "group": "claude"
+          },
+          {
+            "id": "perm",
+            "label": "Tools and allowed tools flags",
+            "group": "control"
+          },
+          {
+            "id": "out",
+            "label": "JSON result with session ID and cost",
+            "group": "data"
+          },
+          {
+            "id": "gate",
+            "label": "Exit status and test step",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "ci",
+            "to": "cli",
+            "label": "run with -p and --bare"
+          },
+          {
+            "from": "perm",
+            "to": "cli",
+            "label": "restricts and approves tools"
+          },
+          {
+            "from": "cli",
+            "to": "out",
+            "label": "output-format json"
+          },
+          {
+            "from": "out",
+            "to": "gate",
+            "label": "result fields"
+          },
+          {
+            "from": "gate",
+            "to": "ci",
+            "label": "pass or fail the job"
+          }
+        ]
+      },
+      "steps": [
+        "Run claude with the -p flag to start a non-interactive run.",
+        "Pass --tools with only the built-in tools the job needs, such as Read and Edit.",
+        "Pass --allowedTools to approve those tools without a prompt.",
+        "Add --bare in CI to skip hooks, skills, and CLAUDE.md files from the host.",
+        "Choose --output-format json to read the result, the session ID, and the cost.",
+        "Check the exit status before the job continues. Zero means the run succeeded.",
+        "Run the team test command as a separate step. (Inference)"
+      ],
+      "pros": [
+        "A script runs Claude Code without an interactive session.",
+        "The JSON output includes the total cost, so a script can record spend.",
+        "The --tools flag restricts which built-in tools the run can use."
+      ],
+      "cons": [
+        "Without --bare, a print run runs project hooks and connects project MCP servers, even in an untrusted folder.",
+        "A print run shows no workspace trust dialog and no per-server approval prompt.",
+        "Piped stdin has a size cap, so large inputs need a file path in the prompt.",
+        "The --allowedTools flag only removes prompts. It does not restrict which tools are available."
+      ],
+      "use_when": [
+        "A CI job needs a model result with a clear pass or fail status.",
+        "A script needs output that matches a JSON Schema."
+      ],
+      "do_not_use_when": [
+        "A task needs a person to approve each step in real time. (Inference)",
+        "A developer needs a one-off answer, and an interactive session fits better."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Pass --tools to restrict the built-in tools, and --allowedTools to approve them without a prompt.",
+          "combination": "Use the dontAsk permission mode for a locked-down CI run, so any call that would prompt is denied."
+        },
+        {
+          "family": "operations",
+          "choice": "Read the exit status and the result field before the job passes.",
+          "combination": "Record total_cost_usd from the JSON output for each run."
+        },
+        {
+          "family": "cost",
+          "choice": "Track spend with total_cost_usd for each run.",
+          "combination": "When a run continues a conversation, the total includes the earlier runs."
+        },
+        {
+          "family": "isolation",
+          "choice": "Add --bare when the repository is not trusted.",
+          "combination": ""
+        },
+        {
+          "family": "skill",
+          "choice": "Add --bare in CI so host skills and subagents do not load.",
+          "combination": "Omit --bare only in a trusted checkout when the job needs project hooks or skills. (Inference)"
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "The GitHub Action can use Amazon Bedrock with the use_bedrock input set to true.",
+          "url": "https://code.claude.com/docs/en/github-actions-cloud-providers"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Claude Code reads CLAUDE_CODE_USE_FOUNDRY and the other Foundry variables from the environment, which suits a scripted run.",
+          "url": "https://code.claude.com/docs/en/microsoft-foundry"
+        }
+      ],
+      "exam_tie": "D7.2. Expect a scenario with a CI check or a scripted call. The credited answer uses a bounded print run with a fixed tools list and a checked exit status. (Inference)",
+      "trap": "An --allowedTools list read as a tool restriction. The flag only auto-approves the listed tools. To restrict which tools exist, use --tools, and bypass mode belongs only in isolated environments.",
+      "decision_rule": "Restrict each scripted run with --tools, approve only those tools, and check the exit status before the job passes.",
+      "exam_tip": "If the stem asks to restrict tools in a CI run, look for --tools or a deny rule, not --allowedTools alone.",
+      "key_facts": [
+        {
+          "text": "Claude Code exits with code 0 on success and a non-zero code when the run fails.",
+          "url": "https://code.claude.com/docs/en/headless",
+          "label": "Fact"
+        },
+        {
+          "text": "The JSON output payload includes total_cost_usd and a per-model cost breakdown.",
+          "url": "https://code.claude.com/docs/en/headless",
+          "label": "Fact"
+        },
+        {
+          "text": "The --bare flag skips auto-discovery of hooks, skills, subagents, plugins, MCP servers, auto memory, and CLAUDE.md.",
+          "url": "https://code.claude.com/docs/en/headless",
+          "label": "Fact"
+        },
+        {
+          "text": "Without --bare, a print run runs project hooks and connects .mcp.json servers in an untrusted folder.",
+          "url": "https://code.claude.com/docs/en/headless",
+          "label": "Fact"
+        },
+        {
+          "text": "Piped stdin is capped at 10MB.",
+          "url": "https://code.claude.com/docs/en/headless",
+          "label": "Fact"
+        },
+        {
+          "text": "The --json-schema flag returns output in the structured_output field.",
+          "url": "https://code.claude.com/docs/en/headless",
+          "label": "Fact"
+        },
+        {
+          "text": "The --allowedTools flag lets tools run without a prompt. To restrict which tools are available, use --tools.",
+          "url": "https://code.claude.com/docs/en/cli-reference",
+          "label": "Fact"
+        },
+        {
+          "text": "In a Manual mode claude -p run, a call that needs approval is denied unless something approves it.",
+          "url": "https://code.claude.com/docs/en/headless",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps: Not in source.",
+        "Quota or rate limit for scripted runs: Not in source."
+      ]
+    },
+    {
+      "name": "GitHub Actions workflows",
+      "first_principle": "A workflow trigger starts Claude Code in the repository, and repository secrets hold the credential.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "event",
+            "label": "Comment or issue mentions claude",
+            "group": "client"
+          },
+          {
+            "id": "runner",
+            "label": "GitHub Actions runner",
+            "group": "cloud"
+          },
+          {
+            "id": "action",
+            "label": "Claude Code GitHub Action",
+            "group": "claude"
+          },
+          {
+            "id": "secret",
+            "label": "Repository secret for the credential",
+            "group": "data"
+          },
+          {
+            "id": "api",
+            "label": "Claude API or cloud provider",
+            "group": "cloud"
+          },
+          {
+            "id": "pr",
+            "label": "Pull request with changes",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "event",
+            "to": "runner",
+            "label": "trigger"
+          },
+          {
+            "from": "secret",
+            "to": "action",
+            "label": "authentication input"
+          },
+          {
+            "from": "runner",
+            "to": "action",
+            "label": "run action"
+          },
+          {
+            "from": "action",
+            "to": "api",
+            "label": "model requests"
+          },
+          {
+            "from": "action",
+            "to": "pr",
+            "label": "branch and pull request"
+          }
+        ]
+      },
+      "steps": [
+        "Install the Claude GitHub App on the repository.",
+        "Add the authentication secret as ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN.",
+        "Copy the workflow file into the .github/workflows folder.",
+        "Mention @claude in an issue or pull request comment to start a run in interactive mode.",
+        "Review the pull request that the action opens before you merge it. (Inference)"
+      ],
+      "pros": [
+        "The action runs in the repository and uses the repository permissions it receives. (Inference)",
+        "The quick setup command writes the secret and the workflow files for you.",
+        "A federated credential needs no stored long-lived secret."
+      ],
+      "cons": [
+        "An OAuth token belongs to the subscription of the person who ran the setup command.",
+        "Each repository needs its own secret unless the team shares an organization secret.",
+        "A workflow that runs on every comment can start more runs than the team expects. (Inference)"
+      ],
+      "use_when": [
+        "The team wants a comment on an issue or pull request to start a model run.",
+        "The team wants the run output to appear as a pull request."
+      ],
+      "do_not_use_when": [
+        "A developer wants a local result, and a headless run fits better.",
+        "The secret must outlive one developer, and an API key from the console fits better."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Use an API key from the Claude Console for a secret shared across repositories.",
+          "combination": "Use an organization-level Actions secret so repositories share one copy."
+        },
+        {
+          "family": "data location",
+          "choice": "Store the credential as a repository secret, never in the workflow file.",
+          "combination": "Use workload identity federation to avoid a stored long-lived secret."
+        },
+        {
+          "family": "operations",
+          "choice": "Use interactive mode with the default @claude trigger when a person starts each run.",
+          "combination": "Set a prompt input when the workflow must run without a comment."
+        },
+        {
+          "family": "isolation",
+          "choice": "Grant the workflow only the permissions it needs. (Inference)",
+          "combination": "Grant id-token write for the federation exchange, even with a custom token."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "The GitHub Action can run through Amazon Bedrock, with the use_bedrock input.",
+          "url": "https://code.claude.com/docs/en/github-actions-cloud-providers"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "The GitHub Action can run through Google Cloud's Agent Platform with the use_vertex input set to true.",
+          "url": "https://code.claude.com/docs/en/github-actions-cloud-providers"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "The GitHub Action can run through Microsoft Foundry with the use_foundry input set to true.",
+          "url": "https://code.claude.com/docs/en/github-actions-cloud-providers"
+        }
+      ],
+      "exam_tie": "D7.2. Expect a scenario where a team wants an agent to act on a comment or an issue. The credited answer uses the GitHub Action with a repository secret and a pull request as output. (Inference)",
+      "trap": "A personal subscription token stored as a shared organization secret. The docs say the token is tied to the subscription of the person who created it, so an API key fits a shared secret.",
+      "decision_rule": "Use the GitHub Action for a repository trigger, and use an API key for a secret that several repositories share.",
+      "exam_tip": "If the stem names a shared secret across repositories, choose an API key over an OAuth token.",
+      "key_facts": [
+        {
+          "text": "The Claude Code GitHub Action expects the secret ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN.",
+          "url": "https://code.claude.com/docs/en/github-actions",
+          "label": "Fact"
+        },
+        {
+          "text": "An OAuth token from claude setup-token is tied to the subscription of the person who ran the command.",
+          "url": "https://code.claude.com/docs/en/github-actions",
+          "label": "Fact"
+        },
+        {
+          "text": "Workload identity federation needs the id-token write permission in the workflow.",
+          "url": "https://code.claude.com/docs/en/github-actions",
+          "label": "Fact"
+        },
+        {
+          "text": "In interactive mode, the default trigger phrase is @claude.",
+          "url": "https://code.claude.com/docs/en/github-actions",
+          "label": "Fact"
+        },
+        {
+          "text": "The quick setup runs /install-github-app from a Claude Code session.",
+          "url": "https://code.claude.com/docs/en/github-actions",
+          "label": "Fact"
+        },
+        {
+          "text": "The Bedrock option for the GitHub Action uses the use_bedrock input set to true.",
+          "url": "https://code.claude.com/docs/en/github-actions-cloud-providers",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Run count or minutes billed for GitHub Actions: Not in source.",
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Subagent roles for review and exploration",
+      "first_principle": "A subagent with a narrow tools list can explore or review without the power to change files.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "main",
+            "label": "Main session",
+            "group": "claude"
+          },
+          {
+            "id": "sub",
+            "label": "Subagent with tools list",
+            "group": "claude"
+          },
+          {
+            "id": "tools",
+            "label": "Read and Grep tools only",
+            "group": "control"
+          },
+          {
+            "id": "repo",
+            "label": "Repository files",
+            "group": "data"
+          },
+          {
+            "id": "report",
+            "label": "Findings with file references",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "main",
+            "to": "sub",
+            "label": "delegate task"
+          },
+          {
+            "from": "tools",
+            "to": "sub",
+            "label": "limits access"
+          },
+          {
+            "from": "sub",
+            "to": "repo",
+            "label": "reads files"
+          },
+          {
+            "from": "sub",
+            "to": "report",
+            "label": "returns findings"
+          }
+        ]
+      },
+      "steps": [
+        "Create a subagent file in the .claude/agents folder for the team.",
+        "Set the tools field to Read and Grep for an exploration role.",
+        "Set the model field to haiku for a lower-cost exploration role.",
+        "Ask the main session to delegate the review to the subagent. (Inference)",
+        "Check the findings for file and line references before you act on them. (Inference)"
+      ],
+      "pros": [
+        "A subagent keeps long search output out of the main conversation.",
+        "A tools list removes write access for a review role.",
+        "The team commits the subagent file, so each clone gets the same role."
+      ],
+      "cons": [
+        "A subagent without a tools field inherits every tool available to subagents.",
+        "Plugin subagents ignore the hooks, mcpServers, and permissionMode fields.",
+        "Rewind usually does not restore subagent edits to other files, so use Git to revert them."
+      ],
+      "use_when": [
+        "A repository review needs file references from a read-only role.",
+        "An exploration task reads many files that the main session does not need."
+      ],
+      "do_not_use_when": [
+        "The task is one file edit that the main session can do directly.",
+        "The role must enforce a permission that only a settings rule can enforce."
+      ],
+      "constraints": [
+        {
+          "family": "isolation",
+          "choice": "Give an exploration role only the Read and Grep tools.",
+          "combination": "Add disallowedTools for a write tool when a role inherits tools."
+        },
+        {
+          "family": "cost",
+          "choice": "Set the model field to haiku for exploration.",
+          "combination": "Use the inherit value when the role must match the main session model."
+        },
+        {
+          "family": "governance",
+          "choice": "Commit project subagents in .claude/agents so the team reviews them.",
+          "combination": "Deploy a managed subagent file when the organization needs the same role everywhere."
+        },
+        {
+          "family": "scale",
+          "choice": "Split large reviews into one subagent per area of the repository. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D7.2. Expect a scenario that asks for an agent role with least privilege. The credited answer sets a tools list on the subagent file. (Inference)",
+      "trap": "A review subagent with no tools field, which inherits write tools. The role then can edit files that a review should only read.",
+      "decision_rule": "Set the tools field on each role to the smallest set that the role needs.",
+      "exam_tip": "If a stem asks for a read-only reviewer, look for a tools list that omits write tools.",
+      "key_facts": [
+        {
+          "text": "A subagent without a tools field inherits every tool available to subagents.",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "label": "Fact"
+        },
+        {
+          "text": "A user or project subagent named Explore overrides the built-in Explore subagent.",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "label": "Fact"
+        },
+        {
+          "text": "Plugin subagents do not support the hooks, mcpServers, or permissionMode frontmatter fields.",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "label": "Fact"
+        },
+        {
+          "text": "Managed subagent definitions take precedence over project and user subagents with the same name.",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "label": "Fact"
+        },
+        {
+          "text": "The model field accepts sonnet, opus, haiku, fable, a full model ID, or inherit.",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps: Not in source.",
+        "Token limit for a subagent: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Does a script or CI job need the result?} -->|Yes| B{Is the trigger a comment or issue?}\n  A -->|No| I[Interactive session]\n  B -->|Yes| G[GitHub Action with repository secret]\n  B -->|No| H[Headless print run with tools list]\n  H --> J{Does the job parse fields?}\n  J -->|Yes| K[JSON output with schema]\n  J -->|No| L[Text output with exit status check]",
+  "cheatsheet": "flowchart LR\n  P[print run -p] --> T[Tools flag restricts]\n  P --> E[Exit status]\n  P --> O[JSON output]\n  O --> C[Cost field]\n  G[GitHub Action] --> S[Repository secret]\n  S --> K[API key for shared use]\n  R[Subagent] --> RT[Read and Grep only]",
+  "patterns": [
+    {
+      "wording": "run a model check in CI and fail the job on error",
+      "answer_type": "print run with an exit status check",
+      "rule": "Use -p, restrict tools with --tools, approve only those tools, and read the exit status.",
+      "traps": [
+        "An interactive session in CI",
+        "Bypass mode with no tools list",
+        "An --allowedTools list as the only restriction"
+      ]
+    },
+    {
+      "wording": "a script needs fields from the model output",
+      "answer_type": "JSON output with a schema",
+      "rule": "Use --output-format json with --json-schema when the script parses fields.",
+      "traps": [
+        "Parsing free text with a pattern match",
+        "A request for JSON in the prompt only"
+      ]
+    },
+    {
+      "wording": "a comment on an issue starts a code change",
+      "answer_type": "GitHub Action with repository secret",
+      "rule": "Use the GitHub Action for a comment trigger and keep the credential in a repository secret.",
+      "traps": [
+        "A developer script run by hand",
+        "A personal subscription token as a shared secret"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for AI-assisted workflows: Not in source.",
+    "Exam-specific wording for service coverage: Not in source."
+  ],
+  "sources": [
+    "https://code.claude.com/docs/en/headless",
+    "https://code.claude.com/docs/en/github-actions",
+    "https://code.claude.com/docs/en/github-actions-cloud-providers",
+    "https://code.claude.com/docs/en/sub-agents",
+    "https://code.claude.com/docs/en/cli-reference",
+    "https://code.claude.com/docs/en/settings",
+    "https://code.claude.com/docs/en/checkpointing",
+    "https://code.claude.com/docs/en/microsoft-foundry"
+  ]
+}

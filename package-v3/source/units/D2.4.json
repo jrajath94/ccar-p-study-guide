@@ -1,0 +1,585 @@
+{
+  "id": "D2.4",
+  "domain": "D2",
+  "title": "Context and token management",
+  "task_statement": "Budget context and tokens per turn with token counting, compaction, and context editing. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Context window and token counting",
+      "first_principle": "Every input and output token counts toward the context window, so count tokens before you send a turn.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "count",
+            "label": "Token counting endpoint",
+            "group": "control"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "win",
+            "label": "Context window up to 1M tokens",
+            "group": "data"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          },
+          {
+            "id": "usage",
+            "label": "Usage fields with billed counts",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "count",
+            "label": "count with the model ID"
+          },
+          {
+            "from": "count",
+            "to": "app",
+            "label": "estimated input tokens"
+          },
+          {
+            "from": "app",
+            "to": "api",
+            "label": "send request that fits"
+          },
+          {
+            "from": "api",
+            "to": "win",
+            "label": "must fit the window"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "generate output"
+          },
+          {
+            "from": "model",
+            "to": "usage",
+            "label": "billed counts"
+          }
+        ]
+      },
+      "steps": [
+        "Call the token counting endpoint with the same model ID you plan to use.",
+        "Compare the estimated input tokens with your budget for the turn.",
+        "Trim the history, tool definitions, or documents when the total is too high.",
+        "Send the request when the total fits the window and the budget.",
+        "Check the usage fields in the response for the billed counts.",
+        "Count prompts again after a model change, because Claude 4.7 and later models use a newer tokenizer."
+      ],
+      "pros": [
+        "Token counting is free to use, subject to rate limits.",
+        "Counts help with rate limits, costs, and model routing decisions.",
+        "A 1M token window is the default for every model that has one, with no beta header."
+      ],
+      "cons": [
+        "The count is an estimate, so the billed count can differ by a small amount.",
+        "Token counting does not use prompt caching logic.",
+        "Claude Haiku 5.5 counts the same text as about 30 percent more tokens than Claude Haiku 4.5."
+      ],
+      "use_when": [
+        "A request nears the budget for one turn or the context window.",
+        "A model change may change prompt size."
+      ],
+      "do_not_use_when": [
+        "A count from a model before Claude Opus 4.7 is reused for Claude Haiku 5.5.",
+        "The request includes a server tool such as web search, or the MCP connector, which the endpoint rejects."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Count tokens before each send to set a per-turn budget.",
+          "combination": "Check the higher Claude Haiku 5.5 rate for prompts over 100,000 tokens."
+        },
+        {
+          "family": "scale",
+          "choice": "Use the 1M token window as the default for long inputs on current models.",
+          "combination": "Compact or trim the history before the window fills."
+        },
+        {
+          "family": "quota",
+          "choice": "Plan token counting calls within their requests per minute limit.",
+          "combination": "Token counting has its own limit, separate from message creation."
+        },
+        {
+          "family": "operations",
+          "choice": "Log the usage fields for each request.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Token counting is generally available on Bedrock.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/token-counting"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Token counting is generally available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/token-counting"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Token counting is generally available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/token-counting"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Token counting is generally available on Foundry.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/token-counting"
+        }
+      ],
+      "exam_tie": "D2.4. Expect a scenario where a budget or window limit needs a count before the call. (Inference)",
+      "trap": "A count from an older model looks reusable, but Claude 4.7 and later models use a newer tokenizer, so the count changes.",
+      "decision_rule": "Count tokens with the model ID you will call, and budget each turn before you send it.",
+      "exam_tip": "A token count is an estimate, so keep a margin below the window limit. (Inference)",
+      "key_facts": [
+        {
+          "text": "The context window for Claude Haiku 5.5 is 1M tokens.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 prices input at $0.50 per million tokens for prompts over 100,000 tokens.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Token counting is free to use but subject to requests per minute rate limits.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/token-counting",
+          "label": "Fact"
+        },
+        {
+          "text": "Thinking tokens count toward the context window limit.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 counts the same text as about 30 percent more tokens than Claude Haiku 4.5.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Token counting and message creation have separate and independent rate limits.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/token-counting",
+          "label": "Fact"
+        },
+        {
+          "text": "The token count is an estimate, and the billed count can differ by a small amount.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/token-counting",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Accuracy percentage of the token count estimate: Not in source.",
+        "Console steps for token counting: Not in source."
+      ]
+    },
+    {
+      "name": "Compaction of older turns",
+      "first_principle": "Compaction replaces older turns with a summary that Claude writes on the server, so the active context stays small.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app loop",
+            "group": "client"
+          },
+          {
+            "id": "hist",
+            "label": "Long conversation history",
+            "group": "data"
+          },
+          {
+            "id": "api",
+            "label": "Messages API with compaction parameter",
+            "group": "claude"
+          },
+          {
+            "id": "comp",
+            "label": "Compaction block with summary",
+            "group": "control"
+          },
+          {
+            "id": "recent",
+            "label": "Recent turns kept word for word",
+            "group": "client"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          }
+        ],
+        "edges": [
+          {
+            "from": "hist",
+            "to": "api",
+            "label": "older turns"
+          },
+          {
+            "from": "app",
+            "to": "api",
+            "label": "send request"
+          },
+          {
+            "from": "api",
+            "to": "comp",
+            "label": "summary block"
+          },
+          {
+            "from": "comp",
+            "to": "app",
+            "label": "block first in messages"
+          },
+          {
+            "from": "recent",
+            "to": "api",
+            "label": "kept turns"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "smaller active context"
+          }
+        ]
+      },
+      "steps": [
+        "Use compaction on demand when your app controls when the summary runs.",
+        "Send the compact-2026-09-04 beta header and the compaction parameter.",
+        "Receive the summary block from the API in the response.",
+        "Place the returned block first in messages, in place of the summarized turns.",
+        "To keep recent turns word for word, pick a cut point and send the later turns after the block.",
+        "Write a custom summarization prompt when the default summary drops a needed detail."
+      ],
+      "pros": [
+        "The API writes the summary, so you need no summarization code.",
+        "Recent turns can stay word for word.",
+        "Compaction in the background keeps the work active while the summary is written."
+      ],
+      "cons": [
+        "Compaction is in beta on the listed platforms.",
+        "A summary can drop a detail that a later turn needs.",
+        "Threshold compaction does not keep recent turns unless your code pauses after compaction."
+      ],
+      "use_when": [
+        "A long agent task would exceed the window or lose focus.",
+        "The app controls when older turns get summarized."
+      ],
+      "do_not_use_when": [
+        "Only large tool results grow, and a rule-based clear fits better.",
+        "Exact instructions must stay word for word in every turn. Keep them in the system prompt (Inference)."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Compact older turns to keep the active context small.",
+          "combination": "Use context editing for large old tool results."
+        },
+        {
+          "family": "scale",
+          "choice": "Compact before the window fills, not after the request fails.",
+          "combination": "Set the trigger with the threshold option."
+        },
+        {
+          "family": "operations",
+          "choice": "Log each compaction block that appears in a response.",
+          "combination": "Test each summary against the later turns (Inference)."
+        },
+        {
+          "family": "governance",
+          "choice": "Store a custom summarization prompt with a version.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Compaction on demand and compaction at a token threshold are in beta on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Compaction on demand and compaction at a token threshold are in beta on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Compaction on demand and compaction at a token threshold are in beta on Foundry.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Compaction at a token threshold is in beta on Bedrock. The on-demand page does not list Bedrock.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-threshold"
+        }
+      ],
+      "exam_tie": "D2.4. Expect a scenario where a long agent task needs its history kept inside the window. (Inference)",
+      "trap": "A rolling window of the last turns looks cheap, but it drops early constraints that the task still needs (Inference).",
+      "decision_rule": "Compact older turns when the task needs them, and keep recent turns word for word.",
+      "exam_tip": "If a summary drops a constraint, write a custom summarization prompt before you change the model.",
+      "key_facts": [
+        {
+          "text": "Compaction on demand uses the compact-2026-09-04 beta header.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand",
+          "label": "Fact"
+        },
+        {
+          "text": "Compaction at a token threshold uses the compact-2026-01-12 beta header.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-threshold",
+          "label": "Fact"
+        },
+        {
+          "text": "Compaction on demand is in beta on the Claude API, Claude Platform on AWS, Claude Models on Google Cloud (Google managed), and Microsoft Foundry.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand",
+          "label": "Fact"
+        },
+        {
+          "text": "Compaction replaces older turns with a summary that Claude writes on the server.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction",
+          "label": "Fact"
+        },
+        {
+          "text": "No parameter sets which turns are kept. You pick a cut point in your history.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-keep-recent-turns",
+          "label": "Fact"
+        },
+        {
+          "text": "The docs say to use on-demand compaction wherever it is available.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction",
+          "label": "Fact"
+        },
+        {
+          "text": "Compaction at a token threshold is in beta on Amazon Bedrock, but compaction on demand does not list Bedrock.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-threshold",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Summary length in tokens: Not in source.",
+        "Console steps for compaction: Not in source.",
+        "Compaction on demand on Amazon Bedrock: Not in source."
+      ]
+    },
+    {
+      "name": "Context editing by rule",
+      "first_principle": "Context editing clears old tool results or thinking blocks by rule, so the context shrinks without a summary.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API with context management",
+            "group": "claude"
+          },
+          {
+            "id": "clr",
+            "label": "Clear old tool results by threshold",
+            "group": "control"
+          },
+          {
+            "id": "think",
+            "label": "Keep or clear thinking blocks",
+            "group": "control"
+          },
+          {
+            "id": "cache",
+            "label": "Prompt cache state",
+            "group": "data"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "request with edit strategies"
+          },
+          {
+            "from": "api",
+            "to": "clr",
+            "label": "threshold rule"
+          },
+          {
+            "from": "api",
+            "to": "think",
+            "label": "keep or clear rule"
+          },
+          {
+            "from": "clr",
+            "to": "model",
+            "label": "smaller history"
+          },
+          {
+            "from": "think",
+            "to": "cache",
+            "label": "clearing invalidates from that point"
+          },
+          {
+            "from": "model",
+            "to": "cache",
+            "label": "reads when kept"
+          }
+        ]
+      },
+      "steps": [
+        "Send the context-management-2025-06-27 beta header with each request.",
+        "Add the clear_tool_uses_20250919 strategy to clear old tool results after a threshold.",
+        "Add the clear_thinking_20251015 strategy to manage thinking blocks in earlier turns.",
+        "Set the keep value for thinking explicitly when code runs on several model tiers.",
+        "Keep thinking blocks when cache hits on later turns matter.",
+        "Set clear_at_least so each clear removes enough tokens to justify the cache write."
+      ],
+      "pros": [
+        "Old tool results leave the context without a summary call.",
+        "Retained thinking blocks preserve cache hits on later turns.",
+        "Server-side edits apply before the prompt reaches Claude."
+      ],
+      "cons": [
+        "Context editing is in beta.",
+        "A tool result clear or a thinking block clear invalidates the cached prefix from that point.",
+        "Client-side edits to earlier turns can invalidate thinking blocks in later turns."
+      ],
+      "use_when": [
+        "Agent tasks produce large tool results that are no longer needed.",
+        "The app needs a rule-based clear instead of a summary."
+      ],
+      "do_not_use_when": [
+        "The task needs the exact content of old tool results later (Inference).",
+        "The team needs a summary of the whole conversation, where compaction fits better."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Clear old tool results to lower the input tokens per turn.",
+          "combination": "Set clear_at_least, because each tool result clear invalidates the cached prefix and adds a cache write."
+        },
+        {
+          "family": "operations",
+          "choice": "Check cache reads after each change to an edit rule.",
+          "combination": "Use cache diagnostics when cache reads drop."
+        },
+        {
+          "family": "scale",
+          "choice": "Use a threshold so edits run only for long contexts.",
+          "combination": "For most long conversations, the docs prefer server-side compaction as the primary strategy."
+        },
+        {
+          "family": "governance",
+          "choice": "Name the strategy version and threshold in code.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D2.4. Expect a scenario where old tool results fill the window and the team asks for the smallest fix. (Inference)",
+      "trap": "A second summary call on every turn looks thorough, but a rule-based clear needs no extra call.",
+      "decision_rule": "Clear old tool results by rule. Keep thinking blocks when cache hits matter.",
+      "exam_tip": "If cache reads drop after a clear, check clear_at_least and the keep setting for thinking blocks.",
+      "key_facts": [
+        {
+          "text": "Context editing is in beta and needs the context-management-2025-06-27 beta header.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+          "label": "Fact"
+        },
+        {
+          "text": "The clear_tool_uses_20250919 strategy clears old tool results when context grows beyond a threshold.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+          "label": "Fact"
+        },
+        {
+          "text": "The clear_thinking_20251015 strategy manages thinking blocks from earlier assistant turns.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+          "label": "Fact"
+        },
+        {
+          "text": "On Claude Haiku 5.5, server-side context management never invalidates thinking blocks.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+          "label": "Fact"
+        },
+        {
+          "text": "When thinking blocks are cleared, the prompt cache is invalidated from that position.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+          "label": "Fact"
+        },
+        {
+          "text": "A clear of tool results invalidates cached prompt prefixes. Use clear_at_least to clear a minimum number of tokens each time.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+          "label": "Fact"
+        },
+        {
+          "text": "For most use cases, server-side compaction is the primary strategy, and context editing gives fine-grained control.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Platform support for context editing beyond the Claude API: Not in source.",
+        "Console steps for context editing: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Request near the window or budget?} -->|No| B[Send the request]\n  A -->|Yes| C{Large old tool results?}\n  C -->|Yes| D[Clear by rule with context editing]\n  C -->|No| E{Long history needed as a summary?}\n  E -->|Yes| F[Compact with on demand or threshold]\n  E -->|No| G[Trim history in app code]\n  D --> H[Count tokens before the next call]\n  F --> H\n  G --> H",
+  "cheatsheet": "flowchart LR\n  C[Count tokens first] --> W[Window 1M tokens]\n  W --> E[Clear tool results by rule]\n  W --> K[Compact older turns]\n  K --> R[Keep recent turns word for word]\n  E --> T[Keep thinking for cache hits]\n  C --> L[Haiku 5.5 higher rate above 100k]",
+  "patterns": [
+    {
+      "wording": "answer quality drops and cost rises as the history grows",
+      "answer_type": "per-turn budget with compaction or a rule-based clear",
+      "rule": "Measure growth per turn. Then compact or clear the part that grows.",
+      "traps": [
+        "A bigger window as the fix",
+        "Full history on every turn"
+      ]
+    },
+    {
+      "wording": "a long agent task loses an early constraint after a summary",
+      "answer_type": "custom summarization prompt with the constraint kept",
+      "rule": "Write a summarization prompt that keeps the constraint. Test it on later turns.",
+      "traps": [
+        "A summary on every turn",
+        "The default summary without a check"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+    "https://platform.claude.com/docs/en/build-with-claude/compaction",
+    "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand",
+    "https://platform.claude.com/docs/en/build-with-claude/compaction-threshold",
+    "https://platform.claude.com/docs/en/build-with-claude/context-editing",
+    "https://platform.claude.com/docs/en/build-with-claude/token-counting",
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/models/haiku-5-5/overview"
+  ]
+}

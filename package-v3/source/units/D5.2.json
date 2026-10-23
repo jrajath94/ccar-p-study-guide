@@ -1,0 +1,587 @@
+{
+  "id": "D5.2",
+  "domain": "D5",
+  "title": "Risks and failure modes",
+  "task_statement": "Map each risk to a prevention control, a detection signal, and a recovery step. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Hallucination control with grounded quotes",
+      "first_principle": "A claim that cites a quote from the source is checkable, and a claim without a quote is removed.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "docs",
+            "label": "Source documents",
+            "group": "data"
+          },
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "quotes",
+            "label": "Claude extracts exact quotes",
+            "group": "claude"
+          },
+          {
+            "id": "answer",
+            "label": "Claude drafts answer from quotes",
+            "group": "claude"
+          },
+          {
+            "id": "check",
+            "label": "Citation check in application code",
+            "group": "control"
+          },
+          {
+            "id": "reader",
+            "label": "Reader sees verified claims",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "docs",
+            "to": "app",
+            "label": "document text"
+          },
+          {
+            "from": "app",
+            "to": "quotes",
+            "label": "ask for quotes first"
+          },
+          {
+            "from": "quotes",
+            "to": "answer",
+            "label": "answer only from quotes"
+          },
+          {
+            "from": "answer",
+            "to": "check",
+            "label": "each claim with its quote"
+          },
+          {
+            "from": "check",
+            "to": "answer",
+            "label": "retract unsupported claims"
+          },
+          {
+            "from": "check",
+            "to": "reader",
+            "label": "verified claims only"
+          }
+        ]
+      },
+      "steps": [
+        "Allow Claude to say that it does not know when the source lacks the answer.",
+        "For long documents, ask Claude to extract exact quotes before it answers.",
+        "Limit the answer to facts that appear in the quotes or the supplied documents.",
+        "Ask Claude to attach a source quote to each claim.",
+        "Remove each claim that has no source quote from the final text.",
+        "Check the citations in application code before the reader sees the answer. (Inference)",
+        "Review high-stakes answers with a person, because these techniques reduce errors but do not catch every error."
+      ],
+      "pros": [
+        "Makes each claim checkable against a quote in the source.",
+        "Lowers the rate of false statements in long documents.",
+        "Works through prompt design, without a separate grounding service."
+      ],
+      "cons": [
+        "Quote extraction adds tokens and latency to each call.",
+        "The techniques reduce hallucinations but do not eliminate them.",
+        "A quote can support a wrong claim when the source document is wrong. (Inference)"
+      ],
+      "use_when": [
+        "Answers must cite a source document.",
+        "The input is a long document, such as a policy or a report.",
+        "A wrong claim has a cost for the user or the business."
+      ],
+      "do_not_use_when": [
+        "The task is open fiction with no source requirement.",
+        "The answer needs live data that no supplied document or tool provides."
+      ],
+      "constraints": [
+        {
+          "family": "latency",
+          "choice": "Ask for quotes first and the answer second, in one prompt.",
+          "combination": "Split the work into two calls when the document is very long. (Inference)"
+        },
+        {
+          "family": "cost",
+          "choice": "Quote only the passages that matter, not the full document.",
+          "combination": ""
+        },
+        {
+          "family": "quota",
+          "choice": "Use best-of-N comparison only for high-stakes answers.",
+          "combination": "Compare outputs for inconsistencies that point to a hallucination."
+        },
+        {
+          "family": "operations",
+          "choice": "Log each quote and claim pair for each answer.",
+          "combination": "Alert on claims that arrive without a quote. (Inference)"
+        },
+        {
+          "family": "skill",
+          "choice": "Write the instruction so that no quote means no claim.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source. The hallucination page names no cloud platform for this control.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D5.2. Expect a scenario where a fluent answer cites nothing. The credited answer requires grounded quotes and removes unsupported claims. (Inference)",
+      "trap": "A larger model looks like the fix for unsupported claims. The docs describe quotes, permission to abstain, and citations for the same risk.",
+      "decision_rule": "Require a source quote for each claim, and remove each claim that has none.",
+      "exam_tip": "If the scenario asks for a control on unsupported claims, choose quotes and citations over a model change.",
+      "key_facts": [
+        {
+          "text": "For long documents above 20k tokens, ask Claude for word-for-word quotes before the task.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude must retract a claim when it cannot find a source quote.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+          "label": "Fact"
+        },
+        {
+          "text": "The guide says the techniques significantly reduce hallucinations but do not eliminate them.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+          "label": "Fact"
+        },
+        {
+          "text": "Best-of-N verification runs the same prompt several times and compares the outputs.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Hallucination rate for any Claude model. Not in source.",
+        "Token cost of quote extraction. Not in source."
+      ]
+    },
+    {
+      "name": "Cost exhaustion limits",
+      "first_principle": "A spend limit on a workspace caps the monthly loss, and a call cap in code stops one runaway run.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your application",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "ws",
+            "label": "Workspace spend limit",
+            "group": "control"
+          },
+          {
+            "id": "rate",
+            "label": "Workspace rate limits per model",
+            "group": "control"
+          },
+          {
+            "id": "org",
+            "label": "Organization limits",
+            "group": "control"
+          },
+          {
+            "id": "alert",
+            "label": "Spend alert at threshold",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "requests with workspace key"
+          },
+          {
+            "from": "rate",
+            "to": "api",
+            "label": "limits requests and tokens"
+          },
+          {
+            "from": "api",
+            "to": "ws",
+            "label": "counts monthly spend"
+          },
+          {
+            "from": "ws",
+            "to": "alert",
+            "label": "threshold reached"
+          },
+          {
+            "from": "org",
+            "to": "ws",
+            "label": "always applies"
+          }
+        ]
+      },
+      "steps": [
+        "Create a workspace for each project, team, or environment that calls the API.",
+        "Set a monthly spend limit on each workspace in the Console.",
+        "Configure spend alerts at the thresholds that you choose.",
+        "Set rate limits for each model in the rate limit settings of each workspace.",
+        "Expect the organization limits to apply, even when workspace limits add up to more.",
+        "Cap the number of tool calls in each run in application code. (Inference)"
+      ],
+      "pros": [
+        "Caps monthly spend per workspace without a code change.",
+        "Separates usage by project, team, or environment.",
+        "Sends an alert at each threshold that you set."
+      ],
+      "cons": [
+        "You cannot set a spend limit on the Default Workspace.",
+        "Spend can take about 2 hours to show recent usage, so usage can pass a limit before requests fail.",
+        "A spend limit does not stop a single run that loops in minutes. (Inference)"
+      ],
+      "use_when": [
+        "Several teams share one organization and need separate budgets.",
+        "A new workflow could loop or flood the API.",
+        "Finance needs a monthly ceiling for each project."
+      ],
+      "do_not_use_when": [
+        "The only key runs in the Default Workspace, because you cannot set a spend limit on that workspace.",
+        "The control must stop one run within minutes. Use a call cap in code instead. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Set a monthly spend limit for each workspace.",
+          "combination": "Add alerts at thresholds below the limit."
+        },
+        {
+          "family": "quota",
+          "choice": "Set workspace rate limits for each model, for requests and tokens.",
+          "combination": "Expect the organization limit to apply even when workspace limits add up to more."
+        },
+        {
+          "family": "isolation",
+          "choice": "Use one workspace for each team so that budgets stay separate.",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Export usage by API key and model when spend rises.",
+          "combination": "Retire the key that drives the increase. (Inference)"
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Rate limits are managed by Anthropic. Set organization and workspace spend limits in the Claude Console. Spend can take about 2 hours to show.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Rate limits and quotas are managed by AWS. The default quota is 2 million input tokens per minute.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        }
+      ],
+      "exam_tie": "D5.2. Expect a scenario with a runaway loop or a budget breach. The credited answer sets a workspace spend limit with alerts, and it caps calls in code. (Inference)",
+      "trap": "A higher rate limit looks like a fix for a cost problem. It allows more calls, so it raises spend.",
+      "decision_rule": "Set a monthly spend limit on each workspace, and cap the calls per run in code.",
+      "exam_tip": "If the scenario names the Default Workspace, remember that you cannot set a spend limit on it.",
+      "key_facts": [
+        {
+          "text": "A workspace spend limit caps monthly spending and can send alerts at thresholds.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "You cannot set spend limits on the Default Workspace.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "Organization-wide limits always apply, even when workspace limits add up to more.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "The Claude Code workspace is the only workspace that supports per-user monthly spend limits.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "The Amazon Bedrock default quota is 2 million input tokens per minute.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+          "label": "Fact"
+        },
+        {
+          "text": "Customers can request up to 5 million input tokens per minute without additional Anthropic approval on Amazon Bedrock.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+          "label": "Fact"
+        },
+        {
+          "text": "When usage reaches a workspace spend limit, requests return HTTP 400 with invalid_request_error until the next month or a change to the limit.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "label": "Fact"
+        },
+        {
+          "text": "On Claude Platform on AWS, spend can take about 2 hours to reflect recent usage, and the overshoot is billed.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Alert threshold values that the Console offers by default. Not in source."
+      ]
+    },
+    {
+      "name": "Fixed model IDs and retirement",
+      "first_principle": "A pinned model ID keeps behavior fixed, and a tested migration plan handles the retirement date.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "id",
+            "label": "Pinned model ID",
+            "group": "claude"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "usage",
+            "label": "Usage export by key and model",
+            "group": "control"
+          },
+          {
+            "id": "notice",
+            "label": "Deprecation and retirement notice",
+            "group": "control"
+          },
+          {
+            "id": "test",
+            "label": "Replacement model test",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "id",
+            "label": "request names model ID"
+          },
+          {
+            "from": "id",
+            "to": "api",
+            "label": "fixed snapshot"
+          },
+          {
+            "from": "usage",
+            "to": "notice",
+            "label": "find deprecated use"
+          },
+          {
+            "from": "notice",
+            "to": "test",
+            "label": "start replacement test"
+          },
+          {
+            "from": "test",
+            "to": "app",
+            "label": "move to active model ID"
+          }
+        ]
+      },
+      "steps": [
+        "Name the model ID in each request, not an alias.",
+        "A dateless model ID from the 4.6 generation maps to one fixed snapshot.",
+        "Anthropic does not update the weights or configuration of a model ID.",
+        "Export usage by API key and model to find deprecated model use.",
+        "Test a replacement model well before the retirement date.",
+        "Move traffic to an active model ID before retirement, because requests to retired models fail."
+      ],
+      "pros": [
+        "Keeps behavior stable for a given model ID.",
+        "Gives a notice period before retirement.",
+        "Lets you find deprecated use in the usage export."
+      ],
+      "cons": [
+        "A pinned ID needs a planned move when the model retires.",
+        "Deprecated models are likely to be less reliable than active models.",
+        "A replacement model can change results, so it needs its own tests."
+      ],
+      "use_when": [
+        "Output must stay stable for an audited workflow.",
+        "A release needs one fixed model for a validation period.",
+        "The team must show which model handled each request."
+      ],
+      "do_not_use_when": [
+        "A prototype that accepts model changes without review.",
+        "A workflow that relies on an alias for an earlier model. Check its snapshot date first."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Record the model ID in each release record.",
+          "combination": "Require a replacement test before each model change."
+        },
+        {
+          "family": "operations",
+          "choice": "Export usage by API key and model each month.",
+          "combination": "Alert when a deprecated model still receives requests. (Inference)"
+        },
+        {
+          "family": "data location",
+          "choice": "Check the retirement schedule of the platform you use.",
+          "combination": "Expect partner-operated platforms to set their own schedules."
+        },
+        {
+          "family": "skill",
+          "choice": "Test the replacement with the same evaluation set as the current model.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The Anthropic-operated retirement dates apply to this platform.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "The Anthropic-operated retirement dates apply to this platform.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "The Anthropic-operated retirement dates apply to this platform.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Amazon Bedrock sets its own retirement schedule, so dates can differ.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Google managed sets its own retirement schedule, so dates can differ.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+        }
+      ],
+      "exam_tie": "D5.2. Expect a scenario about silent output change or a model near retirement. The credited answer pins a model ID and plans a tested migration. (Inference)",
+      "trap": "An earlier alias is wrongly taken as a fixed version. A 4.6-generation ID is a snapshot, but an earlier alias points to the latest snapshot for its minor version.",
+      "decision_rule": "Pin a model ID for each release, and move to a tested replacement before retirement.",
+      "exam_tip": "If the scenario asks how to avoid silent change, choose the pinned ID and a replacement test.",
+      "key_facts": [
+        {
+          "text": "Deprecated models remain functional but are no longer recommended.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic gives at least 60 days notice before retirement for publicly released models.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "Requests to retired models fail.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "A dateless model ID from the 4.6 generation is a fixed snapshot.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        },
+        {
+          "text": "Aliases for earlier models point to the most recent dated snapshot for that minor version.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        },
+        {
+          "text": "The infrastructure that serves a fixed model ID can change and cause minor differences in observable behavior.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Retirement dates for Amazon Bedrock and Google managed models. Not in source.",
+        "Supply-chain controls for third-party packages in the application. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Which risk is in scope?} -->|Unsupported claims| B[Require quotes and remove unsupported claims]\n  A -->|Runaway spend| C{Shared budget?}\n  C -->|Yes| D[Workspace spend limit and alerts]\n  C -->|No| E[Call cap in code]\n  A -->|Model retirement| F[Pin model ID and test replacement]",
+  "cheatsheet": "flowchart LR\n  H[Hallucination] --> Q[Quote per claim]\n  Q --> R[Remove unsupported claims]\n  C[Cost] --> W[Workspace spend limit]\n  W --> A[Threshold alerts]\n  C --> K[Call cap in code]\n  M[Model change] --> P[Pinned model ID]\n  P --> T[Tested replacement]\n  T --> N[Notice before retirement]",
+  "patterns": [
+    {
+      "wording": "a loop drives spend up overnight",
+      "answer_type": "spend limit and call cap",
+      "rule": "Cap spend per workspace. Cap tool calls per run in code.",
+      "traps": [
+        "Longer timeout",
+        "Higher rate limit"
+      ]
+    },
+    {
+      "wording": "an answer states a fact that no source supports",
+      "answer_type": "quote grounding with removal of unsupported claims",
+      "rule": "Require a quote for each claim. Remove each claim that has none.",
+      "traps": [
+        "Larger model alone",
+        "Longer prompt with more warnings"
+      ]
+    },
+    {
+      "wording": "a model reaches retirement while traffic continues",
+      "answer_type": "pinned ID and tested replacement",
+      "rule": "Track usage by model. Move to an active ID before the retirement date.",
+      "traps": [
+        "Alias that moves to a newer snapshot",
+        "Wait for failed requests before a move"
+      ]
+    }
+  ],
+  "console_steps": [
+    {
+      "step": "Open the Workspaces page in the Claude Console.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+      "screenshot": null
+    },
+    {
+      "step": "Select the workspace and click Spend limits to set a monthly cap.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+      "screenshot": null
+    },
+    {
+      "step": "Open the Usage page in the Claude Console and click Export.",
+      "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+      "screenshot": null
+    }
+  ],
+  "not_in_source": [
+    "Console steps for quote checks and model ID choice: Not in source.",
+    "EU AI Act duties for model risk management. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+    "https://platform.claude.com/docs/en/manage-claude/workspaces",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+    "https://platform.claude.com/docs/en/api/rate-limits"
+  ]
+}

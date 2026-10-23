@@ -1,0 +1,627 @@
+{
+  "id": "F4",
+  "domain": "F",
+  "title": "Security and identity",
+  "task_statement": "Choose the credential, the workspace scope, and the data controls for each caller. (Inference: task wording from repo lesson 7-2A, not from the exam guide)",
+  "components": [
+    {
+      "name": "API keys and workspace scope",
+      "first_principle": "An API key is a bearer secret, so its scope and expiration limit the damage from a leak.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app or CI job",
+            "group": "client"
+          },
+          {
+            "id": "store",
+            "label": "Secrets manager",
+            "group": "data"
+          },
+          {
+            "id": "key",
+            "label": "API key with scope and expiry",
+            "group": "control"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "ws",
+            "label": "Workspace boundary",
+            "group": "cloud"
+          },
+          {
+            "id": "audit",
+            "label": "Key status in Admin API",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "store",
+            "to": "app",
+            "label": "load secret at runtime"
+          },
+          {
+            "from": "app",
+            "to": "api",
+            "label": "Authorization Bearer header"
+          },
+          {
+            "from": "key",
+            "to": "api",
+            "label": "authenticates request"
+          },
+          {
+            "from": "key",
+            "to": "ws",
+            "label": "scoped to one workspace"
+          },
+          {
+            "from": "audit",
+            "to": "key",
+            "label": "reports status and expires_at"
+          }
+        ]
+      },
+      "steps": [
+        "Create the key in the Console and select its expiration.",
+        "Choose a service account key for shared or automated workloads.",
+        "Scope the key to one workspace when the workload needs only that workspace.",
+        "Store the key in a secrets manager, not in source code.",
+        "Send the key as a bearer token in the Authorization header.",
+        "Rotate the key before its expiration date.",
+        "Disable a suspected leaked key at once."
+      ],
+      "pros": [
+        "A scoped key limits access to one workspace.",
+        "Expiration limits how long a leaked key works.",
+        "Identity-backed keys become invalid when their identity leaves the organization."
+      ],
+      "cons": [
+        "A static key stays valid until it expires or is disabled.",
+        "The Console shows the full key once, so a lost key needs a new key.",
+        "Workspace keys are legacy keys and remain usable after their creator leaves."
+      ],
+      "use_when": [
+        "A developer runs scripts with a personal key for their own work.",
+        "A shared service needs its own identity. Create a service account key."
+      ],
+      "do_not_use_when": [
+        "A cloud workload has a platform identity. Use federation instead.",
+        "A team shares one key. The key acts as one person and breaks when that person leaves."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Use a service account key for shared workloads.",
+          "combination": "Rotate keys before their expiration dates."
+        },
+        {
+          "family": "isolation",
+          "choice": "Scope keys to one workspace for each environment.",
+          "combination": "Use separate workspaces for tenants that must not share usage."
+        },
+        {
+          "family": "data location",
+          "choice": "Choose a workspace region on Claude Platform on AWS when residency matters.",
+          "combination": "Send inference_geo us for US inference on Claude 4.6 and later models."
+        },
+        {
+          "family": "operations",
+          "choice": "Review key status and expires_at with the Admin API.",
+          "combination": "Use an Admin API key only for the admin endpoints."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Short-term bearer tokens have a 12-hour maximum and are the least preferred option.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "SigV4 signed requests with IAM are the primary method, and API keys are also supported.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Requests use Google Cloud credentials, and the caller identity needs the aiplatform.endpoints.predict permission.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Each request carries a Google OAuth 2.0 access token, and three IAM roles control access.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Foundry supports API keys and Microsoft Entra ID tokens, with Azure RBAC roles.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "F4. Expect a leaked key or a shared key in a scenario. The credited answer uses a scoped, identity-backed key or federation. (Inference)",
+      "trap": "A key in a prompt or a config file looks convenient, but the model reads the prompt and the file exposes the secret.",
+      "decision_rule": "Use a scoped, time-limited, identity-backed key, and store it in a secrets manager.",
+      "exam_tip": "A 401 authentication_error can mean a revoked, malformed, or expired key.",
+      "key_facts": [
+        {
+          "text": "API keys start with sk-ant- and the Console shows the full key only once.",
+          "url": "https://platform.claude.com/docs/en/get-api-key",
+          "label": "Fact"
+        },
+        {
+          "text": "Key expiration is a preset of 3 hours, 1 day, 7 days, or 30 days, a custom duration, or Never.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/authentication",
+          "label": "Fact"
+        },
+        {
+          "text": "An expired key returns 401 authentication_error and cannot be reactivated.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/authentication",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic emails the key creator 7 days before expiration for keys with a lifetime of at least 14 days.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/authentication",
+          "label": "Fact"
+        },
+        {
+          "text": "Admin API keys start with sk-ant-admin01-.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/admin-api-keys",
+          "label": "Fact"
+        },
+        {
+          "text": "Short-term bearer tokens on Amazon Bedrock have a 12-hour maximum.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Key rotation interval that Anthropic recommends. Not in source.",
+        "Maximum number of keys for each workspace. Not in source."
+      ]
+    },
+    {
+      "name": "Workload identity federation",
+      "first_principle": "A workload presents a signed token from its own identity provider and receives a short-lived Anthropic token in return.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "idp",
+            "label": "Identity provider issues JWT",
+            "group": "cloud"
+          },
+          {
+            "id": "wl",
+            "label": "Workload with identity token",
+            "group": "client"
+          },
+          {
+            "id": "iss",
+            "label": "Federation issuer in Console",
+            "group": "data"
+          },
+          {
+            "id": "rule",
+            "label": "Federation rule with scope and lifetime",
+            "group": "control"
+          },
+          {
+            "id": "tok",
+            "label": "Short-lived Anthropic token",
+            "group": "control"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          }
+        ],
+        "edges": [
+          {
+            "from": "idp",
+            "to": "wl",
+            "label": "issue JWT"
+          },
+          {
+            "from": "wl",
+            "to": "iss",
+            "label": "present JWT"
+          },
+          {
+            "from": "iss",
+            "to": "rule",
+            "label": "match claims"
+          },
+          {
+            "from": "rule",
+            "to": "tok",
+            "label": "mint token"
+          },
+          {
+            "from": "tok",
+            "to": "api",
+            "label": "bearer token on requests"
+          }
+        ]
+      },
+      "steps": [
+        "Register the identity provider as a federation issuer in the Console.",
+        "Create a federation rule with match conditions for the workload.",
+        "Set the authorization scope and the token lifetime in the rule.",
+        "The workload presents its signed JWT for a token exchange.",
+        "Anthropic checks the JWT signature and the rule match.",
+        "Anthropic returns a short-lived token bound to a service account.",
+        "The SDK refreshes the token before it expires."
+      ],
+      "pros": [
+        "No static secret needs storage or rotation.",
+        "Tokens expire in minutes instead of never.",
+        "The SDK re-reads a rotated token file on each exchange."
+      ],
+      "cons": [
+        "Federation is only as strong as the upstream identity provider.",
+        "Setup needs the admin, owner, or primary owner role.",
+        "Each environment usually needs its own issuer."
+      ],
+      "use_when": [
+        "A CI job or Kubernetes workload already has a platform identity.",
+        "A production workload must avoid long-lived API keys."
+      ],
+      "do_not_use_when": [
+        "A developer needs access for a local script. A personal key suits own development.",
+        "The identity provider publishes no key set. Anthropic cannot verify the JWT."
+      ],
+      "constraints": [
+        {
+          "family": "latency",
+          "choice": "The SDK starts a refresh 120 seconds before expiry.",
+          "combination": "Expect one token exchange at each workload start. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Set the scope in each rule to the least access the workload needs.",
+          "combination": "The default scope is workspace developer, the same as a workspace API key."
+        },
+        {
+          "family": "isolation",
+          "choice": "Register one issuer for each environment.",
+          "combination": "Create a separate rule for each service account."
+        },
+        {
+          "family": "operations",
+          "choice": "Mint a fresh JWT for each exchange, because JWTs with a jti claim are single-use by default.",
+          "combination": "Check the authentication history page when an exchange fails."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "AWS STS outbound web identity federation is disabled by default and needs one enable command per account.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Bedrock uses IAM assumed roles, and AWS STS issues temporary credentials.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Google Cloud credentials for the caller identity authenticate requests.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Each request carries a Google OAuth 2.0 access token with the cloud-platform scope.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Microsoft Entra ID tokens authenticate requests, and they typically expire after 1 hour.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "F4. Expect a CI or Kubernetes scenario that asks for no static secret. The credited answer uses federation with a short-lived token. (Inference)",
+      "trap": "A long-lived key in CI secrets looks simpler, but it is a static secret that stays valid until someone rotates or disables it.",
+      "decision_rule": "Use federation when the workload has a trusted identity, and use a personal key only for development.",
+      "exam_tip": "A jti_reused failure means the JWT was presented before, so mint a new JWT for the exchange.",
+      "key_facts": [
+        {
+          "text": "The default token lifetime in a federation rule is 3,600 seconds.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+          "label": "Fact"
+        },
+        {
+          "text": "The minted token lifetime is never less than 60 seconds.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+          "label": "Fact"
+        },
+        {
+          "text": "The SDK starts an advisory refresh at expiry minus 120 seconds.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+          "label": "Fact"
+        },
+        {
+          "text": "The SDK starts a mandatory refresh at expiry minus 30 seconds.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+          "label": "Fact"
+        },
+        {
+          "text": "The default authorization scope is workspace:developer.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+          "label": "Fact"
+        },
+        {
+          "text": "The federation setup wizard listens for a token exchange for 15 minutes.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+          "label": "Fact"
+        },
+        {
+          "text": "Outbound web identity federation on AWS is disabled by default.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+          "label": "Fact"
+        },
+        {
+          "text": "A federation rule accepts token_lifetime_seconds from 60 to 86400, with a default of 3600.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Time that the Console keeps authentication history. Not in source."
+      ]
+    },
+    {
+      "name": "Data retention and encryption",
+      "first_principle": "A data control names who stores data, for how long, and which key protects it.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "zdr",
+            "label": "ZDR or retention policy",
+            "group": "control"
+          },
+          {
+            "id": "store",
+            "label": "Stored data when a feature needs it",
+            "group": "data"
+          },
+          {
+            "id": "cmek",
+            "label": "Customer-managed key in cloud KMS",
+            "group": "cloud"
+          },
+          {
+            "id": "log",
+            "label": "Platform activity logs",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "send prompts"
+          },
+          {
+            "from": "zdr",
+            "to": "api",
+            "label": "no storage at rest under ZDR"
+          },
+          {
+            "from": "api",
+            "to": "store",
+            "label": "store only when required"
+          },
+          {
+            "from": "cmek",
+            "to": "store",
+            "label": "encrypts stored data"
+          },
+          {
+            "from": "api",
+            "to": "log",
+            "label": "record activity"
+          }
+        ]
+      },
+      "steps": [
+        "Check whether each feature is eligible for zero data retention.",
+        "Ask the account team to enable ZDR for the organization.",
+        "Expect 30-day retention for Covered Models, which sit outside ZDR.",
+        "Choose a customer-managed key in AWS KMS, Google Cloud KMS, or Azure Key Vault when the contract requires one.",
+        "CMEK enablement is permanent, so confirm the key plan first.",
+        "Keep activity logs for at least 30 days on a rolling basis."
+      ],
+      "pros": [
+        "Under ZDR, Anthropic does not store prompts or responses at rest after the response returns.",
+        "A customer-managed key gives the customer control of the encryption key.",
+        "Platform logs record activity for investigations."
+      ],
+      "cons": [
+        "The Console and some features sit outside ZDR.",
+        "A CMEK misconfiguration can cause permanent data loss.",
+        "CORS is not supported for ZDR organizations, so browser apps need a backend proxy."
+      ],
+      "use_when": [
+        "Regulated data passes through the API and the contract forbids storage at rest.",
+        "A customer requires control of the encryption key."
+      ],
+      "do_not_use_when": [
+        "Sensitive data flows through the Console playground. ZDR does not cover the Console.",
+        "The team has no key recovery plan for CMEK."
+      ],
+      "constraints": [
+        {
+          "family": "data location",
+          "choice": "Pick the inference geography and the workspace region that residency needs.",
+          "combination": "US inference applies a 1.1 times pricing multiplier on Claude 4.6 and later models."
+        },
+        {
+          "family": "governance",
+          "choice": "Name one owner for each retention and key decision.",
+          "combination": "Record the ZDR enablement date for audit. (Inference)"
+        },
+        {
+          "family": "operations",
+          "choice": "Keep activity logs for at least 30 days.",
+          "combination": "Turn on Data Access logs on Google Cloud, which are off by default."
+        },
+        {
+          "family": "isolation",
+          "choice": "Use CMEK only where the contract requires it.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Data handling follows Amazon Bedrock data protection, and CloudWatch and CloudTrail log activity.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The retention policy matches the first-party API, and ZDR is available on request. A separate CMEK setup page covers this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Agent Platform governs data handling, and request-response logging can record prompts and completions.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "The retention policy matches the API, and ZDR is available on request. Data Access logs are off by default.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Azure logging is configured in your Azure subscription, for example with Azure Log Analytics.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "F4. Expect a regulated data scenario with a retention or key requirement. The credited answer names ZDR or CMEK and the account team step. (Inference)",
+      "trap": "Platform logs look like a data control, but logs do not enable zero data retention.",
+      "decision_rule": "Enable ZDR or CMEK only through the account team, after you confirm the eligible features.",
+      "exam_tip": "CMEK enablement is permanent, so the answer confirms the key plan before the change.",
+      "key_facts": [
+        {
+          "text": "Covered Models require 30-day data retention.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "Each new organization needs ZDR enabled separately by the account team.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "Under ZDR, Anthropic does not store customer prompts or responses at rest after the API response is returned.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "Retained data is never used for model training without express permission.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "CMEK enablement is permanent and can cause irreversible data loss.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/cmek",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic keeps no copy of the customer key.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/cmek",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic recommends logging activity on at least a 30-day rolling basis.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Retention period for Console usage data. The docs say the Console is outside ZDR and name no period. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Workload has a platform identity?} -->|Yes| B[Federation with short-lived token]\n  A -->|No| C{Shared or automated use?}\n  C -->|Yes| D[Service account key scoped to workspace]\n  C -->|No| E[Personal key for own development]\n  B --> F{Data must not be stored?}\n  D --> F\n  E --> F\n  F -->|Yes| G[Request ZDR through account team]\n  F -->|No| H[Set retention and key owner]",
+  "cheatsheet": "flowchart LR\n  I[Platform identity] --> W{Trusted issuer?}\n  W -->|Yes| FD[Federation token]\n  W -->|No| K[Scoped key]\n  K --> X[Expiration and workspace]\n  FD --> R[Short lifetime]\n  R --> A[Audit log]\n  X --> A\n  Z[ZDR] --> D[Data controls]",
+  "patterns": [
+    {
+      "wording": "a CI job needs API access without a stored secret",
+      "answer_type": "federation with short-lived token",
+      "rule": "Federate the workload identity when the platform issues one.",
+      "traps": [
+        "Long-lived key in CI secrets",
+        "Prompt rule that says keep the key private"
+      ]
+    },
+    {
+      "wording": "a team shares one script that uses a personal key",
+      "answer_type": "service account key",
+      "rule": "Create a service account key for shared workloads.",
+      "traps": [
+        "Personal key shared by a team",
+        "Legacy workspace key as the default"
+      ]
+    },
+    {
+      "wording": "regulated data must not be stored at rest",
+      "answer_type": "ZDR through the account team",
+      "rule": "Request ZDR after you confirm that the feature is eligible.",
+      "traps": [
+        "Console playground for sensitive data",
+        "Activity logs as a substitute for ZDR"
+      ]
+    }
+  ],
+  "console_steps": [
+    {
+      "step": "Open the API keys page in the Claude Console.",
+      "url": "https://platform.claude.com/docs/en/get-api-key",
+      "screenshot": null
+    },
+    {
+      "step": "Create a key, name it, and select its expiration.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/authentication",
+      "screenshot": null
+    },
+    {
+      "step": "Set Linked account to yourself or a service account.",
+      "url": "https://platform.claude.com/docs/en/get-api-key",
+      "screenshot": null
+    }
+  ],
+  "not_in_source": [
+    "Acceptance rules for the federation rule match conditions beyond the documented fields. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/get-api-key",
+    "https://platform.claude.com/docs/en/manage-claude/authentication",
+    "https://platform.claude.com/docs/en/manage-claude/admin-api-keys",
+    "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation",
+    "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+    "https://platform.claude.com/docs/en/manage-claude/cmek",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+  ]
+}

@@ -1,0 +1,423 @@
+{
+  "id": "D2.1",
+  "domain": "D2",
+  "title": "Model selection and tier trade-offs",
+  "task_statement": "Choose the model tier and effort level that clear the quality floor at the lowest cost. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Model tier selection",
+      "first_principle": "Choose the lowest tier that clears a quality floor you measured on your own tasks.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "select",
+            "label": "Model ID chosen per task",
+            "group": "control"
+          },
+          {
+            "id": "haiku",
+            "label": "claude-haiku-5-5 for high-volume work",
+            "group": "claude"
+          },
+          {
+            "id": "sonnet",
+            "label": "claude-sonnet-5-5 for everyday work",
+            "group": "claude"
+          },
+          {
+            "id": "opus",
+            "label": "claude-opus-5-5 for agentic coding",
+            "group": "claude"
+          },
+          {
+            "id": "fable",
+            "label": "claude-fable-5-1 for hardest work",
+            "group": "claude"
+          },
+          {
+            "id": "evals",
+            "label": "Eval set with the quality floor",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "select",
+            "label": "send task"
+          },
+          {
+            "from": "select",
+            "to": "haiku",
+            "label": "fast and low cost"
+          },
+          {
+            "from": "select",
+            "to": "sonnet",
+            "label": "balanced"
+          },
+          {
+            "from": "select",
+            "to": "opus",
+            "label": "complex agentic work"
+          },
+          {
+            "from": "opus",
+            "to": "fable",
+            "label": "evals fall short at xhigh"
+          },
+          {
+            "from": "evals",
+            "to": "select",
+            "label": "floor decides the tier"
+          }
+        ]
+      },
+      "steps": [
+        "Measure the quality floor on your own test set before you pick a tier.",
+        "Start with the tier that the selection matrix lists for your task type.",
+        "For an efficiency-first start, begin with Claude Haiku 5.5 and upgrade only for capability gaps.",
+        "Choose the lowest tier that clears the floor on your evals.",
+        "Send the model ID in the model field, such as claude-haiku-5-5.",
+        "Escalate only the requests that fail the floor to a higher tier.",
+        "Run the evals again after every model ID change."
+      ],
+      "pros": [
+        "Claude Haiku 5.5 has the fastest comparative latency in the current lineup.",
+        "Lower tiers cost less per million tokens than the top tier.",
+        "Each model ID names a pinned snapshot, so behavior changes only with a new ID."
+      ],
+      "cons": [
+        "Lower tiers can fail the quality floor on hard requests.",
+        "A routing setup needs a confidence check that you design (Inference).",
+        "Each tier change needs a new evaluation run."
+      ],
+      "use_when": [
+        "High-volume classification, extraction, or routing has a measured quality floor.",
+        "Latency is the main constraint and the floor holds on the lower tier.",
+        "Complex software work that misses the measured floor on lower tiers."
+      ],
+      "do_not_use_when": [
+        "The team picks a tier without a measured quality floor.",
+        "One tier handles all traffic and no escalation path exists (Inference).",
+        "A single output must exceed the 128K token synchronous output limit."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Route high-volume classification to Claude Haiku 5.5.",
+          "combination": "Escalate the subset that misses the floor to Claude Sonnet 5.5 or Claude Opus 5.5."
+        },
+        {
+          "family": "latency",
+          "choice": "Choose Claude Haiku 5.5 for the fastest comparative latency.",
+          "combination": "Lower the effort level on the same model before you change tiers."
+        },
+        {
+          "family": "scale",
+          "choice": "Use the 1M token context window for long inputs on any current tier.",
+          "combination": "On Claude Haiku 5.5, a prompt over 100,000 tokens pays higher prices, so compare that cost with Claude Sonnet 5.5."
+        },
+        {
+          "family": "governance",
+          "choice": "Pin the exact model ID in production configuration.",
+          "combination": "Check the retirement date before a long rollout."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "The Claude Haiku 5.5 model ID on Bedrock is anthropic.claude-haiku-5-5.",
+          "url": "https://platform.claude.com/docs/en/models/overview"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "The Claude Haiku 5.5 model ID on this platform is claude-haiku-5-5.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Foundry deployments default to the Claude API model ID, and the deployment name is what you send.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "This platform uses the Claude API model IDs, not Bedrock-style IDs.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        }
+      ],
+      "exam_tie": "D2.1. Expect a scenario that asks for the lowest tier that clears a measured quality floor. (Inference)",
+      "trap": "The top tier for every request looks safe, but it adds cost when evals show that a lower tier clears the floor.",
+      "decision_rule": "Pick the lowest tier that clears the measured quality floor, then tune effort on that tier.",
+      "exam_tip": "Name the measured floor in your reasoning before you name a tier.",
+      "key_facts": [
+        {
+          "text": "Claude Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens for prompts up to 100,000 tokens.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 costs $0.50 per million input tokens and $2.50 per million output tokens for prompts over 100,000 tokens.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Sonnet 5.5 costs $2 per million input tokens and $10 per million output tokens.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Opus 5.5 costs $4 per million input tokens and $20 per million output tokens.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Fable 5.1 costs $10 per million input tokens and $50 per million output tokens.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "The four current models in the comparison table have a 1M token context window and 128K max output.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "The model selection matrix says that most workloads start with Claude Opus 5.5.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+          "label": "Fact"
+        },
+        {
+          "text": "The retirement date for Claude Haiku 5.5 is not sooner than October 7, 2027.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Accuracy target for any task or tier: Not in source.",
+        "Confidence check design for a routing setup: Not in source.",
+        "Latency values in seconds for each tier: Not in source."
+      ]
+    },
+    {
+      "name": "Effort and adaptive thinking",
+      "first_principle": "Effort steers how much one model thinks, so tuning effort can come before a model change.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "req",
+            "label": "Request with effort level",
+            "group": "client"
+          },
+          {
+            "id": "model",
+            "label": "Claude model on one tier",
+            "group": "claude"
+          },
+          {
+            "id": "think",
+            "label": "Adaptive thinking decides depth",
+            "group": "claude"
+          },
+          {
+            "id": "resp",
+            "label": "Response and usage counts",
+            "group": "control"
+          },
+          {
+            "id": "evals",
+            "label": "Eval results per effort level",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "req",
+            "label": "set effort"
+          },
+          {
+            "from": "req",
+            "to": "model",
+            "label": "effort level"
+          },
+          {
+            "from": "model",
+            "to": "think",
+            "label": "thinks within the level"
+          },
+          {
+            "from": "think",
+            "to": "resp",
+            "label": "answer and token counts"
+          },
+          {
+            "from": "evals",
+            "to": "req",
+            "label": "choose the level from results"
+          }
+        ]
+      },
+      "steps": [
+        "Leave effort at the default, or set the effort field in output_config.",
+        "Claude Haiku 5.5 uses medium effort by default.",
+        "Use low effort for simple, high-volume requests and subagent tasks.",
+        "Use high or xhigh effort for complex reasoning and longer agent tasks.",
+        "Adaptive thinking decides how much to think at the chosen level.",
+        "Set the level from evaluation results, not from a guess."
+      ],
+      "pros": [
+        "One model covers several cost and latency points.",
+        "Effort changes do not require a second model ID in code.",
+        "Lower effort reduces thinking, which lowers cost and latency."
+      ],
+      "cons": [
+        "At low effort, the model is more likely to skip a search or a check in long agent prompts.",
+        "Effort is a behavioral signal, not a strict token budget.",
+        "Thinking can be turned off on Claude Haiku 5.5 only at high effort or below."
+      ],
+      "use_when": [
+        "Routine requests pass the floor at medium or low effort.",
+        "A hard task fails at the default effort, and evals show a gain at high effort."
+      ],
+      "do_not_use_when": [
+        "A hard token limit is required, because effort is not a strict budget.",
+        "The request disables thinking on Claude Haiku 5.5 at xhigh or max effort, which returns a 400 error."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Lower the effort level for routine requests.",
+          "combination": "Raise effort only for the subset that misses the floor."
+        },
+        {
+          "family": "latency",
+          "choice": "Use low effort for latency-sensitive requests.",
+          "combination": "Keep medium effort when the floor misses at low effort."
+        },
+        {
+          "family": "scale",
+          "choice": "Use adaptive thinking for turns that vary in difficulty.",
+          "combination": "Use a fixed low effort for large fleets of subagents."
+        },
+        {
+          "family": "operations",
+          "choice": "Track output tokens and latency at each effort level in your evals.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "The effort parameter is GA. Per-message effort is in beta and supports Claude Haiku 5.5 on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "The effort parameter is GA. Per-message effort on Bedrock supports only Claude Fable 5.1, Claude Mythos 5.1, and Claude Opus 5.5.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "The effort parameter is GA on this platform. Per-message effort on Foundry: Not in source.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The effort parameter is GA on this platform. Per-message effort on this platform: Not in source.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort"
+        }
+      ],
+      "exam_tie": "D2.1. Expect a scenario with a cost or latency limit where effort tuning comes before a model change. (Inference)",
+      "trap": "A move to the top tier for hard requests looks direct, but it skips effort, which is often a better lever than a model change.",
+      "decision_rule": "Tune effort on the current model before you move to a larger tier, when the evals allow it.",
+      "exam_tip": "On Claude Haiku 5.5 with thinking disabled, a per-message effort change returns a 400 error, so use adaptive thinking to vary effort by turn.",
+      "key_facts": [
+        {
+          "text": "The default effort for Claude Haiku 5.5 is medium.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+          "label": "Fact"
+        },
+        {
+          "text": "The default effort for Claude Opus 5.5 is medium.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 supports the effort levels low, medium, high, xhigh, and max.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+          "label": "Fact"
+        },
+        {
+          "text": "On Claude Haiku 5.5, a thinking budget_tokens setting returns a 400 error.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/thinking",
+          "label": "Fact"
+        },
+        {
+          "text": "Effort is a behavioral signal, not a strict token budget.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+          "label": "Fact"
+        },
+        {
+          "text": "Tuning effort is often a better lever than a model change.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+          "label": "Fact"
+        },
+        {
+          "text": "Per-message effort is in beta and needs the beta header mid-conversation-output-config-2026-07-01.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Token savings percentage for each effort level: Not in source.",
+        "Per-message effort on Microsoft Foundry and Claude Platform on AWS: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Quality floor measured on your evals?} -->|No| B[Build a test set and measure the floor]\n  B --> A\n  A -->|Yes| C{Lowest tier clears the floor?}\n  C -->|Yes| D[Use the lowest tier that clears the floor]\n  C -->|No| E{Higher effort clears the floor?}\n  E -->|Yes| F[Raise effort on the same model]\n  E -->|No| G[Move up one tier]",
+  "cheatsheet": "flowchart LR\n  F[Measure quality floor] --> L[Lowest tier that clears the floor]\n  L --> E[Tune effort on that tier]\n  E --> U[Move up one tier]\n  L --> H[Haiku 5.5 at 0.10 per MTok input]\n  U --> S[Sonnet 5.5 at 2 per MTok input]\n  U --> O[Opus 5.5 at 4 per MTok input]\n  U --> X[Fable 5.1 at 10 per MTok input]",
+  "patterns": [
+    {
+      "wording": "cut cost for a high-volume task with a measured quality floor",
+      "answer_type": "lowest tier that clears the measured floor",
+      "rule": "Measure the floor first. Then choose the lowest tier that clears it.",
+      "traps": [
+        "Top tier for all traffic",
+        "A custom model before tier and effort tuning"
+      ]
+    },
+    {
+      "wording": "a subset of requests misses the quality floor on the lowest tier",
+      "answer_type": "escalate the subset that misses the floor with effort or a higher tier",
+      "rule": "Escalate only the subset that misses the floor. Keep the rest on the lower tier.",
+      "traps": [
+        "Traffic sent to a higher tier by default",
+        "No quality check at all"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/models/overview",
+    "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+    "https://platform.claude.com/docs/en/build-with-claude/effort",
+    "https://platform.claude.com/docs/en/build-with-claude/thinking",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+  ]
+}

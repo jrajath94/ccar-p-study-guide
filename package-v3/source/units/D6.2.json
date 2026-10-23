@@ -1,0 +1,533 @@
+{
+  "id": "D6.2",
+  "domain": "D6",
+  "title": "Trade-off communication",
+  "task_statement": "Compare options on priced, measured trade-offs and tell each audience the facts it decides on. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Model pricing and cost per task",
+      "first_principle": "Compare options on cost per completed task, because the completed task is the unit that you pay for.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "resp",
+            "label": "Response usage fields",
+            "group": "claude"
+          },
+          {
+            "id": "price",
+            "label": "Per token prices by model",
+            "group": "control"
+          },
+          {
+            "id": "task",
+            "label": "Cost per completed task",
+            "group": "data"
+          },
+          {
+            "id": "bill",
+            "label": "Invoice on the chosen platform",
+            "group": "cloud"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "resp",
+            "label": "each request"
+          },
+          {
+            "from": "resp",
+            "to": "price",
+            "label": "priced token counts"
+          },
+          {
+            "from": "price",
+            "to": "task",
+            "label": "sum across requests"
+          },
+          {
+            "from": "task",
+            "to": "bill",
+            "label": "compare with invoice"
+          }
+        ]
+      },
+      "steps": [
+        "Read the token counts in the usage field of each response.",
+        "Price each token count at the rate for its token type.",
+        "Sum the prices across all requests for one completed task.",
+        "Compare the cost per completed task across the options.",
+        "Date the price table before each decision. (Inference)"
+      ],
+      "pros": [
+        "Shows the cost of a finished task, instead of a token rate alone.",
+        "Makes a cheap per-token option comparable with a costlier one.",
+        "Matches the usage fields that each response already returns."
+      ],
+      "cons": [
+        "Prices change, so a comparison goes stale.",
+        "A cost per task needs task-level logs or evaluation results. (Inference)"
+      ],
+      "use_when": [
+        "Two models or platforms meet the quality bar at different prices.",
+        "A budget owner must approve a monthly spend."
+      ],
+      "do_not_use_when": [
+        "Only one model meets the quality bar and no cost cap applies. (Inference)",
+        "The task volume is too small to change the budget. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Compare models on cost per completed task, not per token.",
+          "combination": "Add the cache write and cache read prices when prompts repeat."
+        },
+        {
+          "family": "data location",
+          "choice": "Choose a regional endpoint when data residency requires it.",
+          "combination": "On the Claude API, US-only inference with inference_geo adds a 1.1 times multiplier on all token prices."
+        },
+        {
+          "family": "latency",
+          "choice": "Compare price at the same effort level and latency target. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "governance",
+          "choice": "Write the price date beside every cost figure, because list prices drift.",
+          "combination": "Recompute the figures when prices change. (Inference)"
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Regional endpoints carry a pricing premium over global endpoints.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Billing runs through AWS Marketplace.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Google Cloud invoices the usage, and prices depend on the endpoint type.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Anthropic meters the usage and reports it to Google Cloud in Claude Consumption Units.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Usage bills through Azure Marketplace in Claude Consumption Units, not prepaid credits.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "D6.2. Expect two options that differ in price and quality. The credited answer prices both on the same basis and states the trade-off. (Inference)",
+      "trap": "The lowest per-token price looks cheapest, but a model that needs more tokens or rounds can cost more per completed task.",
+      "decision_rule": "Compare options on cost per completed task, and write the price date beside the figure.",
+      "exam_tip": "If the stem gives only a per-token price, convert it to cost per completed task first.",
+      "key_facts": [
+        {
+          "text": "Compare models on cost per completed task, not per token, because you pay for completed tasks.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+          "label": "Fact"
+        },
+        {
+          "text": "Figures on the optimization page reflect list prices at the time of measurement, and they drift.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+          "label": "Fact"
+        },
+        {
+          "text": "Five-minute cache writes cost 1.25 times the base input price, and one-hour cache writes cost 2 times.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 has one price for prompts up to 100,000 tokens and another price for longer prompts.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Opus 5.5 lists a base input price of 4 USD per million tokens and an output price of 20 USD per million tokens.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Regional endpoints on Amazon Bedrock carry a 10 percent pricing premium over global endpoints.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+          "label": "Fact"
+        },
+        {
+          "text": "US-only inference through the inference_geo parameter adds a 1.1 times multiplier on all token prices for Claude 4.6 and later models.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Price of a model on a platform absent from the pricing page. Not in source.",
+        "Cost per completed task for your own workload. Measure it on your traffic. Not in source."
+      ]
+    },
+    {
+      "name": "Cost per task measurement",
+      "first_principle": "Record cost per task beside each quality score, so a trade-off shows both values together.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "logs",
+            "label": "Production task sample",
+            "group": "client"
+          },
+          {
+            "id": "checks",
+            "label": "Outcome check for each task",
+            "group": "control"
+          },
+          {
+            "id": "runs",
+            "label": "Model tiers across effort levels",
+            "group": "claude"
+          },
+          {
+            "id": "usage",
+            "label": "Usage fields per request",
+            "group": "data"
+          },
+          {
+            "id": "curve",
+            "label": "Score against spend curve",
+            "group": "control"
+          },
+          {
+            "id": "api",
+            "label": "Usage and Cost API aggregate",
+            "group": "cloud"
+          }
+        ],
+        "edges": [
+          {
+            "from": "logs",
+            "to": "checks",
+            "label": "weighted like real traffic"
+          },
+          {
+            "from": "checks",
+            "to": "runs",
+            "label": "score each run"
+          },
+          {
+            "from": "runs",
+            "to": "usage",
+            "label": "token counts"
+          },
+          {
+            "from": "usage",
+            "to": "curve",
+            "label": "priced per task"
+          },
+          {
+            "from": "api",
+            "to": "curve",
+            "label": "aggregate check"
+          }
+        ]
+      },
+      "steps": [
+        "Pull a sample of tasks from production logs, weighted like real traffic.",
+        "Write an outcome check for each sampled task.",
+        "Run each model tier across the effort levels.",
+        "Price each request from its usage fields.",
+        "Plot the score against the spend for each run.",
+        "Confirm the total with the Usage and Cost API.",
+        "Run the winner in shadow on a traffic slice before cutover."
+      ],
+      "pros": [
+        "Shows whether a cheaper tier meets the quality bar on real tasks.",
+        "Shows a score and a spend for each option, so the trade-off stays visible.",
+        "Gives the same method for every model change. (Inference)"
+      ],
+      "cons": [
+        "Needs production logs and outcome checks that many teams lack. (Inference)",
+        "Results reflect the list prices at the time of measurement."
+      ],
+      "use_when": [
+        "A model or effort change must pass a cost and quality review.",
+        "Two configurations score close to each other on quality."
+      ],
+      "do_not_use_when": [
+        "The team has no production logs and no outcome checks yet. (Inference)",
+        "The budget has no limit, so the cost figure changes no decision. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Record cost per task beside each score.",
+          "combination": "If quality falls short, restore the effort, or try the next tier up at its default effort."
+        },
+        {
+          "family": "latency",
+          "choice": "Record elapsed model time per task beside the score. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "scale",
+          "choice": "Weight the sample like real traffic, with edge cases included.",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Read the usage and cost totals from the Usage and Cost API.",
+          "combination": "Poll no more than once per minute for sustained use."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The programmatic Usage and Cost API endpoints are not available. Use the Usage and Cost pages in the Claude Console.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Only the usage endpoint is available, and it uses Google Cloud credentials.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+        }
+      ],
+      "exam_tie": "D6.2. Expect a proposal to switch to a cheaper model. The credited answer measures cost per task against the quality score first. (Inference)",
+      "trap": "A switch on the lowest per-token price looks like a saving. With no quality score on the same tasks, the cheaper tier can miss the bar or cost more per task.",
+      "decision_rule": "Plot the score against the cost per completed task before you choose a model.",
+      "exam_tip": "If the stem gives a cost but no quality score, measure the score first.",
+      "key_facts": [
+        {
+          "text": "For most agent workloads, the docs suggest Claude Opus 5.5 at its default effort as the first model.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+          "label": "Fact"
+        },
+        {
+          "text": "The docs suggest sampling tasks from production logs, weighted like real traffic.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+          "label": "Fact"
+        },
+        {
+          "text": "Usage and cost data typically appears within 5 minutes of request completion.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        },
+        {
+          "text": "The Usage and Cost API supports polling once per minute for sustained use.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        },
+        {
+          "text": "The usage and cost endpoints require Admin API credentials, and workspace API keys do not work.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Quality score threshold for each workload. Set it for each use case. Not in source."
+      ]
+    },
+    {
+      "name": "Five-field trade-off record",
+      "first_principle": "Each option needs the same fields, so every audience reads the same facts. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "opt",
+            "label": "Option with its fields",
+            "group": "control"
+          },
+          {
+            "id": "ben",
+            "label": "Benefit with measured value",
+            "group": "data"
+          },
+          {
+            "id": "cost",
+            "label": "Cost per completed task",
+            "group": "data"
+          },
+          {
+            "id": "risk",
+            "label": "Risk and reversal cost",
+            "group": "control"
+          },
+          {
+            "id": "date",
+            "label": "Date of each figure",
+            "group": "control"
+          },
+          {
+            "id": "aud",
+            "label": "Decision by each audience",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "opt",
+            "to": "ben",
+            "label": "measured"
+          },
+          {
+            "from": "opt",
+            "to": "cost",
+            "label": "priced"
+          },
+          {
+            "from": "opt",
+            "to": "risk",
+            "label": "named"
+          },
+          {
+            "from": "date",
+            "to": "aud",
+            "label": "sets review date"
+          },
+          {
+            "from": "ben",
+            "to": "aud",
+            "label": "decision input"
+          },
+          {
+            "from": "cost",
+            "to": "aud",
+            "label": "decision input"
+          }
+        ]
+      },
+      "steps": [
+        "List each option with the same set of fields. (Inference)",
+        "Fill the benefit field with a measured value and its evaluation set name. (Inference)",
+        "Fill the cost field with cost per completed task. (Inference)",
+        "Name the risk and the reversal cost of each option. (Inference)",
+        "Write one message for each audience that reads its own fields. (Inference)",
+        "Date every figure and set a review date. (Inference)"
+      ],
+      "pros": [
+        "Each audience decides on the facts it owns. (Inference)",
+        "Dated figures show when a choice needs review. (Inference)"
+      ],
+      "cons": [
+        "Several messages take more time than one summary. (Inference)",
+        "Figures drift when prices change, so the record needs a review date."
+      ],
+      "use_when": [
+        "Several audiences hold budget, risk, or sign-off. (Inference)",
+        "The option has a material cost or a compliance impact. (Inference)"
+      ],
+      "do_not_use_when": [
+        "One person decides and holds all the facts. (Inference)",
+        "The choice is a small, fully reversible setting. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Name the signed approver for each audience. (Inference)",
+          "combination": "Add a compliance impact field for regulated data. (Inference)"
+        },
+        {
+          "family": "cost",
+          "choice": "State cost per completed task with the price date.",
+          "combination": ""
+        },
+        {
+          "family": "latency",
+          "choice": "Report a percentile latency for each option. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Estimate the reversal cost in days or weeks. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D6.2. Expect an option that promises perfect accuracy or zero risk. The credited answer states the measured figure and its uncertainty. (Inference)",
+      "trap": "One slide for all audiences looks efficient, but each audience then lacks the field it decides on. (Inference)",
+      "decision_rule": "Give each audience the fields it decides on, and state the uncertainty beside each one. (Inference)",
+      "exam_tip": "An option that claims perfect accuracy or zero risk has no measurement behind it.",
+      "key_facts": [
+        {
+          "text": "Compare models on cost per completed task, not per token.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+          "label": "Fact"
+        },
+        {
+          "text": "Figures reflect list prices at the time of measurement, and they drift as prices change.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+          "label": "Fact"
+        },
+        {
+          "text": "Regional endpoints on Amazon Bedrock carry a 10 percent pricing premium over global endpoints.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Five-field record format. General practice, not in the docs. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Audience holds budget or sign-off?} -->|Yes| B[Quantified option with priced fields]\n  A -->|No| C{Several audiences decide?}\n  C -->|Yes| B\n  C -->|No| D[One message is enough]\n  B --> E{Option claims perfect accuracy or zero risk?}\n  E -->|Yes| F[Replace claim with measured figure and uncertainty]\n  E -->|No| G[Send one message per audience]",
+  "cheatsheet": "flowchart LR\n  P[Price per token] --> T[Cost per completed task]\n  T --> S[Score beside cost]\n  S --> F[Five fields]\n  F --> A[One message per audience]\n  F --> D[Date each figure]\n  X[Perfect claim] --> M[Measured figure with uncertainty]",
+  "patterns": [
+    {
+      "wording": "a vendor claim of perfect accuracy or zero risk",
+      "answer_type": "measured figure with its uncertainty",
+      "rule": "Replace each absolute claim with a measured figure and its uncertainty.",
+      "traps": [
+        "Promise zero risk to win approval",
+        "Quote one accuracy figure without its evaluation set"
+      ]
+    },
+    {
+      "wording": "options that differ in price and quality for several audiences",
+      "answer_type": "priced trade-off for each audience",
+      "rule": "Price each option per completed task, then write one message per audience.",
+      "traps": [
+        "One slide for all audiences",
+        "Compare per-token prices only"
+      ]
+    },
+    {
+      "wording": "a cheaper model proposed for a quality-sensitive task",
+      "answer_type": "measured score against spend",
+      "rule": "Measure quality and cost per task on real traffic before a switch.",
+      "traps": [
+        "Switch on the lowest per-token price",
+        "Accept the cheaper tier without a test"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for trade-off communication: Not in source.",
+    "Stakeholder roles and message formats for each audience. General practice, not in the docs. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+  ]
+}

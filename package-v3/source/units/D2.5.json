@@ -1,0 +1,617 @@
+{
+  "id": "D2.5",
+  "domain": "D2",
+  "title": "Reuse and prompt caching",
+  "task_statement": "Apply prompt reuse and caching to cut cost and latency. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Prompt caching",
+      "first_principle": "Pay full price for a stable prefix once, then read it at a fraction of the price while it stays identical.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "prefix",
+            "label": "Stable prefix: tools, system, documents",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "cache",
+            "label": "Prompt cache, per workspace or organization",
+            "group": "data"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          },
+          {
+            "id": "usage",
+            "label": "Usage fields in the response",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "prefix",
+            "label": "build request"
+          },
+          {
+            "from": "prefix",
+            "to": "api",
+            "label": "cache_control on last stable block"
+          },
+          {
+            "from": "api",
+            "to": "cache",
+            "label": "look up prefix hash"
+          },
+          {
+            "from": "cache",
+            "to": "model",
+            "label": "hit: read, miss: write"
+          },
+          {
+            "from": "model",
+            "to": "usage",
+            "label": "cache read and write token counts"
+          }
+        ]
+      },
+      "steps": [
+        "Put stable content first: tools, then system, then messages.",
+        "Add cache_control to the last block that stays the same across requests.",
+        "The API computes a hash of the prefix up to that breakpoint.",
+        "On a hit, the API reads the cached prefix and processes only the new tokens.",
+        "On a miss, the API writes the prefix to the cache for later requests.",
+        "Each cache read refreshes the lifetime at no extra cost.",
+        "Check cache_read_input_tokens and cache_creation_input_tokens to confirm hits."
+      ],
+      "pros": [
+        "Cuts input cost for repeated prefixes.",
+        "Cuts processing time for long repeated prefixes.",
+        "Needs no extra infrastructure. The API manages the cache."
+      ],
+      "cons": [
+        "A cache write costs more than a normal input token.",
+        "Any change at or before the breakpoint causes a miss.",
+        "Prompts below the minimum length are not cached, and the API returns no error."
+      ],
+      "use_when": [
+        "Many requests share a long system prompt, tool set, or document.",
+        "A multi-turn conversation grows and reuses its history.",
+        "Requests arrive often enough to hit the cache inside the TTL."
+      ],
+      "do_not_use_when": [
+        "The prefix changes on every request, for example a timestamp at the top.",
+        "The prompt is shorter than the minimum cacheable length for the model.",
+        "Requests arrive less often than the TTL and the 1-hour write price exceeds the saving."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Cache the stable prefix with the default 5-minute TTL.",
+          "combination": "Add a 1-hour TTL when calls arrive less often than every 5 minutes but more often than every hour."
+        },
+        {
+          "family": "latency",
+          "choice": "Cache long documents that many requests read.",
+          "combination": "Pre-warm the cache with max_tokens 0 to remove the cache-miss latency on the first user request."
+        },
+        {
+          "family": "isolation",
+          "choice": "Use separate workspaces for tenants that must not share a cache.",
+          "combination": "On Amazon Bedrock and Claude Models on Google Cloud (Google managed), isolation is at organization level only."
+        },
+        {
+          "family": "scale",
+          "choice": "Use up to 4 breakpoints to cache sections that change at different rates.",
+          "combination": "Add a second breakpoint when a conversation grows 20 or more blocks past the last write."
+        },
+        {
+          "family": "operations",
+          "choice": "Track cache read and write token counts per request.",
+          "combination": "Alert when the read count drops to zero after a prompt change."
+        },
+        {
+          "family": "quota",
+          "choice": "Use cache hits to raise rate limit headroom, because cache hits are not deducted against your rate limit.",
+          "combination": "For parallel requests, wait for the first response to start before you send the rest."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Bedrock keeps organization-level cache isolation. The AWS Bedrock documentation sets the per-model minimums and usage-field names.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Cache isolation is at organization level, not workspace level. The 512-token minimum for current models applies on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Cache isolation is at workspace level, the same as the Claude API. The 1-hour TTL is available.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Cache isolation is at workspace level, the same as the Claude API. The 1-hour TTL is available.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        }
+      ],
+      "exam_tie": "D2.5. Expect a scenario with a large repeated prefix and a cost or latency limit. The credited answer moves the stable content first and caches it. (Inference)",
+      "trap": "A custom response cache in front of the API looks cheaper. But it adds a component, and it cannot reuse a prefix for a new question (Inference).",
+      "decision_rule": "Put the breakpoint on the last block whose prefix is identical across the requests that must share the cache.",
+      "exam_tip": "If both cache token counts are zero, the prompt was below the minimum or the prefix changed.",
+      "key_facts": [
+        {
+          "text": "The default cache lifetime is 5 minutes.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "A 5-minute cache write costs 1.25 times the base input price.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "A 1-hour cache write costs 2 times the base input price.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "A cache read costs 0.1 times the base input price on Claude Haiku 5.5. It costs 0.05 times on Claude Opus 5.5 and Claude Sonnet 5.5, and 0.025 times on Claude Fable 5.1.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "A request can define up to 4 cache breakpoints.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "The lookback window checks at most 20 block positions per breakpoint.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "The minimum cacheable prompt length is 512 tokens for Claude Fable 5.1, Claude Opus 5.5, Claude Sonnet 5.5, and Claude Haiku 5.5.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "At 0.1 times the read price, the cache pays off after one read for a 5-minute write and after two reads for a 1-hour write.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Bedrock per-model minimum cacheable length. The Claude docs point to the AWS docs. Not in source."
+      ]
+    },
+    {
+      "name": "Automatic caching versus explicit breakpoints",
+      "first_principle": "Automatic caching places one breakpoint for you, and explicit breakpoints fix each cache point by hand.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "auto",
+            "label": "Top-level cache_control field",
+            "group": "control"
+          },
+          {
+            "id": "explicit",
+            "label": "cache_control on specific blocks",
+            "group": "control"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "slots",
+            "label": "Up to 4 breakpoint slots",
+            "group": "data"
+          },
+          {
+            "id": "cache",
+            "label": "Cache entries, 5-minute or 1-hour TTL",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "auto",
+            "label": "automatic: one field"
+          },
+          {
+            "from": "app",
+            "to": "explicit",
+            "label": "explicit: one field per block"
+          },
+          {
+            "from": "auto",
+            "to": "slots",
+            "label": "uses one slot"
+          },
+          {
+            "from": "explicit",
+            "to": "slots",
+            "label": "uses one slot each"
+          },
+          {
+            "from": "slots",
+            "to": "api",
+            "label": "breakpoints in request"
+          },
+          {
+            "from": "api",
+            "to": "cache",
+            "label": "read on match, write on miss"
+          }
+        ]
+      },
+      "steps": [
+        "Add one top-level cache_control field to start with automatic caching.",
+        "The system places one breakpoint on the last cacheable block.",
+        "The automatic breakpoint moves forward as the conversation grows.",
+        "Place cache_control on a content block to set an explicit breakpoint.",
+        "Each explicit breakpoint uses one of the 4 available slots.",
+        "Automatic caching uses one slot when you combine it with explicit breakpoints.",
+        "The lookback checks at most 20 positions for each breakpoint."
+      ],
+      "pros": [
+        "Automatic caching needs one field and no manual breakpoint management.",
+        "Explicit breakpoints cache sections that change at different rates.",
+        "Explicit breakpoints can cache a system prompt while automatic caching handles the conversation."
+      ],
+      "cons": [
+        "Automatic caching sets the breakpoint on the last cacheable block only.",
+        "Explicit breakpoints need edits when the position of stable content moves.",
+        "Four explicit breakpoints leave no slot, and automatic caching then returns a 400 error.",
+        "If the last block has an explicit cache_control with a different TTL, automatic caching returns a 400 error."
+      ],
+      "use_when": [
+        "A multi-turn conversation grows and each turn adds fewer than 20 blocks.",
+        "Sections such as tools, a system prompt, and a document change at different rates.",
+        "The team wants one setting that works without breakpoint management."
+      ],
+      "do_not_use_when": [
+        "The request already defines 4 explicit block breakpoints.",
+        "The target is the legacy Amazon Bedrock integration for Claude Opus 4.6 and earlier.",
+        "Each turn adds 20 or more blocks past the last write and no second breakpoint exists."
+      ],
+      "constraints": [
+        {
+          "family": "scale",
+          "choice": "Start with automatic caching for multi-turn conversations.",
+          "combination": "Add an explicit breakpoint near the write point when a turn adds 20 or more blocks."
+        },
+        {
+          "family": "cost",
+          "choice": "Set the cache TTL to 1 hour with the ttl field in cache_control.",
+          "combination": "When you mix TTLs, put 1-hour entries before any 5-minute entries."
+        },
+        {
+          "family": "operations",
+          "choice": "Check the cache read and write token counts after each change to the breakpoint setup.",
+          "combination": "Use cache diagnostics to find where the prompt prefix diverged."
+        },
+        {
+          "family": "governance",
+          "choice": "Document which breakpoint mode each service uses.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Automatic caching works on Amazon Bedrock. The legacy Bedrock integration for Claude Opus 4.6 and earlier returns a 400 error for a top-level cache_control field.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Automatic caching is available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Automatic caching is available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Automatic caching is available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        }
+      ],
+      "exam_tie": "D2.5. Expect the scenario to ask which caching mode fits a conversation that gets longer or a fixed set of sections. (Inference)",
+      "trap": "A top-level field on a request that already has 4 explicit breakpoints looks like extra protection, but the request fails with a 400 error.",
+      "decision_rule": "Use automatic caching for conversations that get longer and explicit breakpoints for sections that change at different rates.",
+      "exam_tip": "If a request returns a 400 error after a cache change, count the explicit breakpoints first.",
+      "key_facts": [
+        {
+          "text": "Automatic caching applies the cache breakpoint to the last cacheable block.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "Automatic caching uses a 5-minute TTL by default.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "A ttl value of 1h sets a 1-hour TTL at 2 times the base input price.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "Automatic caching uses one of the 4 available breakpoint slots.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "In a request with mixed TTLs, 1-hour cache entries must appear before 5-minute cache entries.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "Automatic caching is available on every platform except the legacy Amazon Bedrock integration for Claude Opus 4.6 and earlier.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "An explicit cache_control on the last block with a different TTL makes automatic caching return a 400 error.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps for automatic caching: Not in source.",
+        "Per-platform TTL prices beyond the pricing table: Not in source."
+      ]
+    },
+    {
+      "name": "Prompt reuse with templates",
+      "first_principle": "A template fixes the stable instructions once and fills only the variable slots for each request.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "tpl",
+            "label": "Stable template: role, rules, output format",
+            "group": "client"
+          },
+          {
+            "id": "slots",
+            "label": "Variable slots: request and documents",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "cache",
+            "label": "Cached prefix up to breakpoint",
+            "group": "data"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          },
+          {
+            "id": "out",
+            "label": "Answer inside output tags",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "tpl",
+            "to": "api",
+            "label": "stable text first"
+          },
+          {
+            "from": "slots",
+            "to": "api",
+            "label": "variable text last"
+          },
+          {
+            "from": "api",
+            "to": "cache",
+            "label": "breakpoint on last stable block"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "full request"
+          },
+          {
+            "from": "model",
+            "to": "out",
+            "label": "tagged answer"
+          }
+        ]
+      },
+      "steps": [
+        "Write the stable instructions once as a template with fixed text.",
+        "Wrap each input type in its own XML tag, such as request or document.",
+        "Insert the variable content into its slot after the stable text.",
+        "Place the cache breakpoint on the last stable block of the template.",
+        "Ask for the answer inside output tags so your code can extract it.",
+        "Change the template text only with a new version and a new evaluation run.",
+        "A changed prefix misses the cache, so check the hit rate after each version."
+      ],
+      "pros": [
+        "Templates separate instructions from data, as the best practices page recommends.",
+        "A fixed prefix supports cache hits across many requests.",
+        "Tagged slots make the output easy to parse."
+      ],
+      "cons": [
+        "Variable text after the breakpoint is billed at the base input price.",
+        "A template that changes often keeps the cache cold.",
+        "A slot can change the output format, so each template needs its own evaluation."
+      ],
+      "use_when": [
+        "Many requests share the same instructions and output format.",
+        "Documents or requests vary, but the rules stay the same.",
+        "Several teams reuse one approved instruction block."
+      ],
+      "do_not_use_when": [
+        "Each request needs a different structure and a different set of rules.",
+        "The first block changes on every request, for example a timestamp.",
+        "The template text changes for every user, so no prefix repeats."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Keep the template prefix stable and the variable slot last.",
+          "combination": "Add a 1-hour TTL when batches arrive with gaps longer than 5 minutes."
+        },
+        {
+          "family": "operations",
+          "choice": "Keep one live template version for each use case.",
+          "combination": "Use cache diagnostics when the hit rate falls after a template change."
+        },
+        {
+          "family": "governance",
+          "choice": "Store each template with a named version and an owner.",
+          "combination": "Review each template change against the evaluation set before release (Inference)."
+        },
+        {
+          "family": "isolation",
+          "choice": "Use separate workspaces for tenants that must not share a cache.",
+          "combination": "On Amazon Bedrock and Claude Models on Google Cloud (Google managed), the cache is shared across the organization, so separate tenants another way (Inference)."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Bedrock uses organization-level cache isolation, so templates share caches inside one organization.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Caches are isolated by workspace, the same as the Claude API.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "This platform uses organization-level cache isolation, so templates share caches inside one organization.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Caches are isolated by workspace, the same as the Claude API.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+        }
+      ],
+      "exam_tie": "D2.5. Expect the scenario to ask how to reuse one instruction block across many calls without a custom cache. (Inference)",
+      "trap": "A rebuilt full prompt with a timestamp in each request looks harmless, but it breaks the cached prefix on every call.",
+      "decision_rule": "Put stable template text first, variable slots last, and version every change to the template.",
+      "exam_tip": "When a template change drops the hit rate to zero, check the block order before you change the TTL.",
+      "key_facts": [
+        {
+          "text": "A cache hit requires 100 percent identical prompt segments up to the cache_control block.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "Include 3 to 5 examples in examples tags for best results.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Queries placed at the end of a long prompt can improve response quality by up to 30 percent in tests.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Put long-form data near the top of the prompt for inputs of 20k or more tokens.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Custom templates are one documented way to define an exact output format.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency",
+          "label": "Fact"
+        },
+        {
+          "text": "The ticket routing guide inserts a variable into request tags in its prompt template.",
+          "url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/ticket-routing",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "A built-in prompt template feature in the Claude Console: Not in source.",
+        "Limits on the number of stored template versions: Not in source.",
+        "Console steps for prompt templates: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Same long prefix on many calls?} -->|No| X[Do not cache]\n  A -->|Yes| B{Prefix above model minimum?}\n  B -->|No| Y[Grow prefix or do not cache]\n  B -->|Yes| C{Calls arrive within 5 minutes?}\n  C -->|Yes| D[5-minute TTL]\n  C -->|No| E{Two or more reads within one hour?}\n  E -->|Yes| F[1-hour TTL]\n  E -->|No| X",
+  "cheatsheet": "flowchart LR\n  P[Stable prefix first] --> B[Breakpoint on last stable block]\n  B --> T{TTL}\n  T --> T5[5 min: 1.25x write]\n  T --> T1[1 hour: 2x write]\n  B --> R[Read 0.025x to 0.1x by model]\n  B --> M[Max 4 breakpoints]\n  B --> L[Lookback 20 blocks]",
+  "patterns": [
+    {
+      "wording": "reduce cost for a long prompt that repeats on every request",
+      "answer_type": "prompt caching on the stable prefix",
+      "rule": "Cache what repeats. Move variable content after the breakpoint.",
+      "traps": [
+        "Smaller model that fails the quality floor",
+        "Custom response cache"
+      ]
+    },
+    {
+      "wording": "cache hit rate drops to zero after a prompt change",
+      "answer_type": "prefix order or breakpoint position fix",
+      "rule": "Find the block that changes and move it after the breakpoint.",
+      "traps": [
+        "Longer TTL",
+        "More breakpoints on the same variable block"
+      ]
+    },
+    {
+      "wording": "a repeated instruction block and an output that a program must parse",
+      "answer_type": "stable template with tagged slots and tagged output",
+      "rule": "Keep the template stable. Put variable content in its own tag after the stable text.",
+      "traps": [
+        "A rebuilt prompt with a timestamp",
+        "Parsing free text with a pattern match"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/models/overview",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency",
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+    "https://platform.claude.com/docs/en/about-claude/use-case-guides/ticket-routing",
+    "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics"
+  ]
+}

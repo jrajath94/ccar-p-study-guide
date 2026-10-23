@@ -1,0 +1,341 @@
+{
+  "id": "D6.1",
+  "domain": "D6",
+  "title": "Structured discovery",
+  "task_statement": "Turn stakeholder requests into measurable requirements, owners, and prohibited behaviors before design starts. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Success criteria and evaluation sets",
+      "first_principle": "A requirement becomes testable only when it has a metric, a threshold, and a named scope.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "req",
+            "label": "Stakeholder requirement",
+            "group": "client"
+          },
+          {
+            "id": "crit",
+            "label": "Success criterion with metric and threshold",
+            "group": "control"
+          },
+          {
+            "id": "set",
+            "label": "Evaluation set from real task distribution",
+            "group": "data"
+          },
+          {
+            "id": "claude",
+            "label": "Claude model under test",
+            "group": "claude"
+          },
+          {
+            "id": "grade",
+            "label": "Grading: code, LLM, or human",
+            "group": "control"
+          },
+          {
+            "id": "result",
+            "label": "Measured result against threshold",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "req",
+            "to": "crit",
+            "label": "adjective becomes measurable"
+          },
+          {
+            "from": "crit",
+            "to": "set",
+            "label": "scope the test cases"
+          },
+          {
+            "from": "set",
+            "to": "claude",
+            "label": "run each input"
+          },
+          {
+            "from": "claude",
+            "to": "grade",
+            "label": "outputs"
+          },
+          {
+            "from": "grade",
+            "to": "result",
+            "label": "scores"
+          }
+        ]
+      },
+      "steps": [
+        "Write each requirement as a specific and measurable criterion.",
+        "Attach a quantitative metric or a defined qualitative scale to each criterion.",
+        "Name the owner who accepts each threshold. (Inference)",
+        "Build a test set that mirrors the real task distribution.",
+        "Add edge cases to the test set.",
+        "Score each output with code, an LLM, or a human scorer.",
+        "Compare the measured result with the threshold before design starts. (Inference)"
+      ],
+      "pros": [
+        "Turns vague goals into checks that a team can run.",
+        "Gives every stakeholder the same pass or fail test. (Inference)",
+        "Shows which requirement fails before release. (Inference)"
+      ],
+      "cons": [
+        "Thresholds need data that the team may not have yet. (Inference)",
+        "Each quality dimension adds its own evaluation work. (Inference)",
+        "Human scoring is slow and expensive, so the docs advise against it when possible."
+      ],
+      "use_when": [
+        "A request uses adjectives such as accurate or fast.",
+        "The team builds an LLM feature with a measurable quality bar.",
+        "Several success criteria must hold at the same time."
+      ],
+      "do_not_use_when": [
+        "A throwaway prototype needs no pass or fail bar. (Inference)",
+        "No representative inputs exist, so the test set cannot mirror the task. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "latency",
+          "choice": "Set an acceptable response time as a criterion, based on real-time needs.",
+          "combination": "Add a percentile target, such as 95 percent of responses under a limit, when the average hides slow requests."
+        },
+        {
+          "family": "cost",
+          "choice": "Set a budget for each call or each month as a criterion.",
+          "combination": "Compare options by cost per completed task when quality differs. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Name a signed owner for each threshold. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Record operational criteria such as response time and uptime.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D6.1. Expect a vague stakeholder request with no metric. The credited answer defines measurable criteria before any design. (Inference)",
+      "trap": "Design built on adjectives such as fast looks efficient, but no one can test it, so the team builds to a guessed bar. (Inference)",
+      "decision_rule": "Convert each adjective into a metric, a threshold, and an owner before design.",
+      "exam_tip": "If the stem gives adjectives but no metric, the first action is discovery.",
+      "key_facts": [
+        {
+          "text": "Good success criteria are specific, measurable, achievable, and relevant.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        },
+        {
+          "text": "Most use cases need multidimensional evaluation along several success criteria.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        },
+        {
+          "text": "Common success criteria include task fidelity, latency, and price.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        },
+        {
+          "text": "Eval design favors test sets that mirror the real task distribution and include edge cases.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        },
+        {
+          "text": "Code-based grades are the fastest and most reliable, and human grades are slow and expensive.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Cloud platform steps for requirement discovery. The docs do not cover them. Not in source.",
+        "Question grid for discovery interviews. General practice, not in the docs. Not in source."
+      ]
+    },
+    {
+      "name": "Discovery question grid",
+      "first_principle": "Each question covers one dimension where a silent assumption can hide. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "owner",
+            "label": "Named stakeholder owner",
+            "group": "client"
+          },
+          {
+            "id": "grid",
+            "label": "Question grid by dimension",
+            "group": "control"
+          },
+          {
+            "id": "gaps",
+            "label": "Open assumptions log",
+            "group": "data"
+          },
+          {
+            "id": "sign",
+            "label": "Signed requirement record",
+            "group": "control"
+          },
+          {
+            "id": "design",
+            "label": "Design stage",
+            "group": "claude"
+          }
+        ],
+        "edges": [
+          {
+            "from": "owner",
+            "to": "grid",
+            "label": "answers each dimension"
+          },
+          {
+            "from": "grid",
+            "to": "gaps",
+            "label": "unanswered cells"
+          },
+          {
+            "from": "gaps",
+            "to": "owner",
+            "label": "ask again"
+          },
+          {
+            "from": "grid",
+            "to": "sign",
+            "label": "all cells answered"
+          },
+          {
+            "from": "sign",
+            "to": "design",
+            "label": "approved input"
+          }
+        ]
+      },
+      "steps": [
+        "List the dimensions that can hide assumptions, such as prohibitions, cost, volume, and compliance. (Inference)",
+        "Ask the owner of each dimension one question. (Inference)",
+        "Record each answer with its date and the name of the person who gave it. (Inference)",
+        "Log each unconfirmed guess as an open assumption. (Inference)",
+        "Close every open assumption before the design gate. (Inference)"
+      ],
+      "pros": [
+        "Surfaces prohibited behaviors before the build starts. (Inference)",
+        "Exposes answers that disagree across owners early. (Inference)",
+        "Costs little compared with rework after a demo. (Inference)"
+      ],
+      "cons": [
+        "Stakeholders may not know the corner cases either. (Inference)",
+        "Answers go stale when volume or compliance changes. (Inference)"
+      ],
+      "use_when": [
+        "A request names outcomes but no limits, owners, or volumes. (Inference)",
+        "The system touches money, personal data, or several teams. (Inference)"
+      ],
+      "do_not_use_when": [
+        "A short internal demo uses no real data. (Inference)",
+        "The requirement is one fixed setting with an obvious owner. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Name one owner who signs each requirement. (Inference)",
+          "combination": "Add a review date to every signed answer. (Inference)"
+        },
+        {
+          "family": "scale",
+          "choice": "Record expected volume, with peak bursts. (Inference)",
+          "combination": "Recheck the volume answer after a growth event. (Inference)"
+        },
+        {
+          "family": "cost",
+          "choice": "Set a workspace spend limit that enforces the cost answer.",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Name the on-call owner for each operational dependency. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D6.1. Expect a scenario with an unanswered requirement. The credited answer runs discovery before any design. (Inference)",
+      "trap": "Feature work first looks productive, but an unanswered limit still breaks the first production demo. (Inference)",
+      "decision_rule": "Ask one question for each dimension, and do not design around a blank answer. (Inference)",
+      "exam_tip": "A blank answer is an open risk, so name the owner who fills it.",
+      "key_facts": [
+        {
+          "text": "Workspace spend limits cap monthly spending for one workspace.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "Spend limits cannot be set on the Default Workspace.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "Each API key can be scoped to a single workspace.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Dimension list and grid layout. General practice, not in the docs. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Requirement has metric and threshold?} -->|No| B[Ask the owner for a number]\n  B --> A\n  A -->|Yes| C{Owner signed the threshold?}\n  C -->|No| D[Log open assumption]\n  D --> B\n  C -->|Yes| E{Prohibited behaviors listed?}\n  E -->|No| F[Ask the owner for prohibitions]\n  F --> E\n  E -->|Yes| G[Build test set and start design]",
+  "cheatsheet": "flowchart LR\n  A[Adjective] --> B[Metric]\n  B --> C[Threshold]\n  C --> D[Owner signs]\n  D --> E[Test set]\n  E --> F[Scored result]\n  A --> G[Open assumption]\n  G --> D",
+  "patterns": [
+    {
+      "wording": "a request with adjectives but no metric or threshold",
+      "answer_type": "discovery before design",
+      "rule": "Convert each adjective into a metric, a threshold, and an owner.",
+      "traps": [
+        "Build a prototype and tune the wording later",
+        "Pick the largest model first"
+      ]
+    },
+    {
+      "wording": "a requirement that names no prohibited behavior",
+      "answer_type": "written prohibition in the requirement record",
+      "rule": "Write each prohibited behavior as a design constraint with a named owner.",
+      "traps": [
+        "Rely on a reviewer to catch it later",
+        "Add monitoring after launch"
+      ]
+    },
+    {
+      "wording": "an owner who is unknown or who changed roles",
+      "answer_type": "named owner who signs the requirement",
+      "rule": "Assign one owner who signs each requirement before design.",
+      "traps": [
+        "Leave the sign-off with the whole team"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for structured discovery: Not in source.",
+    "Discovery interview method and stakeholder roles. General practice, not in the docs. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+    "https://platform.claude.com/docs/en/manage-claude/workspaces"
+  ]
+}

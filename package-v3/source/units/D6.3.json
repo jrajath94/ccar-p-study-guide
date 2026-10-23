@@ -1,0 +1,568 @@
+{
+  "id": "D6.3",
+  "domain": "D6",
+  "title": "Feedback and expectation alignment",
+  "task_statement": "Set measurable expectations, review triggers, and consequences for a production model. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Usage and Cost API reads",
+      "first_principle": "Usage data arrives after a short delay, so the feedback loop reads aggregates on a schedule.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Production requests",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "usage",
+            "label": "Usage report by model and workspace",
+            "group": "data"
+          },
+          {
+            "id": "cost",
+            "label": "Cost report in USD by day",
+            "group": "data"
+          },
+          {
+            "id": "poll",
+            "label": "Scheduled read with cached result",
+            "group": "control"
+          },
+          {
+            "id": "dash",
+            "label": "Review against threshold",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "requests"
+          },
+          {
+            "from": "api",
+            "to": "usage",
+            "label": "token counts"
+          },
+          {
+            "from": "api",
+            "to": "cost",
+            "label": "priced in USD"
+          },
+          {
+            "from": "usage",
+            "to": "poll",
+            "label": "aggregates"
+          },
+          {
+            "from": "cost",
+            "to": "poll",
+            "label": "daily totals"
+          },
+          {
+            "from": "poll",
+            "to": "dash",
+            "label": "compare with threshold"
+          }
+        ]
+      },
+      "steps": [
+        "Send requests through the workspace that owns the traffic. (Inference)",
+        "Read the usage report grouped by model or workspace.",
+        "Read the cost report for daily totals in USD.",
+        "Poll the endpoints no more than once per minute for sustained use.",
+        "Cache each result for the dashboard refresh.",
+        "Compare each total with the threshold in the feedback contract."
+      ],
+      "pros": [
+        "Gives usage views by model, workspace, and service tier.",
+        "Gives daily cost totals in USD for a budget review.",
+        "Lets a team query history without opening each response. (Inference)"
+      ],
+      "cons": [
+        "Data appears after a delay, so an alert fires late.",
+        "The cost report offers daily granularity only.",
+        "The endpoints need Admin API credentials, not workspace keys."
+      ],
+      "use_when": [
+        "A team needs a usage or cost trend for a budget review.",
+        "A workspace must show its share of spend."
+      ],
+      "do_not_use_when": [
+        "A live incident needs a result within seconds. (Inference)",
+        "The organization has no admin account for these endpoints. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Read daily cost totals for the monthly budget review.",
+          "combination": "Filter by workspace to split the total by team."
+        },
+        {
+          "family": "operations",
+          "choice": "Poll no more than once per minute for sustained use.",
+          "combination": "Use short bursts when you download paginated data."
+        },
+        {
+          "family": "isolation",
+          "choice": "Filter usage by API key and workspace to separate teams.",
+          "combination": ""
+        },
+        {
+          "family": "governance",
+          "choice": "Use an Admin API key, an org:admin token, or an unscoped personal or service account key.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The programmatic Usage and Cost API endpoints are not available. Use the Usage and Cost pages in the Claude Console.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Only the usage endpoint is available, and it uses Google Cloud credentials.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+        }
+      ],
+      "exam_tie": "D6.3. Expect a question on org-wide spend by team. The credited answer reads aggregates on a schedule, not single responses. (Inference)",
+      "trap": "One response at a time looks precise, but it does not show the trend across workspaces. (Inference)",
+      "decision_rule": "Read usage and cost aggregates on a schedule, and compare each total with its threshold.",
+      "exam_tip": "Per-response usage fields show one call. The Usage and Cost API shows totals.",
+      "key_facts": [
+        {
+          "text": "Usage and cost data typically appears within 5 minutes of request completion.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        },
+        {
+          "text": "The API supports polling once per minute for sustained use.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        },
+        {
+          "text": "Usage API time buckets are 1 minute, 1 hour, or 1 day.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        },
+        {
+          "text": "The Cost API supports only daily buckets.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        },
+        {
+          "text": "Usage and Cost endpoints need Admin API credentials, and workspace API keys do not work.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Usage and cost endpoints on Amazon Bedrock. Not in source.",
+        "Dashboard refresh interval for your team. Not in source."
+      ]
+    },
+    {
+      "name": "Workspace spend and rate limits",
+      "first_principle": "Spend limits cap monthly spend for one workspace, and rate limits cap requests and tokens per minute.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "team",
+            "label": "Team workspace",
+            "group": "client"
+          },
+          {
+            "id": "key",
+            "label": "Workspace-scoped API key",
+            "group": "client"
+          },
+          {
+            "id": "claude",
+            "label": "Claude API request",
+            "group": "claude"
+          },
+          {
+            "id": "rate",
+            "label": "Rate limits per model",
+            "group": "control"
+          },
+          {
+            "id": "spend",
+            "label": "Monthly spend limit",
+            "group": "control"
+          },
+          {
+            "id": "alert",
+            "label": "Alert to the owner",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "team",
+            "to": "key",
+            "label": "owns"
+          },
+          {
+            "from": "key",
+            "to": "claude",
+            "label": "runs in one workspace"
+          },
+          {
+            "from": "claude",
+            "to": "rate",
+            "label": "checked per minute"
+          },
+          {
+            "from": "claude",
+            "to": "spend",
+            "label": "counts toward spend"
+          },
+          {
+            "from": "spend",
+            "to": "alert",
+            "label": "threshold reached"
+          }
+        ]
+      },
+      "steps": [
+        "Create one workspace for each team or environment.",
+        "Scope each API key to the workspace it serves.",
+        "Set rate limits for each model in the workspace.",
+        "Set a monthly spend limit for the workspace.",
+        "Configure alerts at the spend thresholds.",
+        "Check the limits again after a model or traffic change. (Inference)"
+      ],
+      "pros": [
+        "Caps spend and requests for each workspace on its own.",
+        "Sends alerts before the spend cap applies.",
+        "Keeps each team cost visible in its own workspace."
+      ],
+      "cons": [
+        "Spend limits cannot be set on the Default Workspace.",
+        "Requests above a rate limit fail with a 429 error."
+      ],
+      "use_when": [
+        "A team or project needs its own budget.",
+        "An environment needs lower limits than production."
+      ],
+      "do_not_use_when": [
+        "One small project has no budget owner. (Inference)",
+        "The traffic has no budget or capacity requirement. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Set a monthly spend limit and alerts on each workspace.",
+          "combination": "Keep production out of the Default Workspace, because it accepts no spend limit. (Inference)"
+        },
+        {
+          "family": "quota",
+          "choice": "Set rate limits for each model on requests, input tokens, and output tokens per minute.",
+          "combination": "Read the current limits with the Rate Limits API."
+        },
+        {
+          "family": "isolation",
+          "choice": "Scope each API key to one workspace.",
+          "combination": ""
+        },
+        {
+          "family": "governance",
+          "choice": "Cap the share of organization limits that Claude Code can use.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "The default quota is 2 million input tokens per minute, and AWS enforces requests per minute.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Foundry omits Anthropic rate limit headers, so manage limits in Azure monitoring and request increases through Azure.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Google Cloud manages rate limits and quotas.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Anthropic manages rate limits, and higher limits go through the account representative.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Anthropic manages rate limits, new organizations start on the Start tier, and increases go through the account representative.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        }
+      ],
+      "exam_tie": "D6.3. Expect a team that asks for its own budget. The credited answer uses a separate workspace with its own limits and alerts. (Inference)",
+      "trap": "One shared key with one global cap looks simpler, but it hides which team spent the budget. (Inference)",
+      "decision_rule": "Give each team or environment its own workspace, with its own spend and rate limits.",
+      "exam_tip": "A budget for each team points to workspace spend limits, not to a shared key.",
+      "key_facts": [
+        {
+          "text": "Each workspace can have spend limits and alerts at chosen thresholds.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "Rate limits cap requests, input tokens, and output tokens per minute.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "Requests that exceed a rate limit return a 429 error.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "label": "Fact"
+        },
+        {
+          "text": "An organization can have up to 100 workspaces by default, and archived workspaces do not count.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "The default Amazon Bedrock quota is 2 million input tokens per minute.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Default requests per minute on Amazon Bedrock. Not in source.",
+        "Exact Start tier rate limit values for Claude Platform on AWS. Not in source."
+      ]
+    },
+    {
+      "name": "Feedback contract with review triggers",
+      "first_principle": "A written trigger turns a metric drift into a scheduled review. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "data",
+            "label": "Usage and quality data",
+            "group": "data"
+          },
+          {
+            "id": "metric",
+            "label": "Primary metric and threshold",
+            "group": "control"
+          },
+          {
+            "id": "budget",
+            "label": "Error budget for each period",
+            "group": "control"
+          },
+          {
+            "id": "trig",
+            "label": "Review trigger",
+            "group": "control"
+          },
+          {
+            "id": "owner",
+            "label": "Named owner",
+            "group": "client"
+          },
+          {
+            "id": "rule",
+            "label": "Iterate or re-architect rule",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "data",
+            "to": "metric",
+            "label": "measured value"
+          },
+          {
+            "from": "metric",
+            "to": "budget",
+            "label": "sets allowance"
+          },
+          {
+            "from": "budget",
+            "to": "trig",
+            "label": "allowance spent"
+          },
+          {
+            "from": "metric",
+            "to": "trig",
+            "label": "threshold crossed"
+          },
+          {
+            "from": "trig",
+            "to": "owner",
+            "label": "page owner"
+          },
+          {
+            "from": "owner",
+            "to": "rule",
+            "label": "apply rule"
+          }
+        ]
+      },
+      "steps": [
+        "Set the primary metric and its threshold with the owner. (Inference)",
+        "Derive the error budget from the threshold for each period. (Inference)",
+        "Write each review trigger as a count or a rate, not a judgment. (Inference)",
+        "Name the consequence of each trigger before launch. (Inference)",
+        "Write the rule that separates tuning from a rebuild. (Inference)",
+        "Review the contract on the same date as the requirements. (Inference)"
+      ],
+      "pros": [
+        "Turns metric drift into a scheduled review. (Inference)",
+        "Settles the breach question before a dispute starts. (Inference)"
+      ],
+      "cons": [
+        "A trigger can fire on a data change instead of a model change. (Inference)",
+        "A strict consequence can pause work after a false alarm. (Inference)"
+      ],
+      "use_when": [
+        "Production traffic depends on a probabilistic output. (Inference)",
+        "A stakeholder asks for a guaranteed percentage. (Inference)"
+      ],
+      "do_not_use_when": [
+        "A prototype has no users and no budget. (Inference)",
+        "The metric has no measurement yet. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Name the owner who signs each consequence. (Inference)",
+          "combination": "Date the contract and review it with the requirements. (Inference)"
+        },
+        {
+          "family": "operations",
+          "choice": "Route each trigger to a named owner. (Inference)",
+          "combination": "Segment the data before any rebuild decision. (Inference)"
+        },
+        {
+          "family": "cost",
+          "choice": "Forecast monthly spend from cost per task and expected volume. (Inference)",
+          "combination": "Add a cost trigger for drift above the forecast. (Inference)"
+        },
+        {
+          "family": "latency",
+          "choice": "Set a latency range instead of a single point. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D6.3. Expect a drift or SLA dispute. The credited answer applies the agreed trigger and rule, not a new target. (Inference)",
+      "trap": "A higher SLA target looks like a fix, but the system behavior does not change. (Inference)",
+      "decision_rule": "Write each trigger, its owner, and its consequence before launch. (Inference)",
+      "exam_tip": "A drop below the agreed iterate threshold calls for tuning, not a rebuild. (Inference)",
+      "key_facts": [
+        {
+          "text": "Good success criteria are measurable, with quantitative metrics or well-defined qualitative scales.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        },
+        {
+          "text": "Operational criteria include response time in milliseconds and uptime as a percentage.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        },
+        {
+          "text": "Price is a common success criterion, set as the budget to run the model.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        },
+        {
+          "text": "Most use cases need several success criteria checked together.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+          "label": "Fact"
+        },
+        {
+          "text": "Usage and cost data typically appears within 5 minutes of request completion.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Error budget formula and default allowance. General practice, not in the docs. Not in source.",
+        "Breach consequence for a vendor contract. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Metric crossed its threshold?} -->|No| B[Keep monitoring]\n  A -->|Yes| C{Trigger tied to a named owner?}\n  C -->|No| D[Name the owner first]\n  D --> C\n  C -->|Yes| E{Drop below iterate threshold?}\n  E -->|Yes| F[Tune prompts and retrieval then re-measure]\n  E -->|No| G[Re-architect under the signed rule]\n  F --> H{Three tuning rounds failed?}\n  H -->|Yes| G",
+  "cheatsheet": "flowchart LR\n  M[Metric threshold] --> B[Error budget]\n  B --> T[Review trigger]\n  T --> O[Named owner]\n  O --> R{Iterate or rebuild}\n  R --> I[Tune and re-measure]\n  R --> X[Re-architect]\n  W[Workspace limits] --> C[Spend alerts]",
+  "patterns": [
+    {
+      "wording": "a spend overrun found in a monthly report",
+      "answer_type": "workspace limits and alerts",
+      "rule": "Set a spend limit and alerts on the workspace that owns the spend.",
+      "traps": [
+        "Lower the model tier without a measurement",
+        "Use one shared key with no owner"
+      ]
+    },
+    {
+      "wording": "a quality drop below an agreed range",
+      "answer_type": "review trigger and iterate rule",
+      "rule": "Run the agreed review and tune before any rebuild.",
+      "traps": [
+        "Rebuild on the first drop",
+        "Tighten the target to hide the drop"
+      ]
+    },
+    {
+      "wording": "a stakeholder demands a perfect guarantee",
+      "answer_type": "measured range with a named trigger",
+      "rule": "Replace the guarantee with a measured range, a trigger, and a consequence.",
+      "traps": [
+        "Promise perfect uptime",
+        "Promise a single point with no range"
+      ]
+    }
+  ],
+  "console_steps": [
+    {
+      "step": "Open the Workspaces page in the Claude Console.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+      "screenshot": null
+    },
+    {
+      "step": "Select the workspace, then click Spend limits.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+      "screenshot": null
+    },
+    {
+      "step": "Open the Usage page in the Claude Console.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+      "screenshot": null
+    }
+  ],
+  "not_in_source": [
+    "Alert delivery channel for spend thresholds. Not in source.",
+    "Feedback contract template. General practice, not in the docs. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/manage-claude/usage-cost-api",
+    "https://platform.claude.com/docs/en/manage-claude/workspaces",
+    "https://platform.claude.com/docs/en/api/rate-limits",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests"
+  ]
+}

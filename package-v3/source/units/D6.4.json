@@ -1,0 +1,372 @@
+{
+  "id": "D6.4",
+  "domain": "D6",
+  "title": "Architecture documentation",
+  "task_statement": "Record architecture decisions with their alternatives, owners, evidence, and review criteria so a successor can operate the system. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Architecture decision record",
+      "first_principle": "A record that a successor can read preserves the decision after the original people leave. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "decision",
+            "label": "Decision and date",
+            "group": "control"
+          },
+          {
+            "id": "alts",
+            "label": "Alternatives and rejections",
+            "group": "control"
+          },
+          {
+            "id": "trade",
+            "label": "Trade-offs and assumptions",
+            "group": "data"
+          },
+          {
+            "id": "evidence",
+            "label": "Evidence link to eval run",
+            "group": "data"
+          },
+          {
+            "id": "owner",
+            "label": "Current owner",
+            "group": "client"
+          },
+          {
+            "id": "review",
+            "label": "Review criteria",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "decision",
+            "to": "alts",
+            "label": "rejected options"
+          },
+          {
+            "from": "alts",
+            "to": "trade",
+            "label": "trade-offs per option"
+          },
+          {
+            "from": "trade",
+            "to": "evidence",
+            "label": "eval run identifier"
+          },
+          {
+            "from": "owner",
+            "to": "review",
+            "label": "owner checks criteria"
+          },
+          {
+            "from": "review",
+            "to": "decision",
+            "label": "reopen rule"
+          }
+        ]
+      },
+      "steps": [
+        "Write the decision, its date, and its owner. (Inference)",
+        "List each alternative and the reason it lost. (Inference)",
+        "Record the assumptions and trade-offs of the chosen option. (Inference)",
+        "Link the evidence, such as an evaluation run. (Inference)",
+        "Write the review criteria that reopen the decision. (Inference)",
+        "Record the open issues that remain unresolved. (Inference)",
+        "Add a new record that supersedes the old one. Keep the old record unchanged. (Inference)"
+      ],
+      "pros": [
+        "Lets a successor operate the system without the original team. (Inference)",
+        "Keeps the evidence attached to the decision. (Inference)"
+      ],
+      "cons": [
+        "Records go stale when code changes without a record update. (Inference)",
+        "A long record for a small configuration flag adds work with no gain. (Inference)"
+      ],
+      "use_when": [
+        "A decision is expensive to reverse or affects several components. (Inference)",
+        "A new owner will run the system later. (Inference)"
+      ],
+      "do_not_use_when": [
+        "A configuration flag is easy to revert and has no trade-off. (Inference)",
+        "A hackathon demo uses no real data. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Name the current owner of each decision. (Inference)",
+          "combination": "Link audit or compliance evidence to the evidence field. (Inference)"
+        },
+        {
+          "family": "operations",
+          "choice": "Write the review criteria as measurable thresholds. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "scale",
+          "choice": "Write records only for decisions that affect several components. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "cost",
+          "choice": "Record the cost per completed task that the decision assumed. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D6.4. Expect a successor scenario with no original owner. The credited answer reads the decision record and checks its review criteria before any change. (Inference)",
+      "trap": "A full new evaluation looks thorough, but it repeats evidence that the record already holds. (Inference)",
+      "decision_rule": "Record each decision with its alternatives, owner, evidence, and review criteria when you make it. (Inference)",
+      "exam_tip": "If the decision owner left, the first action reads the record. (Inference)",
+      "key_facts": [
+        {
+          "text": "A model ID identifies a pinned version that stays constant for the lifetime of that ID.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic does not update the weights or configuration of a model ID.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        },
+        {
+          "text": "Infrastructure updates can change observable behavior even when the model ID and weights stay the same.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        },
+        {
+          "text": "Every model ID has its own deprecation and retirement schedule.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Architecture decision record template or required fields. General practice, not in the docs. Not in source.",
+        "Anthropic guidance on architecture decision records. Not in source."
+      ]
+    },
+    {
+      "name": "Model ID in decision records",
+      "first_principle": "Record the exact model ID, because a dateless ID from the 4.6 generation names one fixed snapshot.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "id",
+            "label": "Model ID in request",
+            "group": "claude"
+          },
+          {
+            "id": "snap",
+            "label": "Fixed model snapshot",
+            "group": "claude"
+          },
+          {
+            "id": "infra",
+            "label": "Serving infrastructure",
+            "group": "cloud"
+          },
+          {
+            "id": "record",
+            "label": "Decision record with model ID",
+            "group": "control"
+          },
+          {
+            "id": "dep",
+            "label": "Deprecation schedule for the ID",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "id",
+            "label": "sends model parameter"
+          },
+          {
+            "from": "id",
+            "to": "snap",
+            "label": "maps to one snapshot"
+          },
+          {
+            "from": "infra",
+            "to": "snap",
+            "label": "may change behavior"
+          },
+          {
+            "from": "record",
+            "to": "id",
+            "label": "names the ID"
+          },
+          {
+            "from": "dep",
+            "to": "id",
+            "label": "sets retirement"
+          }
+        ]
+      },
+      "steps": [
+        "Send the full model ID in each request.",
+        "Record the model ID and the platform in the decision record.",
+        "Record the deprecation date for that model ID. (Inference)",
+        "Test a new model ID before you change the record. (Inference)",
+        "Create a new record when the model ID changes. (Inference)"
+      ],
+      "pros": [
+        "The record matches the exact snapshot that the evaluation measured.",
+        "A model upgrade becomes an explicit change to the model ID."
+      ],
+      "cons": [
+        "A dateless ID is not an evergreen pointer, because an updated version ships under a new model ID.",
+        "Behavior can shift on the same ID after infrastructure updates."
+      ],
+      "use_when": [
+        "A decision depends on measured quality or cost for one model.",
+        "A platform offers several ID formats for the same model."
+      ],
+      "do_not_use_when": [
+        "The decision does not depend on model behavior, such as a storage format choice. (Inference)",
+        "The model is a prototype with no decision record. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "skill",
+          "choice": "Record the model ID that the evaluation used. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Check the deprecation table before each release.",
+          "combination": "Test a successor model well before the retirement date. (Inference)"
+        },
+        {
+          "family": "data location",
+          "choice": "Record the platform that hosts the model ID.",
+          "combination": "Record the endpoint type, such as global or regional, on Amazon Bedrock. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Record the API version that the client sends.",
+          "combination": "Use the latest API version when possible, as the docs recommend."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Model IDs carry an anthropic. prefix, such as anthropic.claude-opus-5-5.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Models from the 4.6 generation use the Claude API ID. Earlier models add an at sign and a date.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "This offering uses the same model IDs as the Claude API.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Model IDs are identical to the Claude API IDs, such as claude-haiku-5-5, with no anthropic. prefix.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "The deployment name becomes the model parameter, and it defaults to the model ID.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "D6.4. Expect a decision record that names a model. The credited answer names the exact model ID and the platform. (Inference)",
+      "trap": "A dateless ID looks like an alias that moves, but it names a fixed snapshot. A record that says latest misstates what was tested.",
+      "decision_rule": "Record the exact model ID, the platform, and the deprecation date for each measured decision.",
+      "exam_tip": "A model ID with no date is a fixed snapshot from the 4.6 generation onward.",
+      "key_facts": [
+        {
+          "text": "A dateless model ID from the 4.6 generation is a fixed snapshot, not an alias.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        },
+        {
+          "text": "Models before the 4.6 generation include a snapshot date in the ID.",
+          "url": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic gives at least 60 days of notice before retirement of a publicly released model.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "Microsoft Foundry follows the Claude API lifecycle schedule.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic recommends the latest API version whenever possible.",
+          "url": "https://platform.claude.com/docs/en/api/versioning",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Endpoint type effect on model behavior for Amazon Bedrock. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Decision depends on a model?} -->|No| B[Record decision without model ID]\n  A -->|Yes| C{Exact model ID recorded?}\n  C -->|No| D[Record the dated or dateless model ID]\n  D --> C\n  C -->|Yes| E{Review criteria set?}\n  E -->|No| F[Write measurable review criteria]\n  E -->|Yes| G{Successor can run the system from the record?}\n  G -->|No| H[Add absent fields in a new record]\n  G -->|Yes| I[Record is complete]",
+  "cheatsheet": "flowchart LR\n  D[Decision] --> A[Alternatives and rejections]\n  A --> T[Trade-offs]\n  T --> E[Evidence link]\n  E --> O[Owner]\n  O --> R[Review criteria]\n  M[Exact model ID] --> E\n  R --> S[Supersede, do not edit]",
+  "patterns": [
+    {
+      "wording": "a successor must run a system whose owner left",
+      "answer_type": "read the record and check review criteria",
+      "rule": "Read the decision record, check its criteria against current data, then change the system.",
+      "traps": [
+        "Re-run the full evaluation from scratch",
+        "Remove the component because the owner left"
+      ]
+    },
+    {
+      "wording": "a team cannot say which model a decision measured",
+      "answer_type": "exact model ID in the record",
+      "rule": "Record the exact model ID and platform for each measured decision.",
+      "traps": [
+        "Record the model family only",
+        "Record latest as the model"
+      ]
+    },
+    {
+      "wording": "a decision record is wrong after a code change",
+      "answer_type": "new record that supersedes the old one",
+      "rule": "Add a new record that supersedes the old one. Do not edit it in place.",
+      "traps": [
+        "Edit the old record without a trace"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for architecture documentation: Not in source.",
+    "Storage location for decision records in a repository. General practice, not in the docs. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions",
+    "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "https://platform.claude.com/docs/en/api/versioning",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+  ]
+}

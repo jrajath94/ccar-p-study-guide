@@ -1,0 +1,509 @@
+{
+  "id": "D7.3",
+  "domain": "D7",
+  "title": "Diagnosis and operational resolution",
+  "task_statement": "Find the cause of a Claude Code problem with built-in diagnostics, usage data, and rewind before you change code or settings. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Diagnostic commands",
+      "first_principle": "Read the loaded state before you change a setting, a hook, or a server, because a file on disk can differ from what loaded.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "dev",
+            "label": "Developer terminal",
+            "group": "client"
+          },
+          {
+            "id": "doctor",
+            "label": "claude doctor and /doctor",
+            "group": "control"
+          },
+          {
+            "id": "session",
+            "label": "Running session",
+            "group": "claude"
+          },
+          {
+            "id": "status",
+            "label": "/status, /hooks, /mcp, /context",
+            "group": "control"
+          },
+          {
+            "id": "log",
+            "label": "Debug log from claude --debug",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "dev",
+            "to": "doctor",
+            "label": "find invalid settings"
+          },
+          {
+            "from": "dev",
+            "to": "session",
+            "label": "start or inspect"
+          },
+          {
+            "from": "session",
+            "to": "status",
+            "label": "show loaded state"
+          },
+          {
+            "from": "session",
+            "to": "log",
+            "label": "record hook events"
+          }
+        ]
+      },
+      "steps": [
+        "Run claude doctor in the terminal to find invalid settings files without a session.",
+        "Run /doctor inside a session to get proposed fixes that you confirm first.",
+        "Run /status to see the settings sources that loaded for the session.",
+        "Run /hooks and /mcp to check the hook and server configuration.",
+        "Start the session with claude --debug to record each hook match and its exit code.",
+        "Run /context to see what fills the context window."
+      ],
+      "pros": [
+        "The commands read the live state rather than a remembered setup.",
+        "The claude doctor command prints diagnostics and changes nothing.",
+        "The debug log shows which hook matchers were checked."
+      ],
+      "cons": [
+        "A command shows the state at one moment, so run it again after each change. (Inference)",
+        "The diagnostics show what loaded, not why the model chose an action. (Inference)",
+        "The debug flag adds log output for the whole session, so use it only for a session that fails. (Inference)"
+      ],
+      "use_when": [
+        "A setting, hook, or MCP server does not take effect.",
+        "Claude Code will not start because a settings file is invalid."
+      ],
+      "do_not_use_when": [
+        "The question is about answer quality, and no configuration changed.",
+        "A single known setting needs a value change and the file path is clear."
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Run claude doctor before a settings change and again after it.",
+          "combination": "Run /doctor in a session when the fix needs Claude to edit files after your confirmation."
+        },
+        {
+          "family": "governance",
+          "choice": "Run /status to confirm that managed settings are in force.",
+          "combination": "Check /status on each developer machine after a managed rollout. (Inference)"
+        },
+        {
+          "family": "latency",
+          "choice": "Run /context to find large context before you change the model. (Inference)",
+          "combination": "Run /compact with focus instructions to free context in the same conversation."
+        },
+        {
+          "family": "scale",
+          "choice": "Enable the debug flag only for the session that fails. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D7.3. Expect a scenario where a hook or a server seems inactive. The credited answer checks the loaded configuration with a built-in command before it edits code or guidance. (Inference)",
+      "trap": "A CLAUDE.md edit meant to make a hook run. Hooks run from settings files, and a guidance note never starts a hook, so the check is the hook configuration and the debug log.",
+      "decision_rule": "Run the built-in check that matches the symptom before you change the setting or the code.",
+      "exam_tip": "If a setting seems ignored, check the settings sources with /status before you edit the file.",
+      "key_facts": [
+        {
+          "text": "The claude doctor command prints read-only installation and settings diagnostics without opening a session.",
+          "url": "https://code.claude.com/docs/en/debug-your-config",
+          "label": "Fact"
+        },
+        {
+          "text": "The /doctor command proposes fixes that Claude applies after you confirm.",
+          "url": "https://code.claude.com/docs/en/commands",
+          "label": "Fact"
+        },
+        {
+          "text": "The claude --debug flag records each hook event, the matchers checked, and the hook exit code and output.",
+          "url": "https://code.claude.com/docs/en/debug-your-config",
+          "label": "Fact"
+        },
+        {
+          "text": "The /status command shows a Setting sources line that lists each settings file that loaded.",
+          "url": "https://code.claude.com/docs/en/settings",
+          "label": "Fact"
+        },
+        {
+          "text": "The /context command shows context usage and optimization suggestions.",
+          "url": "https://code.claude.com/docs/en/commands",
+          "label": "Fact"
+        },
+        {
+          "text": "A server that shows as connected but lists zero tools needs a Reconnect from /mcp.",
+          "url": "https://code.claude.com/docs/en/debug-your-config",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Usage, cost, and telemetry",
+      "first_principle": "Cost and latency changes need per-session numbers before anyone changes the model.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "dev",
+            "label": "Developer session",
+            "group": "client"
+          },
+          {
+            "id": "usage",
+            "label": "/usage in the session",
+            "group": "control"
+          },
+          {
+            "id": "otel",
+            "label": "OpenTelemetry metrics and events",
+            "group": "data"
+          },
+          {
+            "id": "collector",
+            "label": "Team collector and backend",
+            "group": "cloud"
+          },
+          {
+            "id": "billing",
+            "label": "Cloud provider billing console",
+            "group": "cloud"
+          }
+        ],
+        "edges": [
+          {
+            "from": "dev",
+            "to": "usage",
+            "label": "show session cost"
+          },
+          {
+            "from": "dev",
+            "to": "otel",
+            "label": "export metrics"
+          },
+          {
+            "from": "otel",
+            "to": "collector",
+            "label": "OTLP export"
+          },
+          {
+            "from": "dev",
+            "to": "billing",
+            "label": "cloud spend controls"
+          }
+        ]
+      },
+      "steps": [
+        "Run /usage in a session to see the session cost and the plan limits.",
+        "Set the OpenTelemetry exporter variables in managed settings, the shell, or the user settings file.",
+        "Check the claude_code.session.count metric to confirm that the export works.",
+        "Track claude_code.cost.usage and claude_code.token.usage in the team backend.",
+        "Leave prompt logging off unless the policy allows prompt content in telemetry."
+      ],
+      "pros": [
+        "The /usage command shows cost without any setup.",
+        "Metrics give a time series for cost and tokens across a team.",
+        "Prompt content logging is off by default."
+      ],
+      "cons": [
+        "The /usage counters reset when /clear starts a new session.",
+        "A repository cannot turn on telemetry, because the repository ignores the OpenTelemetry variables.",
+        "Telemetry needs a collector and a backend that the team runs."
+      ],
+      "use_when": [
+        "A cost rise needs a trend across sessions and developers.",
+        "A developer needs the current session cost in the terminal."
+      ],
+      "do_not_use_when": [
+        "The cost question concerns a cloud provider bill, and the provider console is the source of truth.",
+        "The team wants prompt text in logs by default, which the default setting blocks."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Use /usage for the current session and OpenTelemetry for the trend.",
+          "combination": "Set workspace spend limits in the Console for an API organization."
+        },
+        {
+          "family": "governance",
+          "choice": "Set the exporter variables in managed settings to lock the collector.",
+          "combination": "A repository can only turn a signal off with its exporter selector, not turn telemetry on."
+        },
+        {
+          "family": "data location",
+          "choice": "Keep prompt and response logging off by default.",
+          "combination": "Enable prompt logging only where the policy allows prompt content in telemetry."
+        },
+        {
+          "family": "operations",
+          "choice": "Use the default export interval for normal operation.",
+          "combination": "Lower the export interval only for a test, and reset it for production. (Inference)"
+        },
+        {
+          "family": "scale",
+          "choice": "Use the cardinality switches to drop session or version attributes from metrics.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Claude Code is billed per token to the cloud account, and the spend controls live in the provider billing console.",
+          "url": "https://code.claude.com/docs/en/costs#cloud-providers"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Claude Code is billed per token to the cloud account, and the spend controls live in the provider billing console.",
+          "url": "https://code.claude.com/docs/en/costs#cloud-providers"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Claude Code is billed per token to the cloud account, and the spend controls live in the provider billing console.",
+          "url": "https://code.claude.com/docs/en/costs#cloud-providers"
+        }
+      ],
+      "exam_tie": "D7.3. Expect a scenario with a cost rise after a change. The credited answer reads per-session cost and token data before it changes the model. (Inference)",
+      "trap": "A smaller model to cut cost before the team reads the usage data. The change may miss the cause and can lower answer quality.",
+      "decision_rule": "Read the cost and token data for the affected sessions before you change the model.",
+      "exam_tip": "If a cost question asks for the first step, choose the usage read over the model change.",
+      "key_facts": [
+        {
+          "text": "Across enterprise deployments, the average cost is around $13 per developer per active day.",
+          "url": "https://code.claude.com/docs/en/costs",
+          "label": "Fact"
+        },
+        {
+          "text": "The default export interval for metrics is 60000 milliseconds.",
+          "url": "https://code.claude.com/docs/en/monitoring-usage",
+          "label": "Fact"
+        },
+        {
+          "text": "OTEL_LOG_USER_PROMPTS is disabled by default.",
+          "url": "https://code.claude.com/docs/en/monitoring-usage",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Code ignores OpenTelemetry exporter variables in a repository settings file.",
+          "url": "https://code.claude.com/docs/en/monitoring-usage",
+          "label": "Fact"
+        },
+        {
+          "text": "The metric claude_code.token.usage counts tokens used.",
+          "url": "https://code.claude.com/docs/en/monitoring-usage",
+          "label": "Fact"
+        },
+        {
+          "text": "The session cost totals reset when /clear starts a new session.",
+          "url": "https://code.claude.com/docs/en/costs",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps: Not in source.",
+        "Per-developer attribution on Bedrock, Foundry, or Google Cloud without a gateway: Not in source."
+      ]
+    },
+    {
+      "name": "Rewind and file snapshots",
+      "first_principle": "Rewind restores file edits that Claude Code tracked, so a bad change does not need a manual undo.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "prompt",
+            "label": "Prompt that starts a turn",
+            "group": "client"
+          },
+          {
+            "id": "snap",
+            "label": "File snapshots per checkpoint",
+            "group": "data"
+          },
+          {
+            "id": "rewind",
+            "label": "Rewind menu",
+            "group": "control"
+          },
+          {
+            "id": "conv",
+            "label": "Conversation history",
+            "group": "claude"
+          },
+          {
+            "id": "git",
+            "label": "Version control for Bash changes",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "prompt",
+            "to": "snap",
+            "label": "checkpoint before turn"
+          },
+          {
+            "from": "rewind",
+            "to": "snap",
+            "label": "restore tracked files"
+          },
+          {
+            "from": "rewind",
+            "to": "conv",
+            "label": "restore conversation"
+          },
+          {
+            "from": "git",
+            "to": "snap",
+            "label": "covers untracked Bash edits"
+          }
+        ]
+      },
+      "steps": [
+        "Claude Code creates a checkpoint before each prompt that starts a turn.",
+        "Claude Code keeps file snapshots for the 100 most recent checkpoints in a session.",
+        "Run /rewind, or press Esc twice with an empty prompt, to open the rewind menu.",
+        "Choose the action that restores the conversation, the code, or both.",
+        "Use version control for a file that only Bash commands changed, because rewind does not track it."
+      ],
+      "pros": [
+        "Rewind undoes tracked Claude edits without a Git command.",
+        "The conversation and the code can rewind together.",
+        "The rewind menu lists the prompts from the session."
+      ],
+      "cons": [
+        "Bash command changes to a file that Claude did not edit are not tracked.",
+        "Snapshots are deleted about 30 days after the session last saved one.",
+        "A rewind to a deleted snapshot can fail with No files were restored."
+      ],
+      "use_when": [
+        "Claude made file edits in the session that you want to undo.",
+        "A resumed session needs an earlier file state within the retention period."
+      ],
+      "do_not_use_when": [
+        "The change came only from a Bash command on a file that Claude never edited.",
+        "The change is older than the retention period for the snapshots."
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Rewind before you send a prompt that repeats the same change. (Inference)",
+          "combination": "Set cleanupPeriodDays to keep snapshots longer."
+        },
+        {
+          "family": "data location",
+          "choice": "Keep the repository in version control as the durable record.",
+          "combination": "Commit before a large agent change, so Git holds a clean state. (Inference)"
+        },
+        {
+          "family": "scale",
+          "choice": "Use the rewind menu for the most recent checkpoints, which the session keeps.",
+          "combination": ""
+        },
+        {
+          "family": "governance",
+          "choice": "Review the rewound files before the next commit. (Inference)",
+          "combination": "Use version control history as the audit trail for agent edits. (Inference)"
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D7.3. Expect a scenario where an agent change must be undone. The credited answer uses rewind for tracked edits and version control for Bash edits. (Inference)",
+      "trap": "A belief that rewind undoes every change in the session. Rewind does not track Bash changes to files that Claude did not edit.",
+      "decision_rule": "Use rewind for tracked Claude edits and version control for everything else.",
+      "exam_tip": "If a stem says a shell command changed a file, look for version control in the answer, not rewind.",
+      "key_facts": [
+        {
+          "text": "Claude Code keeps file snapshots for the 100 most recent checkpoints in a session.",
+          "url": "https://code.claude.com/docs/en/checkpointing",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Code deletes a session's file snapshots about 30 days after the session last saved one.",
+          "url": "https://code.claude.com/docs/en/checkpointing",
+          "label": "Fact"
+        },
+        {
+          "text": "Two Esc presses with an empty prompt open the rewind menu.",
+          "url": "https://code.claude.com/docs/en/checkpointing",
+          "label": "Fact"
+        },
+        {
+          "text": "The cleanupPeriodDays setting sets the retention period, with a default of 30 days.",
+          "url": "https://code.claude.com/docs/en/claude-directory",
+          "label": "Fact"
+        },
+        {
+          "text": "Rewind does not undo Bash command changes to a file that Claude did not edit.",
+          "url": "https://code.claude.com/docs/en/checkpointing",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Is the symptom a config or tool failure?} -->|Yes| B[Run claude doctor and /status]\n  A -->|No| C{Is the symptom a cost or latency rise?}\n  C -->|Yes| D[Read /usage and telemetry first]\n  C -->|No| E{Must the last edits be undone?}\n  E -->|Yes| F[Use rewind for tracked edits]\n  E -->|No| G[Check prompt or model change first]\n  F --> H{Did a Bash command change the file?}\n  H -->|Yes| I[Use version control]",
+  "cheatsheet": "flowchart LR\n  D[claude doctor] --> S[Settings sources]\n  S --> H[Hook match at debug]\n  U[Usage command] --> T[Token and cost metrics]\n  C[Checkpoint per turn] --> R[Rewind menu]\n  R --> N[Bash edits need Git]\n  X[Context command] --> L[Large context]",
+  "patterns": [
+    {
+      "wording": "a hook that should run does not run",
+      "answer_type": "loaded config and debug log check",
+      "rule": "Check the hook in /hooks, then start the session with claude --debug.",
+      "traps": [
+        "A CLAUDE.md note that asks for the hook",
+        "A larger model to fix a hook"
+      ]
+    },
+    {
+      "wording": "cost rises after a prompt change",
+      "answer_type": "per-session usage read first",
+      "rule": "Read the usage and token data, then find the context that grew.",
+      "traps": [
+        "A smaller model with no data",
+        "A longer cache lifetime with no check"
+      ]
+    },
+    {
+      "wording": "an agent edit must be undone after a shell command changed a file",
+      "answer_type": "version control revert for the Bash change",
+      "rule": "Use rewind for tracked edits and version control for Bash changes.",
+      "traps": [
+        "Rewind alone for a Bash-only change",
+        "A manual edit with no record"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for diagnostics and operations: Not in source.",
+    "Latency threshold that triggers an alert: Not in source."
+  ],
+  "sources": [
+    "https://code.claude.com/docs/en/debug-your-config",
+    "https://code.claude.com/docs/en/commands",
+    "https://code.claude.com/docs/en/settings",
+    "https://code.claude.com/docs/en/costs",
+    "https://code.claude.com/docs/en/monitoring-usage",
+    "https://code.claude.com/docs/en/checkpointing",
+    "https://code.claude.com/docs/en/claude-directory"
+  ]
+}

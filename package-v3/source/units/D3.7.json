@@ -1,0 +1,180 @@
+{
+  "id": "D3.7",
+  "domain": "D3",
+  "title": "Integration mechanisms",
+  "task_statement": "Choose an integration mechanism by reuse, trust boundary, and run cost. MCP is not the default for every case. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "MCP connector in the Messages API",
+      "first_principle": "Connect a remote MCP server from the Messages API, so the API calls its tools without a client in your code.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app", "group": "client"},
+          {"id": "api", "label": "Messages API with mcp_servers", "group": "claude"},
+          {"id": "model", "label": "Claude model", "group": "claude"},
+          {"id": "srv", "label": "Remote MCP server over HTTP", "group": "cloud"},
+          {"id": "backend", "label": "Backend system behind the server", "group": "data"},
+          {"id": "auth", "label": "OAuth bearer token", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "api", "label": "request with mcp_servers and toolset"},
+          {"from": "api", "to": "model", "label": "tool definitions from the server"},
+          {"from": "model", "to": "api", "label": "MCP tool use block"},
+          {"from": "api", "to": "srv", "label": "tool call over HTTP"},
+          {"from": "srv", "to": "backend", "label": "read or write"},
+          {"from": "auth", "to": "api", "label": "authorization_token"}
+        ]
+      },
+      "steps": [
+        "Define each remote server in the mcp_servers array with its URL.",
+        "Reference each server from exactly one MCP toolset.",
+        "Enable all tools, or allowlist and denylist specific tools in the configs.",
+        "Send the request with the MCP connector beta header.",
+        "Read the MCP tool use and MCP tool result blocks in the response."
+      ],
+      "pros": [
+        "The connector calls remote MCP servers from the Messages API without an MCP client in your code.",
+        "One request can connect to several MCP servers.",
+        "MCP servers work in Message Batches API requests."
+      ],
+      "cons": [
+        "Only the tool calls part of the MCP specification is supported.",
+        "A local STDIO server cannot connect directly.",
+        "The connector is not covered by zero data retention arrangements."
+      ],
+      "use_when": [
+        "A remote server exposes the tools that the app needs.",
+        "One host needs a few remote tools and no shared client code. (Inference)",
+        "Batch processing needs tool calls against remote servers."
+      ],
+      "do_not_use_when": [
+        "The server runs only as a local STDIO process.",
+        "Your data policy requires zero data retention for tool data.",
+        "The integration needs MCP resources or prompts, because only tools are supported."
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Use an allowlist to expose only approved tools.", "combination": "Use a denylist when a server has a few risky tools and many safe ones."},
+        {"family": "cost", "choice": "MCP tool calls in Batches API requests cost the same as in Messages API requests.", "combination": "Batch processing gives a 50 percent discount on all usage."},
+        {"family": "scale", "choice": "Connect multiple servers in one request, with one MCP toolset for each server.", "combination": "Use tool search when the combined tool count is large."},
+        {"family": "isolation", "choice": "Pass a separate authorization_token for each authenticated server.", "combination": ""},
+        {"family": "operations", "choice": "Check the MCP tool result blocks for errors before you show output to a user. (Inference)", "combination": "Verify the tool list in a test request before each release. (Inference)"}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "The MCP connector is listed as beta on this platform.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"},
+        {"service": "Microsoft Foundry", "text": "The MCP connector is listed as beta on this platform.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"}
+      ],
+      "exam_tie": "D3.7. Expect a scenario that names the number of hosts and the number of tools. The credited answer matches the mechanism to that reuse count. (Inference)",
+      "trap": "The connector looks like full MCP support. Only tool calls work, so resources and prompts need another path.",
+      "decision_rule": "Use the MCP connector when a Messages API request needs tool calls on a remote MCP server.",
+      "exam_tip": "If the scenario needs MCP resources or prompts, the connector alone does not cover it.",
+      "key_facts": [
+        {"text": "The MCP connector uses the mcp-client-2025-11-20 beta header.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "Only tool calls from the MCP specification are supported.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "Every MCP server in mcp_servers must be referenced by exactly one MCP toolset.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "The MCP connector supports Streamable HTTP and SSE transports.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "The MCP connector is not covered by zero data retention arrangements.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "Batch processing gives a 50 percent discount on all usage.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "A Message Batch holds up to 100,000 requests or 256 MB, whichever limit comes first.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Maximum number of MCP servers in one request: Not in source.",
+        "Connector timeout values: Not in source.",
+        "Amazon Bedrock support for the MCP connector: Not in source.",
+        "Claude Models on Google Cloud support for the MCP connector: Not in source.",
+        "Console steps for MCP connector setup: Not in source."
+      ]
+    },
+    {
+      "name": "Claude Code MCP servers",
+      "first_principle": "Register each MCP server once in Claude Code, with a transport that matches where the server runs.",
+      "architecture": {
+        "nodes": [
+          {"id": "dev", "label": "Developer terminal", "group": "client"},
+          {"id": "config", "label": "MCP server configuration entry", "group": "control"},
+          {"id": "cc", "label": "Claude Code session", "group": "client"},
+          {"id": "remote", "label": "Remote server over HTTP or SSE", "group": "cloud"},
+          {"id": "local", "label": "Local server over STDIO", "group": "data"},
+          {"id": "model", "label": "Claude model", "group": "claude"}
+        ],
+        "edges": [
+          {"from": "dev", "to": "config", "label": "claude mcp add"},
+          {"from": "config", "to": "cc", "label": "server definition"},
+          {"from": "cc", "to": "remote", "label": "HTTP or SSE transport"},
+          {"from": "cc", "to": "local", "label": "STDIO subprocess"},
+          {"from": "remote", "to": "model", "label": "tools through tool search"},
+          {"from": "local", "to": "model", "label": "tools through tool search"}
+        ]
+      },
+      "steps": [
+        "Add a remote server with the http transport and its URL.",
+        "Add a server that exposes only SSE with the http transport, or with the sse transport before v2.1.265.",
+        "Add a local server with the stdio transport and the command after a double dash.",
+        "Check the /mcp list for the connection state of each server.",
+        "Set a per-server timeout in the server entry when a tool call runs long."
+      ],
+      "pros": [
+        "Claude Code connects remote servers over HTTP or SSE, and local servers over STDIO.",
+        "Tool search is on by default, which keeps large tool sets out of context.",
+        "Organization controls can block a connector tool before Claude sees it."
+      ],
+      "cons": [
+        "Without tool search, Claude Code does not report failed server connections to Claude.",
+        "A local STDIO server runs as a subprocess on the developer machine. (Inference)",
+        "A per-server timeout is a hard wall-clock limit for each tool call."
+      ],
+      "use_when": [
+        "A developer needs remote tools in an interactive session.",
+        "A local tool exists only as a command-line server. (Inference)",
+        "The team needs one shared configuration for several projects. (Inference)"
+      ],
+      "do_not_use_when": [
+        "The integration runs in production without a developer session. (Inference)",
+        "The integration must run in a managed API request, where the MCP connector fits better. (Inference)"
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Set an organization control to ask or blocked for a connector tool.", "combination": "Use allow rules only for tools that need no prompt. (Inference)"},
+        {"family": "operations", "choice": "Set a timeout in the .mcp.json entry for a long server.", "combination": "Set CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT to 0 only when idle checks cause false stops. (Inference)"},
+        {"family": "scale", "choice": "Keep tool search on for large tool sets.", "combination": "Use alwaysLoad only for servers whose tools every turn needs."},
+        {"family": "latency", "choice": "Use a remote server when a shared service must answer for many developers. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source. The Claude Code MCP page names no native platform service.", "url": "https://code.claude.com/docs/en/mcp"}
+      ],
+      "exam_tie": "D3.7. Expect a scenario about a developer tool that calls a team service. The credited answer names the transport and the configuration scope. (Inference)",
+      "trap": "A local STDIO server looks like a fit for an API backend, but the Messages API connector cannot connect to it directly.",
+      "decision_rule": "Use STDIO for a local process, and HTTP or SSE for a shared remote server.",
+      "exam_tip": "If the scenario names a local command-line tool, choose a Claude Code STDIO server.",
+      "key_facts": [
+        {"text": "The command claude mcp add --transport http adds a remote HTTP server.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"},
+        {"text": "From v2.1.265, Claude Code tries the HTTP transport first and switches to SSE when the server does not accept it.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"},
+        {"text": "Without tool search, Claude Code does not report failed server connections to Claude.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"},
+        {"text": "An organization control set to blocked removes the connector tool before Claude sees it.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"},
+        {"text": "The idle timeout defaults to five minutes for HTTP and SSE servers, and to 30 minutes for stdio servers.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"},
+        {"text": "The per-server timeout field takes milliseconds and overrides MCP_TOOL_TIMEOUT for that server.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Maximum timeout value for a server entry: Not in source.",
+        "Maximum number of servers per developer machine: Not in source.",
+        "Console steps for Claude Code MCP setup: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Reuse across hosts or languages?} -->|No| B{Capability exists only as a CLI?}\n  A -->|Yes| C{Need tools only or resources too?}\n  B -->|Yes| D[CLI wrapper with careful parsing]\n  B -->|No| E[Direct API call with an SDK]\n  C -->|Tools only| F[MCP server with tools]\n  C -->|Resources or prompts| G[MCP server plus a separate path]\n  F --> H{Called from Messages API?}\n  H -->|Yes| I[MCP connector]\n  H -->|No| J[Claude Code or SDK MCP client]",
+  "cheatsheet": "flowchart LR\n  R[Reuse count] --> D{Many consumers}\n  D -->|No| API[Direct API or SDK]\n  D -->|Yes| MCP[MCP server]\n  MCP --> CON[MCP connector in Messages API]\n  MCP --> CC[Claude Code MCP config]\n  CLI[Legacy CLI only] --> W[CLI wrapper]",
+  "patterns": [
+    {"wording": "one team and one host need one internal API", "answer_type": "direct API call", "rule": "Skip the protocol when no second consumer exists.", "traps": ["MCP server for a single host", "CLI wrapper with text parsing"]},
+    {"wording": "several hosts in several languages share one service", "answer_type": "MCP server with one schema", "rule": "Build one server and let each host connect as a client.", "traps": ["Hand-rolled client per host", "Slogan that MCP is the standard"]},
+    {"wording": "a Messages API request needs remote tools with no client code", "answer_type": "MCP connector", "rule": "Define the server in mcp_servers, then reference it from one toolset.", "traps": ["Local STDIO server in the connector", "Resources or prompts believed to work through the connector"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for integration mechanisms: Not in source.",
+    "Exact product support for each MCP primitive in every platform: Not in source.",
+    "Agent to agent handoff contract details: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector",
+    "https://code.claude.com/docs/en/mcp",
+    "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+  ]
+}

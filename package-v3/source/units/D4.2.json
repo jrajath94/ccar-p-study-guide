@@ -1,0 +1,169 @@
+{
+  "id": "D4.2",
+  "domain": "D4",
+  "title": "Evaluation datasets and frameworks",
+  "task_statement": "Build an eval set that covers real task traffic and grade it with the cheapest reliable grader. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Evaluation dataset design",
+      "first_principle": "An eval set measures the system well only when its cases match the real task distribution.",
+      "architecture": {
+        "nodes": [
+          {"id": "traffic", "label": "Real task traffic", "group": "client"},
+          {"id": "rep", "label": "Representative cases", "group": "data"},
+          {"id": "edge", "label": "Edge cases: empty, long, or unclear input", "group": "data"},
+          {"id": "version", "label": "Versioned eval set", "group": "control"},
+          {"id": "runner", "label": "Eval runner", "group": "control"},
+          {"id": "sut", "label": "System under test on Claude", "group": "claude"}
+        ],
+        "edges": [
+          {"from": "traffic", "to": "rep", "label": "sample real tasks"},
+          {"from": "traffic", "to": "edge", "label": "collect rare inputs"},
+          {"from": "rep", "to": "runner", "label": "load cases"},
+          {"from": "edge", "to": "runner", "label": "load cases"},
+          {"from": "version", "to": "runner", "label": "pin set version"},
+          {"from": "runner", "to": "sut", "label": "send inputs"}
+        ]
+      },
+      "steps": [
+        "Sample cases from the real task distribution.",
+        "Add edge cases such as irrelevant input, empty input, and very long input.",
+        "Add ambiguous cases where even humans would struggle to agree.",
+        "Write expected answers so that code can grade most cases.",
+        "Version the set and add new cases when the task changes. (Inference)"
+      ],
+      "pros": [
+        "Edge cases expose failures that clean samples hide.",
+        "Automated scores make each run cheap and frequent. (Inference)",
+        "The docs say more questions with lower signal beat fewer hand-graded questions."
+      ],
+      "cons": [
+        "A set misses traffic that it never sampled. (Inference)",
+        "Expected answers take effort to write and maintain. (Inference)",
+        "Shared eval cases can leak into training data. (Inference)"
+      ],
+      "use_when": [
+        "The application handles varied user input.",
+        "Production shows failures that a clean set does not show.",
+        "A team needs a regression check before each release."
+      ],
+      "do_not_use_when": [
+        "A one-off demo has no decision attached to the result. (Inference)",
+        "The task has no real traffic yet, so the set would only reflect guesses. (Inference)"
+      ],
+      "constraints": [
+        {"family": "skill", "choice": "Assign a domain expert to review the ambiguous cases. (Inference)", "combination": ""},
+        {"family": "scale", "choice": "Prioritize volume with automated checks over small hand-graded sets.", "combination": "Add a human-graded slice for ambiguous cases. (Inference)"},
+        {"family": "operations", "choice": "Refresh the set when the task distribution changes. (Inference)", "combination": "Keep the old version so that results remain comparable. (Inference)"},
+        {"family": "governance", "choice": "Remove personal data from cases before they leave the trust boundary. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D4.2. Expect a scenario where a clean test set reports a high score and production fails on unusual input. The credited answer adds edge and adversarial cases to the set. (Inference)",
+      "trap": "A set built only from easy, clean examples. The score is high, but it does not predict production behavior.",
+      "decision_rule": "Build the eval set from production traffic, and add edge cases that production contains.",
+      "exam_tip": "A high average on a clean set does not prove the system handles the hard cases.",
+      "key_facts": [
+        {"text": "The docs say to design evals that mirror the real-world task distribution.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs list irrelevant input, overly long input, and ambiguous cases as edge cases.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs say to automate scoring when possible.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs say that more questions with slightly lower signal beat fewer high-quality hand-graded evals.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "A target share of edge cases in an eval set. Not in source.",
+        "Rates of disagreement between human labelers. Not in source."
+      ]
+    },
+    {
+      "name": "Graders for evaluations",
+      "first_principle": "Use the cheapest grader that stays reliable for each type of case.",
+      "architecture": {
+        "nodes": [
+          {"id": "case", "label": "Eval case with expected answer", "group": "data"},
+          {"id": "code", "label": "Code grader: exact or string match", "group": "control"},
+          {"id": "judge", "label": "LLM grader with rubric on Claude", "group": "claude"},
+          {"id": "human", "label": "Human grader for disputed cases", "group": "client"},
+          {"id": "score", "label": "Pass or fail per case", "group": "data"}
+        ],
+        "edges": [
+          {"from": "case", "to": "code", "label": "checkable answers"},
+          {"from": "case", "to": "judge", "label": "rubric and output"},
+          {"from": "case", "to": "human", "label": "disputed cases"},
+          {"from": "code", "to": "score", "label": "match result"},
+          {"from": "judge", "to": "score", "label": "correct or incorrect"},
+          {"from": "human", "to": "score", "label": "reviewed label"}
+        ]
+      },
+      "steps": [
+        "Use a code grader first for exact match and string match checks.",
+        "Use an LLM grader for judgment that code cannot express.",
+        "Write a detailed rubric with a clear pass condition and a fixed output format.",
+        "Turn on thinking for the grader model when the judgment is complex.",
+        "Test the LLM grader for reliability before you scale it.",
+        "Use a human grader only when the other methods cannot decide."
+      ],
+      "pros": [
+        "The docs rank code graders as the fastest and most reliable method.",
+        "An LLM grader handles subtle judgment at scale.",
+        "A fixed output format makes grader scores easy to parse."
+      ],
+      "cons": [
+        "Code graders lack nuance for complex judgment.",
+        "Human graders are slow and expensive, so the docs say to avoid them when possible.",
+        "An LLM grader can disagree with human graders on hard cases. (Inference)"
+      ],
+      "use_when": [
+        "Outputs have an answer that code can check with an exact or string match.",
+        "The judgment is complex and hard to express in code.",
+        "A new LLM grader must match a reviewed sample of human labels. (Inference)"
+      ],
+      "do_not_use_when": [
+        "The LLM grader has not passed a reliability test on the case type. (Inference)",
+        "A human panel must grade every release at high volume. (Inference)"
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Use code to check most cases, and reserve LLM graders for judgment.", "combination": "Use the Message Batches API for offline grader runs."},
+        {"family": "operations", "choice": "Test each grader before it scores a release.", "combination": "Recheck the grader when the grader model changes. (Inference)"},
+        {"family": "governance", "choice": "Use reviewed human labels as the reference for each LLM grader. (Inference)", "combination": ""},
+        {"family": "scale", "choice": "Scale LLM graders only after the reliability test passes.", "combination": "Use code graders for volume, because the docs call them extremely scalable."}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D4.2. Expect a scenario with a cost limit and a judgment task. The credited answer uses code for checkable cases and tests an LLM grader before it scales. (Inference)",
+      "trap": "An LLM grader that runs on every case with no reliability test. The cost is low, but the scores may be wrong.",
+      "decision_rule": "Assign each case type the cheapest grader that passed a reliability test on that type.",
+      "exam_tip": "Human graders are the costliest rung, so they fit only the cases that code and LLM graders cannot decide.",
+      "key_facts": [
+        {"text": "The docs rank code graders as the fastest and most reliable method.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs say human graders are slow and expensive, and to avoid them if possible.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs say to test an LLM grader for reliability first, then scale it.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs suggest that the grader output only correct or incorrect, inside result tags in the example.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs suggest thinking on for the grader model when the judgment is complex.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs name unattended evaluation runs as suitable for batch processing.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "A numeric agreement rate that makes an LLM grader reliable. Not in source.",
+        "Grader model choice for a specific task. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Output has a checkable answer?} -->|Yes| B[Code grader with exact or string match]\n  A -->|No| C{Judgment fits a rubric?}\n  C -->|Yes| D{LLM grader passed reliability test?}\n  D -->|Yes| E[LLM grader with rubric]\n  D -->|No| F[Human grader on a sample]\n  C -->|No| F",
+  "cheatsheet": "flowchart LR\n  S[Eval set] --> M[Mirror real traffic]\n  M --> E[Edge cases]\n  E --> V[Versioned set]\n  S --> G1[Code grader: cheapest]\n  S --> G2[LLM grader: rubric]\n  G2 --> R[Reliability test first]\n  S --> G3[Human grader: costliest]",
+  "patterns": [
+    {"wording": "a high average score on a clean set while production fails", "answer_type": "edge and adversarial cases added to the set", "rule": "Add the cases that production contains. Report scores per case type.", "traps": ["Raise the clean-set average further", "Add a larger model tier"]},
+    {"wording": "grader cost is too high for a daily run", "answer_type": "cheapest reliable grader per case type", "rule": "Use code first. Use an LLM grader only after a reliability test.", "traps": ["Grade every case by hand", "Skip the reliability test to save time"]},
+    {"wording": "an LLM grader gives scores that people do not trust", "answer_type": "rubric and reliability test", "rule": "Write a rubric with a fixed output format. Test the grader before it scores releases.", "traps": ["Accept the grader score without a test", "Drop the grader and keep no check"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Evaluation tool in the Claude Console: Not in source.",
+    "Human label disagreement rate for any task: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+    "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence"
+  ]
+}

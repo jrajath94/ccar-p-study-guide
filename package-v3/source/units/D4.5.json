@@ -1,0 +1,179 @@
+{
+  "id": "D4.5",
+  "domain": "D4",
+  "title": "Optimization under quality floors",
+  "task_statement": "Cut cost and latency only while the quality floor and the safety guard still hold. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Batch processing for work that can wait",
+      "first_principle": "Work that no user waits for can trade latency for a lower token price.",
+      "architecture": {
+        "nodes": [
+          {"id": "queue", "label": "Unattended job queue", "group": "client"},
+          {"id": "batch", "label": "Batch request set", "group": "client"},
+          {"id": "api", "label": "Message Batches API", "group": "claude"},
+          {"id": "proc", "label": "Batch processing queue", "group": "cloud"},
+          {"id": "results", "label": "Batch results for 29 days", "group": "data"},
+          {"id": "floor", "label": "Quality floor check", "group": "control"}
+        ],
+        "edges": [
+          {"from": "queue", "to": "batch", "label": "group requests"},
+          {"from": "batch", "to": "api", "label": "submit batch"},
+          {"from": "api", "to": "proc", "label": "process requests"},
+          {"from": "proc", "to": "results", "label": "results after completion"},
+          {"from": "results", "to": "floor", "label": "score against floor"}
+        ]
+      },
+      "steps": [
+        "Send work that no user waits for to the Batch API.",
+        "Keep interactive requests on the synchronous Messages API.",
+        "Check the batch status before you read the results.",
+        "Read the results after all requests finish or after 24 hours.",
+        "Score the results against the quality floor before you change production. (Inference)",
+        "Resubmit expired requests in a new batch. (Inference)"
+      ],
+      "pros": [
+        "Batch pricing gives 50 percent off each token.",
+        "The discount also applies to cached tokens in a batch.",
+        "Results stay available for 29 days, so the team can review them later."
+      ],
+      "cons": [
+        "Results can take up to 24 hours.",
+        "Managed Agents sessions cannot use batch processing.",
+        "Batch requests wait in a queue with their own rate limits."
+      ],
+      "use_when": [
+        "Evaluation runs, backfills, and scheduled jobs can wait for results.",
+        "A nightly grader pass runs over the eval set.",
+        "The team can accept results up to 24 hours after submission."
+      ],
+      "do_not_use_when": [
+        "A user waits for the answer in the product.",
+        "The workflow needs an interactive Managed Agents session.",
+        "A request sets max_tokens to 0 for a cache warm-up, which batches do not support."
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Send every unattended request through the batch interface.", "combination": "Combine the batch discount with prompt caching for shared prefixes."},
+        {"family": "latency", "choice": "Accept a result window of up to 24 hours.", "combination": "Use the synchronous path for any request a user waits for."},
+        {"family": "quota", "choice": "Keep each batch below 100,000 requests and 256 MB.", "combination": "Split a larger job into several batches. (Inference)"},
+        {"family": "operations", "choice": "Read the results within 29 days of batch creation.", "combination": "Store results in your own system when you need them later. (Inference)"},
+        {"family": "scale", "choice": "Plan for the Batches API rate limits, which are shared across all models.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "Extended output for batches, a beta feature, is supported, the same as on the Claude API.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"},
+        {"service": "Amazon Bedrock", "text": "Extended output for batches, a beta feature, is not currently available.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Extended output for batches, a beta feature, is not currently available.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"},
+        {"service": "Microsoft Foundry", "text": "Extended output for batches, a beta feature, is not currently available.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"}
+      ],
+      "exam_tie": "D4.5. Expect a scenario with a large unattended job and a cost limit. The credited answer uses the batch interface and keeps calls that users see synchronous. (Inference)",
+      "trap": "Streaming a nightly job to cut its latency. Streaming changes the timing of the first token, and the job still pays the synchronous price.",
+      "decision_rule": "Send unattended work to the batch interface, and keep any request a user waits for synchronous.",
+      "exam_tip": "A job with a deadline of minutes does not fit batch processing.",
+      "key_facts": [
+        {"text": "The Batch API takes 50 percent off every token of a request, cached tokens too.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "A batch holds up to 100,000 Message requests or 256 MB, whichever limit comes first.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Most batches complete within 1 hour.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Expired requests in a batch are not billed.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Results become available after all messages complete or after 24 hours, whichever comes first.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Batch results are available for 29 days after creation.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "A batched request must set max_tokens to at least 1.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Batch pricing for each model on Amazon Bedrock. Not in source.",
+        "Queue wait time for a batch of a given size. Not in source."
+      ]
+    },
+    {
+      "name": "Model tier and effort choice",
+      "first_principle": "The cheapest model and effort that clear the quality floor give the lowest cost per completed task.",
+      "architecture": {
+        "nodes": [
+          {"id": "task", "label": "Incoming task", "group": "client"},
+          {"id": "router", "label": "Routing rule by task type", "group": "control"},
+          {"id": "small", "label": "Faster tier at lower effort", "group": "claude"},
+          {"id": "large", "label": "Stronger tier at higher effort", "group": "claude"},
+          {"id": "floor", "label": "Quality floor on eval set", "group": "data"},
+          {"id": "cost", "label": "Cost per completed task", "group": "data"}
+        ],
+        "edges": [
+          {"from": "task", "to": "router", "label": "send task"},
+          {"from": "router", "to": "small", "label": "easy tasks"},
+          {"from": "router", "to": "large", "label": "hard tasks"},
+          {"from": "small", "to": "floor", "label": "check floor"},
+          {"from": "large", "to": "floor", "label": "check floor"},
+          {"from": "floor", "to": "cost", "label": "cost per completed task"}
+        ]
+      },
+      "steps": [
+        "Measure the quality floor on the eval set for each candidate model and effort.",
+        "Pick the cheapest model and effort that clear the floor.",
+        "Compare the candidates on cost per completed task.",
+        "Route only the task types that the cheaper tier handles above the floor.",
+        "Re-run failed tasks at a higher effort when outcomes are checkable.",
+        "Audit prompts after each model change."
+      ],
+      "pros": [
+        "A smaller tier can cut latency and cost on tasks it handles well.",
+        "Effort is one control for speed and cost on Claude Haiku 5.5.",
+        "Routing lets easy tasks skip the costlier tier."
+      ],
+      "cons": [
+        "A cheaper tier can fail the quality floor on hard tasks.",
+        "Routing rules need upkeep when the task mix changes. (Inference)",
+        "Each tier needs its own prompt audit after a change. (Inference)"
+      ],
+      "use_when": [
+        "Speed or cost binds and the quality floor is known.",
+        "Tasks differ in difficulty in a way the input shows. (Inference)",
+        "A time-sensitive workflow can use the fastest tier that passes the floor."
+      ],
+      "do_not_use_when": [
+        "No eval floor exists yet, so the comparison has no line. (Inference)",
+        "All tasks are hard and only the strongest tier clears the floor. (Inference)"
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Choose a faster tier and a lower effort for time-sensitive work.", "combination": "Stream the response to show the first tokens early."},
+        {"family": "cost", "choice": "Compare candidates on cost per completed task.", "combination": "Report the floor result for each route next to the cost. (Inference)"},
+        {"family": "operations", "choice": "Audit prompts against the model after each model change.", "combination": ""},
+        {"family": "scale", "choice": "Route by task type, not by user identity. (Inference)", "combination": ""},
+        {"family": "skill", "choice": "Assign one person to own the routing rule and its eval results. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D4.5. Expect a scenario with a latency target above the limit and a quality floor near its line. The credited answer measures each stage and changes one lever at a time. (Inference)",
+      "trap": "Routing all traffic to the cheapest tier. The cost falls, but hard tasks fail the quality floor.",
+      "decision_rule": "Choose the cheapest model and effort that clear the quality floor on each task route.",
+      "exam_tip": "A speed gain is valid only when the quality floor still holds after the change.",
+      "key_facts": [
+        {"text": "The docs say Claude Haiku 5.5 offers the fastest response times with high intelligence.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency", "label": "Fact"},
+        {"text": "The docs call effort the main control for speed and cost on Claude Haiku 5.5.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency", "label": "Fact"},
+        {"text": "The docs say to start most agent workloads with Claude Opus 5.5 at default effort medium.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "The docs say each newer model solved at least as many tasks as the one before, in Anthropic measurements.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "The docs say to audit prompts against the current model, and again whenever the model changes.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Latency figures per tier on the same workload. Not in source.",
+        "A quality floor value for any workload. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{User waits for the answer?} -->|Yes| B[Synchronous Messages API]\n  A -->|No| C{Result can wait up to 24 hours?}\n  C -->|No| D[Synchronous Messages API]\n  C -->|Yes| E[Batch API at 50 percent of token price]\n  E --> F{Quality floor holds on a sample?}\n  F -->|No| G[Use a stronger tier or higher effort]\n  F -->|Yes| H[Ship the cheaper route]",
+  "cheatsheet": "flowchart LR\n  W[Unattended work] --> B[Batch API]\n  B --> D[50 percent off tokens]\n  B --> L[Up to 100k requests or 256 MB]\n  B --> X[Results up to 24 hours]\n  U[User waits] --> S[Messages API]\n  T[Easy tasks] --> C[Cheaper tier]\n  H[Hard tasks] --> R[Stronger tier or effort]",
+  "patterns": [
+    {"wording": "a nightly job must score the eval set and no user waits", "answer_type": "batch processing", "rule": "Send unattended work to the batch interface. Keep calls that users see synchronous.", "traps": ["Stream the nightly job", "Move the job to a faster tier with no deadline"]},
+    {"wording": "latency is above the target and the quality floor is close", "answer_type": "measured cut under floors", "rule": "Measure each stage, then cut the lever with the least quality cost first. Check the floor after each cut.", "traps": ["Cut context and caching together with no measure", "Move all traffic to the cheapest tier"]},
+    {"wording": "some tasks are easy enough for a cheaper tier", "answer_type": "routing with a floor per route", "rule": "Route only the task types that the cheaper tier handles above the floor.", "traps": ["Route everything to the cheapest tier", "Route by guess with no measurement"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Batch job timing in the Claude Console: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+    "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency",
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+  ]
+}

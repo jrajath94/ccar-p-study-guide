@@ -1,0 +1,272 @@
+{
+  "id": "D3.3",
+  "domain": "D3",
+  "title": "Accuracy and latency trade-offs",
+  "task_statement": "Meet a latency target and an accuracy floor by setting model, effort, and delivery mode with measured receipts. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Model and effort choice for latency",
+      "first_principle": "Latency rises with model size, output length, and effort, so choose the smallest model and effort that pass the quality target.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app sends the request", "group": "client"},
+          {"id": "route", "label": "Model and effort chosen per task", "group": "control"},
+          {"id": "haiku", "label": "Claude Haiku 5.5 at low effort", "group": "claude"},
+          {"id": "large", "label": "Larger Claude model at higher effort", "group": "claude"},
+          {"id": "cap", "label": "max_tokens caps the output", "group": "data"},
+          {"id": "measure", "label": "p95 latency and quality score per stage", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "route", "label": "task and quality target"},
+          {"from": "route", "to": "haiku", "label": "simple task"},
+          {"from": "route", "to": "large", "label": "hard task with measured gap"},
+          {"from": "haiku", "to": "cap", "label": "bounded output"},
+          {"from": "large", "to": "cap", "label": "bounded output"},
+          {"from": "cap", "to": "measure", "label": "timing and score"}
+        ]
+      },
+      "steps": [
+        "Engineer a prompt that works well first, then measure baseline latency and time to first token.",
+        "Choose the smallest model that meets the quality target on your test set.",
+        "Set output_config effort to a lower level for simple tasks.",
+        "Set max_tokens to a value that the expected output fits.",
+        "Ask for a shorter answer in the prompt when output length adds time.",
+        "Move hard tasks to a larger model only when the measured quality gap justifies the time. (Inference)"
+      ],
+      "pros": [
+        "The docs name Haiku 5.5 as the fastest option that keeps high intelligence.",
+        "Lower effort cuts output tokens and cost.",
+        "Fast mode raises output speed on supported Opus models without a change in intelligence."
+      ],
+      "cons": [
+        "Lower effort reduces capability on hard tasks.",
+        "Fast mode uses premium pricing on every token.",
+        "Fast mode speed benefits do not target time to first token."
+      ],
+      "use_when": [
+        "A user waits on an interactive answer with a fixed latency target.",
+        "Tasks are short and repeat often.",
+        "The quality test passes at a lower effort level."
+      ],
+      "do_not_use_when": [
+        "The prompt is not yet tuned, because the docs say to reach good quality first.",
+        "The fast mode request targets Claude Haiku 5.5, which fast mode does not support.",
+        "The task needs the highest capability and a loose latency target."
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Use Haiku 5.5 at low effort for time-sensitive calls.", "combination": "Raise effort to medium for calls that fail the quality check."},
+        {"family": "latency", "choice": "Use fast mode on a supported Opus model for long outputs.", "combination": "Accept the premium price for every token in the fast request."},
+        {"family": "cost", "choice": "Lower effort to cut output tokens.", "combination": "Keep high effort for calls where a wrong answer is costly."},
+        {"family": "quota", "choice": "Keep output tokens per minute under the model limit for your tier.", "combination": "Request a higher tier through your Anthropic account representative on Claude Platform on AWS."},
+        {"family": "operations", "choice": "Track p95 latency for each stage beside the average. (Inference)", "combination": "Alert on the tail latency. (Inference)"}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "Fast mode is not available. Effort and the Messages API work as on the Claude API.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "Fast mode is available for Claude Opus 5.5.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"},
+        {"service": "Microsoft Foundry", "text": "Fast mode for Claude Opus 5.5 is available only on deployments hosted on Azure.", "url": "https://platform.claude.com/docs/en/build-with-claude/fast-mode"},
+        {"service": "Amazon Bedrock", "text": "Bedrock is not in the fast mode list of supported platforms.", "url": "https://platform.claude.com/docs/en/build-with-claude/fast-mode"}
+      ],
+      "exam_tie": "D3.3. Expect a scenario with a latency target, an accuracy floor, and a proposal to add a stage or a bigger model. The credited answer measures each stage and cuts the weakest one. (Inference)",
+      "trap": "A bigger model looks like the accuracy fix. It adds time per call and can break the latency target.",
+      "decision_rule": "Pick the smallest model and effort level that passes the measured quality target and the latency target.",
+      "exam_tip": "When the scenario states a latency limit, reject an option that adds a slower step before you measure it.",
+      "key_facts": [
+        {"text": "Claude Haiku 5.5 defaults to medium effort.", "url": "https://platform.claude.com/docs/en/build-with-claude/effort", "label": "Fact"},
+        {"text": "Fast mode delivers up to 2.5 times higher output tokens per second.", "url": "https://platform.claude.com/docs/en/build-with-claude/fast-mode", "label": "Fact"},
+        {"text": "Fast mode speed benefits apply to output tokens per second, not to time to first token.", "url": "https://platform.claude.com/docs/en/build-with-claude/fast-mode", "label": "Fact"},
+        {"text": "Fast mode on Claude Opus 5.5 costs $8 per MTok input and $40 per MTok output.", "url": "https://platform.claude.com/docs/en/build-with-claude/fast-mode", "label": "Fact"},
+        {"text": "Effort is a behavioral signal, not a strict token budget.", "url": "https://platform.claude.com/docs/en/build-with-claude/effort", "label": "Fact"},
+        {"text": "The docs say to reach good quality first, then lower latency.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Ablation receipts for accuracy per stage. The docs do not set this method. (Inference)",
+        "Fast mode latency gain on time to first token. Not in source."
+      ]
+    },
+    {
+      "name": "Streaming for perceived latency",
+      "first_principle": "Streaming sends output as the model generates it, so users see the first tokens before the full response ends.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app with streaming enabled", "group": "client"},
+          {"id": "api", "label": "Messages API streams events", "group": "claude"},
+          {"id": "model", "label": "Claude model generates tokens", "group": "claude"},
+          {"id": "ui", "label": "User interface renders each delta", "group": "client"},
+          {"id": "metric", "label": "Time to first token and total time", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "api", "label": "request with stream true"},
+          {"from": "api", "to": "model", "label": "generate"},
+          {"from": "model", "to": "api", "label": "token events"},
+          {"from": "api", "to": "ui", "label": "text deltas as they arrive"},
+          {"from": "ui", "to": "metric", "label": "first token timestamp"}
+        ]
+      },
+      "steps": [
+        "Set stream to true on the Messages request.",
+        "The API sends server-sent events as the model generates output.",
+        "Your app renders each text delta as soon as it arrives.",
+        "Measure time to first token and total time as two separate values.",
+        "Handle streaming refusals in the client before you show the output."
+      ],
+      "pros": [
+        "Users see output early, which improves perceived responsiveness.",
+        "The same request works for text, tool use, and thinking deltas.",
+        "Long requests avoid the timeout risk of one long response."
+      ],
+      "cons": [
+        "The client must handle partial output and mid-stream errors.",
+        "Streaming does not reduce the model work or the token count.",
+        "Code that reads the full text runs only after the stream ends."
+      ],
+      "use_when": [
+        "A person reads a chat answer as it appears.",
+        "Responses are long and the first sentence matters most.",
+        "A request could run past the requests without streaming timeout."
+      ],
+      "do_not_use_when": [
+        "A batch job reads only the final object.",
+        "A downstream system needs the full response before it starts.",
+        "The client cannot process incremental events."
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Stream text to the user as tokens arrive.", "combination": "Pair streaming with a smaller model to lower the first-token wait. (Inference)"},
+        {"family": "operations", "choice": "Track time to first token and total time as two metrics.", "combination": "Alert on time to first token for the interactive path only."},
+        {"family": "governance", "choice": "Check streaming refusals in the client before display.", "combination": "Keep refusal handling on the server for batch results. (Inference)"},
+        {"family": "scale", "choice": "Open one stream for each user request. (Inference)", "combination": "Limits for concurrent streams are Not in source."}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "Full server-sent events streaming is supported.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Amazon Bedrock", "text": "The Messages endpoint on Bedrock uses standard server-sent events streaming.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Streaming requests use the streamRawPredict method instead of rawPredict.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"},
+        {"service": "Microsoft Foundry", "text": "Streaming behavior on Foundry is Not in source.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"}
+      ],
+      "exam_tie": "D3.3. Expect a chat scenario where users complain about the wait. The credited answer streams the response and measures time to first token. (Inference)",
+      "trap": "Streaming looks like a generation speed-up. It shows output sooner, and the total generation time stays about the same. (Inference)",
+      "decision_rule": "Stream when a person reads the output as it arrives, and measure time to first token.",
+      "exam_tip": "If the scenario needs the full result before any step, streaming does not meet the target.",
+      "key_facts": [
+        {"text": "Setting stream to true returns the response as server-sent events.", "url": "https://platform.claude.com/docs/en/build-with-claude/streaming", "label": "Fact"},
+        {"text": "Time to first token measures the time to the first output token.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency", "label": "Fact"},
+        {"text": "After a 504 timeout error, the docs suggest the streaming Messages API for long requests.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "The SDK validates that Messages requests without streaming are not expected to exceed a 10-minute timeout.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Concurrent stream limit per workspace. Not in source.",
+        "Streaming support details on Microsoft Foundry. Not in source."
+      ]
+    },
+    {
+      "name": "Batch processing and service tiers for throughput",
+      "first_principle": "Work that can wait trades response time for half the standard price, and the batch runs in the background.",
+      "architecture": {
+        "nodes": [
+          {"id": "job", "label": "Offline job with many items", "group": "client"},
+          {"id": "app", "label": "Your app builds one request per item", "group": "client"},
+          {"id": "batch", "label": "Message Batches API", "group": "claude"},
+          {"id": "queue", "label": "Background processing queue", "group": "cloud"},
+          {"id": "results", "label": "Results kept for 29 days", "group": "data"},
+          {"id": "std", "label": "Standard tier for interactive calls", "group": "control"}
+        ],
+        "edges": [
+          {"from": "job", "to": "app", "label": "list of items"},
+          {"from": "app", "to": "batch", "label": "create batch"},
+          {"from": "batch", "to": "queue", "label": "process up to 24 hours"},
+          {"from": "queue", "to": "results", "label": "results ready"},
+          {"from": "app", "to": "std", "label": "interactive calls go elsewhere"}
+        ]
+      },
+      "steps": [
+        "Build one request for each item and give each request a custom_id.",
+        "Submit the list of requests to the Message Batches API.",
+        "Poll the batch until processing_status reads ended.",
+        "Read the results when processing ends or after 24 hours, whichever comes first.",
+        "Download the results within 29 days of creation.",
+        "Match each result to its input with the custom_id."
+      ],
+      "pros": [
+        "Batch usage is charged at 50 percent of standard API prices.",
+        "One batch holds up to 100,000 requests or 256 MB.",
+        "Batch runs outside normal capacity, as the service tiers page states."
+      ],
+      "cons": [
+        "Results can take up to 24 hours.",
+        "A batch can exceed the workspace spend limit slightly.",
+        "Batch is not an option for a user who waits for a reply."
+      ],
+      "use_when": [
+        "An evaluation run or document backfill can wait a day.",
+        "Throughput and cost matter more than the first response time.",
+        "Many requests share a long prefix that the cache can reuse."
+      ],
+      "do_not_use_when": [
+        "A user waits for a reply in a chat window.",
+        "The platform is Microsoft Foundry, Bedrock, or Google managed, where the Message Batches API is not supported.",
+        "A single request has a latency target of seconds."
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Use Batch for offline work at half the standard price.", "combination": "Use the 1-hour cache for batch runs longer than 5 minutes."},
+        {"family": "latency", "choice": "Use the Standard tier for interactive traffic.", "combination": "Current Priority Tier commitments continue until the contract end date."},
+        {"family": "scale", "choice": "Keep each batch under 100,000 requests and 256 MB.", "combination": "Split a larger job into several batches."},
+        {"family": "quota", "choice": "Check the batch rate limits for requests in the queue.", "combination": "Submit a large job in several batches to stay under queue limits. (Inference)"},
+        {"family": "operations", "choice": "Store each custom_id with the source record.", "combination": "Download the results before the 29-day window ends."}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "The Message Batches API is supported.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "The Message Batches API works as it does on the Claude API.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "The Message Batches API is not supported.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"},
+        {"service": "Microsoft Foundry", "text": "The Message Batches API is not supported.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"},
+        {"service": "Amazon Bedrock", "text": "The Message Batches API is not supported.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"}
+      ],
+      "exam_tie": "D3.3. Expect a scenario with a large offline set and a throughput or cost goal. The credited answer moves that work to Batch and keeps interactive calls elsewhere. (Inference)",
+      "trap": "Batch looks like a speed fix for a large job. Results can take up to 24 hours, so it does not meet a seconds-level target.",
+      "decision_rule": "Use Batch when the caller accepts results within 24 hours and needs half the standard price.",
+      "exam_tip": "If the scenario needs an answer in seconds, reject Batch whatever the volume.",
+      "key_facts": [
+        {"text": "Batch usage is charged at 50 percent of standard API prices.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "A batch holds up to 100,000 requests or 256 MB, whichever is reached first.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Most batches finish within 1 hour.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Batch results are available for 29 days after creation.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "A batch expires if processing does not complete within 24 hours.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Priority Tier capacity commitments are no longer available for purchase.", "url": "https://platform.claude.com/docs/en/api/service-tiers", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Amazon Bedrock batch inference details outside the Claude Messages path. Not in source.",
+        "Batch throughput in requests per second. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Does a person wait for this answer?} -->|Yes| B{Is the target under a few seconds?}\n  A -->|No| C{Can results arrive within 24 hours?}\n  B -->|Yes| D[Haiku 5.5 at low effort with streaming]\n  B -->|No| E[Smallest model that passes the quality test]\n  C -->|Yes| F[Message Batches API at half price]\n  C -->|No| G[Standard calls with measured stages]\n  D --> H{Quality check passes?}\n  E --> H\n  H -->|No| I[Raise effort one level]\n  H -->|Yes| J[Keep and monitor p95]",
+  "cheatsheet": "flowchart LR\n  M[Smallest model that passes quality] --> E[Lowest effort that passes quality]\n  E --> C[max_tokens cap]\n  M --> S[Stream for first token]\n  M --> F[Fast mode on Opus only]\n  W[Offline work] --> B[Batch at half price]\n  B --> R[Results within 24 hours]\n  M --> L[p95 per stage]\n  L --> X[Cut weakest receipt]",
+  "patterns": [
+    {"wording": "the answer misses the accuracy target and breaks the latency target after several additions", "answer_type": "cut the stage with the weakest measured gain", "rule": "Measure each stage and cut the one whose gain is smallest for its time cost.", "traps": ["Add a bigger model for more accuracy", "Add a reasoning stage with no measured gain"]},
+    {"wording": "users wait too long for the first words of a reply", "answer_type": "streaming with time to first token measured", "rule": "Stream the output and measure time to first token as its own metric.", "traps": ["Faster model without a measured need", "Longer timeout in the client"]},
+    {"wording": "a large offline job needs results and the cost must fall", "answer_type": "Message Batches API for the offline set", "rule": "Move work that can wait a day to Batch, and keep interactive calls on the standard path.", "traps": ["Parallel calls with standard pricing", "Batch for an interactive chat"]}
+  ],
+  "console_steps": [
+    {"step": "Open the Rate limits page in the Claude Console.", "url": "https://platform.claude.com/docs/en/api/rate-limits", "screenshot": null}
+  ],
+  "not_in_source": [
+    "Console steps for the latency work beyond the rate limits page: Not in source.",
+    "Accuracy receipts for each stage. The docs do not define an ablation method. (Inference)",
+    "Median and p95 latency figures per model. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/effort",
+    "https://platform.claude.com/docs/en/build-with-claude/fast-mode",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency",
+    "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+    "https://platform.claude.com/docs/en/build-with-claude/streaming",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals",
+    "https://platform.claude.com/docs/en/api/errors",
+    "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+    "https://platform.claude.com/docs/en/api/service-tiers",
+    "https://platform.claude.com/docs/en/api/rate-limits",
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+  ]
+}

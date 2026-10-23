@@ -1,0 +1,269 @@
+{
+  "id": "D3.2",
+  "domain": "D3",
+  "title": "Authentication and authorization in integrations",
+  "task_statement": "Give each integration call a verifiable identity and the narrowest access it needs. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Per-user delegation to MCP servers",
+      "first_principle": "A remote MCP server authorizes the call from an OAuth token that the client sends for that server, so the token must name the user.",
+      "architecture": {
+        "nodes": [
+          {"id": "user", "label": "End user signs in", "group": "client"},
+          {"id": "app", "label": "Your app holds the OAuth flow", "group": "client"},
+          {"id": "vault", "label": "Per-user vault credential store", "group": "data"},
+          {"id": "api", "label": "Messages API or agent session", "group": "claude"},
+          {"id": "mcp", "label": "Remote MCP server", "group": "cloud"},
+          {"id": "upstream", "label": "Upstream system with its own access list", "group": "control"}
+        ],
+        "edges": [
+          {"from": "user", "to": "app", "label": "sign in"},
+          {"from": "app", "to": "api", "label": "request with authorization_token"},
+          {"from": "api", "to": "mcp", "label": "tool call with bearer token"},
+          {"from": "mcp", "to": "upstream", "label": "server calls its own backend"},
+          {"from": "app", "to": "vault", "label": "store credential per user"},
+          {"from": "vault", "to": "api", "label": "token for mcp_server_url at runtime"}
+        ]
+      },
+      "steps": [
+        "The app signs the end user in and gets an OAuth access token for the MCP server.",
+        "The app puts the token in the authorization_token field of the server definition.",
+        "The MCP connector sends the bearer token with each tool call to that server.",
+        "A Managed Agents vault holds the credentials of one end user, keyed by mcp_server_url.",
+        "Anthropic refreshes the access token when the credential includes a refresh block.",
+        "Claude Code signs in from /mcp in an interactive session before a run."
+      ],
+      "pros": [
+        "The server receives a token for the user who signed in.",
+        "A vault keeps tokens out of each request body.",
+        "The MCP connector accepts OAuth Bearer tokens for authenticated servers."
+      ],
+      "cons": [
+        "The app owns the OAuth flow and token refresh for the Messages API.",
+        "The MCP connector is not eligible for zero data retention.",
+        "A vault is scoped to the workspace, so any key with workspace access can use it."
+      ],
+      "use_when": [
+        "The server must act for a named person.",
+        "The remote server requires OAuth before it accepts a call.",
+        "The audit must name the person who asked for the action."
+      ],
+      "do_not_use_when": [
+        "The server runs as a local stdio process, because the MCP connector cannot reach it.",
+        "A batch job has no human actor and one narrow service identity is enough.",
+        "Claude Code runs with claude -p and the server needs a new sign-in."
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Pass each user's token for each server.", "combination": "Set a refresh block so Anthropic refreshes the token for long sessions."},
+        {"family": "isolation", "choice": "Store one credential for each end user in a vault.", "combination": "Use separate workspaces for tenants that must not share keys."},
+        {"family": "data location", "choice": "Use an MCP tunnel for a server in a private network.", "combination": "Plan for research preview terms with no uptime commitment."},
+        {"family": "operations", "choice": "Sign in again when the server rejects the stored refresh token.", "combination": "Run claude mcp login before a non-interactive run."}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "OAuth authentication is not supported. Use SigV4 or an API key. The MCP connector is in beta.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Amazon Bedrock", "text": "The MCP connector is not supported on Bedrock.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "The MCP connector is not supported.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "The MCP connector is available.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"},
+        {"service": "Microsoft Foundry", "text": "The MCP connector is in beta. Token handling for MCP servers is Not in source.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"}
+      ],
+      "exam_tie": "D3.2. Expect a scenario that asks who the agent acted for. The credited answer uses per-user credentials with a token the server checks, not a shared key. (Inference)",
+      "trap": "A shared service key with a user name in the prompt looks like attribution. The system cannot verify a name that the user typed.",
+      "decision_rule": "Give each server a per-user credential when the audit must name the person who asked.",
+      "exam_tip": "If the scenario offers a session id or a prompt field as identity, reject it.",
+      "key_facts": [
+        {"text": "The MCP connector beta accepts an OAuth Bearer token in authorization_token.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "Local STDIO servers cannot connect directly through the MCP connector.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "Claude Code flags a remote server for sign-in on a 401 or 403 response.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"},
+        {"text": "Vault credentials are write-only, and the API never returns their secret values.", "url": "https://platform.claude.com/docs/en/managed-agents/vaults", "label": "Fact"},
+        {"text": "A claude -p run cannot run the OAuth flow. Sign in first with /mcp or claude mcp login.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "The MCP audience check through RFC 8707 and the token passthrough ban. Not in source.",
+        "Dynamic client registration status in the MCP authorization profile. Not in source.",
+        "Revocation delay for a token that a server cached. Not in source."
+      ]
+    },
+    {
+      "name": "Workspace and API key boundary",
+      "first_principle": "A workspace groups keys, members, and limits, and a key scoped to one workspace reaches only that workspace.",
+      "architecture": {
+        "nodes": [
+          {"id": "admin", "label": "Admin assigns workspace roles", "group": "control"},
+          {"id": "key", "label": "API key scoped to one workspace", "group": "client"},
+          {"id": "org", "label": "Unscoped key with workspace header", "group": "client"},
+          {"id": "api", "label": "Messages API", "group": "claude"},
+          {"id": "wa", "label": "Workspace A resources", "group": "data"},
+          {"id": "wb", "label": "Workspace B resources", "group": "data"}
+        ],
+        "edges": [
+          {"from": "admin", "to": "key", "label": "create scoped key"},
+          {"from": "key", "to": "api", "label": "request"},
+          {"from": "org", "to": "api", "label": "anthropic-workspace-id header"},
+          {"from": "api", "to": "wa", "label": "in-scope access"},
+          {"from": "api", "to": "wb", "label": "only if key has access"}
+        ]
+      },
+      "steps": [
+        "Create one workspace for each project, environment, or tenant that needs separate limits. (Inference)",
+        "Create an API key and scope it to one workspace.",
+        "Send the anthropic-workspace-id header with requests from an unscoped key.",
+        "Assign the workspace roles that the team needs and no more.",
+        "Set spend limits for each workspace in the Console.",
+        "Archive the workspace when the project ends, and its keys archive with it."
+      ],
+      "pros": [
+        "Separate keys and resources for each project or tenant.",
+        "The Claude Code workspace keeps developer traffic apart from other workloads.",
+        "Each workspace has its own spend limit."
+      ],
+      "cons": [
+        "Each workspace adds setup and role management.",
+        "A workspace archive cannot be undone.",
+        "The Default Workspace cannot be renamed, archived, or deleted."
+      ],
+      "use_when": [
+        "Tenants must not share resources or prompt caches.",
+        "One team needs its own spend cap.",
+        "Test and production environments need separate keys."
+      ],
+      "do_not_use_when": [
+        "One internal script needs one key and no separate limits.",
+        "The organization needs more workspaces than the default cap without an account request.",
+        "The team needs per-member workspace roles on Claude Platform on AWS, because member management is not available there."
+      ],
+      "constraints": [
+        {"family": "isolation", "choice": "Use one workspace for each tenant that must not share resources. (Inference)", "combination": "Prompt caches stay isolated by workspace on the Claude API, Claude Platform on AWS, and Microsoft Foundry."},
+        {"family": "cost", "choice": "Set a monthly spend limit for each workspace.", "combination": "Keep each workspace limit below the tier spend cap. (Inference)"},
+        {"family": "quota", "choice": "Set rate limits for each workspace and model in the Console.", "combination": "Check the organization tier limits, which apply at the organization level."},
+        {"family": "governance", "choice": "Grant the least workspace role for each member.", "combination": "Use the Workspace Limited Developer role when the member needs no tracing views."},
+        {"family": "data location", "choice": "Bind each Claude Platform on AWS workspace to one region.", "combination": "Call the workspace only through its region endpoint."}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "A workspace is bound to one AWS region and serves as the IAM resource through its workspace ARN.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "Files, skills, batches, and sessions belong to the workspace whose ID the request sets.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"},
+        {"service": "Microsoft Foundry", "text": "Prompt caches are isolated by workspace within an organization.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"},
+        {"service": "Amazon Bedrock", "text": "Prompt caches are isolated by organization, not by workspace.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Prompt caches are isolated by organization, not by workspace.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"}
+      ],
+      "exam_tie": "D3.2. Expect a scenario with shared keys across teams or tenants. The credited answer scopes keys and workspaces to the boundary that owns the data. (Inference)",
+      "trap": "An unscoped key with a workspace header looks isolated. The key still reaches every workspace that its user or service account can access.",
+      "decision_rule": "Scope the key to the one workspace that owns the data, and give members the least role.",
+      "exam_tip": "A key scoped to one workspace cannot reach another workspace, even with a header that names it.",
+      "key_facts": [
+        {"text": "An organization can hold up to 100 workspaces by default.", "url": "https://platform.claude.com/docs/en/manage-claude/workspaces", "label": "Fact"},
+        {"text": "The Default Workspace cannot be renamed, archived, or deleted.", "url": "https://platform.claude.com/docs/en/manage-claude/workspaces", "label": "Fact"},
+        {"text": "A workspace archive also archives its API keys, and the action cannot be undone.", "url": "https://platform.claude.com/docs/en/manage-claude/workspaces", "label": "Fact"},
+        {"text": "A Claude Code key stops when its owner leaves the workspace or the organization.", "url": "https://platform.claude.com/docs/en/manage-claude/workspaces", "label": "Fact"},
+        {"text": "Rate limits are defined by usage tier at the organization level.", "url": "https://platform.claude.com/docs/en/api/rate-limits", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Role limits for workspace admins on Claude Platform on AWS beyond the listed exceptions. Not in source."
+      ]
+    },
+    {
+      "name": "Cloud platform identity",
+      "first_principle": "Each cloud platform checks its own identity and IAM policy before it runs a request, so the policy becomes the access control.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app with the Anthropic SDK", "group": "client"},
+          {"id": "sts", "label": "Cloud identity service issues credentials", "group": "cloud"},
+          {"id": "iam", "label": "IAM policy on workspace or deployment", "group": "control"},
+          {"id": "model", "label": "Claude endpoint on the platform", "group": "claude"},
+          {"id": "log", "label": "Platform request record", "group": "data"}
+        ],
+        "edges": [
+          {"from": "sts", "to": "app", "label": "temporary credentials"},
+          {"from": "app", "to": "model", "label": "signed request"},
+          {"from": "iam", "to": "model", "label": "allow or deny per action"},
+          {"from": "model", "to": "log", "label": "request ID for lookup"}
+        ]
+      },
+      "steps": [
+        "The SDK loads AWS credentials from the default credential provider chain.",
+        "The SDK signs each request with SigV4 for the workspace region.",
+        "IAM checks aws-external-anthropic:CreateInference on the workspace ARN.",
+        "Add aws-external-anthropic:CallWithBearerToken only for API key calls.",
+        "Enable outbound web identity federation once for each AWS account.",
+        "Use the AWS request ID to look up the call in CloudTrail."
+      ],
+      "pros": [
+        "Current IAM roles, policies, and audit tools apply to the calls.",
+        "Each workspace has its own ARN for access policy.",
+        "Temporary credentials from the cloud identity service limit exposure."
+      ],
+      "cons": [
+        "Outbound web identity federation is disabled by default, and every request fails until you enable it.",
+        "OAuth is not supported on Claude Platform on AWS.",
+        "The Bedrock service role path needs iam:PassRole on the service role ARN."
+      ],
+      "use_when": [
+        "The organization manages access with AWS IAM roles and policies.",
+        "The organization manages access with Entra ID roles on a Foundry deployment.",
+        "Access must be limited to one workspace or deployment."
+      ],
+      "do_not_use_when": [
+        "The workload needs user consent through OAuth on Claude Platform on AWS.",
+        "The workload would use a long-term Bedrock key. The docs show a deny policy that blocks long-term keys.",
+        "The workload runs on Google managed Claude with no IAM role for predict calls."
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Grant access with IAM policies on the workspace ARN.", "combination": "Use an API key for a CI job only with CallWithBearerToken."},
+        {"family": "data location", "choice": "Match the region to the workspace region.", "combination": "On Bedrock, AWS is the inference data processor, not Anthropic."},
+        {"family": "operations", "choice": "Keep the Anthropic request ID for support tickets.", "combination": "Keep the AWS request ID for CloudTrail lookups."},
+        {"family": "quota", "choice": "Request a higher tier through your Anthropic account representative on Claude Platform on AWS.", "combination": "On Bedrock, request up to 5 million input TPM without Anthropic approval."}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "Authentication uses SigV4 or an API key from the AWS Console. Outbound web identity federation must be enabled once per account.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Amazon Bedrock", "text": "Access uses a Bedrock service role, IAM assumed roles, or bearer tokens. Assumed roles and bearer tokens have a 12-hour maximum.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
+        {"service": "Microsoft Foundry", "text": "Access management uses Azure-issued API keys or Entra ID role-based access control.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "The caller identity needs an IAM role with aiplatform.endpoints.predict.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "The caller needs roles/claude.user on the project and Application Default Credentials. IAM roles apply to every workspace in the project.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"}
+      ],
+      "exam_tie": "D3.2. Expect a scenario that names a cloud platform and asks how to control access. The credited answer uses that platform identity model and a scoped policy. (Inference)",
+      "trap": "A long-lived static key in code looks simpler. It bypasses the platform identity, so the IAM policy cannot scope or revoke each caller.",
+      "decision_rule": "Use the platform identity and scope the IAM policy to the workspace or deployment.",
+      "exam_tip": "If the scenario needs OAuth user consent on Claude Platform on AWS, reject that option because OAuth is not supported.",
+      "key_facts": [
+        {"text": "Outbound web identity federation is disabled by default on every AWS account.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws", "label": "Fact"},
+        {"text": "Bedrock bearer tokens have a 12-hour maximum and are the least preferred option.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock", "label": "Fact"},
+        {"text": "The inference data processor is Anthropic on Claude Platform on AWS and AWS on Bedrock.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws", "label": "Fact"},
+        {"text": "The default Bedrock quota is 2 million input tokens per minute.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock", "label": "Fact"},
+        {"text": "Google managed Claude needs the aiplatform.endpoints.predict permission.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Microsoft Foundry token lifetime for Entra ID tokens. Not in source.",
+        "Google managed IAM role names beyond the predict permission. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Must the audit name the human?} -->|No| B{Is the caller a batch or service job?}\n  A -->|Yes| C{Does the server need OAuth?}\n  C -->|Yes| D[Per-user token in authorization_token]\n  C -->|No| E[Per-user vault credential or narrow key]\n  B -->|Yes| F[Narrow service identity in one workspace]\n  B -->|No| G{Which platform hosts the model?}\n  G -->|Claude Platform on AWS| H[SigV4 with IAM policy on workspace ARN]\n  G -->|Bedrock| K[Service role or assumed IAM role]\n  G -->|Foundry or Google| I[Entra ID or Google IAM role]\n  D --> J[Server checks the token for each call]\n  E --> J",
+  "cheatsheet": "flowchart LR\n  I[Identity per hop] --> U[Per-user token]\n  I --> V[Vault per end user]\n  I --> W[Workspace key scope]\n  I --> P[Platform IAM policy]\n  U --> S[Server checks token]\n  W --> R[Least workspace role]\n  P --> A[SigV4 on AWS]\n  I --> X[Session id is not identity]",
+  "patterns": [
+    {"wording": "the audit must name the person who asked for each action", "answer_type": "per-user credential checked at the server", "rule": "Give each user a credential for each server, and never share one key for all users.", "traps": ["Shared service key with a name in the prompt", "Department-level credential"]},
+    {"wording": "one key reaches several teams and tenants", "answer_type": "workspace scope on each key", "rule": "Scope each key to one workspace and give members the least role.", "traps": ["Unscoped key with a workspace header", "One shared workspace for all tenants"]},
+    {"wording": "the cloud platform must control who calls the model", "answer_type": "platform IAM policy on the workspace or deployment", "rule": "Use the platform identity, and scope the IAM policy to the workspace or deployment.", "traps": ["Long-lived static key in code", "OAuth consent on Claude Platform on AWS"]}
+  ],
+  "console_steps": [
+    {"step": "Open the Workspaces page in the Claude Console.", "url": "https://platform.claude.com/docs/en/manage-claude/workspaces", "screenshot": null}
+  ],
+  "not_in_source": [
+    "Audience and token passthrough rules of the MCP authorization profile. The mirror has no page on them. Not in source.",
+    "Revocation propagation delay for tokens. Not in source.",
+    "Consent screen wording for MCP OAuth. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector",
+    "https://platform.claude.com/docs/en/agents-and-tools/remote-mcp-servers",
+    "https://platform.claude.com/docs/en/managed-agents/vaults",
+    "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+    "https://platform.claude.com/docs/en/manage-claude/workspaces",
+    "https://platform.claude.com/docs/en/api/rate-limits",
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://code.claude.com/docs/en/mcp"
+  ]
+}

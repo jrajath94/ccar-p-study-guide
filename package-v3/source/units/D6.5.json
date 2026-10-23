@@ -1,0 +1,557 @@
+{
+  "id": "D6.5",
+  "domain": "D6",
+  "title": "Lifecycle phases",
+  "task_statement": "Run an AI system through ordered lifecycle phases with gates, and plan model retirement and migration. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Lifecycle phase gates",
+      "first_principle": "Each phase closes only when its artifact exists, so later work cannot replace earlier work. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "disc",
+            "label": "Discovery: requirements and owners",
+            "group": "client"
+          },
+          {
+            "id": "design",
+            "label": "Design: priced options and records",
+            "group": "control"
+          },
+          {
+            "id": "handoff",
+            "label": "Handoff: runbooks and alert owners",
+            "group": "control"
+          },
+          {
+            "id": "mon",
+            "label": "Monitoring: triggers and usage data",
+            "group": "data"
+          },
+          {
+            "id": "iter",
+            "label": "Iteration: tune or re-architect",
+            "group": "claude"
+          }
+        ],
+        "edges": [
+          {
+            "from": "disc",
+            "to": "design",
+            "label": "requirements gate"
+          },
+          {
+            "from": "design",
+            "to": "handoff",
+            "label": "records gate"
+          },
+          {
+            "from": "handoff",
+            "to": "mon",
+            "label": "runbook gate"
+          },
+          {
+            "from": "mon",
+            "to": "iter",
+            "label": "trigger gate"
+          },
+          {
+            "from": "iter",
+            "to": "disc",
+            "label": "return rule when requirements change"
+          }
+        ]
+      },
+      "steps": [
+        "Close discovery when each requirement has a metric, a threshold, and an owner. (Inference)",
+        "Close design when options are priced and decision records exist. (Inference)",
+        "Close handoff when runbooks, alert owners, and a tested rollback path exist. (Inference)",
+        "Close monitoring when triggers fire and a review follows. (Inference)",
+        "Return to the earliest skipped phase when a later phase fails. (Inference)"
+      ],
+      "pros": [
+        "A failed later phase points to the gate that the team skipped. (Inference)",
+        "Gates limit how much a fix costs after each later phase. (Inference)"
+      ],
+      "cons": [
+        "Gates can slow a small team that has no handoff. (Inference)",
+        "Emergencies skip gates, so the record must catch up later. (Inference)"
+      ],
+      "use_when": [
+        "The system has real users, money, or compliance scope. (Inference)",
+        "Several teams hand off operation of the system. (Inference)"
+      ],
+      "do_not_use_when": [
+        "A reversible demo has no real data. (Inference)",
+        "A live outage needs an immediate fix before any record exists. Write the record after the fix. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Name the alert owner before the handoff gate closes. (Inference)",
+          "combination": "Test the rollback path before live traffic. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Name the signer for each gate. (Inference)",
+          "combination": "Record an emergency path that writes the record after the fix. (Inference)"
+        },
+        {
+          "family": "scale",
+          "choice": "Scale the gate review to the team size. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "cost",
+          "choice": "Compare the cost of a gate with the cost of a later fix. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D6.5. Expect a live failure where a phase was skipped. The credited answer returns to the skipped phase, not to more monitoring. (Inference)",
+      "trap": "More dashboards look like progress, but they measure a design that has no requirements. (Inference)",
+      "decision_rule": "When a later phase fails, return to the earliest skipped gate. (Inference)",
+      "exam_tip": "A higher error rate with no thresholds points to discovery, not to monitoring tools. (Inference)",
+      "key_facts": [
+        {
+          "text": "Anthropic recommends the latest API version whenever possible.",
+          "url": "https://platform.claude.com/docs/en/api/versioning",
+          "label": "Fact"
+        },
+        {
+          "text": "API version 2026-10-21 removes the temperature, top_p, and top_k request parameters.",
+          "url": "https://platform.claude.com/docs/en/api/versioning",
+          "label": "Fact"
+        },
+        {
+          "text": "A request that sends a removed parameter returns a 400 error on every model.",
+          "url": "https://platform.claude.com/docs/en/api/versioning",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic gives at least 60 days of notice before retirement of a publicly released model.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Gate names and number of phases. General practice, not in the docs. Not in source."
+      ]
+    },
+    {
+      "name": "Model lifecycle states and retirement",
+      "first_principle": "A model has one of four states, active, legacy, deprecated, or retired, and requests to a retired model fail.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "active",
+            "label": "Active model",
+            "group": "claude"
+          },
+          {
+            "id": "legacy",
+            "label": "Legacy: no further updates",
+            "group": "claude"
+          },
+          {
+            "id": "dep",
+            "label": "Deprecated: replacement named",
+            "group": "control"
+          },
+          {
+            "id": "ret",
+            "label": "Retired: requests fail",
+            "group": "control"
+          },
+          {
+            "id": "audit",
+            "label": "Usage export by API key and model",
+            "group": "data"
+          },
+          {
+            "id": "plan",
+            "label": "Migration plan before retirement date",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "active",
+            "to": "legacy",
+            "label": "no further updates"
+          },
+          {
+            "from": "legacy",
+            "to": "dep",
+            "label": "deprecation notice"
+          },
+          {
+            "from": "dep",
+            "to": "ret",
+            "label": "retirement date"
+          },
+          {
+            "from": "audit",
+            "to": "plan",
+            "label": "lists affected keys"
+          },
+          {
+            "from": "plan",
+            "to": "dep",
+            "label": "migrate before retirement"
+          }
+        ]
+      },
+      "steps": [
+        "Check the model status on the deprecations page in each release cycle. (Inference)",
+        "Export usage from the Usage page to find deprecated models.",
+        "Read the downloaded file to find each API key and model in use.",
+        "Test the replacement model well before the retirement date. (Inference)",
+        "Move all traffic to the replacement before the retirement date."
+      ],
+      "pros": [
+        "Retirement dates appear on the deprecations page ahead of time.",
+        "The usage export shows which API keys still call deprecated models."
+      ],
+      "cons": [
+        "Deprecated models are likely to be less reliable than active models.",
+        "Some retirement dates are tentative, so the deadline can move."
+      ],
+      "use_when": [
+        "An application calls a model with a deprecated or legacy status.",
+        "A team plans a model change before a known retirement date."
+      ],
+      "do_not_use_when": [
+        "The application calls an active model and no change is planned. (Inference)",
+        "A decision must use a model that the platform has already retired. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Export usage by model and API key before each retirement date.",
+          "combination": "Test the replacement before the date. (Inference)"
+        },
+        {
+          "family": "skill",
+          "choice": "Use the replacement that the deprecations page names.",
+          "combination": ""
+        },
+        {
+          "family": "governance",
+          "choice": "Notify the owner at the first deprecation notice. (Inference)",
+          "combination": "Check each platform, because Amazon Bedrock and Google managed platforms set their own retirement schedules."
+        },
+        {
+          "family": "cost",
+          "choice": "Compare the replacement with cost per completed task before cutover. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The retirement dates on the deprecations page apply to this platform.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "The retirement dates on the deprecations page apply to this platform.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Google sets the lifecycle dates, and they can differ from the Claude API schedule.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Foundry follows the Claude API lifecycle schedule.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Amazon Bedrock sets its own retirement schedule, so lifecycle status and dates can differ from the deprecations page.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+        }
+      ],
+      "exam_tie": "D6.5. Expect a deprecation notice with a near retirement date. The credited answer migrates before the date, to the named replacement. (Inference)",
+      "trap": "A model switch made only at the retirement date causes an outage, because requests to a retired model fail.",
+      "decision_rule": "Migrate to the named replacement before the retirement date, and test the replacement first.",
+      "exam_tip": "A deprecated model still serves requests, but its retirement date sets the deadline.",
+      "key_facts": [
+        {
+          "text": "Requests to a retired model fail.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "Deprecated models are likely to be less reliable than active models.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic gives at least 60 days of notice before retirement of a publicly released model.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "The Usage page export produces a CSV that breaks usage down by API key and model.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "Some retirement dates in the model status table are tentative.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        },
+        {
+          "text": "Deprecation page dates apply to the Claude API, Claude Platform on AWS, Claude Models on Google Cloud (Anthropic managed), and Microsoft Foundry.",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Exact Amazon Bedrock retirement dates. The deprecations page points to the Bedrock model tables. Not in source.",
+        "Retirement date for a model after its tentative date. Not in source."
+      ]
+    },
+    {
+      "name": "Workspaces per environment",
+      "first_principle": "Every request runs in exactly one workspace, so each environment needs its own workspace for keys, usage, and limits.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "dev",
+            "label": "Development workspace",
+            "group": "client"
+          },
+          {
+            "id": "stg",
+            "label": "Staging workspace",
+            "group": "client"
+          },
+          {
+            "id": "prod",
+            "label": "Production workspace",
+            "group": "client"
+          },
+          {
+            "id": "keys",
+            "label": "Workspace-scoped API keys",
+            "group": "control"
+          },
+          {
+            "id": "claude",
+            "label": "Claude API request",
+            "group": "claude"
+          },
+          {
+            "id": "limits",
+            "label": "Workspace rate and spend limits",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "dev",
+            "to": "keys",
+            "label": "issues key"
+          },
+          {
+            "from": "stg",
+            "to": "keys",
+            "label": "issues key"
+          },
+          {
+            "from": "prod",
+            "to": "keys",
+            "label": "issues key"
+          },
+          {
+            "from": "keys",
+            "to": "claude",
+            "label": "runs in one workspace"
+          },
+          {
+            "from": "limits",
+            "to": "claude",
+            "label": "apply per workspace"
+          }
+        ]
+      },
+      "steps": [
+        "Create one workspace each for development, staging, and production.",
+        "Scope each API key to the workspace that it serves.",
+        "Set rate limits for each workspace, based on its environment.",
+        "Set a spend limit on each workspace that is not the Default Workspace.",
+        "Promote the tested model ID from staging to production. (Inference)"
+      ],
+      "pros": [
+        "Each environment has its own keys, usage, and limits.",
+        "Usage reports separate the environments by workspace."
+      ],
+      "cons": [
+        "Each extra workspace adds administration work. (Inference)",
+        "The Default Workspace cannot be renamed, archived, or deleted."
+      ],
+      "use_when": [
+        "Development and production need different rate limits.",
+        "Teams need separate cost reports."
+      ],
+      "do_not_use_when": [
+        "A single prototype has one user and no production traffic. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "isolation",
+          "choice": "Scope each API key to one workspace.",
+          "combination": "Use a key that is not workspace-scoped with a workspace header for calls across workspaces."
+        },
+        {
+          "family": "quota",
+          "choice": "Set development rate limits lower than production rate limits.",
+          "combination": ""
+        },
+        {
+          "family": "cost",
+          "choice": "Set a spend limit on each workspace that is not the Default Workspace.",
+          "combination": "Keep production traffic out of the Default Workspace, which has no spend limit. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Give each team access only to its own workspace.",
+          "combination": "On Google Cloud, give each team its own project, because roles apply to every workspace in a project."
+        },
+        {
+          "family": "data location",
+          "choice": "On Claude Platform on AWS, create each workspace in the AWS region where the data must stay.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Each workspace binds to one AWS region, and IAM policies grant or deny access per workspace.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Setup creates one Default Workspace, and IAM roles apply to every workspace in the project.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Prompt caches are isolated by organization on this platform, not by workspace.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Prompt caches are isolated by workspace on this platform.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces"
+        }
+      ],
+      "exam_tie": "D6.5. Expect a question on separate environments. The credited answer separates development, staging, and production into workspaces with their own limits. (Inference)",
+      "trap": "One shared workspace with a label convention looks simple, but keys and limits then mix across environments. (Inference)",
+      "decision_rule": "Create one workspace for each environment that needs its own limits or reports.",
+      "exam_tip": "The Default Workspace cannot have spend limits, so production needs its own workspace.",
+      "key_facts": [
+        {
+          "text": "Every request runs in exactly one workspace.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "An organization can have up to 100 workspaces by default.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "The Default Workspace cannot be renamed, archived, or deleted.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "Development workspaces use lower rate limits, and production workspaces use full rate limits.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "Spend limits cannot be set on the Default Workspace.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Workspace limits on platforms other than the Claude API. Not in source.",
+        "Promotion process from staging to production. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Stakeholder needs a new environment or model?} -->|No| B[Keep current phase]\n  A -->|Yes| C{Requirements have metric and owner?}\n  C -->|No| D[Return to discovery]\n  C -->|Yes| E{Model has a retirement notice?}\n  E -->|Yes| F[Test named replacement before date]\n  E -->|No| G{Separate environment needed?}\n  F --> G\n  G -->|Yes| H[Create workspace with its own limits]\n  G -->|No| I[Proceed through the gates]",
+  "cheatsheet": "flowchart LR\n  D[Discovery] --> DE[Design]\n  DE --> H[Handoff]\n  H --> M[Monitoring]\n  M --> I[Iteration]\n  I --> D\n  R[Retirement notice] --> X[Export usage]\n  X --> P[Replacement tested]",
+  "patterns": [
+    {
+      "wording": "an error rate rises in production with no requirement thresholds",
+      "answer_type": "return to the skipped phase",
+      "rule": "Return to the earliest phase whose gate the team skipped.",
+      "traps": [
+        "Add dashboards to the live system",
+        "Add a reviewer to every task"
+      ]
+    },
+    {
+      "wording": "a deprecation notice names a retirement date",
+      "answer_type": "migrate to the named replacement before the date",
+      "rule": "Test the replacement, then move traffic before the retirement date.",
+      "traps": [
+        "Wait for the date to force a change",
+        "Keep the retired model on a backup route"
+      ]
+    },
+    {
+      "wording": "a team mixes development and production traffic in one workspace",
+      "answer_type": "separate workspace for each environment",
+      "rule": "Create one workspace for each environment with its own limits.",
+      "traps": [
+        "One shared key for all environments"
+      ]
+    }
+  ],
+  "console_steps": [
+    {
+      "step": "Open the Usage page in the Claude Console.",
+      "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+      "screenshot": null
+    },
+    {
+      "step": "Click Export on the Usage page.",
+      "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+      "screenshot": null
+    },
+    {
+      "step": "Review the downloaded CSV by API key and model.",
+      "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+      "screenshot": null
+    }
+  ],
+  "not_in_source": [
+    "Console steps for lifecycle phases in general: Not in source.",
+    "Lifecycle phase names and gate criteria. General practice, not in the docs. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/api/versioning",
+    "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "https://platform.claude.com/docs/en/manage-claude/workspaces",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+  ]
+}

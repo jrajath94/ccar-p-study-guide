@@ -1,0 +1,573 @@
+{
+  "id": "F2",
+  "domain": "F",
+  "title": "LLM foundations",
+  "task_statement": "Explain how a model produces output, what limits its input and output, and how a tool call returns control to the app. (Inference: task wording from repo lesson 7-3A, not from the exam guide)",
+  "components": [
+    {
+      "name": "Context window",
+      "first_principle": "The context window holds every input token and every output token of a turn, so all of them share one budget.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "sys",
+            "label": "System prompt and tool definitions",
+            "group": "client"
+          },
+          {
+            "id": "msgs",
+            "label": "Messages and tool results",
+            "group": "client"
+          },
+          {
+            "id": "win",
+            "label": "Context window, 1M for listed models",
+            "group": "claude"
+          },
+          {
+            "id": "out",
+            "label": "Thinking and text output",
+            "group": "claude"
+          },
+          {
+            "id": "max",
+            "label": "max_tokens cap on output",
+            "group": "control"
+          },
+          {
+            "id": "stop",
+            "label": "stop_reason in the response",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "sys",
+            "to": "win",
+            "label": "counts toward window"
+          },
+          {
+            "from": "msgs",
+            "to": "win",
+            "label": "counts toward window"
+          },
+          {
+            "from": "win",
+            "to": "out",
+            "label": "generate turn"
+          },
+          {
+            "from": "max",
+            "to": "out",
+            "label": "caps output"
+          },
+          {
+            "from": "out",
+            "to": "stop",
+            "label": "ends with reason"
+          }
+        ]
+      },
+      "steps": [
+        "Everything in a request counts toward the context window.",
+        "The system prompt, the messages, the tool results, and the tool definitions all count.",
+        "Thinking tokens and text output count too.",
+        "The max_tokens value caps the output for each response.",
+        "An input longer than the window returns a 400 invalid_request_error.",
+        "On Claude 4.5 models and newer, output stops with model_context_window_exceeded when generation reaches the limit.",
+        "Use the token-count endpoint before a large request."
+      ],
+      "pros": [
+        "A 1M-token window fits long documents in one request for listed models.",
+        "Earlier tool results stay available to the model in the same turn.",
+        "Each response reports its token usage."
+      ],
+      "cons": [
+        "Accuracy and recall degrade as token count grows, which the docs call context rot.",
+        "Cached prompt prefixes still occupy the window.",
+        "Long inputs raise the token count of every turn."
+      ],
+      "use_when": [
+        "The task needs many documents or a long conversation in one request.",
+        "The expected output fits inside the max_tokens cap."
+      ],
+      "do_not_use_when": [
+        "The input alone exceeds the model window. Shorten or split the input first.",
+        "A short prompt answers the task. Extra context adds cost and can reduce focus."
+      ],
+      "constraints": [
+        {
+          "family": "scale",
+          "choice": "Use the 1M-token window for listed models and the 200k window for older models.",
+          "combination": "Use server-side compaction when a conversation nears the window."
+        },
+        {
+          "family": "cost",
+          "choice": "Estimate tokens before a large request.",
+          "combination": "Cache stable prefixes to cut the cost of repeated input."
+        },
+        {
+          "family": "latency",
+          "choice": "Set max_tokens to the output size that the task needs.",
+          "combination": "Stream the output when the first tokens matter."
+        },
+        {
+          "family": "operations",
+          "choice": "Read stop_reason before you accept a response.",
+          "combination": "Treat model_context_window_exceeded as a truncated answer."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Context-window sizes match the first-party Claude API.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Listed models have a 1M-token context window on Foundry.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Listed models have a 1M-token context window on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        }
+      ],
+      "exam_tie": "F2. Expect a long document and an output limit in one scenario. The credited answer checks the window and max_tokens before the design. (Inference)",
+      "trap": "A bigger window looks like the fix for missed details, but context rot means more tokens can lower recall.",
+      "decision_rule": "Fit the request inside the window with room for max_tokens, then select what enters the window.",
+      "exam_tip": "If the input alone exceeds the window, the API returns a 400 error and no output.",
+      "key_facts": [
+        {
+          "text": "Claude Opus 5.5 has a 1M-token context window.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Models with a 1M-token context window generate up to 128k output tokens in one request.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        },
+        {
+          "text": "Other models, such as Claude Sonnet 4.5, have a 200k-token context window.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        },
+        {
+          "text": "An input that alone exceeds the window returns a 400 invalid_request_error.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        },
+        {
+          "text": "Thinking tokens count toward the context window.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        },
+        {
+          "text": "1M tokens is roughly 555k words on the current tokenizer.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "One request can include up to 600 images or PDF pages on models with a 1M-token window.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Accuracy loss percentage at a given token count. Not in source.",
+        "Token count for text in a language other than English. Not in source."
+      ]
+    },
+    {
+      "name": "Model tier choice",
+      "first_principle": "Each tier trades speed and price against capability, so the choice follows the quality target and the budget. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "req",
+            "label": "Task and quality target",
+            "group": "client"
+          },
+          {
+            "id": "cat",
+            "label": "Tier list with price and speed",
+            "group": "cloud"
+          },
+          {
+            "id": "eval",
+            "label": "Results on a fixed test set",
+            "group": "data"
+          },
+          {
+            "id": "choice",
+            "label": "Chosen tier",
+            "group": "control"
+          },
+          {
+            "id": "id",
+            "label": "Model ID for the platform",
+            "group": "cloud"
+          },
+          {
+            "id": "api",
+            "label": "Messages API model field",
+            "group": "claude"
+          }
+        ],
+        "edges": [
+          {
+            "from": "req",
+            "to": "choice",
+            "label": "set quality target and budget"
+          },
+          {
+            "from": "cat",
+            "to": "choice",
+            "label": "filter by price and speed"
+          },
+          {
+            "from": "eval",
+            "to": "choice",
+            "label": "keep tier that passes"
+          },
+          {
+            "from": "choice",
+            "to": "id",
+            "label": "look up platform ID"
+          },
+          {
+            "from": "id",
+            "to": "api",
+            "label": "set model field"
+          }
+        ]
+      },
+      "steps": [
+        "Name the task and the quality target.",
+        "List the tiers with their price, speed, and context window.",
+        "Run the same evaluation set on two tiers.",
+        "Keep the least costly tier that meets the quality target.",
+        "Set the model field to the ID for the platform in use.",
+        "Test the choice again after each model migration."
+      ],
+      "pros": [
+        "Tiers give a clear trade-off between price, speed, and capability.",
+        "A tier change keeps the same request shape.",
+        "A test set replaces a guess about which model is large enough."
+      ],
+      "cons": [
+        "Model IDs differ by platform, so a copied ID can fail.",
+        "Prices and retirement dates change over time.",
+        "A smaller tier can miss a hard task, and the miss may show no error."
+      ],
+      "use_when": [
+        "A high-volume task with a clear output format needs low latency.",
+        "A hard reasoning task fails the quality target on a smaller tier."
+      ],
+      "do_not_use_when": [
+        "The largest tier is chosen with no quality test. (Inference)",
+        "The design uses a model that is near retirement. Plan a migration first."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Pick the lowest price tier that passes the test set.",
+          "combination": "Price the expected volume before the choice is final."
+        },
+        {
+          "family": "latency",
+          "choice": "Use the fastest tier for high-volume, latency-sensitive tasks.",
+          "combination": "Raise the effort setting when the quality test fails. (Inference)"
+        },
+        {
+          "family": "skill",
+          "choice": "Match the tier to the complexity of the task.",
+          "combination": ""
+        },
+        {
+          "family": "governance",
+          "choice": "Record each model retirement date in the design record.",
+          "combination": "Plan the migration before the retirement date."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "The model ID is anthropic.claude-haiku-5-5 on Bedrock.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The model ID is claude-haiku-5-5, the same as the Claude API.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "The model ID is claude-haiku-5-5 on this platform.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "The model ID is claude-haiku-5-5 on this platform.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "The deployment name becomes the model parameter, and it can differ from the model ID.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "F2. Expect a scenario with a volume, a latency limit, and a quality floor. The credited answer picks the tier that meets all three. (Inference)",
+      "trap": "The largest model looks safest, but it adds cost and latency that the scenario does not require.",
+      "decision_rule": "Choose the least costly tier that passes the evaluation for the task.",
+      "exam_tip": "If the stem names a platform, check the model ID for that platform before you accept an option.",
+      "key_facts": [
+        {
+          "text": "Claude Haiku 5.5 is built for high-volume, latency-sensitive tasks such as classification and routing.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 has a 1M-token context window and up to 128K output tokens.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 uses a tokenizer that counts about 30 percent more tokens than Claude Haiku 4.5 for the same text.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Sonnet 5.5 costs 2 dollars per million input tokens and 10 dollars per million output tokens.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Sonnet 5.5 retires not sooner than September 28, 2027.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "A quality score that separates the tiers for one task. Not in source."
+      ]
+    },
+    {
+      "name": "Tool call loop",
+      "first_principle": "The model requests a tool call, and your code runs the operation and returns the result.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "model",
+            "label": "Claude model turn",
+            "group": "claude"
+          },
+          {
+            "id": "stop",
+            "label": "stop_reason check",
+            "group": "control"
+          },
+          {
+            "id": "code",
+            "label": "Your tool code",
+            "group": "client"
+          },
+          {
+            "id": "res",
+            "label": "tool_result block",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "send tools and messages"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "generate turn"
+          },
+          {
+            "from": "model",
+            "to": "stop",
+            "label": "return stop_reason"
+          },
+          {
+            "from": "stop",
+            "to": "code",
+            "label": "tool_use: run each tool"
+          },
+          {
+            "from": "code",
+            "to": "res",
+            "label": "format output"
+          },
+          {
+            "from": "res",
+            "to": "api",
+            "label": "send next request"
+          }
+        ]
+      },
+      "steps": [
+        "Send the tools array and the user message in one request.",
+        "Claude returns a tool_use block with a tool name and a JSON object of arguments.",
+        "Your code runs the tool.",
+        "Claude never receives your implementation of the tool.",
+        "Your code sends the output back in a tool_result block.",
+        "Repeat while stop_reason is tool_use.",
+        "Stop the loop on end_turn, max_tokens, stop_sequence, or refusal."
+      ],
+      "pros": [
+        "Your app keeps control of execution and permissions.",
+        "The tool schema gives typed inputs to your code.",
+        "Server tools run on Anthropic infrastructure with no code on your side."
+      ],
+      "cons": [
+        "Each client tool call adds one round trip.",
+        "Your code must enforce a stop rule for the loop. (Inference)",
+        "Tool results count toward the context window."
+      ],
+      "use_when": [
+        "The task needs an action with side effects, such as an update to a record.",
+        "The task needs fresh or external data."
+      ],
+      "do_not_use_when": [
+        "The model can answer from its training. No tool call is needed.",
+        "A single prompt answers the question and no action runs."
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Log each tool_use block and its result.",
+          "combination": "Record the request ID of each turn."
+        },
+        {
+          "family": "latency",
+          "choice": "Run parallel tool_use blocks concurrently, and return all results in one user message.",
+          "combination": "Use server tools to avoid a client round trip."
+        },
+        {
+          "family": "governance",
+          "choice": "Run side-effect tools in your code behind your permission checks.",
+          "combination": "Require human approval for writes. (Inference)"
+        },
+        {
+          "family": "scale",
+          "choice": "Defer large tool sets with the tool search tool.",
+          "combination": ""
+        },
+        {
+          "family": "cost",
+          "choice": "Cache the stable tool definitions with prompt caching.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "F2. Expect a scenario where the model must take an action. The credited answer runs the tool in app code and returns a tool_result. (Inference)",
+      "trap": "A design where the model calls the external API directly looks simpler. The model never runs anything on its own, so your app must run the client tool.",
+      "decision_rule": "Run every client tool in your code and return each result in a tool_result block.",
+      "exam_tip": "If stop_reason is tool_use, run the tools before you read the text as the final answer.",
+      "key_facts": [
+        {
+          "text": "The model never runs anything on its own.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+          "label": "Fact"
+        },
+        {
+          "text": "A tool_use block includes the tool name and a JSON object of arguments.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+          "label": "Fact"
+        },
+        {
+          "text": "The loop continues while stop_reason is tool_use.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+          "label": "Fact"
+        },
+        {
+          "text": "The loop exits on end_turn, max_tokens, stop_sequence, or refusal.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+          "label": "Fact"
+        },
+        {
+          "text": "A paused server-side loop returns stop_reason pause_turn.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic runs server-executed tools such as web_search, web_fetch, code_execution, and tool_search.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Maximum number of tool calls per turn. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Input fits window with max_tokens?} -->|No| B[Split or curate input]\n  A -->|Yes| C{Model must act or fetch data?}\n  C -->|Yes| D[Client tool loop with tool_result]\n  C -->|No| E{Quality passes on smaller tier?}\n  E -->|Yes| F[Use smaller tier]\n  E -->|No| G[Use larger tier or higher effort]",
+  "cheatsheet": "flowchart LR\n  W[1M window for listed models] --> B[Input plus max_tokens]\n  B --> O{Fits?}\n  O -->|No| S[Split or curate input]\n  O -->|Yes| T[Tier by test set]\n  T --> L[tool_use loop]\n  L --> R[stop_reason check]\n  R --> E[Final answer]",
+  "patterns": [
+    {
+      "wording": "a long document must be answered in one request",
+      "answer_type": "window fit check before the design",
+      "rule": "Confirm that the input plus max_tokens fits the window, then curate the context.",
+      "traps": [
+        "Bigger window as the only fix",
+        "Input larger than the window"
+      ]
+    },
+    {
+      "wording": "the model must change a record or fetch fresh data",
+      "answer_type": "client tool loop with tool_result",
+      "rule": "Run the tool in app code and return a tool_result block.",
+      "traps": [
+        "Model calls the API directly",
+        "Prompt asks the model to act"
+      ]
+    },
+    {
+      "wording": "high volume with a quality floor and low latency",
+      "answer_type": "smallest tier that passes the test set",
+      "rule": "Pick the least costly tier that passes the evaluation.",
+      "traps": [
+        "Largest model by default",
+        "Model ID copied from another platform"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+    "https://platform.claude.com/docs/en/models/overview",
+    "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use"
+  ]
+}

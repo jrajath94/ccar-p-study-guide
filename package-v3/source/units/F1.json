@@ -1,0 +1,600 @@
+{
+  "id": "F1",
+  "domain": "F",
+  "title": "Architecture and business foundations",
+  "task_statement": "Turn cost, capacity, and quality requirements into numbers that a design can meet. (Inference: task wording from repo lesson 7-4A, not from the exam guide)",
+  "components": [
+    {
+      "name": "Token cost model",
+      "first_principle": "Each token class has its own price, so the cost of a request is the sum of its classes.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "usage",
+            "label": "Usage fields per response",
+            "group": "control"
+          },
+          {
+            "id": "price",
+            "label": "Price per million tokens by class",
+            "group": "data"
+          },
+          {
+            "id": "cost",
+            "label": "Cost per request",
+            "group": "control"
+          },
+          {
+            "id": "bill",
+            "label": "Monthly invoice or Console report",
+            "group": "cloud"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "send request"
+          },
+          {
+            "from": "api",
+            "to": "usage",
+            "label": "return token counts"
+          },
+          {
+            "from": "usage",
+            "to": "cost",
+            "label": "count per class"
+          },
+          {
+            "from": "price",
+            "to": "cost",
+            "label": "rate per class"
+          },
+          {
+            "from": "cost",
+            "to": "bill",
+            "label": "times daily volume"
+          }
+        ]
+      },
+      "steps": [
+        "The API reports token counts for each class in the usage fields.",
+        "Cache writes and cache reads have their own multiplier on the base input price.",
+        "Thinking tokens bill as output tokens.",
+        "Batch requests cost 50 percent less than standard requests.",
+        "Multiply each count by its rate and divide the result by one million.",
+        "Multiply the cost per request by the daily request volume and the number of days.",
+        "Compare the monthly figure with the spend cap before launch."
+      ],
+      "pros": [
+        "The arithmetic gives an exact figure once the token counts are known.",
+        "The cost of a request is visible before any load test runs.",
+        "Usage fields show the split between cached and uncached tokens."
+      ],
+      "cons": [
+        "Token counts change with the tokenizer, so a sample of real requests gives the best estimate.",
+        "Prices differ by model, endpoint, and platform.",
+        "Prompts over 100,000 tokens cost more on Claude Haiku 5.5."
+      ],
+      "use_when": [
+        "A design choice changes the token count per request or the request volume.",
+        "A budget owner must approve a monthly spend figure."
+      ],
+      "do_not_use_when": [
+        "The work has no token cost, such as a local function with no model call.",
+        "The price for the chosen platform is unknown. Look up the platform price first."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Price each token class separately and add the totals.",
+          "combination": "Add batch pricing for work that can wait up to 24 hours."
+        },
+        {
+          "family": "quota",
+          "choice": "Compare the monthly forecast with the monthly spend cap of the tier.",
+          "combination": "Set a workspace spend limit below the tier cap."
+        },
+        {
+          "family": "data location",
+          "choice": "Use a regional endpoint only when residency requires it.",
+          "combination": "Expect a 10 percent premium on regional endpoints."
+        },
+        {
+          "family": "scale",
+          "choice": "Forecast cost at peak request volume, not at the monthly average.",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Sum the usage fields for each request each day.",
+          "combination": "Alert when the daily total passes the forecast. (Inference)"
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Global endpoints carry no pricing premium. Regional endpoints carry a 10 percent premium.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Usage bills in Claude Consumption Units. Each unit costs 0.01 dollars, and token rates convert to units.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Google Cloud invoices usage. Regional and multi-region endpoints carry a 10 percent premium over global endpoints.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Google Cloud Marketplace bills the usage. One Claude Consumption Unit costs 0.01 dollars.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Azure Marketplace bills Claude Consumption Units. A US Data Zone deployment applies a 1.1 times multiplier.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "F1. Expect a scenario with a price, a volume, and a request for a monthly figure. The credited answer uses token arithmetic per class. (Inference)",
+      "trap": "A flat estimate that counts input tokens only looks simple, but output tokens cost more, so the estimate understates the bill.",
+      "decision_rule": "Multiply each token class by its own rate, add the classes, then multiply by the request volume.",
+      "exam_tip": "If a figure has no unit, convert it to tokens per request and requests per day first.",
+      "key_facts": [
+        {
+          "text": "Claude Sonnet 5.5 costs 2 dollars per million input tokens and 10 dollars per million output tokens.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Opus 5.5 costs 4 dollars per million input tokens and 20 dollars per million output tokens.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 starts at 0.10 dollars per million input tokens and 0.50 dollars per million output tokens.",
+          "url": "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Batch API requests cost 50 percent less than the base price.",
+          "url": "https://platform.claude.com/docs/en/models/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Regional and multi-region endpoints include a 10 percent premium over global endpoints.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Setting inference_geo to us on Claude 4.6 and later models applies a 1.1 times pricing multiplier.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Prompts over 100,000 tokens cost more on Claude Haiku 5.5.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Per-model Google Cloud list prices for Claude models. The docs link to Google Cloud pricing pages. Not in source.",
+        "Monthly spend for any sample workload. Not in source."
+      ]
+    },
+    {
+      "name": "Spend caps and usage tiers",
+      "first_principle": "A spend cap stops usage at a set monthly amount, so it limits the worst-case bill.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "tier",
+            "label": "Organization usage tier",
+            "group": "control"
+          },
+          {
+            "id": "cap",
+            "label": "Monthly spend cap per tier",
+            "group": "control"
+          },
+          {
+            "id": "wsl",
+            "label": "Workspace spend limit",
+            "group": "cloud"
+          },
+          {
+            "id": "rl",
+            "label": "Rate limits per model class",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "send request"
+          },
+          {
+            "from": "tier",
+            "to": "cap",
+            "label": "sets cap"
+          },
+          {
+            "from": "cap",
+            "to": "api",
+            "label": "cap reached: 429 without retry-after"
+          },
+          {
+            "from": "wsl",
+            "to": "api",
+            "label": "limit reached: 400"
+          },
+          {
+            "from": "rl",
+            "to": "api",
+            "label": "requests and tokens per minute"
+          }
+        ]
+      },
+      "steps": [
+        "The organization sits in a usage tier with a monthly spend cap.",
+        "Each workspace can set a lower spend limit in the Console.",
+        "Rate limits apply per model class in requests and tokens per minute.",
+        "When usage reaches a spend limit you set, requests return HTTP 400.",
+        "When usage reaches the tier cap, requests return HTTP 429 without a retry-after header.",
+        "Raise or remove the limit to restore access sooner."
+      ],
+      "pros": [
+        "A cap bounds the monthly loss from a runaway loop.",
+        "Workspace limits separate budgets for teams and environments.",
+        "A tier move raises the rate limits and the spend cap together."
+      ],
+      "cons": [
+        "A tier cap returns 429, which looks like a rate limit, but retries fail until access resumes.",
+        "Spend on Claude Platform on AWS can take about 2 hours to show, so usage can pass a cap before requests stop.",
+        "The Default Workspace cannot have a spend limit."
+      ],
+      "use_when": [
+        "A team or environment needs its own monthly budget.",
+        "A new workload must not exceed a fixed monthly amount."
+      ],
+      "do_not_use_when": [
+        "The goal is faster throughput. Rate limits control request speed, not the budget.",
+        "A usage report is the only goal. A report alone does not stop usage."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Set a workspace spend limit for each team or environment.",
+          "combination": "Add billing recipients who receive the cap notice."
+        },
+        {
+          "family": "quota",
+          "choice": "Read the rate limits for each tier before the launch date.",
+          "combination": "Ask the account representative for a tier change on Claude Platform on AWS."
+        },
+        {
+          "family": "cost",
+          "choice": "Set the spend limit below the tier cap.",
+          "combination": "Add an alert threshold for an early warning. (Inference)"
+        },
+        {
+          "family": "isolation",
+          "choice": "Use a separate workspace for each team that needs a separate budget.",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Track spend per workspace in the Console.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "The default quota is 2 million input tokens per minute. AWS enforces requests per minute.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The tier cap and the rate limits apply. Tier moves go through the account representative or support.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Google Cloud manages rate limits and quotas for this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Anthropic manages rate limits. The account representative raises them on request.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Foundry does not send Anthropic rate limit headers. Limit increases go through Azure.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "F1. Expect a scenario with a shared key and a budget owner. The credited answer scopes the budget at the workspace level. (Inference)",
+      "trap": "A retry loop for every 429 looks right. A spend cap 429 has no retry-after header, so retries fail until access resumes.",
+      "decision_rule": "Use a workspace spend limit for budget control and a rate limit change for throughput.",
+      "exam_tip": "A 429 with no retry-after header points to a spend cap, not to a rate limit.",
+      "key_facts": [
+        {
+          "text": "The Start tier monthly spend cap is 500 US dollars.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "label": "Fact"
+        },
+        {
+          "text": "The Build tier monthly spend cap is 1,000 US dollars.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "label": "Fact"
+        },
+        {
+          "text": "The Scale tier monthly spend cap is 200,000 US dollars.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "label": "Fact"
+        },
+        {
+          "text": "A tier spend cap returns HTTP 429 with no retry-after header.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "label": "Fact"
+        },
+        {
+          "text": "A spend limit that you set returns HTTP 400 with an invalid_request_error type.",
+          "url": "https://platform.claude.com/docs/en/api/rate-limits",
+          "label": "Fact"
+        },
+        {
+          "text": "An organization has up to 100 workspaces by default.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "The Default Workspace cannot have a spend limit.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+          "label": "Fact"
+        },
+        {
+          "text": "On Claude Platform on AWS, spend can take about 2 hours to reflect recent usage, and the overshoot is billed.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Alert threshold percentages for workspace spend. The docs say alerts exist, but they name no values. Not in source.",
+        "Delay between a cap notice and the email delivery. Not in source."
+      ]
+    },
+    {
+      "name": "Acceptance thresholds for model output",
+      "first_principle": "Each quality adjective needs a metric, a threshold, and an owner before the build starts. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "req",
+            "label": "Stakeholder requirement",
+            "group": "client"
+          },
+          {
+            "id": "eval",
+            "label": "Fixed evaluation set",
+            "group": "data"
+          },
+          {
+            "id": "api",
+            "label": "Model output",
+            "group": "claude"
+          },
+          {
+            "id": "metric",
+            "label": "Metric score",
+            "group": "control"
+          },
+          {
+            "id": "thr",
+            "label": "Numeric threshold",
+            "group": "control"
+          },
+          {
+            "id": "owner",
+            "label": "Named owner sign-off",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "req",
+            "to": "metric",
+            "label": "turn adjective into metric"
+          },
+          {
+            "from": "eval",
+            "to": "api",
+            "label": "run on fixed inputs"
+          },
+          {
+            "from": "api",
+            "to": "metric",
+            "label": "score output"
+          },
+          {
+            "from": "metric",
+            "to": "thr",
+            "label": "compare with line"
+          },
+          {
+            "from": "thr",
+            "to": "owner",
+            "label": "miss goes to owner"
+          }
+        ]
+      },
+      "steps": [
+        "Write the requirement as one sentence that names the quality.",
+        "Name a metric that measures that quality on a fixed evaluation set.",
+        "Set a numeric threshold that the metric must meet.",
+        "Name one owner who signs off the threshold.",
+        "Run the same evaluation before each release.",
+        "Review the threshold when the traffic or the task changes."
+      ],
+      "pros": [
+        "A number gives all builders the same target.",
+        "A threshold makes a release decision testable.",
+        "An owner answers for the number."
+      ],
+      "cons": [
+        "A threshold chosen without data can be wrong.",
+        "A green metric can hide a user problem when traffic changes.",
+        "A fixed evaluation set can drift from live traffic."
+      ],
+      "use_when": [
+        "An output error has a cost, such as a wrong date in a legal form.",
+        "Two or more teams hand off work that depends on the quality claim."
+      ],
+      "do_not_use_when": [
+        "A one-person demo has no users and no money at stake.",
+        "The output has no quality claim that a test can check."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Name one owner for each threshold.",
+          "combination": "Review the owner sign-off on a fixed date."
+        },
+        {
+          "family": "operations",
+          "choice": "Run the same evaluation before each release.",
+          "combination": "Add a sample of live traffic when the fixed set no longer matches users. (Inference)"
+        },
+        {
+          "family": "cost",
+          "choice": "Measure the cost of a wrong output before setting the threshold.",
+          "combination": "Lower the threshold only when an error costs little. (Inference)"
+        },
+        {
+          "family": "skill",
+          "choice": "Write each metric in the terms that the task owner uses.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "F1. Expect an option with a vague quality word and an option with a metric and a threshold. The credited answer names both. (Inference)",
+      "trap": "Launch first and tune the threshold later sounds agile, but users meet the errors before any bar exists.",
+      "decision_rule": "Attach a metric, a threshold, and an owner to each quality word before the build starts.",
+      "exam_tip": "If the stem says fast or accurate with no number, the answer adds a metric and a threshold.",
+      "key_facts": [
+        {
+          "text": "Even with temperature set to 0, identical inputs can produce different outputs across API calls.",
+          "url": "https://platform.claude.com/docs/en/about-claude/glossary",
+          "label": "Fact"
+        },
+        {
+          "text": "As token count grows, accuracy and recall degrade, which the docs call context rot.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        },
+        {
+          "text": "The token-count endpoint estimates token usage before a request is sent.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "A default accuracy target for model output. Not in source.",
+        "A default size for an evaluation set. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Budget or throughput problem?} -->|Budget| B[Workspace spend limit]\n  A -->|Throughput| C[Rate limit change or retry]\n  B --> D{Forecast above tier cap?}\n  D -->|Yes| E[Move tier or cut tokens]\n  D -->|No| F[Set alert threshold]\n  C --> G{429 has retry-after?}\n  G -->|Yes| H[Wait and retry]\n  G -->|No| I[Check tier spend cap]",
+  "cheatsheet": "flowchart LR\n  T[Token classes] --> R[Rate per class]\n  R --> C[Cost per request]\n  C --> F[Daily volume]\n  F --> M[Monthly forecast]\n  M --> K{Under spend cap?}\n  K -->|No| X[Move tier or cut tokens]\n  K -->|Yes| W[Workspace limit]\n  W --> A[Alert threshold]",
+  "patterns": [
+    {
+      "wording": "budget for a new workload with a fixed monthly limit",
+      "answer_type": "workspace spend limit",
+      "rule": "Set the budget at the workspace that owns the workload.",
+      "traps": [
+        "Spend cap set on the Default Workspace",
+        "Usage report with no enforcement"
+      ]
+    },
+    {
+      "wording": "estimate the monthly bill from request volume",
+      "answer_type": "per class token arithmetic",
+      "rule": "Multiply each token class by its own rate, then by volume.",
+      "traps": [
+        "Input price only",
+        "One average price for all models"
+      ]
+    },
+    {
+      "wording": "quality target for output that carries money risk",
+      "answer_type": "metric, threshold, and owner chain",
+      "rule": "Write the metric, threshold, and owner before the build.",
+      "traps": [
+        "Build first and tune later",
+        "Quality adjective with no number"
+      ]
+    }
+  ],
+  "console_steps": [
+    {
+      "step": "Open the Workspaces page in the Claude Console.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+      "screenshot": null
+    },
+    {
+      "step": "Select the workspace and click Spend limits.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/workspaces",
+      "screenshot": null
+    }
+  ],
+  "not_in_source": [
+    "Acceptance threshold values for any product. The docs name no thresholds. Not in source.",
+    "Exact cost of a delayed refund or other business loss. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/models/overview",
+    "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+    "https://platform.claude.com/docs/en/api/rate-limits",
+    "https://platform.claude.com/docs/en/manage-claude/workspaces",
+    "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+    "https://platform.claude.com/docs/en/about-claude/glossary",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+  ]
+}

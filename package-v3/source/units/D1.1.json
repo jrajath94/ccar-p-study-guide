@@ -1,0 +1,189 @@
+{
+  "id": "D1.1",
+  "domain": "D1",
+  "title": "Business problem to Claude solution",
+  "task_statement": "Turn a business request into a Claude solution with a stated outcome, constraints, and success criteria. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Use-case fit and lane choice",
+      "first_principle": "Send fixed mapping to code and send open input to Claude only when a check in code can verify the output. (Inference)",
+      "architecture": {
+        "nodes": [
+          {"id": "req", "label": "Business request with outcome and constraints", "group": "control"},
+          {"id": "fixed", "label": "Fixed rules in code", "group": "client"},
+          {"id": "open", "label": "Open input queue", "group": "client"},
+          {"id": "claude", "label": "Claude model call", "group": "claude"},
+          {"id": "check", "label": "Deterministic check in code", "group": "control"},
+          {"id": "evals", "label": "Eval set from real inputs", "group": "data"},
+          {"id": "out", "label": "Accepted result", "group": "client"}
+        ],
+        "edges": [
+          {"from": "req", "to": "fixed", "label": "fixed input types"},
+          {"from": "req", "to": "open", "label": "open input types"},
+          {"from": "open", "to": "claude", "label": "send input"},
+          {"from": "claude", "to": "check", "label": "draft result"},
+          {"from": "check", "to": "out", "label": "pass"},
+          {"from": "fixed", "to": "out", "label": "rule result"},
+          {"from": "evals", "to": "check", "label": "pass threshold"}
+        ]
+      },
+      "steps": [
+        "Write the outcome, the hard constraints, and the owner before you choose a model.",
+        "Sort each input type into fixed mapping or open input.",
+        "Send fixed mapping to code rules with no model call.",
+        "Send open input to Claude only when a code check can verify the output.",
+        "Set one metric and one threshold for each success criterion.",
+        "Name an owner who signs the result when the threshold fails."
+      ],
+      "pros": [
+        "Fixed rules return the same output for the same input. (Inference)",
+        "Claude handles input whose wording and layout vary.",
+        "A code check limits the damage from a wrong model output. (Inference)"
+      ],
+      "cons": [
+        "Two code paths need maintenance. (Inference)",
+        "The fixed path misses input types that no rule covers. (Inference)",
+        "Each path needs its own success criteria and eval set. (Inference)"
+      ],
+      "use_when": [
+        "The inputs vary, and a check in code can verify the output.",
+        "The task needs language analysis that rules cannot cover.",
+        "Several input types arrive in one queue."
+      ],
+      "do_not_use_when": [
+        "The input follows a fixed format, and a rule covers every case.",
+        "No check in code can verify the output, and the error cost is high.",
+        "The team has no success criteria or eval set yet."
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Start with Claude Haiku 5.5, which the docs list for the lowest latency and price.", "combination": "Move to a larger model only when evals show a capability gap."},
+        {"family": "latency", "choice": "Choose Claude Haiku 5.5 when the application needs low latency.", "combination": "Keep fixed steps in code when they need the lowest latency. (Inference)"},
+        {"family": "scale", "choice": "Use the Message Batches API for large volumes that do not need an immediate answer.", "combination": "Expect most batches to finish within 1 hour. A batch that does not finish within 24 hours expires."},
+        {"family": "governance", "choice": "Name one owner for each success criterion. (Inference)", "combination": "Run the fit test again when the input mix or the error cost changes. (Inference)"},
+        {"family": "skill", "choice": "Write the lane rules with the team that owns the process. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "Access criteria are set per model. The page lists Claude Haiku 4.5 as open to all customers. Haiku 5.5 access is Not in source.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
+        {"service": "Claude Platform on AWS", "text": "Billing runs through AWS Marketplace in Claude Consumption Units. Anthropic manages rate limits.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Google Cloud bills the usage as Agent Platform usage. Google Cloud manages rate limits.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/overview"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "Google Cloud Marketplace bills the usage. Anthropic manages rate limits.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"},
+        {"service": "Microsoft Foundry", "text": "Billing runs through the Azure Marketplace in Claude Consumption Units.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"}
+      ],
+      "exam_tie": "D1.1. Expect a business request with a cost or accuracy limit. The credited answer names the outcome, the lane, and a measurable success line. (Inference)",
+      "trap": "A model call for a fixed format that a rule covers. It adds cost and a failure mode, and it gives no gain. (Inference)",
+      "decision_rule": "Use code for fixed mapping, and use Claude with a code check for open input.",
+      "exam_tip": "If the stem gives no success metric, add the metric before you pick the architecture. (Inference)",
+      "key_facts": [
+        {"text": "Claude Haiku 5.5 base input price is 0.10 dollars per million tokens for prompts up to 100,000 tokens.", "url": "https://platform.claude.com/docs/en/about-claude/pricing", "label": "Fact"},
+        {"text": "Claude Haiku 5.5 output price is 0.50 dollars per million tokens for prompts up to 100,000 tokens.", "url": "https://platform.claude.com/docs/en/about-claude/pricing", "label": "Fact"},
+        {"text": "Claude Haiku 5.5 prompts over 100,000 tokens pay higher prices.", "url": "https://platform.claude.com/docs/en/about-claude/pricing", "label": "Fact"},
+        {"text": "Claude Opus 5.5 base input price is 4 dollars per million tokens.", "url": "https://platform.claude.com/docs/en/about-claude/pricing", "label": "Fact"},
+        {"text": "The Message Batches API discount is 50 percent on input and output tokens.", "url": "https://platform.claude.com/docs/en/about-claude/pricing", "label": "Fact"},
+        {"text": "A batch holds up to 100,000 Message requests or 256 MB, whichever is reached first.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Haiku 5.5 access on Amazon Bedrock: Not in source.",
+        "Timeouts and quotas for each native service beyond the rate limit notes above: Not in source.",
+        "Repo tier names Fast, Balanced, and Capable with input prices of 1, 2, and 4 dollars per million tokens: Not in source.",
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Success criteria and evals",
+      "first_principle": "Write each success criterion as a measurable target with a threshold, and test it on an eval set before the build scales.",
+      "architecture": {
+        "nodes": [
+          {"id": "goal", "label": "Business outcome", "group": "control"},
+          {"id": "criteria", "label": "Criteria with threshold and owner", "group": "control"},
+          {"id": "evalset", "label": "Eval set from real task inputs", "group": "data"},
+          {"id": "app", "label": "Application under test", "group": "client"},
+          {"id": "claude", "label": "Claude model", "group": "claude"},
+          {"id": "grader", "label": "Automated grader in code", "group": "control"},
+          {"id": "report", "label": "Pass rate per criterion", "group": "control"}
+        ],
+        "edges": [
+          {"from": "goal", "to": "criteria", "label": "translate outcome"},
+          {"from": "criteria", "to": "grader", "label": "define metric"},
+          {"from": "evalset", "to": "app", "label": "test inputs"},
+          {"from": "app", "to": "claude", "label": "model calls"},
+          {"from": "claude", "to": "grader", "label": "outputs"},
+          {"from": "grader", "to": "report", "label": "scores"}
+        ]
+      },
+      "steps": [
+        "Write each criterion as a specific, measurable target.",
+        "Attach a threshold and a named owner to each criterion.",
+        "Collect test inputs that match the real task distribution.",
+        "Add edge cases, such as empty input and overly long input.",
+        "Grade outputs in code where possible, and use an LLM grader where code cannot check the output.",
+        "Compare each new prompt or model version against the same eval set."
+      ],
+      "pros": [
+        "Automated scoring supports repeated runs on each change.",
+        "A measurable target shows whether a change helped.",
+        "Quality and operational metrics can share one report."
+      ],
+      "cons": [
+        "Eval sets take time to build and maintain. (Inference)",
+        "Ambiguous cases split human graders, so the target needs a clear rule.",
+        "LLM-based scoring needs checks of its own. (Inference)"
+      ],
+      "use_when": [
+        "A team must decide whether to ship a prompt or model change.",
+        "A team compares two prompts or models on the same task.",
+        "An output that customers read needs a quality floor. (Inference)"
+      ],
+      "do_not_use_when": [
+        "The output has no measurable form, and no owner reads the result. (Inference)",
+        "The team needs a result for one demo with no users. (Inference)"
+      ],
+      "constraints": [
+        {"family": "operations", "choice": "Run the eval set after each prompt or model change.", "combination": "Keep the eval set versioned with the prompt. (Inference)"},
+        {"family": "governance", "choice": "Name the owner who signs each threshold. (Inference)", "combination": ""},
+        {"family": "scale", "choice": "Prefer more automated test cases over fewer hand-graded cases.", "combination": "Keep a small set of human-graded cases for calibration. (Inference)"},
+        {"family": "cost", "choice": "Use the Message Batches API for large eval runs that do not need an immediate answer.", "combination": "A batch that does not finish within 24 hours expires."}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D1.1. Expect a stem that asks how to prove success. The credited answer names a measurable criterion with a threshold and an eval set. (Inference)",
+      "trap": "A general quality goal, such as good performance. It cannot pass or fail, so no owner can sign it.",
+      "decision_rule": "Write each criterion as a metric, a threshold, and an owner before you compare models.",
+      "exam_tip": "If an option uses an adjective as the success test, prefer the option that adds a number and a test set. (Inference)",
+      "key_facts": [
+        {"text": "The docs give an example criterion of an F1 score of at least 0.85 on a held-out test set.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs list specific, measurable, achievable, and relevant as the properties of a success criterion.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "Most batches finish in less than 1 hour.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Batch results are available for 29 days after creation.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Pass rate threshold for any product: Not in source.",
+        "Repo toy holdout size of 500 invoices: Not in source.",
+        "Console steps: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Input varies in ways no rule covers?} -->|No| B[Fixed rules in code]\n  A -->|Yes| C{Output checkable in code?}\n  C -->|No| D[Redefine the task or add a reviewer]\n  C -->|Yes| E{Criteria with threshold and owner?}\n  E -->|No| F[Write criteria first]\n  E -->|Yes| G[Claude with code check]",
+  "cheatsheet": "flowchart LR\n  O[Outcome] --> C[Constraints]\n  C --> F{Fixed mapping}\n  F -->|Yes| R[Code rules]\n  F -->|No| L[Claude with check]\n  L --> M[Metric threshold owner]\n  M --> E[Eval set]",
+  "patterns": [
+    {"wording": "reduce cost for a task with a fixed input format", "answer_type": "code rules over a model call", "rule": "Use code for fixed mapping. Call Claude only for open input.", "traps": ["Largest model for every input", "Model call for a field that a rule reads"]},
+    {"wording": "success is described only with adjectives", "answer_type": "measurable criteria with threshold and owner", "rule": "Add a metric, a threshold, and a named owner before the build.", "traps": ["More model tiers with no eval set", "One demo result used as proof"]},
+    {"wording": "a wrong output reaches a customer", "answer_type": "code check on every output", "rule": "Place a deterministic check between the model and the user.", "traps": ["Prompt wording as the only control", "Human review of every output with no check"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Official name for a fit test as a method: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+    "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/overview",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+  ]
+}

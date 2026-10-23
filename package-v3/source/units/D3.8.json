@@ -1,0 +1,255 @@
+{
+  "id": "D3.8",
+  "domain": "D3",
+  "title": "Progressive discovery and monolithic context",
+  "task_statement": "Load tool and skill detail on demand, not the full catalog on every call. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Tool search tool in the Messages API",
+      "first_principle": "Load only the tools that a request needs, found by a search tool over the full catalog.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app with the full catalog", "group": "client"},
+          {"id": "api", "label": "Messages API request", "group": "claude"},
+          {"id": "search", "label": "Tool search tool", "group": "control"},
+          {"id": "refs", "label": "Tool reference blocks", "group": "control"},
+          {"id": "model", "label": "Claude model", "group": "claude"},
+          {"id": "deferred", "label": "Deferred tool definitions", "group": "data"}
+        ],
+        "edges": [
+          {"from": "app", "to": "api", "label": "tools with defer_loading true"},
+          {"from": "model", "to": "search", "label": "search query"},
+          {"from": "search", "to": "deferred", "label": "match names and descriptions"},
+          {"from": "deferred", "to": "refs", "label": "matching tools"},
+          {"from": "refs", "to": "model", "label": "up to 5 by default"},
+          {"from": "model", "to": "api", "label": "call a loaded tool"}
+        ]
+      },
+      "steps": [
+        "Add a tool search tool to the tools list.",
+        "Set defer_loading to true on the tools that should load later.",
+        "Keep at least one tool non-deferred, normally the search tool itself.",
+        "Claude runs a search and receives the matches as tool reference blocks.",
+        "Claude then calls a matched tool, and the API loads only the matched definitions."
+      ],
+      "pros": [
+        "Tool search typically reduces tool definition tokens by over 85 percent in a multiserver setup.",
+        "Selection accuracy stays high across large catalogs, because only a focused set loads.",
+        "The MCP connector can set defer_loading once for a whole server."
+      ],
+      "cons": [
+        "A tool with defer_loading true cannot carry cache_control, or the API returns 400.",
+        "On Amazon Bedrock, server-side tool search works only through the InvokeModel API, not the Converse API.",
+        "Each search adds a round trip before the tool call. (Inference)"
+      ],
+      "use_when": [
+        "You have 10 or more tools available.",
+        "Tool definitions use more than 10k tokens.",
+        "You aggregate several MCP servers with 200 or more tools."
+      ],
+      "do_not_use_when": [
+        "You have fewer than 10 tools, or every tool is used in every request.",
+        "The tool definitions total less than 100 tokens.",
+        "A fixed workflow needs every tool visible on each turn. (Inference)"
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Defer tool definitions to cut the tokens that each request carries.", "combination": "Keep the three to five most frequently used tools non-deferred."},
+        {"family": "latency", "choice": "Keep the catalog focused, because each search adds a round trip.", "combination": "Set a higher search limit only when Claude needs more candidates. (Inference)"},
+        {"family": "scale", "choice": "Use a catalog of up to 10,000 deferred tools for each request.", "combination": "Choose regex search or BM25 search for the query style that your users write."},
+        {"family": "operations", "choice": "Use a service prefix in tool names, such as github_ for GitHub tools.", "combination": "Monitor which tools Claude discovers, and refine the descriptions that miss."}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "Server-side tool search runs only through the InvokeModel API, not the Converse API.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool"},
+        {"service": "Claude Platform on AWS", "text": "Server-side tool search works the same as on the Claude API.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool"},
+        {"service": "Microsoft Foundry", "text": "Deployments hosted on Azure reject tool search, and the Agent SDK then loads tools upfront.", "url": "https://code.claude.com/docs/en/agent-sdk/tool-search"}
+      ],
+      "exam_tie": "D3.8. Expect a scenario with a large tool catalog, high token cost, and wrong tool picks. The credited answer defers definitions and searches. (Inference)",
+      "trap": "Shorter tool descriptions look cheaper. The full schemas still load on each call, so the token cost stays high. (Inference)",
+      "decision_rule": "Defer tool definitions when the catalog reaches 10 or more tools, or when definitions exceed 10k tokens.",
+      "exam_tip": "If the scenario counts tokens per call, choose deferral over description edits. (Inference)",
+      "key_facts": [
+        {"text": "Tool search returns up to 5 tools that match the query by default.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
+        {"text": "A request allows up to 10,000 tools with defer_loading true.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
+        {"text": "Regex patterns are limited to 200 characters, and BM25 queries to 500 characters.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
+        {"text": "The docs say tool selection accuracy degrades once you exceed 30 to 50 available tools.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
+        {"text": "The docs say tool search typically reduces tool definition tokens by over 85 percent.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
+        {"text": "The context window holds up to 1M tokens for several models, such as Claude Haiku 5.5.", "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Token cost per tool definition in your app: Not in source.",
+        "Exact latency added by one search: Not in source.",
+        "Google Cloud support details for tool search: Not in source.",
+        "Console steps for tool search: Not in source."
+      ]
+    },
+    {
+      "name": "Agent SDK tool search",
+      "first_principle": "The Agent SDK withholds tool definitions by default and loads matches after the agent searches.",
+      "architecture": {
+        "nodes": [
+          {"id": "sdk", "label": "Agent SDK query call", "group": "client"},
+          {"id": "summary", "label": "Summary of tool names in context", "group": "client"},
+          {"id": "mcp", "label": "MCP servers", "group": "cloud"},
+          {"id": "catalog", "label": "Full tool catalog", "group": "data"},
+          {"id": "search", "label": "Tool search in the agent loop", "group": "control"},
+          {"id": "model", "label": "Claude model", "group": "claude"}
+        ],
+        "edges": [
+          {"from": "sdk", "to": "summary", "label": "names and short descriptions"},
+          {"from": "mcp", "to": "catalog", "label": "tool definitions"},
+          {"from": "model", "to": "search", "label": "need a tool not loaded"},
+          {"from": "search", "to": "catalog", "label": "match tools"},
+          {"from": "catalog", "to": "model", "label": "load up to 5 by default"}
+        ]
+      },
+      "steps": [
+        "The SDK withholds tool definitions from the context window.",
+        "The agent receives a summary of available tool names.",
+        "The agent searches when a task needs a tool that is not loaded.",
+        "Up to five tools that match load into context by default.",
+        "Loaded tools stay available for later turns until the SDK compacts the messages where the agent found them."
+      ],
+      "pros": [
+        "Tool search is on by default in the Agent SDK.",
+        "The ENABLE_TOOL_SEARCH variable sets on, off, or a threshold mode.",
+        "In auto mode, tools load upfront until their definitions reach 10 percent of the context window."
+      ],
+      "cons": [
+        "Each search adds one extra round trip.",
+        "Some models on the SDK unsupported list load tools upfront, and no value overrides that.",
+        "Deployments on Microsoft Foundry hosted on Azure reject tool search."
+      ],
+      "use_when": [
+        "The agent uses many MCP tools across several servers.",
+        "The context budget binds harder than round trip latency. (Inference)",
+        "You want tool search to turn on only when definitions grow. Use auto mode."
+      ],
+      "do_not_use_when": [
+        "Fewer than about 10 tool definitions fit comfortably in context.",
+        "Latency binds harder than tokens, so each round trip hurts. (Inference)",
+        "The model must see every tool name before each turn. (Inference)"
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Use auto mode to load tools upfront until they reach 10 percent of the window.", "combination": "Use auto:5 to activate tool search at 5 percent of the window."},
+        {"family": "latency", "choice": "Set ENABLE_TOOL_SEARCH to false when round trips matter more than tokens.", "combination": "Keep the tool count low, so the agent rarely searches. (Inference)"},
+        {"family": "operations", "choice": "Set alwaysLoad to true on a server whose tools every turn needs.", "combination": "Expect startup to wait for alwaysLoad servers, capped at the 5-second connect timeout."},
+        {"family": "scale", "choice": "Tool search applies to remote MCP servers and custom SDK MCP servers.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Microsoft Foundry", "text": "Deployments hosted on Azure reject tool search, and the SDK loads tool definitions upfront for them.", "url": "https://code.claude.com/docs/en/agent-sdk/tool-search"}
+      ],
+      "exam_tie": "D3.8. Expect a scenario with an SDK agent and many MCP tools. The credited answer keeps deferral on and tunes the threshold or the always-load setting. (Inference)",
+      "trap": "A fix that turns tool search off looks simple for wrong picks. Every definition then loads on every turn, so the token cost rises.",
+      "decision_rule": "Keep tool search on in the Agent SDK unless latency binds harder than tokens. (Inference)",
+      "exam_tip": "If the scenario names a model that rejects tool search, load the tools upfront.",
+      "key_facts": [
+        {"text": "Tool search is on by default in the Agent SDK.", "url": "https://code.claude.com/docs/en/agent-sdk/tool-search", "label": "Fact"},
+        {"text": "Up to five of the most relevant tools load into context by default.", "url": "https://code.claude.com/docs/en/agent-sdk/tool-search", "label": "Fact"},
+        {"text": "The auto mode activates tool search when definitions reach 10 percent of the context window.", "url": "https://code.claude.com/docs/en/agent-sdk/tool-search", "label": "Fact"},
+        {"text": "Tool search adds one extra round trip each time Claude searches for tools.", "url": "https://code.claude.com/docs/en/agent-sdk/tool-search", "label": "Fact"},
+        {"text": "Setting ENABLE_TOOL_SEARCH to false loads all tool definitions on every turn.", "url": "https://code.claude.com/docs/en/agent-sdk/tool-search", "label": "Fact"},
+        {"text": "With alwaysLoad true, startup waits for the server tools, capped at the standard 5-second connect timeout.", "url": "https://code.claude.com/docs/en/mcp", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Exact point at which the SDK compacts messages in long sessions: Not in source.",
+        "Native platform name for Google Cloud's Agent Platform in the exam service list: Not in source.",
+        "Console steps for Agent SDK tool search: Not in source."
+      ]
+    },
+    {
+      "name": "Agent Skills progressive disclosure",
+      "first_principle": "Load skill metadata first, and read instructions and files only when a task needs them.",
+      "architecture": {
+        "nodes": [
+          {"id": "meta", "label": "Skill name and description", "group": "client"},
+          {"id": "prompt", "label": "System prompt with all metadata", "group": "claude"},
+          {"id": "model", "label": "Claude model", "group": "claude"},
+          {"id": "skillmd", "label": "SKILL.md instructions", "group": "data"},
+          {"id": "files", "label": "Reference files and scripts", "group": "data"},
+          {"id": "out", "label": "Script output", "group": "control"}
+        ],
+        "edges": [
+          {"from": "meta", "to": "prompt", "label": "about 100 tokens per skill"},
+          {"from": "model", "to": "skillmd", "label": "read when the skill is relevant"},
+          {"from": "skillmd", "to": "files", "label": "points to files"},
+          {"from": "model", "to": "files", "label": "read only what the task needs"},
+          {"from": "files", "to": "out", "label": "script run through bash"},
+          {"from": "out", "to": "model", "label": "only output enters context"}
+        ]
+      },
+      "steps": [
+        "Put the name and description of each skill in the system prompt.",
+        "Write a description that says what the skill does and when to use it.",
+        "Claude reads SKILL.md only when the skill becomes relevant.",
+        "Claude reads reference files only as the task needs them.",
+        "Scripts run through bash, and only their output enters the context."
+      ],
+      "pros": [
+        "Many skills install with little context cost, about 100 tokens each.",
+        "Reference files cost no tokens until a task reads them.",
+        "A script runs without its code in the context."
+      ],
+      "cons": [
+        "A weak description can hide a useful skill from the model.",
+        "A loaded SKILL.md body costs under 5k tokens, which still competes with the conversation.",
+        "Skills on the API run with no network access and no runtime package installation."
+      ],
+      "use_when": [
+        "The same domain guidance repeats across many tasks.",
+        "Reference material is large, and each task needs one part of it.",
+        "A deterministic check belongs in a script. (Inference)"
+      ],
+      "do_not_use_when": [
+        "A one-off instruction fits in the prompt. (Inference)",
+        "The task needs live network access from the sandbox.",
+        "The guidance is short and needed on every request. (Inference)"
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Keep SKILL.md under 500 lines and move detail into separate files.", "combination": "Use scripts for checks, so only their output costs tokens."},
+        {"family": "skill", "choice": "Use a name of up to 64 characters with lowercase letters, numbers, and hyphens.", "combination": "Use a description of up to 1,024 characters that says when to use the skill."},
+        {"family": "scale", "choice": "Split content by domain, so one task reads one file.", "combination": ""},
+        {"family": "governance", "choice": "Custom Skills on the Claude API are shared across the whole workspace.", "combination": "Use a separate workspace for a tenant whose Skills must stay private. (Inference)"}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "Skills follow the same behavior as the Claude API. Upload custom Skills through the Skills API.", "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"},
+        {"service": "Microsoft Foundry", "text": "Skills follow the same behavior as the Claude API. Pre-built Agent Skills require a Hosted on Anthropic deployment. The Skill version download endpoint is not supported.", "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview"}
+      ],
+      "exam_tie": "D3.8. Expect a scenario with a large body of guidance and a token budget. The credited answer loads the smallest needed part on demand. (Inference)",
+      "trap": "A system prompt that holds every reference file looks thorough. Each token then competes with the conversation for context space.",
+      "decision_rule": "Put only metadata in the prompt, and load each file when the task needs it.",
+      "exam_tip": "If the scenario names large reference documents, choose skill files over a longer system prompt. (Inference)",
+      "key_facts": [
+        {"text": "Level 1 metadata costs about 100 tokens per skill.", "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview", "label": "Fact"},
+        {"text": "Level 2 instructions cost under 5k tokens when a skill triggers.", "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview", "label": "Fact"},
+        {"text": "The SKILL.md body should stay under 500 lines.", "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices", "label": "Fact"},
+        {"text": "A skill name has a maximum of 64 characters.", "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices", "label": "Fact"},
+        {"text": "A skill description has a maximum of 1,024 characters.", "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices", "label": "Fact"},
+        {"text": "Skills on the API run in a sandbox with no network access.", "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Amazon Bedrock support for Agent Skills: Not in source.",
+        "Maximum number of skills per workspace: Not in source.",
+        "Console steps for Agent Skills: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Tool or guidance catalog large?} -->|No| B[Load everything upfront]\n  A -->|Yes| C{Latency binds harder than tokens?}\n  C -->|Yes| D[Keep core tools loaded upfront]\n  C -->|No| E{Tools or guidance?}\n  E -->|Tools| F[Tool search with defer_loading true]\n  E -->|Guidance| G[Skills with progressive disclosure]\n  F --> H[Keep three to five frequent tools non-deferred]",
+  "cheatsheet": "flowchart LR\n  M[Metadata first] --> S[Search or select]\n  S --> T[Tool search tool]\n  S --> K[Skills files]\n  T --> L[Load up to 5 matches]\n  K --> R[Read only needed files]\n  L --> C[Lower tokens per call]\n  R --> C",
+  "patterns": [
+    {"wording": "agent costs 100,000 schema tokens per call with 200 tools", "answer_type": "deferral with search", "rule": "Defer definitions, keep a few frequent tools upfront, and search for the rest.", "traps": ["Rewrite all descriptions only", "Remove tools from the config"]},
+    {"wording": "wrong tool picks rise as the catalog grows", "answer_type": "smaller visible choice set", "rule": "Show fewer tools per turn, and load matches on demand.", "traps": ["Larger model that reads all schemas", "Longer system prompt with every schema"]},
+    {"wording": "long domain guidance must reach the agent only when relevant", "answer_type": "skill with progressive disclosure", "rule": "Keep metadata in the prompt, and read files on demand.", "traps": ["Full guidance in the system prompt", "Script code pasted into context"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for progressive discovery: Not in source.",
+    "Break-even point between upfront and searched tool definitions for a given app: Not in source.",
+    "Tool search support for Claude Models on Google Cloud: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+    "https://code.claude.com/docs/en/agent-sdk/tool-search",
+    "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview",
+    "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+  ]
+}

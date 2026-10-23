@@ -1,0 +1,174 @@
+{
+  "id": "D4.3",
+  "domain": "D4",
+  "title": "A/B tests and iteration",
+  "task_statement": "Compare a change against a control with one primary metric before you ship it. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "A/B test design",
+      "first_principle": "A control arm shows whether the change, and not the traffic mix, caused the measured difference.",
+      "architecture": {
+        "nodes": [
+          {"id": "traffic", "label": "Incoming tasks or users", "group": "client"},
+          {"id": "router", "label": "Consistent assignment rule", "group": "control"},
+          {"id": "a", "label": "Arm A: current prompt or model", "group": "claude"},
+          {"id": "b", "label": "Arm B: candidate prompt or model", "group": "claude"},
+          {"id": "metric", "label": "Primary metric per arm", "group": "data"},
+          {"id": "decision", "label": "Ship, roll back, or iterate", "group": "control"}
+        ],
+        "edges": [
+          {"from": "traffic", "to": "router", "label": "arrive"},
+          {"from": "router", "to": "a", "label": "fixed share"},
+          {"from": "router", "to": "b", "label": "fixed share"},
+          {"from": "a", "to": "metric", "label": "outcomes"},
+          {"from": "b", "to": "metric", "label": "outcomes"},
+          {"from": "metric", "to": "decision", "label": "compare to threshold"}
+        ]
+      },
+      "steps": [
+        "Write the hypothesis and the primary metric before the test starts.",
+        "Assign each user or ticket to one arm and keep that assignment.",
+        "Set the sample size before launch for the lift that you need to detect. (Inference)",
+        "Run both arms over the same period and the same traffic mix.",
+        "Compare the primary metric for each arm with the threshold in the hypothesis.",
+        "Choose ship, roll back, or iterate before you read the result. (Inference)"
+      ],
+      "pros": [
+        "A control arm separates the effect of the change from traffic changes. (Inference)",
+        "The test uses the same primary metric as the offline evaluation.",
+        "The docs list A/B testing as a method to compare against a baseline or earlier version."
+      ],
+      "cons": [
+        "The test needs enough traffic for the lift size that you claim. (Inference)",
+        "Users in the candidate arm see its answers, and any defects in them. (Inference)",
+        "A test with two changes at once cannot show which change caused the result. (Inference)"
+      ],
+      "use_when": [
+        "A prompt, model, or tool change can move the primary metric.",
+        "A team needs a ship decision that rests on a measured comparison.",
+        "The comparison unit is a ticket or a user, and each unit keeps one arm."
+      ],
+      "do_not_use_when": [
+        "Traffic is too low to reach the planned sample size. (Inference)",
+        "The change carries a safety risk and the arm would expose users to it. (Inference)",
+        "The team has no primary metric yet, so no arm can win or lose. (Inference)"
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Log which arm served each request. (Inference)", "combination": "Keep the assignment rule in version control. (Inference)"},
+        {"family": "cost", "choice": "Compare the arms on cost per completed task.", "combination": "Add the spend per arm to the report. (Inference)"},
+        {"family": "operations", "choice": "Track cache read and write token counts for each arm.", "combination": "Expect cache misses when the arms use different models."},
+        {"family": "scale", "choice": "Change one variable per test. (Inference)", "combination": ""},
+        {"family": "latency", "choice": "Record latency per arm for the guard metric. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D4.3. Expect a scenario where a team ships a change with no control and sees a small score move. The credited answer sets a control arm, a hypothesis, and a primary metric first. (Inference)",
+      "trap": "A full rollout that compares the week before with the week after. The traffic mix changed, so the difference does not show the effect of the change.",
+      "decision_rule": "Assign each unit to one arm, and compare the arms on the primary metric with a stated threshold.",
+      "exam_tip": "A significant result that fails the business value check does not justify the switch. (Inference)",
+      "key_facts": [
+        {"text": "The docs list A/B testing as a method to compare performance against a baseline model or earlier version.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The docs describe a held-out test set as the basis for a success criterion.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests", "label": "Fact"},
+        {"text": "The model_changed cache miss type applies when a router, A/B test, or fallback selects a different model.", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics", "label": "Fact"},
+        {"text": "The cache is per model, so each model keeps a separate prompt cache.", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "A formula or minimum sample size for an A/B test. Not in source.",
+        "A statistical significance level that the docs recommend. Not in source."
+      ]
+    },
+    {
+      "name": "Iteration by model and effort",
+      "first_principle": "A newer model or higher effort earns its extra cost only when it completes more tasks.",
+      "architecture": {
+        "nodes": [
+          {"id": "evalset", "label": "Eval set with checkable outcomes", "group": "data"},
+          {"id": "base", "label": "Baseline model and effort", "group": "claude"},
+          {"id": "cand", "label": "Candidate model and effort", "group": "claude"},
+          {"id": "cost", "label": "Cost per completed task", "group": "data"},
+          {"id": "gate", "label": "Quality floor and guard check", "group": "control"},
+          {"id": "retry", "label": "Failed tasks re-run at higher effort", "group": "cloud"}
+        ],
+        "edges": [
+          {"from": "evalset", "to": "base", "label": "same inputs"},
+          {"from": "evalset", "to": "cand", "label": "same inputs"},
+          {"from": "base", "to": "cost", "label": "tokens and outcomes"},
+          {"from": "cand", "to": "cost", "label": "tokens and outcomes"},
+          {"from": "cost", "to": "gate", "label": "check floors first"},
+          {"from": "gate", "to": "retry", "label": "failures only"}
+        ]
+      },
+      "steps": [
+        "Run the baseline and the candidate on the same eval set.",
+        "Check the quality floor and the guard metrics before you compare cost.",
+        "Compare cost per completed task, not cost per token.",
+        "Re-run only the failed tasks at a higher effort when outcomes are checkable.",
+        "Audit the prompts against the model after each model change."
+      ],
+      "pros": [
+        "Cost per completed task compares models on the same unit of value.",
+        "The docs report that failure-only re-runs at higher effort cost less than a fixed high effort in Anthropic measurements.",
+        "A model change can be tested on traffic without a full rollout. (Inference)"
+      ],
+      "cons": [
+        "Re-runs add latency for the tasks that fail the first pass. (Inference)",
+        "Anthropic measurements use benchmarks that may not match your tasks. (Inference)",
+        "Prompts written for an older model can add cost on a newer model."
+      ],
+      "use_when": [
+        "Budget binds and the outcome of each task can be checked.",
+        "The team considers a newer model for the same workload.",
+        "Effort settings differ in cost and quality, and the floor is known."
+      ],
+      "do_not_use_when": [
+        "The outcome of a task cannot be checked by code or a grader. (Inference)",
+        "The latency limit leaves no room for a second pass. (Inference)"
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Compare candidates on cost per completed task.", "combination": "Add the re-run share to the cost report. (Inference)"},
+        {"family": "latency", "choice": "Re-run only failed tasks to limit the extra latency.", "combination": "Use a higher effort only on the tasks that need it. (Inference)"},
+        {"family": "operations", "choice": "Audit prompts against the current model after each model change.", "combination": ""},
+        {"family": "scale", "choice": "Route only the failed tasks to the higher effort tier.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D4.3. Expect a scenario where a team wants to change the model after a test. The credited answer compares cost per completed task and checks the quality floor first. (Inference)",
+      "trap": "A switch to a larger model because its score is higher. The score rises, but the cost per completed task may rise faster than the gain.",
+      "decision_rule": "Ship a model or effort change only when it clears the quality floor and lowers or holds cost per completed task.",
+      "exam_tip": "A higher per-token price does not decide the switch. Compare the completed-task cost instead.",
+      "key_facts": [
+        {"text": "The docs say to compare models on cost per completed task, not per token.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "The docs call a low-effort first pass, with failed tasks re-run at a higher effort, the cheapest policy in Anthropic measurements.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "The docs say to audit prompts against the current model, and again whenever the model changes.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "The docs say each newer model solved at least as many tasks as the one before, in Anthropic measurements.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "In Anthropic tests, low effort with failures re-run at high cost about 40% less than all tasks at high, at the same pass rate.", "url": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence", "label": "Fact"},
+        {"text": "Claude Opus 5.5 and Claude Haiku 5.5 default to medium effort. Other models that support effort default to high.", "url": "https://platform.claude.com/docs/en/build-with-claude/effort", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "A general claim that newer models always cost less per task. Not in source.",
+        "The effort level that fits a given workload. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Change can move the primary metric?} -->|No| X[Do not test]\n  A -->|Yes| B{Traffic reaches the sample size?}\n  B -->|No| C[Use offline eval set first]\n  B -->|Yes| D{Change carries safety risk?}\n  D -->|Yes| E[Shadow run first]\n  D -->|No| F[Two arms with one primary metric]\n  F --> G{Lift real and worth the cost?}\n  G -->|Yes| H[Ship]\n  G -->|No| I[Keep control]",
+  "cheatsheet": "flowchart LR\n  H[Hypothesis] --> P[Primary metric]\n  P --> A[Arm A control]\n  P --> B[Arm B candidate]\n  A --> R[Compare on threshold]\n  B --> R\n  R --> C[Cost per completed task]\n  R --> K[Keep arm assignment fixed]\n  K --> M[Cache is per model]",
+  "patterns": [
+    {"wording": "a full rollout shows a small score move with no control", "answer_type": "A/B test with a control arm", "rule": "Assign units to a control and a candidate arm, and compare one primary metric.", "traps": ["Compare two time periods", "Ship and watch the next week"]},
+    {"wording": "the test shows a real lift that costs more than it returns", "answer_type": "business significance check", "rule": "Separate statistical significance from business value. Decide with the cost of the switch.", "traps": ["Ship because the lift is significant", "Run the test longer to find a bigger lift"]},
+    {"wording": "a candidate change touches tools or permissions", "answer_type": "shadow run before exposure", "rule": "Measure the candidate on logged or copied traffic before users see it. (Inference)", "traps": ["Expose all users at once", "Skip the guard metrics"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Sample size formula for an A/B test in the Claude docs: Not in source.",
+    "A/B test statistical method: general practice, not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests",
+    "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics",
+    "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence",
+    "https://platform.claude.com/docs/en/build-with-claude/effort"
+  ]
+}
