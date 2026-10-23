@@ -1,0 +1,57 @@
+{
+  "unit": "D3.4",
+  "items": [
+    {
+      "id": "D3.4-1",
+      "select": 1,
+      "stem": "An incident review must find which tool call sent a bad record. Prompt logs show the text but no tool hop. Prompt text must stay out of the trace data.",
+      "options": [
+        "Store full prompt content in the spans, so each hop shows its text.",
+        "Read the usage report by hour, which lists each tool call.",
+        "Emit one trace per run, with a span for each model and tool hop, in metadata only mode.",
+        "Emit one span per run with no child spans, in metadata only mode, and export it to two collectors."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "One trace ID links each model and tool hop, so the review can find the hop that acted. Metadata only mode keeps prompt text out of the spans.",
+      "trap": "A usage report by hour looks like tool-level detail, but it groups token totals by model, workspace, or key.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/opentelemetry"
+    },
+    {
+      "id": "D3.4-2",
+      "select": 1,
+      "stem": "Finance needs a monthly split of API spend by workspace, reconciled with billing. The figures must come from platform reports, not from app logs.",
+      "options": [
+        "Call the cost report with an Admin API key, grouped by workspace.",
+        "Call the cost report and the usage report hourly, both grouped by workspace.",
+        "Add up input tokens from each app response, then multiply by list prices.",
+        "Call the cost report with hourly buckets for a monthly split."
+      ],
+      "correct": [
+        0
+      ],
+      "rationale": "The cost report returns USD totals, and it groups results by workspace. Its daily buckets suit a monthly split that finance reconciles with billing.",
+      "trap": "Input token totals from app responses look exact, but finance needs the platform cost totals for billing reconciliation.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+    },
+    {
+      "id": "D3.4-3",
+      "select": 2,
+      "stem": "A security team audits developer tool use in Claude Code. The OTLP destination must stay fixed for every developer, and MCP tool arguments must appear in the audit trail. Which two changes meet both constraints?",
+      "options": [
+        "Pin the OTLP endpoint and credentials in managed settings.",
+        "Enable telemetry in each repository's project settings file.",
+        "Set OTEL_LOG_USER_PROMPTS to 1 to capture tool arguments.",
+        "Set OTEL_LOG_TOOL_DETAILS to 1 to capture MCP call arguments."
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "rationale": "Managed settings keep the destination fixed for every developer. Tool details log MCP server names, tool names, and input arguments.",
+      "trap": "A project setting that enables telemetry looks simple, but Claude Code ignores OTel exporter variables in project settings.",
+      "source": "https://code.claude.com/docs/en/monitoring-usage"
+    }
+  ]
+}

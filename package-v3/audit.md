@@ -71,24 +71,82 @@ Pending. The practice exams (six files of 75 items) and the question bank (about
 
 ## Text checks
 
+- audit.md: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 - console-steps.html: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 - mega-cheatsheet.html: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 - mind-map.html: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
+- practice-answer-key.html: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
+- practice-test.html: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 - question-patterns.html: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 - treatise.html: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 - video-gaps.md: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 - video-prompt.md: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 - video-summary.md: banned words 0, dashes 0, semicolons 0, contractions 0, exam code in body 0.
 
-Eight-word overlap with practice files: not run, files not supplied.
+Eight-word overlap with practice files (URLs excluded): {}.
+
+## Practice items and coverage
+
+Practice exam files supplied: 11 (six full, five unofficial). They hold 678 items in total: 378 in the full exams (63 each) and 300 in the unofficial exams (60 each). The spec expected six files of 75. The counts differ.
+Mapping method: keyword counts against each unit. The map is approximate. It was not reviewed item by item. Each unit has at least one mapped item.
+Original practice items written for this package: 126 across all 42 units (three per unit). Each item cites an official docs page. Each key was checked against the docs by a review pass.
+The practice exam text is not copied into any output. Stems, options, answer keys, and explanations from the uploaded files stay out of the outputs.
+Eight-word overlap with the uploaded exam files: see the text checks section.
+
+### Mapped items per unit (approximate)
+
+- F1 Architecture and business foundations: 39 mapped items
+- F2 LLM foundations: 8 mapped items
+- F3 Software and distributed systems: 27 mapped items
+- F4 Security and identity: 41 mapped items
+- D1.1 Business problem to Claude solution: 3 mapped items
+- D1.2 End-to-end architecture: 14 mapped items
+- D1.3 Architectural pattern selection: 24 mapped items
+- D1.4 Multi-agent orchestration: 10 mapped items
+- D1.5 Task decomposition: 15 mapped items
+- D1.6 Business-value alignment: 9 mapped items
+- D2.1 Model selection and tier trade-offs: 10 mapped items
+- D2.2 System prompts, templates, and guardrails: 17 mapped items
+- D2.3 Prompt techniques: 27 mapped items
+- D2.4 Context and token management: 13 mapped items
+- D2.5 Reuse and prompt caching: 26 mapped items
+- D3.1 Tool capability scope: 3 mapped items
+- D3.2 Authentication and authorization in integrations: 0 mapped items
+- D3.3 Accuracy and latency trade-offs: 32 mapped items
+- D3.4 Observability at scale: 5 mapped items
+- D3.5 The RAG pipeline: 64 mapped items
+- D3.6 Retrieval strategies: 2 mapped items
+- D3.7 Integration mechanisms: 21 mapped items
+- D3.8 Progressive discovery and monolithic context: 15 mapped items
+- D4.1 Evaluation metrics: 27 mapped items
+- D4.2 Evaluation datasets and frameworks: 11 mapped items
+- D4.3 A/B tests and iteration: 5 mapped items
+- D4.4 Diagnosis at the correct layer: 2 mapped items
+- D4.5 Optimization under quality floors: 7 mapped items
+- D4.6 Production monitoring: 34 mapped items
+- D5.1 Guardrails and safety controls: 7 mapped items
+- D5.2 Risks and failure modes: 25 mapped items
+- D5.3 Human-in-the-loop validation: 22 mapped items
+- D5.4 Regulatory compliance and data controls: 17 mapped items
+- D5.5 Responsible AI: 10 mapped items
+- D6.1 Structured discovery: 4 mapped items
+- D6.2 Trade-off communication: 7 mapped items
+- D6.3 Feedback and expectation alignment: 2 mapped items
+- D6.4 Architecture documentation: 1 mapped items
+- D6.5 Lifecycle phases: 18 mapped items
+- D7.1 Team configuration for Claude Code: 25 mapped items
+- D7.2 AI-assisted workflows with Claude Code: 3 mapped items
+- D7.3 Diagnosis and operational resolution: 24 mapped items
+
 
 ## Open checks
 
 - Question-to-unit map: pending. The six practice exams and the question bank are not supplied.
-- Eight-word overlap check: pending, practice files not supplied.
+- Eight-word overlap check: 0 matches.
 - Official exam guide: partner-gated. Domain names, weights, and task statements rest on secondary sources (Inference).
 - Native cloud services list in the exam guide: not available. The build uses the five platforms that the docs name (Inference).
 - Publication checks (detect, remove-ai-marks, publication-clean): pending. They run on the Mac through Remote Control.
+- Practice items: the review pass corrected answer keys. Recheck the audit after the pass.
 - Official screenshots: not copied, because the docs state no reuse terms for images. Console steps link to the official pages.
 
 ## Not in source

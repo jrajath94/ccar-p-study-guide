@@ -44,7 +44,7 @@ Narration. Business problem to Claude solution. Send fixed mapping to code and s
 
 Visual. Black background. Draw a line diagram with white outlined boxes for: User message, Application state and history, Messages API, Claude model with tools, Your tools and data, Trace record per stage. Arrows appear one at a time in order. Then show the decision rule in green text and the trap in red text.
 
-Narration. End-to-end architecture. The Messages API is stateless, so the application sends the full history on each call and reads each stop reason. Keep the history, the retries, and the stop reason handling in application code. The trap: A larger model or a longer prompt for a failure that no trace locates. The change treats a symptom and hides the stage that breaks. (Inference)
+Narration. End-to-end architecture. No state persists between Messages API calls. The application resends the conversation on each call and checks each stop reason. Keep the history, the retries, and the stop reason handling in application code. The trap: A larger model or a longer prompt for a failure that no trace locates. The change treats a symptom and hides the stage that breaks. (Inference)
 
 ## Scene 8. D1.3 Architectural pattern selection
 

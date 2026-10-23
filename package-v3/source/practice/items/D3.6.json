@@ -1,0 +1,57 @@
+{
+  "unit": "D3.6",
+  "items": [
+    {
+      "id": "D3.6-1",
+      "select": 1,
+      "stem": "An app answers stock-count questions from an index that refreshes hourly. Users need the current count, and policy questions must stay on the index. Which change meets both constraints?",
+      "options": [
+        "Refresh the index every five minutes, and keep the snapshot as the only source.",
+        "Enable the SSE transport on the connector, so stock values stream in.",
+        "Route stock questions to a read tool on the inventory server, and keep policy questions on the index.",
+        "Route stock questions and policy questions to a read tool on the inventory server."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "A read tool returns the value as it stands at call time. Policy text changes less often, so it can stay in the index (Inference).",
+      "trap": "A faster index refresh looks like the fix for stale counts, but the index still holds a snapshot (Inference).",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"
+    },
+    {
+      "id": "D3.6-2",
+      "select": 1,
+      "stem": "A query contains an error code, and users also ask about the same docs in plain words. A semantic index alone misses the exact code. The fix must find both the code and the paraphrased passages.",
+      "options": [
+        "Use a semantic index only, and raise the number of candidates it returns.",
+        "Store the codes as binary embeddings, which keeps exact matches.",
+        "Run two semantic matchers with different models, and merge both lists.",
+        "Run keyword and semantic matchers, then merge both candidate lists."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "A keyword matcher finds exact codes, and a semantic matcher finds paraphrases. The merged candidate list covers both query shapes (Inference).",
+      "trap": "A larger candidate count from the semantic index looks like coverage, but a vector match can still miss the exact code (Inference).",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/embeddings"
+    },
+    {
+      "id": "D3.6-3",
+      "select": 2,
+      "stem": "A chat app must answer with live order status from a remote server. The app must not run an MCP client in its code, and answers must not come from a stored snapshot. Which two changes meet both constraints?",
+      "options": [
+        "Define the server in mcp_servers, and reference it from one MCP toolset.",
+        "Copy the order status into the index every hour, and search that copy.",
+        "Send the request with the MCP connector beta header.",
+        "Read order status through MCP resources, which the connector loads."
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "rationale": "The connector calls the remote server's tools from the Messages API, so the app needs no MCP client. The beta header enables the connector.",
+      "trap": "MCP resources look like a live feed, but the connector supports only tool calls from the MCP specification.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"
+    }
+  ]
+}

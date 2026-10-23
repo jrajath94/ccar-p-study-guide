@@ -6,7 +6,7 @@
   "components": [
     {
       "name": "Request loop with state in the application",
-      "first_principle": "The Messages API is stateless, so the application sends the full history on each call and reads each stop reason.",
+      "first_principle": "No state persists between Messages API calls. The application resends the conversation on each call and checks each stop reason.",
       "architecture": {
         "nodes": [
           {"id": "user", "label": "User message", "group": "client"},

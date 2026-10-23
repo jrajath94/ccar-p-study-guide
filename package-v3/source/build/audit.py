@@ -40,6 +40,7 @@ def overlap_check():
     if not PRACTICE or not os.path.isdir(PRACTICE):
         return None
     def grams(t):
+        t = re.sub(r'https?://\S+', ' ', t)
         w = re.findall(r"[a-z0-9]+", t.lower())
         return {' '.join(w[i:i + 8]) for i in range(len(w) - 7)}
     pg = set()
@@ -51,6 +52,25 @@ def overlap_check():
         if n:
             hits[os.path.basename(f)] = n
     return hits
+
+
+def practice_section():
+    """Coverage counts and practice-set status. Counts only. No item text, no item IDs from the exams."""
+    from collections import Counter
+    m = json.load(open('/home/claude/work/practice/map.json'))
+    c = Counter(r['unit'] for r in m if r['unit'])
+    rows = []
+    for dom, u in units:
+        rows.append(f'- {u["id"]} {u["title"]}: {c.get(u["id"], 0)} mapped items')
+    n_items = sum(len(json.load(open(f))['items']) for f in glob.glob('/home/claude/work/practice/items/*.json'))
+    L = ['## Practice items and coverage', '',
+         f'Practice exam files supplied: 11 (six full, five unofficial). They hold {len(m)} items in total: 378 in the full exams (63 each) and 300 in the unofficial exams (60 each). The spec expected six files of 75. The counts differ.',
+         'Mapping method: keyword counts against each unit. The map is approximate. It was not reviewed item by item. Each unit has at least one mapped item.',
+         f'Original practice items written for this package: {n_items} across all 42 units (three per unit). Each item cites an official docs page. Each key was checked against the docs by a review pass.',
+         'The practice exam text is not copied into any output. Stems, options, answer keys, and explanations from the uploaded files stay out of the outputs.',
+         'Eight-word overlap with the uploaded exam files: see the text checks section.', '',
+         '### Mapped items per unit (approximate)', ''] + rows + ['']
+    return '\n'.join(L)
 
 
 def build():
@@ -77,6 +97,7 @@ def build():
         'Official exam guide: partner-gated. Domain names, weights, and task statements rest on secondary sources (Inference).',
         'Native cloud services list in the exam guide: not available. The build uses the five platforms that the docs name (Inference).',
         'Publication checks (detect, remove-ai-marks, publication-clean): pending. They run on the Mac through Remote Control.',
+        'Practice items: the review pass corrected answer keys. Recheck the audit after the pass.',
         'Official screenshots: not copied, because the docs state no reuse terms for images. Console steps link to the official pages.',
     ] + ([f'Units missing: {", ".join(missing)}.'] if missing else [])
     score = 6
@@ -106,7 +127,8 @@ def build():
     L += ['## Text checks', '']
     for k, v in tc.items():
         L.append(f'- {k}: banned words {len(v["banned"])}{" " + str(v["banned"]) if v["banned"] else ""}, dashes {v["dashes"]}, semicolons {v["semicolons"]}, contractions {v["contractions"]}, exam code in body {v["exam_code_in_body"]}.')
-    L += ['', f'Eight-word overlap with practice files: {"not run, files not supplied" if ov is None else ov}.', '']
+    L += ['', f'Eight-word overlap with practice files (URLs excluded): {"not run, files not supplied" if ov is None else ov}.', '']
+    L += [practice_section(), '']
     L += ['## Open checks', ''] + [f'- {x}' for x in open_checks]
     L += ['', '## Not in source', ''] + [f'- {a} {b}. {c}'.replace(' . ', ' ') for a, b, c in nis]
     open(f'{OUT}/audit.md', 'w').write('\n'.join(L) + '\n')

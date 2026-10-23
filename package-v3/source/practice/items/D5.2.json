@@ -1,0 +1,50 @@
+{
+  "unit": "D5.2",
+  "items": [
+    {
+      "id": "D5.2-1",
+      "select": 1,
+      "stem": "A new agent loops overnight and drives API spend up. The team shares one organization across three projects. The team needs a monthly ceiling for each project and a stop for a single runaway loop.",
+      "options": [
+        "Set a monthly spend limit on each project workspace with alerts, and cap tool calls per run in code.",
+        "Raise the workspace rate limit, so the loop finishes its work within the same hour.",
+        "Set a spend limit on the Default Workspace that holds the project key.",
+        "Create a separate organization for each project, each with its own billing and dashboard."
+      ],
+      "correct": [0],
+      "rationale": "A workspace spend limit caps monthly spend for each project, and alerts fire at thresholds that you choose. A call cap in code stops one runaway run within minutes. (Inference)",
+      "trap": "A higher rate limit looks like a fix for a stalled loop, but it allows more calls and raises spend.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/workspaces"
+    },
+    {
+      "id": "D5.2-2",
+      "select": 1,
+      "stem": "An audited workflow calls an alias for an earlier model. The output must stay fixed through a validation period. The team must also find any deprecated use before the retirement date.",
+      "options": [
+        "Keep the alias, since aliases for earlier models point to a fixed snapshot that never moves.",
+        "Move the workflow to the newest model now, and skip the replacement test to save time.",
+        "Pin a dated snapshot ID, and export usage by key and model to find deprecated use.",
+        "Build a shadow environment that replays every request to two model IDs, with a dashboard per token."
+      ],
+      "correct": [2],
+      "rationale": "A dated snapshot ID stays fixed for the validation period. A usage export by key and model shows which calls still use deprecated models.",
+      "trap": "An alias for an earlier model sounds fixed, but it points to the most recent snapshot for that minor version.",
+      "source": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions"
+    },
+    {
+      "id": "D5.2-3",
+      "select": 2,
+      "stem": "An assistant summarizes a long contract, and a wrong claim has a real cost. The model must stay the same. Each claim must point to source text. Which two controls meet these constraints?",
+      "options": [
+        "Use a larger model tier for summaries, because larger tiers invent fewer contract terms.",
+        "Ask for word-for-word quotes before the summary, because the contract is a long document.",
+        "Turn on contract mode, which blocks any summary that lacks a citation.",
+        "Remove each summary claim that has no source quote, after the quote check runs."
+      ],
+      "correct": [1, 3],
+      "rationale": "Quotes before the summary ground each claim in the text of the document. Claims with no quote are removed, so each claim that stays in the summary is checkable.",
+      "trap": "A larger model tier looks like the fix for invented terms, but the constraints keep the same model.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"
+    }
+  ]
+}

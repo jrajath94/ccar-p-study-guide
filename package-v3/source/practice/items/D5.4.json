@@ -1,0 +1,50 @@
+{
+  "unit": "D5.4",
+  "items": [
+    {
+      "id": "D5.4-1",
+      "select": 1,
+      "stem": "A clinic sends patient notes to the Messages API. The contract requires that prompts and responses not persist after each response. The clinic also tests prompts in the Console playground.",
+      "options": [
+        "Keep default retention, and encrypt each prompt in the clinic network before it leaves.",
+        "Enable ZDR for the organization, send API calls only with its keys, and keep patient data out of the playground.",
+        "Enable HIPAA readiness, which stops storage of prompts after each response.",
+        "Enable ZDR, and attach a customer-managed key to a new workspace for all stored data."
+      ],
+      "correct": [1],
+      "rationale": "Zero data retention means Anthropic does not store prompts or responses at rest after the response returns. ZDR does not cover Console usage, so patient data stays out of the playground.",
+      "trap": "HIPAA readiness sounds like the no-storage setting, but it adds safeguards and does not require deletion after each response.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention"
+    },
+    {
+      "id": "D5.4-2",
+      "select": 1,
+      "stem": "A company must keep inference in the United States for a model at version 4.6 or later. The rule must hold even when application code omits the residency setting.",
+      "options": [
+        "Set the application server region to US, which keeps inference in the United States.",
+        "Set inference_geo to us on each request, and leave the workspace allowed list open.",
+        "Set default_inference_geo and allowed_inference_geos to us on the workspace.",
+        "Create a new workspace with US workspace geo, and set its default and allowed inference geos to us."
+      ],
+      "correct": [2],
+      "rationale": "The default geo applies when a request omits inference_geo. The allowed list rejects any request that names another geo, so application code cannot skip the rule.",
+      "trap": "A region on the application server sounds like it sets inference location, but inference_geo controls where inference runs.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/data-residency"
+    },
+    {
+      "id": "D5.4-3",
+      "select": 2,
+      "stem": "A bank must hold its own keys for new stored data, and it must show who read which records. The audit record must remain after a key is revoked. Which two actions meet these constraints?",
+      "options": [
+        "Attach a customer-managed key to a new workspace before its first request.",
+        "Re-encrypt old workspaces under the customer key, with the key added after the first request.",
+        "Export Activity Feed events to an internal audit store on a schedule.",
+        "Create a separate workspace and customer key for every team, each with its own Compliance Access Key."
+      ],
+      "correct": [0, 2],
+      "rationale": "CMEK protects data written after the key takes effect, so a key set up before the first request covers all new data. The Activity Feed sits under the Anthropic key, so audit records survive a key revocation.",
+      "trap": "A key added after the first request sounds like it protects old data, but earlier data is not re-encrypted.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/cmek"
+    }
+  ]
+}

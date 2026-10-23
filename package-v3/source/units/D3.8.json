@@ -179,7 +179,7 @@
       },
       "steps": [
         "Put the name and description of each skill in the system prompt.",
-        "Write a description that says what the skill does and when to use it.",
+        "Describe the skill's purpose and the conditions that trigger it.",
         "Claude reads SKILL.md only when the skill becomes relevant.",
         "Claude reads reference files only as the task needs them.",
         "Scripts run through bash, and only their output enters the context."

@@ -1,0 +1,57 @@
+{
+  "unit": "D2.4",
+  "items": [
+    {
+      "id": "D2.4-1",
+      "select": 1,
+      "stem": "A chat service sends long histories. Each turn must fit an input budget that the app sets before the call, and the model must stay the same. Which change meets both constraints?",
+      "options": [
+        "Set effort to low, so the input token count falls.",
+        "Skip counting, and rely on the usage fields after each response.",
+        "Count tokens before each send, and switch to a larger-window model when the count is high.",
+        "Count tokens with the target model ID, and trim history that exceeds the budget."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "The token counting endpoint reports the input size before the call. The app trims the history, so each turn fits the budget on the same model.",
+      "trap": "Usage fields in a response look like a budget check, but those counts arrive only after the call is sent.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/token-counting"
+    },
+    {
+      "id": "D2.4-2",
+      "select": 1,
+      "stem": "An agent task fills its context with old tool results. The team wants no extra summarization call, and recent work must stay in context. Which change meets both constraints?",
+      "options": [
+        "Add the clear_tool_uses strategy with the context-management beta header.",
+        "Start a separate summary request on every turn, then send that summary.",
+        "Clear all tool results on every turn, including the most recent ones.",
+        "Use the token counting endpoint to delete old turns from the history."
+      ],
+      "correct": [
+        0
+      ],
+      "rationale": "The clear_tool_uses strategy removes old tool results by rule, so no summary call is needed. The beta header enables context editing.",
+      "trap": "A separate summary on every turn looks thorough, but it adds the model call that the constraint rules out.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/context-editing"
+    },
+    {
+      "id": "D2.4-3",
+      "select": 2,
+      "stem": "A long agent task loses an early constraint after a default summary. Recent turns must stay word for word after the summary. Which two changes meet both constraints?",
+      "options": [
+        "Let the default summary run, and trust it to keep every constraint.",
+        "Write a custom summarization prompt that keeps the early constraint.",
+        "Set a keep_recent_turns parameter to five in the compaction request.",
+        "Pick a cut point, and send the later turns after the summary block."
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "rationale": "A custom summarization prompt can require the early constraint in the summary. No parameter selects kept turns, so the cut point sets which turns stay word for word.",
+      "trap": "A keep_recent_turns parameter looks like the direct control, but no parameter sets which turns are kept.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/compaction-keep-recent-turns"
+    }
+  ]
+}

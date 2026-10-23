@@ -1,0 +1,57 @@
+{
+  "unit": "D2.5",
+  "items": [
+    {
+      "id": "D2.5-1",
+      "select": 1,
+      "stem": "A research app sends the same 30,000-token reference set with every question. Answers must not change, and the input cost per call must drop. Which change meets both constraints?",
+      "options": [
+        "Replace the reference set with a short summary, which shrinks each call.",
+        "Place the reference set first, and mark its last stable block with cache_control.",
+        "Place each new question first, then the reference set, and mark the last block with cache_control.",
+        "Send the reference set through the token counting endpoint before each call."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "A cache hit needs an identical prefix up to the breakpoint. Cache reads cost a fraction of the base input price, and the answers stay the same.",
+      "trap": "A short summary looks like a cost fix, but it changes the answers that must stay the same.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "id": "D2.5-2",
+      "select": 1,
+      "stem": "A multi-turn assistant adds two blocks on each turn. The team wants one cache setting and no breakpoint edits. Which change meets both constraints?",
+      "options": [
+        "Add explicit cache_control to four blocks, and omit the top-level field.",
+        "Add a top-level cache_control field, and move an explicit breakpoint to the newest block on each turn.",
+        "Add a cache_mode parameter set to auto in the request body.",
+        "Add one top-level cache_control field to the request."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "Automatic caching moves the breakpoint to the last cacheable block as the conversation grows. One top-level field enables it, so the team needs no breakpoint edits.",
+      "trap": "Explicit breakpoints on four blocks look more controlled, but they need edits each time the stable content moves.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    },
+    {
+      "id": "D2.5-3",
+      "select": 2,
+      "stem": "A batch job sends a tool list that never changes, then a weekly document. Calls arrive about every 30 minutes. The tool list must stay cached between calls, and the weekly document must not break that cache. Which two changes meet both constraints?",
+      "options": [
+        "Set ttl to 1h on the breakpoint after the tool list, before the document.",
+        "Place the weekly document first, then cache from its last block.",
+        "Keep the weekly document after the breakpoint, so its edits do not break the cache.",
+        "Set a cache TTL of 2h on the request, so the whole prompt stays cached."
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "rationale": "A 1-hour TTL keeps the tool list cached across 30-minute gaps. Content after the breakpoint can change without a miss on the cached prefix.",
+      "trap": "A document placed first looks harmless, but any change at or before the breakpoint causes a cache miss.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    }
+  ]
+}

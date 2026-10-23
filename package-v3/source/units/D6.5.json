@@ -213,7 +213,7 @@
         "Check the model status on the deprecations page in each release cycle. (Inference)",
         "Export usage from the Usage page to find deprecated models.",
         "Read the downloaded file to find each API key and model in use.",
-        "Test the replacement model well before the retirement date. (Inference)",
+        "Run evaluations on the replacement model before the retirement date. (Inference)",
         "Move all traffic to the replacement before the retirement date."
       ],
       "pros": [

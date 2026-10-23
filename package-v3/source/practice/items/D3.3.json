@@ -1,0 +1,57 @@
+{
+  "unit": "D3.3",
+  "items": [
+    {
+      "id": "D3.3-1",
+      "select": 1,
+      "stem": "Users must see the first words of a reply before the full answer is ready. The model and the answer quality must stay the same. Which change meets both constraints?",
+      "options": [
+        "Stream the response, so text appears as the tokens arrive.",
+        "Enable fast mode, which cuts the time to first token.",
+        "Send each request as a Message Batch, and read the results the next day.",
+        "Cache each full answer in a custom store, and show it only after the answer is complete."
+      ],
+      "correct": [
+        0
+      ],
+      "rationale": "Streaming sends output as the model generates it, so the first words appear before the answer ends. Streaming does not reduce the total generation work (Inference).",
+      "trap": "Fast mode looks like a first-token fix, but its speed gain applies to output tokens per second, not to time to first token.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/streaming"
+    },
+    {
+      "id": "D3.3-2",
+      "select": 1,
+      "stem": "An evaluation run has 50,000 prompts. Results can arrive within one day, and the run must cost less than standard calls. No user waits for these results.",
+      "options": [
+        "Send each prompt one at a time on the standard path, with high effort.",
+        "Buy a Priority Tier commitment, which gives half-price calls.",
+        "Submit one Message Batch, and also run the full set on the standard path.",
+        "Submit the prompts as one Message Batch, and read results after processing ends."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "Batch usage is charged at half the standard API price. Results can take up to 24 hours, which fits an evaluation run that no user waits on.",
+      "trap": "Standard calls look simple, but they keep standard pricing for a job that can wait a day.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+    },
+    {
+      "id": "D3.3-3",
+      "select": 2,
+      "stem": "A classifier meets its accuracy floor at medium effort, but its latency target is tight. Many requests are simple, and a short answer is enough for them. Which two changes meet both constraints?",
+      "options": [
+        "Move all requests to a larger model at high effort.",
+        "Set effort lower for simple requests, and keep medium effort for the rest.",
+        "Enable fast mode on Claude Haiku 5.5, which cuts the first-token wait.",
+        "Ask for a shorter answer in the prompt when output length adds time."
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "rationale": "Lower effort cuts output and thinking work on simple requests. A shorter answer cuts output time, and medium effort keeps the accuracy floor on harder requests.",
+      "trap": "A larger model looks like the safer choice for accuracy, but each call takes longer and can miss the latency target (Inference).",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/effort"
+    }
+  ]
+}

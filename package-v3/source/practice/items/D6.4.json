@@ -1,0 +1,50 @@
+{
+  "unit": "D6.4",
+  "items": [
+    {
+      "id": "D6.4-1",
+      "select": 1,
+      "stem": "A decision record names a model by family only. A successor cannot tell which model the evaluation measured. The record must name the measured model exactly. Which entry meets the constraint?",
+      "options": [
+        "Attach the full evaluation notebook and every raw response to the record.",
+        "Write the exact model ID and the platform in the record.",
+        "Record the model family name only, since the family name identifies the model.",
+        "Record the API version header as the model ID for the evaluation."
+      ],
+      "correct": [1],
+      "rationale": "From the 4.6 generation on, a dateless ID names one fixed snapshot. The exact ID and the platform let a successor identify the measured model.",
+      "trap": "A model family name looks like enough, but it does not name the snapshot that the evaluation measured.",
+      "source": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions"
+    },
+    {
+      "id": "D6.4-2",
+      "select": 1,
+      "stem": "A decision record names a model ID. The platform posts a retirement notice with a date for that ID. The notice names a replacement model. The team must keep the record accurate and avoid an outage on that date. Which action meets the constraint?",
+      "options": [
+        "Record the retirement date beside the ID, then test the named replacement before that date.",
+        "Keep the ID in the record, since a dateless ID is a fixed snapshot that never retires.",
+        "Freeze all model work for the year, and rebuild every decision record from scratch.",
+        "Add the Usage page CSV to the record as the model version number."
+      ],
+      "correct": [0],
+      "rationale": "Every model ID has its own retirement schedule, and a notice sets the date. A tested replacement lets the team move traffic before that date.",
+      "trap": "A dateless ID looks permanent, but it is a fixed snapshot that still follows its own retirement schedule.",
+      "source": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+    },
+    {
+      "id": "D6.4-3",
+      "select": 2,
+      "stem": "A team writes a decision record for a Claude model in production. A successor must run the system later and must check the decision. Select two entries that meet both needs.",
+      "options": [
+        "Record the model family and let the successor choose the newest model.",
+        "Record the workspace spend limit as the model version for the decision.",
+        "Record the exact model ID with its platform and deprecation date.",
+        "Write the review criteria that reopen the decision as measurable thresholds."
+      ],
+      "correct": [2, 3],
+      "rationale": "The exact ID, the platform, and the deprecation date tell a successor what runs and when it retires. Measurable review criteria tell the successor when to reopen the decision. (Inference)",
+      "trap": "A model family name looks like a stable reference, but it does not identify the snapshot that was measured.",
+      "source": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions"
+    }
+  ]
+}

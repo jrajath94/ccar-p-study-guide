@@ -9,19 +9,63 @@
       "first_principle": "Each attached tool is a permission, a token cost, and a selection choice, so the set should hold only what the task calls.",
       "architecture": {
         "nodes": [
-          {"id": "app", "label": "Your app builds the request", "group": "client"},
-          {"id": "tools", "label": "Scoped tools array for this task", "group": "client"},
-          {"id": "model", "label": "Claude model picks a tool by name", "group": "claude"},
-          {"id": "policy", "label": "Permission policy or allowlist", "group": "control"},
-          {"id": "mcp", "label": "MCP server or local tool", "group": "cloud"},
-          {"id": "context", "label": "Tool result enters the context", "group": "data"}
+          {
+            "id": "app",
+            "label": "Your app builds the request",
+            "group": "client"
+          },
+          {
+            "id": "tools",
+            "label": "Scoped tools array for this task",
+            "group": "client"
+          },
+          {
+            "id": "model",
+            "label": "Claude model picks a tool by name",
+            "group": "claude"
+          },
+          {
+            "id": "policy",
+            "label": "Permission policy or allowlist",
+            "group": "control"
+          },
+          {
+            "id": "mcp",
+            "label": "MCP server or local tool",
+            "group": "cloud"
+          },
+          {
+            "id": "context",
+            "label": "Tool result enters the context",
+            "group": "data"
+          }
         ],
         "edges": [
-          {"from": "app", "to": "tools", "label": "attach only task tools"},
-          {"from": "tools", "to": "model", "label": "schemas sent with each call"},
-          {"from": "model", "to": "policy", "label": "tool_use request"},
-          {"from": "policy", "to": "mcp", "label": "allowed call only"},
-          {"from": "mcp", "to": "context", "label": "result returned to the model"}
+          {
+            "from": "app",
+            "to": "tools",
+            "label": "attach only task tools"
+          },
+          {
+            "from": "tools",
+            "to": "model",
+            "label": "schemas sent with each call"
+          },
+          {
+            "from": "model",
+            "to": "policy",
+            "label": "tool_use request"
+          },
+          {
+            "from": "policy",
+            "to": "mcp",
+            "label": "allowed call only"
+          },
+          {
+            "from": "mcp",
+            "to": "context",
+            "label": "result returned to the model"
+          }
         ]
       },
       "steps": [
@@ -54,30 +98,94 @@
         "The tool set already holds only the tools that every request uses."
       ],
       "constraints": [
-        {"family": "cost", "choice": "Remove tools the task never calls from every request. (Inference)", "combination": "Defer the rest with tool search when the set grows large."},
-        {"family": "scale", "choice": "Use tool search when the set has 10 or more tools.", "combination": "Keep the 3 to 5 most used tools non-deferred."},
-        {"family": "governance", "choice": "Keep write tools on always_ask in MCP toolsets.", "combination": "Use always_allow only for a trusted read-only MCP server. (Inference)"},
-        {"family": "governance", "choice": "In Claude Code, deny rules apply first, then ask rules, then allow rules.", "combination": "Add a deny rule for a blocked tool. An allow rule cannot override it."},
-        {"family": "operations", "choice": "Record tool decisions and results in your audit log. (Inference)", "combination": "Use the audit log to review removals, not to replace them. (Inference)"}
+        {
+          "family": "cost",
+          "choice": "Remove tools the task never calls from every request. (Inference)",
+          "combination": "Defer the rest with tool search when the set grows large."
+        },
+        {
+          "family": "scale",
+          "choice": "Use tool search when the set has 10 or more tools.",
+          "combination": "Keep the 3 to 5 most used tools non-deferred."
+        },
+        {
+          "family": "governance",
+          "choice": "Keep write tools on always_ask in MCP toolsets.",
+          "combination": "Use always_allow only for a trusted read-only MCP server. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "In Claude Code, deny rules apply first, then ask rules, then allow rules.",
+          "combination": "Add a deny rule for a blocked tool. An allow rule cannot override it."
+        },
+        {
+          "family": "operations",
+          "choice": "Record tool decisions and results in your audit log. (Inference)",
+          "combination": "Use the audit log to review removals, not to replace them. (Inference)"
+        }
       ],
       "native_services": [
-        {"service": "Claude Platform on AWS", "text": "All tool use capabilities are available except the computer use and browser use toolsets.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
-        {"service": "Amazon Bedrock", "text": "The MCP connector is not supported.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
-        {"service": "Claude Models on Google Cloud (Google managed)", "text": "The MCP connector is not supported.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"},
-        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "The MCP connector is available.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"},
-        {"service": "Microsoft Foundry", "text": "The MCP connector is in beta. Tool search support is Not in source.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"}
+        {
+          "service": "Claude Platform on AWS",
+          "text": "All tool use capabilities are available except the computer use and browser use toolsets.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "The MCP connector is not supported.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "The MCP connector is not supported.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "The MCP connector is available.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "The MCP connector is in beta. Tool search support is Not in source.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"
+        }
       ],
       "exam_tie": "D3.1. Expect a scenario with an over-broad tool set and one wrong call. The credited answer removes or scopes the unneeded tool. A log entry alone is not the fix. (Inference)",
       "trap": "Full audit logs on a broad tool set look like the safe fix. The permission stays attached, so the next wrong call still runs.",
       "decision_rule": "Remove or scope each tool the task does not need before you add any monitoring.",
       "exam_tip": "If the scenario names an unneeded write capability, pick removal, a cap, or an approval gate.",
       "key_facts": [
-        {"text": "A typical multiserver setup can consume about 55k tokens in tool definitions.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
-        {"text": "Tool search typically reduces definition tokens by over 85 percent.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
-        {"text": "Claude tool selection accuracy can degrade once the set exceeds about 30 to 50 tools.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
-        {"text": "Tool search is advisable with 10 or more tools.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
-        {"text": "In Managed Agents, MCP toolsets default to always_ask, and the agent toolset defaults to always_allow.", "url": "https://platform.claude.com/docs/en/managed-agents/permission-policies", "label": "Fact"},
-        {"text": "Claude Code evaluates permission rules in this order: deny, ask, then allow.", "url": "https://code.claude.com/docs/en/permissions", "label": "Fact"}
+        {
+          "text": "A typical multiserver setup can consume about 55k tokens in tool definitions.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        },
+        {
+          "text": "Tool search typically reduces definition tokens by over 85 percent.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude tool selection accuracy can degrade once the set exceeds about 30 to 50 tools.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        },
+        {
+          "text": "Tool search is advisable with 10 or more tools.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        },
+        {
+          "text": "In Managed Agents, MCP toolsets default to always_ask, and the agent toolset defaults to always_allow.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Code evaluates permission rules in this order: deny, ask, then allow.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        }
       ],
       "not_in_source": [
         "Tool count at which accuracy falls on Microsoft Foundry or Claude Models on Google Cloud. Not in source.",
@@ -89,20 +197,68 @@
       "first_principle": "Deferred tools stay out of the first prompt, and the API adds the found tools when the model searches for them.",
       "architecture": {
         "nodes": [
-          {"id": "app", "label": "Your app with full tool catalog", "group": "client"},
-          {"id": "search", "label": "Tool search tool, always non-deferred", "group": "claude"},
-          {"id": "model", "label": "Claude model issues a search", "group": "claude"},
-          {"id": "api", "label": "Messages API expands tool references", "group": "cloud"},
-          {"id": "cache", "label": "Cached prefix of non-deferred tools", "group": "data"},
-          {"id": "tool", "label": "Discovered tool runs", "group": "control"}
+          {
+            "id": "app",
+            "label": "Your app with full tool catalog",
+            "group": "client"
+          },
+          {
+            "id": "search",
+            "label": "Tool search tool, always non-deferred",
+            "group": "claude"
+          },
+          {
+            "id": "model",
+            "label": "Claude model issues a search",
+            "group": "claude"
+          },
+          {
+            "id": "api",
+            "label": "Messages API expands tool references",
+            "group": "cloud"
+          },
+          {
+            "id": "cache",
+            "label": "Cached prefix of non-deferred tools",
+            "group": "data"
+          },
+          {
+            "id": "tool",
+            "label": "Discovered tool runs",
+            "group": "control"
+          }
         ],
         "edges": [
-          {"from": "app", "to": "search", "label": "tools array with defer_loading true"},
-          {"from": "search", "to": "model", "label": "search input"},
-          {"from": "model", "to": "api", "label": "server_tool_use search"},
-          {"from": "api", "to": "model", "label": "tool_reference expanded"},
-          {"from": "api", "to": "cache", "label": "deferred tools stay out of prefix"},
-          {"from": "model", "to": "tool", "label": "tool_use for the found tool"}
+          {
+            "from": "app",
+            "to": "search",
+            "label": "tools array with defer_loading true"
+          },
+          {
+            "from": "search",
+            "to": "model",
+            "label": "search input"
+          },
+          {
+            "from": "model",
+            "to": "api",
+            "label": "server_tool_use search"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "tool_reference expanded"
+          },
+          {
+            "from": "api",
+            "to": "cache",
+            "label": "deferred tools stay out of prefix"
+          },
+          {
+            "from": "model",
+            "to": "tool",
+            "label": "tool_use for the found tool"
+          }
         ]
       },
       "steps": [
@@ -134,26 +290,74 @@
         "The model is Claude Opus 4.1 or an earlier model, which lacks tool search."
       ],
       "constraints": [
-        {"family": "cost", "choice": "Defer tools that few requests use.", "combination": "Keep frequent tools non-deferred to avoid extra search round trips."},
-        {"family": "latency", "choice": "Accept one extra search step for large catalogs. (Inference)", "combination": "Use standard tool use when the set is small."},
-        {"family": "scale", "choice": "Allow up to 10,000 deferred tools in one request.", "combination": "Claude can set a limit from 1 to 10,000 in its search input."},
-        {"family": "skill", "choice": "Use clear names and keyword-rich descriptions for each deferred tool.", "combination": "Use a shared name prefix such as github_ for one service."},
-        {"family": "operations", "choice": "Monitor which tools the model discovers.", "combination": "Rewrite descriptions for tools that the model never finds."}
+        {
+          "family": "cost",
+          "choice": "Defer tools that few requests use.",
+          "combination": "Keep frequent tools non-deferred to avoid extra search round trips."
+        },
+        {
+          "family": "latency",
+          "choice": "Accept one extra search step for large catalogs. (Inference)",
+          "combination": "Use standard tool use when the set is small."
+        },
+        {
+          "family": "scale",
+          "choice": "Allow up to 10,000 deferred tools in one request.",
+          "combination": "Claude can set a limit from 1 to 10,000 in its search input."
+        },
+        {
+          "family": "skill",
+          "choice": "Use clear names and keyword-rich descriptions for each deferred tool.",
+          "combination": "Use a shared name prefix such as github_ for one service."
+        },
+        {
+          "family": "operations",
+          "choice": "Monitor which tools the model discovers.",
+          "combination": "Rewrite descriptions for tools that the model never finds."
+        }
       ],
       "native_services": [
-        {"service": "Claude Platform on AWS", "text": "Server-side tool search works the same as on the Claude API.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
-        {"service": "Amazon Bedrock", "text": "Server-side tool search works only through the InvokeModel API, not the Converse API.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool"}
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Server-side tool search works the same as on the Claude API.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Server-side tool search works only through the InvokeModel API, not the Converse API.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool"
+        }
       ],
       "exam_tie": "D3.1. Expect a scenario with a large tool library and high token cost. The credited answer defers rarely used tools and keeps frequent tools in the prompt. (Inference)",
       "trap": "A longer system prompt that lists every tool looks like a fix. It keeps every schema in the first prompt.",
       "decision_rule": "Defer each tool that few requests use, and keep the most used tools non-deferred.",
       "exam_tip": "If the scenario shows 10 or more tools and high cost, pick tool search over a longer prompt.",
       "key_facts": [
-        {"text": "Each search returns up to 5 found tools by default.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
-        {"text": "A request can define up to 10,000 tools with defer_loading set to true.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
-        {"text": "Regex patterns are limited to 200 characters, and BM25 queries to 500 characters.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
-        {"text": "Standard tool use fits when a request has fewer than 10 tools.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"},
-        {"text": "A deferred tool cannot carry cache_control, and the API returns a 400 error.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool", "label": "Fact"}
+        {
+          "text": "Each search returns up to 5 found tools by default.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        },
+        {
+          "text": "A request can define up to 10,000 tools with defer_loading set to true.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        },
+        {
+          "text": "Regex patterns are limited to 200 characters, and BM25 queries to 500 characters.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        },
+        {
+          "text": "Standard tool use fits when a request has fewer than 10 tools.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        },
+        {
+          "text": "A deferred tool cannot carry cache_control, and the API returns a 400 error.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool",
+          "label": "Fact"
+        }
       ],
       "not_in_source": [
         "Latency added by each search. Not in source.",
@@ -165,23 +369,67 @@
       "first_principle": "Clear, few, and consistently named tool definitions give the model the fewest wrong picks.",
       "architecture": {
         "nodes": [
-          {"id": "dev", "label": "Tool author writes description and schema", "group": "client"},
-          {"id": "defs", "label": "Tool definitions with input_schema", "group": "client"},
-          {"id": "model", "label": "Claude model selects a tool", "group": "claude"},
-          {"id": "strict", "label": "Strict mode grammar limit per request", "group": "control"},
-          {"id": "call", "label": "tool_use block with input", "group": "claude"},
-          {"id": "run", "label": "Your code runs the tool", "group": "cloud"}
+          {
+            "id": "dev",
+            "label": "Tool author writes description and schema",
+            "group": "client"
+          },
+          {
+            "id": "defs",
+            "label": "Tool definitions with input_schema",
+            "group": "client"
+          },
+          {
+            "id": "model",
+            "label": "Claude model selects a tool",
+            "group": "claude"
+          },
+          {
+            "id": "strict",
+            "label": "Strict mode grammar limit per request",
+            "group": "control"
+          },
+          {
+            "id": "call",
+            "label": "tool_use block with input",
+            "group": "claude"
+          },
+          {
+            "id": "run",
+            "label": "Your code runs the tool",
+            "group": "cloud"
+          }
         ],
         "edges": [
-          {"from": "dev", "to": "defs", "label": "one job per tool"},
-          {"from": "defs", "to": "model", "label": "tools array in request"},
-          {"from": "defs", "to": "strict", "label": "strict true count"},
-          {"from": "model", "to": "call", "label": "name and input"},
-          {"from": "call", "to": "run", "label": "validated input"}
+          {
+            "from": "dev",
+            "to": "defs",
+            "label": "one job per tool"
+          },
+          {
+            "from": "defs",
+            "to": "model",
+            "label": "tools array in request"
+          },
+          {
+            "from": "defs",
+            "to": "strict",
+            "label": "strict true count"
+          },
+          {
+            "from": "model",
+            "to": "call",
+            "label": "name and input"
+          },
+          {
+            "from": "call",
+            "to": "run",
+            "label": "validated input"
+          }
         ]
       },
       "steps": [
-        "Write each description with what the tool does and when to use it.",
+        "Describe each tool by its purpose and the conditions that call it.",
         "State in each description what the tool does not return.",
         "Group related actions under one tool with an action parameter when they share inputs.",
         "Prefix each tool name with its service or resource name.",
@@ -209,23 +457,59 @@
         "The set already holds a few clear tools."
       ],
       "constraints": [
-        {"family": "skill", "choice": "Write descriptions of at least 3 to 4 sentences for each tool, more for a complex tool.", "combination": "Use input_examples only for tools with complex inputs."},
-        {"family": "operations", "choice": "Use stable slugs or UUIDs in tool responses.", "combination": "Remove fields the next step never reads."},
-        {"family": "governance", "choice": "Keep destructive actions in separate tools with their own gates. (Inference)", "combination": "Share one read tool across several services only when the data scope matches."},
-        {"family": "scale", "choice": "Limit strict tools to 20 per request.", "combination": "Leave non-strict tools outside this limit."}
+        {
+          "family": "skill",
+          "choice": "Write descriptions of at least 3 to 4 sentences for each tool, more for a complex tool.",
+          "combination": "Use input_examples only for tools with complex inputs."
+        },
+        {
+          "family": "operations",
+          "choice": "Use stable slugs or UUIDs in tool responses.",
+          "combination": "Remove fields the next step never reads."
+        },
+        {
+          "family": "governance",
+          "choice": "Keep destructive actions in separate tools with their own gates. (Inference)",
+          "combination": "Share one read tool across several services only when the data scope matches."
+        },
+        {
+          "family": "scale",
+          "choice": "Limit strict tools to 20 per request.",
+          "combination": "Leave non-strict tools outside this limit."
+        }
       ],
       "native_services": [
-        {"service": "All", "text": "Not in source for platform-specific tool definition limits. The strict tool limit is documented on the structured outputs page.", "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}
+        {
+          "service": "All",
+          "text": "Not in source for platform-specific tool definition limits. The strict tool limit is documented on the structured outputs page.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
+        }
       ],
       "exam_tie": "D3.1. Expect a scenario where the model picks a near-duplicate tool. The credited answer merges or renames tools, not a longer prompt. (Inference)",
       "trap": "A system prompt rule that says to pick the right search tool looks like a fix. Two tools with the same job still split the model choice.",
       "decision_rule": "Give each job one tool name and one description, and merge tools that do the same job.",
       "exam_tip": "If the scenario shows two similar search tools, pick the option that merges them or renames them for distinct jobs.",
       "key_facts": [
-        {"text": "Tool descriptions should run at least 3 to 4 sentences for each tool.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools", "label": "Fact"},
-        {"text": "Tool examples add about 20 to 50 tokens for simple examples.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools", "label": "Fact"},
-        {"text": "A request can set strict on at most 20 tools.", "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs", "label": "Fact"},
-        {"text": "The docs call tool description detail the most important factor in tool performance.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools", "label": "Fact"}
+        {
+          "text": "Tool descriptions should run at least 3 to 4 sentences for each tool.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools",
+          "label": "Fact"
+        },
+        {
+          "text": "Tool examples add about 20 to 50 tokens for simple examples.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools",
+          "label": "Fact"
+        },
+        {
+          "text": "A request can set strict on at most 20 tools.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "The docs call tool description detail the most important factor in tool performance.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools",
+          "label": "Fact"
+        }
       ],
       "not_in_source": [
         "Exact accuracy gain from a merged tool. Not in source.",
@@ -236,9 +520,33 @@
   "decision_flow": "flowchart TD\n  A{Does the task ever need this tool?} -->|No| X[Remove from the request]\n  A -->|Yes| B{Does the tool write or delete data?}\n  B -->|Yes| C[Cap the writes or add an approval gate]\n  B -->|No| D{Ten or more tools in the set?}\n  C --> D\n  D -->|Yes| E[Use tool search with deferred tools]\n  D -->|No| F[Attach with standard tool use]\n  E --> G{Does another tool do the same job?}\n  F --> G\n  G -->|Yes| H[Merge the tools into one name]\n  G -->|No| I[Keep the tool with a clear description]",
   "cheatsheet": "flowchart LR\n  S[Task tools only] --> R[Remove unused tools]\n  R --> M[Merge same-job tools]\n  S --> W[Cap or gate writes]\n  S --> D[Defer rare tools]\n  D --> K[Keep frequent tools non-deferred]\n  S --> P[Deny then ask then allow]\n  W --> A[Approval on write tools]\n  S --> L[Logs record, removal blocks]",
   "patterns": [
-    {"wording": "the agent picks the wrong tool after the tool list grows", "answer_type": "scope the tool set and merge similar names", "rule": "Merge tools that do the same job and remove tools the task never calls.", "traps": ["Routing layer on top of the same tool set", "Logging every call with no removal"]},
-    {"wording": "a wrong write fires through a tool the task rarely needs", "answer_type": "remove the write tool or cap its writes", "rule": "Remove the write capability, or cap it and gate it with approval.", "traps": ["Keep all tools and log every call", "Longer audit retention"]},
-    {"wording": "the tool schema cost per call rises with the library", "answer_type": "tool search with deferred tools", "rule": "Defer tools that few requests use and keep frequent tools non-deferred.", "traps": ["Delete tools the task still needs", "Longer system prompt listing every tool"]}
+    {
+      "wording": "the agent picks the wrong tool after the tool list grows",
+      "answer_type": "scope the tool set and merge similar names",
+      "rule": "Merge tools that do the same job and remove tools the task never calls.",
+      "traps": [
+        "Routing layer on top of the same tool set",
+        "Logging every call with no removal"
+      ]
+    },
+    {
+      "wording": "a wrong write fires through a tool the task rarely needs",
+      "answer_type": "remove the write tool or cap its writes",
+      "rule": "Remove the write capability, or cap it and gate it with approval.",
+      "traps": [
+        "Keep all tools and log every call",
+        "Longer audit retention"
+      ]
+    },
+    {
+      "wording": "the tool schema cost per call rises with the library",
+      "answer_type": "tool search with deferred tools",
+      "rule": "Defer tools that few requests use and keep frequent tools non-deferred.",
+      "traps": [
+        "Delete tools the task still needs",
+        "Longer system prompt listing every tool"
+      ]
+    }
   ],
   "console_steps": [],
   "not_in_source": [

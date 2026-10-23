@@ -1,0 +1,57 @@
+{
+  "unit": "D3.2",
+  "items": [
+    {
+      "id": "D3.2-1",
+      "select": 1,
+      "stem": "An internal assistant calls a remote MCP server. The server must record which employee asked for each action. Which change meets the constraint?",
+      "options": [
+        "Use one shared service key, and add the employee name to the prompt.",
+        "Send each user's OAuth token in authorization_token for that server.",
+        "Send one shared OAuth token for all users, and route all calls through a logging proxy.",
+        "Set the anthropic-workspace-id header to the employee's team workspace."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "The server checks a bearer token that names the signed-in user. A name typed into a prompt cannot prove who asked (Inference).",
+      "trap": "A shared key with a name in the prompt looks like attribution, but the system cannot verify a name that the user typed (Inference).",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"
+    },
+    {
+      "id": "D3.2-2",
+      "select": 1,
+      "stem": "A workload runs on Claude Platform on AWS. The security team needs IAM to control each caller, and the workload has no user consent flow. Which change meets both constraints?",
+      "options": [
+        "Store a long-lived API key in the code, and skip IAM policies.",
+        "Add an OAuth consent screen for each user before each call.",
+        "Sign with SigV4 from one shared role for all callers, and log each request ID in a second store.",
+        "Enable outbound web identity federation, sign with SigV4, and scope IAM to the workspace ARN."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "Outbound web identity federation is disabled by default, so requests fail until it is enabled. An IAM policy on the workspace ARN then limits each caller.",
+      "trap": "An OAuth consent screen looks like user control, but Claude Platform on AWS does not support OAuth.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+    },
+    {
+      "id": "D3.2-3",
+      "select": 2,
+      "stem": "On the Claude API, two tenants must not share prompt caches or API keys. The team also wants a separate monthly spend limit for each tenant. Which two changes meet both constraints?",
+      "options": [
+        "Use one workspace for both tenants, and name each tenant in a header.",
+        "Rename the Default Workspace to the first tenant, then archive it later.",
+        "Create one workspace per tenant, and scope each tenant key to its workspace.",
+        "Set a monthly spend limit on each tenant workspace."
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "rationale": "Prompt caches stay isolated by workspace on the Claude API. Each new workspace can also have its own spend limit.",
+      "trap": "A tenant header in one workspace looks like isolation, but both tenants then share one prompt cache and one spend limit.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/workspaces"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "unit": "F4",
+  "items": [
+    {
+      "id": "F4-1",
+      "select": 1,
+      "stem": "A CI pipeline calls the Claude API for nightly evals. The CI platform issues a signed identity token for each job. The constraint: no static API key may be stored in CI. Which design meets the constraint?",
+      "options": [
+        "Store a workspace API key in the CI secrets manager with a 30-day expiry.",
+        "Build a token broker that holds the key in a vault and issues short tokens to each job.",
+        "Register the CI identity provider as a federation issuer and create a federation rule for the pipeline.",
+        "Use a Bedrock short-term bearer token, which lasts up to 12 hours, for the Claude API calls."
+      ],
+      "correct": [2],
+      "rationale": "Federation lets the workload exchange its signed identity token for a short-lived Anthropic token. No static key sits in CI, and the federation rule sets the scope and lifetime.",
+      "trap": "A key with a 30-day expiry looks short-lived, but it is still a static API key stored in CI.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/workload-identity-federation"
+    },
+    {
+      "id": "F4-2",
+      "select": 1,
+      "stem": "A nightly job reads usage by workspace and also sends Messages requests for the product. The constraint: each call must use the key type that the API accepts for it. Which key plan meets the constraint?",
+      "options": [
+        "Use one workspace API key for both the usage reads and the Messages requests.",
+        "Use an Admin API key for the usage reads and a workspace API key for the Messages requests.",
+        "Create a separate organization with its own Admin API key, and a second key for requests.",
+        "Use the Default Workspace key for the usage reads, because it is an Admin API key."
+      ],
+      "correct": [1],
+      "rationale": "An Admin API key authenticates the Usage and Cost API. A workspace API key covers the Messages requests, so each key does one job.",
+      "trap": "One workspace key for both calls looks simpler, but a workspace key cannot authenticate the Usage and Cost API.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/admin-api-keys"
+    },
+    {
+      "id": "F4-3",
+      "select": 2,
+      "stem": "A health tech team sends regulated prompts through the Messages API. The contract forbids saving prompts and responses at rest. Which two actions meet the constraint?",
+      "options": [
+        "Ask the account team to enable ZDR for the organization.",
+        "Keep the regulated prompts in the Console playground, since ZDR covers the Console.",
+        "Turn on platform activity logs, which keep prompts out of storage at rest.",
+        "Check that each feature in use is eligible for zero data retention before launch."
+      ],
+      "correct": [0, 3],
+      "rationale": "ZDR is enabled for each organization by the account team, and Anthropic does not store prompts or responses at rest under ZDR. Eligibility depends on the feature, so the team checks each feature before launch.",
+      "trap": "Platform activity logs look like a data control, but logs do not enable zero data retention.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention"
+    }
+  ]
+}

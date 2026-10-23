@@ -1,0 +1,50 @@
+{
+  "unit": "D4.4",
+  "items": [
+    {
+      "id": "D4.4-1",
+      "select": 1,
+      "stem": "Cache read tokens dropped to zero after a team edited the tool list in a shared template. The model stayed the same. The team must name the changed layer first, with the smallest fix.",
+      "options": [
+        "Raise the cache duration to one hour, so the prefix stays cached while the tool list changes.",
+        "Read cache_miss_reason in the response, and fix the earliest changed block first.",
+        "Rewrite the whole prompt template, then measure hit rates over a month of traffic.",
+        "Turn on the streaming cache trace in the Console, which lists each changed block after every response."
+      ],
+      "correct": [1],
+      "rationale": "The response reports the earliest point of divergence and its reason type. The first fix goes to that block, which confirms the layer before any other change.",
+      "trap": "A longer cache duration looks like a quick fix, but a changed prefix misses the cache at any duration.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics"
+    },
+    {
+      "id": "D4.4-2",
+      "select": 1,
+      "stem": "An assistant gives different figures for the same question across three runs. The model and the prompt did not change. The team needs a check that flags unsupported answers, with no new model.",
+      "options": [
+        "Move the assistant to a larger model tier, since a stronger model returns the same figure on each run.",
+        "Enable a consistency flag in the Messages API that blocks answers with a figure that varies.",
+        "Run the same prompt several times, and flag answers that disagree on a key figure.",
+        "Route each question through three model tiers, and vote on the answer from all three."
+      ],
+      "correct": [2],
+      "rationale": "Several runs of one prompt expose answers that disagree. Disagreement on a key figure signals a possible hallucination, and the check needs no new model.",
+      "trap": "A consistency flag in the Messages API sounds like a direct fix, but the docs do not describe such a flag.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations"
+    },
+    {
+      "id": "D4.4-3",
+      "select": 2,
+      "stem": "Cache reads fell after a prompt edit. Two later blocks also changed, so the first reason may hide the others. The team must find the fix and confirm it with cache evidence. Which two steps meet these constraints?",
+      "options": [
+        "Change the cache duration and the prompt wording in one release, to save a diagnosis round.",
+        "Fix the earliest divergence first, because later reasons can hide behind it.",
+        "Read cache_miss_reason from the usage export, which names each changed block.",
+        "Confirm the fix with the cache read token count on the next request."
+      ],
+      "correct": [1, 3],
+      "rationale": "The response reports only the earliest divergence, so later changes can stay hidden until that block is fixed. The cache read count on the next request confirms the fix.",
+      "trap": "The usage export sounds like the place for the miss reason, but the docs attach cache_miss_reason to the response itself.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics"
+    }
+  ]
+}

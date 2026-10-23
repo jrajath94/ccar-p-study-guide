@@ -1,0 +1,50 @@
+{
+  "unit": "D4.6",
+  "items": [
+    {
+      "id": "D4.6-1",
+      "select": 1,
+      "stem": "Monthly spend rose 30 percent while completed tasks stayed flat. The team needs an alert before the budget breaks. The alert must reflect the value of each task, and it needs a named owner.",
+      "options": [
+        "Alert on total token count per day, since token counts rise with spend.",
+        "Alert on 40 metrics, with latency, token counts, and per-user spend among them, each with its own owner.",
+        "Alert on cost per completed task, and name the owner who acts when the line breaks.",
+        "Set the Cost API to alert on one-minute buckets, so spend breaks show within a minute."
+      ],
+      "correct": [2],
+      "rationale": "Cost per completed task shows whether spend buys finished work. A named owner turns the alert into a control that someone acts on. (Inference)",
+      "trap": "One-minute Cost API buckets look like faster alerts, but the Cost API supports only daily buckets.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+    },
+    {
+      "id": "D4.6-2",
+      "select": 1,
+      "stem": "The data rules allow only metadata in the observability destination. A request failed across three services. The team uses the Claude API and needs the order and timing of each hop for that one request.",
+      "options": [
+        "Export full content for every request, then search the prompts for the failed call.",
+        "Read the per-hop trace for the failed request, with metadata-only export.",
+        "Build a custom span format and tracing service before the next incident.",
+        "Turn on the claude_code.session.count metric, which records the timing of each hop."
+      ],
+      "correct": [1],
+      "rationale": "A trace shows the order and timing of each hop in one request. Metadata-only spans still carry identifiers and timing, so the data rules hold.",
+      "trap": "The session count metric sounds like timing data, but it counts sessions as each one starts.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/opentelemetry"
+    },
+    {
+      "id": "D4.6-3",
+      "select": 2,
+      "stem": "A team pinned a model ID. Live quality dropped after an infrastructure update, and no code changed. The team must find the cause with evidence before it changes the model. Which two actions meet this constraint?",
+      "options": [
+        "Freeze the infrastructure that serves the model ID, so no update can change observable behavior.",
+        "Compare live metrics with the baseline from before the update, and record the model ID with each metric.",
+        "Rewrite the prompt with a new template and retrain the grader before any metric comparison.",
+        "Check prompt and data changes from the same period before the team changes the model ID."
+      ],
+      "correct": [1, 3],
+      "rationale": "A pinned ID fixes the weights, so the infrastructure that serves it remains a likely cause of the shift. A baseline and the change history point to the actual cause.",
+      "trap": "A setting that freezes the infrastructure sounds like a fix, but the docs describe no such setting.",
+      "source": "https://platform.claude.com/docs/en/about-claude/models/model-ids-and-versions"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "unit": "D2.3",
+  "items": [
+    {
+      "id": "D2.3-1",
+      "select": 1,
+      "stem": "A ticket classifier misses its accuracy bar on new labels. The team has no budget for model training, and it wants the smallest prompt change first. Which change should the team try first?",
+      "options": [
+        "Train a custom classifier on the full ticket history before any prompt change.",
+        "Enable citations, so each label links to its source text.",
+        "Add three to five varied labeled examples in example tags, then run the evals.",
+        "Add the examples, and also turn on adaptive thinking for every call."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "Three to five examples in example tags steer the output pattern without training. Measure the result first, and add more examples only if the evals need them.",
+      "trap": "Custom training on the full history looks like the strongest fix, but the team has no training budget.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+    },
+    {
+      "id": "D2.3-2",
+      "select": 1,
+      "stem": "A migration moves an extraction service to a Claude 4.6 model. Each request ends with a prefilled assistant turn, and the API returns a 400 error. The fix must keep the output format and run on Claude 4.6.",
+      "options": [
+        "Turn thinking off, so the prefilled assistant turn is accepted.",
+        "Remove the prefill, and state the output format in the system prompt.",
+        "Keep the prefill, and add structured outputs to the same request.",
+        "Keep the prefill, and route these calls to an earlier model."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "Claude 4.6 and later models reject a prefilled final assistant turn. A system prompt instruction keeps the output format without the prefill.",
+      "trap": "Thinking turned off looks like a valid fix, but the prefilled final turn still returns a 400 error on Claude 4.6.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"
+    },
+    {
+      "id": "D2.3-3",
+      "select": 2,
+      "stem": "A routing service needs one label from a fixed enum for each ticket. The call targets Claude Opus 5.5, which rejects forced tool use. Which two changes meet the constraints?",
+      "options": [
+        "Use tool_choice auto with a strict tool that has an enum field.",
+        "Set tool_choice to one named tool, so the model must call it.",
+        "Use structured outputs with an enum in the schema.",
+        "Add a prompt caching breakpoint to the label instructions."
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "rationale": "Tool choice auto works with strict tool use on Opus 5.5. Structured outputs with an enum also return one label from the fixed list.",
+      "trap": "A named tool choice looks like the simplest way to lock the label, but Opus 5.5 rejects forced tool use with a 400 error.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/thinking"
+    }
+  ]
+}

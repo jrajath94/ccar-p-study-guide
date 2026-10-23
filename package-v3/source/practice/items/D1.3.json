@@ -1,0 +1,50 @@
+{
+  "unit": "D1.3",
+  "items": [
+    {
+      "id": "D1.3-1",
+      "select": 1,
+      "stem": "A finance app reads one invoice, classifies it, and posts one record. The steps are fixed, and one model judgment is needed for the class. The app must keep control of the write. Which pattern meets the constraint?",
+      "options": [
+        "Run an agent loop with a session budget, and let the agent post each record through the MCP connector.",
+        "Send the invoice to Claude with network access, and let the model post the record.",
+        "Run the fixed steps in app code, with one model call for the classification, then post in app code.",
+        "Use a server-executed tool to post the record, so the app runs no code."
+      ],
+      "correct": [2],
+      "rationale": "The steps are fixed, so app code runs them in order. The model makes only the classification judgment, and the app keeps control of the write.",
+      "trap": "An agent loop looks thorough for an invoice, but its planned steps add cost and variation that fixed code does not need.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works"
+    },
+    {
+      "id": "D1.3-2",
+      "select": 1,
+      "stem": "A research job searches the web, and each result decides the next search. The steps are unknown until the run starts. The team must stop spend at a fixed cap for each session. Which pattern meets the constraint?",
+      "options": [
+        "Hard-code the search steps in code, with one model call for each step.",
+        "Run an agent with six subagents and a merge step, with no session budget.",
+        "Set effort to low, which stops new model requests at the cap.",
+        "Run an agent loop with a session budget that pauses the session at the cap."
+      ],
+      "correct": [3],
+      "rationale": "An agent loop chooses each step from the results so far, which fits steps that are unknown. A session budget stops new model requests when list cost reaches the cap.",
+      "trap": "Setting effort to low looks like a spend control, but only a session budget stops new requests at the cap.",
+      "source": "https://platform.claude.com/docs/en/managed-agents/budgets"
+    },
+    {
+      "id": "D1.3-3",
+      "select": 2,
+      "stem": "A checker reads one file, runs one fixed test command, and writes a report. The steps are known, and the app must keep the order of the steps. Which two options meet the constraint?",
+      "options": [
+        "Call each step from application code in a fixed order, with a model call only for the report text.",
+        "Let the model choose the next step from a tool list after each result.",
+        "Run each step from application code, and check each result before the next step starts.",
+        "Enable a server-executed web search tool to run the test command on your machine."
+      ],
+      "correct": [0, 2],
+      "rationale": "Application code keeps the step order, and the model writes only the report text. Each result is checked before the next step runs, so a failure stops the chain early.",
+      "trap": "A model that picks the next tool looks flexible, but the order then depends on the model rather than on your code.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works"
+    }
+  ]
+}

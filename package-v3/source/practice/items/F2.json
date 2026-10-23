@@ -1,0 +1,50 @@
+{
+  "unit": "F2",
+  "items": [
+    {
+      "id": "F2-1",
+      "select": 1,
+      "stem": "A team must answer questions about one 600,000-token report in a single request. The team uses Claude Opus 5.5 and expects an answer of about 8,000 tokens. Which design meets the constraint?",
+      "options": [
+        "Split the report into chunks and send one request for each chunk.",
+        "Send the full report in one request and set max_tokens to 8,000.",
+        "Send the full report in one request with server-side compaction enabled on every turn.",
+        "Set max_tokens to 1,000,000 so the window holds the full report."
+      ],
+      "correct": [1],
+      "rationale": "The context window holds the input and the new output of a turn. Opus 5.5 has a 1M-token window, so the report fits, and max_tokens caps only the output at 8,000.",
+      "trap": "Setting max_tokens to 1,000,000 looks like a window fix, but max_tokens caps only the output of a response.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/context-windows"
+    },
+    {
+      "id": "F2-2",
+      "select": 1,
+      "stem": "A team deploys Claude Haiku 5.5 on Claude Platform on AWS. The application must send the model ID that this platform uses. Which choice meets the constraint?",
+      "options": [
+        "The ID claude-haiku-5-5, the same ID that the Claude API uses.",
+        "A custom alias that a config service resolves to a model ID on each request.",
+        "The Foundry deployment name, which this platform uses in place of a model ID.",
+        "The Bedrock-style ID anthropic.claude-haiku-5-5 in the model field."
+      ],
+      "correct": [0],
+      "rationale": "This platform reuses the first-party model IDs, with no Bedrock-style prefix. Claude Haiku 5.5 therefore uses claude-haiku-5-5 here.",
+      "trap": "The Bedrock-style ID looks right for Haiku 5.5, but this platform omits the anthropic prefix.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+    },
+    {
+      "id": "F2-3",
+      "select": 2,
+      "stem": "A support app lets Claude look up order status through a tool. The app must run each lookup in its own code behind its permission checks. Which two options meet the constraint?",
+      "options": [
+        "Return each result as a tool_result block with the next request.",
+        "Let the model call the order API directly with its own network access.",
+        "Set stop_reason to tool_result so the loop continues.",
+        "Repeat the request while stop_reason is tool_use, and exit on end_turn."
+      ],
+      "correct": [0, 3],
+      "rationale": "The app runs each tool and returns its output as a tool_result block. The loop repeats while stop_reason is tool_use and exits on the other documented stop reasons.",
+      "trap": "Setting stop_reason to tool_result looks like a loop control, but tool_result is a block type that the app sends, not a stop reason.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "unit": "D5.3",
+  "items": [
+    {
+      "id": "D5.3-1",
+      "select": 1,
+      "stem": "A managed agent can delete customer records through an MCP tool. A deletion cannot be undone. Each deletion must wait for a person to approve it before the tool runs.",
+      "options": [
+        "Subscribe to the session.status_idled webhook, which pauses the session before each deletion.",
+        "Run an offline reviewer job that samples sessions after each deletion, and reports the results weekly.",
+        "Add an approval service with a hook, a review queue, and a separate audit database for each tool.",
+        "Set the permission policy to always_ask for the delete tool, so the session pauses until a reply arrives."
+      ],
+      "correct": [3],
+      "rationale": "The always_ask policy pauses the session until a reviewer answers the approval request. The pause happens before the tool runs, so the deletion waits for the answer.",
+      "trap": "The status idled webhook sounds like a pause control, but it only reports that a session went idle.",
+      "source": "https://platform.claude.com/docs/en/managed-agents/permission-policies"
+    },
+    {
+      "id": "D5.3-2",
+      "select": 1,
+      "stem": "A Claude Code team wants a check on shell commands that no permission rule can express. The check must block a command that touches a production host before the command runs.",
+      "options": [
+        "Print a warning from the hook and exit with code 0, so the developer sees the reason.",
+        "Set permissionDecision to allow in the hook JSON, which lets the command run with a warning.",
+        "Add a PreToolUse hook on the shell matcher that exits with code 2 when the host check fails.",
+        "Route every shell command to an approval service with a review queue and a manual reply."
+      ],
+      "correct": [2],
+      "rationale": "A PreToolUse hook that exits with code 2 prevents the tool call. The matcher limits the hook to shell commands, so other tools stay unaffected.",
+      "trap": "A warning printed from a hook with exit code 0 looks like a block, but the call continues.",
+      "source": "https://code.claude.com/docs/en/hooks"
+    },
+    {
+      "id": "D5.3-3",
+      "select": 2,
+      "stem": "An agent edits files in a reversible way across 5,000 sessions each day. Review can happen after each action, and a tested undo path must exist. Which two steps meet these constraints?",
+      "options": [
+        "Set evaluated_permission to review, which pauses each file edit until a reviewer answers.",
+        "Sample sessions at a random rate for offline review, and send flagged actions to a human reviewer.",
+        "Test a rollback procedure before the run, so a flagged file edit can be reversed.",
+        "Require approval for every file edit before it runs, with a decision record for each edit."
+      ],
+      "correct": [1, 2],
+      "rationale": "Random sampling covers high volume at low review cost. (Inference) Flagged actions reach a person, and a tested rollback path makes each flagged edit reversible.",
+      "trap": "Setting evaluated_permission to review sounds like a pause control, but that field only reports the decision on each tool call event.",
+      "source": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-monitoring"
+    }
+  ]
+}

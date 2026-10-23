@@ -1,0 +1,50 @@
+{
+  "unit": "D4.3",
+  "items": [
+    {
+      "id": "D4.3-1",
+      "select": 1,
+      "stem": "A team ships a new prompt after one week of higher scores. The score moved 2 points, and the traffic mix changed that week. The team needs to measure the prompt effect on the same traffic and period.",
+      "options": [
+        "Check this week against last week on the primary metric, since the prompt went live on Monday.",
+        "Split traffic into a control arm and a candidate arm with a fixed assignment rule, then compare the primary metric.",
+        "Run a shadow copy for every user, plus a 90-day holdout, before any arm is compared.",
+        "Turn on the Usage API arm tag, so each arm reports its own spend automatically."
+      ],
+      "correct": [1],
+      "rationale": "A control arm and a candidate arm see the same period and traffic mix. The difference then reflects the change, not the traffic mix.",
+      "trap": "A check of this week against last week looks like a before and after test, but the traffic mix changed in between.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests"
+    },
+    {
+      "id": "D4.3-2",
+      "select": 1,
+      "stem": "A candidate model clears the quality floor by 3 points. Its cost per completed task is 25 percent higher than the control. The change ships only when it clears the floor and holds or lowers cost per completed task. Which choice meets this rule?",
+      "options": [
+        "Ship the candidate, because a higher quality score means the team meets its target.",
+        "Apply the effort discount to the candidate, which lowers its per-token price for every task.",
+        "Add three more arms with new prompts, and decide only after all of them report, to find a cheaper candidate.",
+        "Keep the control, because the candidate raises cost per completed task."
+      ],
+      "correct": [3],
+      "rationale": "The candidate fails the cost rule because its cost per completed task rises. The control is the only choice that meets the rule.",
+      "trap": "A switch on the higher quality score looks right, but the change also has to hold or lower cost per completed task.",
+      "source": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence"
+    },
+    {
+      "id": "D4.3-3",
+      "select": 2,
+      "stem": "A team runs checkable tasks on a model whose default effort is high. The team needs lower cost per completed task, and the pass rate must stay the same. Which two changes meet both constraints?",
+      "options": [
+        "Run the first pass at low effort, and re-run only the failed tasks at high effort.",
+        "Set a higher effort on every task, so each pass rate improves before the cost check.",
+        "Measure the low-effort pass on the eval set, and confirm the pass rate before the change ships.",
+        "Turn on a discount for failed tasks, so each re-run costs nothing."
+      ],
+      "correct": [0, 2],
+      "rationale": "In Anthropic tests, low effort with failed tasks re-run at high effort cost about 40 percent less at the same pass rate. The eval set confirms the pass rate before the change ships.",
+      "trap": "A discount for failed tasks sounds like a cost fix, but the docs do not describe such a discount.",
+      "source": "https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence"
+    }
+  ]
+}

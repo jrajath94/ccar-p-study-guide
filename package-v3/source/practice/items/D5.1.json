@@ -1,0 +1,50 @@
+{
+  "unit": "D5.1",
+  "items": [
+    {
+      "id": "D5.1-1",
+      "select": 1,
+      "stem": "Users type free text into a support app that reaches the main model. The team needs a check before the main call. The check must return a parseable verdict that code can count.",
+      "options": [
+        "Add a stricter system prompt that tells the main model to refuse harmful messages, then send every message.",
+        "Screen each message with a lightweight model that returns a boolean verdict, and block a harmful verdict.",
+        "Screen each message with the main model at high effort, and store the full reasoning for each message.",
+        "Turn on the computer use classifiers for each message, since they scan text before the model reads it."
+      ],
+      "correct": [1],
+      "rationale": "A lightweight model such as Haiku 5.5 screens the input before the main call. Structured output limits the screen to a boolean that code can parse and count.",
+      "trap": "A stricter system prompt looks like a control, but the model can still follow an injected instruction, and no code stops the call.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
+    },
+    {
+      "id": "D5.1-2",
+      "select": 1,
+      "stem": "A Claude Code agent must never run the deploy script. The system prompt forbids it, but the agent still proposes the command. The team needs a rule that Claude Code enforces before the command runs.",
+      "options": [
+        "Add three more sentences to the system prompt that repeat the deploy ban, and ask the agent to confirm.",
+        "Move the deploy script into a separate container with its own network policy, outside the reach of the agent.",
+        "Set the sandbox allowed domains to exclude the deploy host, so the script cannot reach it.",
+        "Add a deny rule for the deploy command in the permission settings, which Claude Code checks before it runs."
+      ],
+      "correct": [3],
+      "rationale": "Claude Code evaluates deny rules first, and the model cannot override that result. A deny rule for the command blocks each attempt before the command runs.",
+      "trap": "A sandbox domain list sounds like it blocks the deploy, but that list controls only the hosts that sandboxed commands reach.",
+      "source": "https://code.claude.com/docs/en/permissions"
+    },
+    {
+      "id": "D5.1-3",
+      "select": 2,
+      "stem": "An agent runs shell commands on a developer machine. Untrusted issue text can steer those commands. The shell must not reach unknown hosts. The Read tool must not open credential files. Which two settings meet both constraints?",
+      "options": [
+        "Run /sandbox to turn on the sandbox, and keep the allowed domain list empty until a task needs a host.",
+        "Add a sandbox denyRead entry for the credential files, so the Read tool cannot open them.",
+        "Run the agent in a separate virtual machine for each issue, with its own network and disk.",
+        "Add permission deny rules for the credential paths, so the Read tool cannot open those files."
+      ],
+      "correct": [0, 3],
+      "rationale": "The sandbox routes shell network traffic through a proxy, and its allowed domain list starts empty. Permission rules govern the built-in Read tool, which the sandbox does not cover.",
+      "trap": "A denyRead entry in the sandbox looks like it blocks the Read tool, but the sandbox does not stop that tool.",
+      "source": "https://code.claude.com/docs/en/sandboxing"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "unit": "F3",
+  "items": [
+    {
+      "id": "F3-1",
+      "select": 1,
+      "stem": "A batch job receives HTTP 429 with a retry-after header of 30 seconds. The request is valid. The job must honor the server wait time and send the same request. Which action meets the constraint?",
+      "options": [
+        "Resend the same request at once in a loop with no delay.",
+        "Ask the model in the prompt to wait 30 seconds and send the request again.",
+        "Move the job to a new queue service with priority lanes before each retry.",
+        "Wait 30 seconds, then resend the same request."
+      ],
+      "correct": [3],
+      "rationale": "A 429 response with a retry-after header tells the caller how long to wait. Wait that long, then resend the same valid request, which meets the constraint.",
+      "trap": "A prompt that says retry looks like a retry policy, but your app must resend the request, not the model.",
+      "source": "https://platform.claude.com/docs/en/api/rate-limits"
+    },
+    {
+      "id": "F3-2",
+      "select": 1,
+      "stem": "A report tool sends a Messages request without streaming. Each report can run for 15 minutes, and the user reads the text as it arrives. Which change meets the constraint?",
+      "options": [
+        "Stream the Messages response and read each event as it arrives.",
+        "Create a Message Batch for each report and poll until processing ends.",
+        "Keep the request without streaming, and write the full response to a database table when it ends.",
+        "Set the client timeout to 24 hours, because idle connections never drop."
+      ],
+      "correct": [0],
+      "rationale": "Streaming sends server-sent events as the model writes, so the user reads text before the response ends. A batch returns results only after processing, so it fails the constraint.",
+      "trap": "Setting the client timeout to 24 hours looks like the fix for long calls, but some networks drop idle connections whatever the timeout.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/streaming"
+    },
+    {
+      "id": "F3-3",
+      "select": 2,
+      "stem": "A chat app streams Claude Opus 5.5 responses to users. Some streams end with an error event after partial text. The app must not show partial text as a final answer. Which two actions meet the constraint?",
+      "options": [
+        "Treat the stream as complete once the HTTP status is 200.",
+        "Handle error events in the same loop that handles content events.",
+        "Show streamed text as a draft until the final message arrives.",
+        "Set a resume flag on the Messages request to continue a cut stream."
+      ],
+      "correct": [1, 2],
+      "rationale": "An error can arrive after the 200 status, so the loop must handle error events as well as content events. Streamed text stays provisional until the final message arrives.",
+      "trap": "Resume looks like the fix for a cut stream, but the docs describe a continuation message on newer models, not a request flag.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/streaming"
+    }
+  ]
+}

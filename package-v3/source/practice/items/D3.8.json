@@ -1,0 +1,50 @@
+{
+  "unit": "D3.8",
+  "items": [
+    {
+      "id": "D3.8-1",
+      "select": 1,
+      "stem": "An agent loads 60 tools on every request, and most definitions go unused. The three most common tools must answer each turn without an extra search step. Which setup meets both constraints?",
+      "options": [
+        "Build a custom embedding index that ranks all 60 tools and injects the top five into each system prompt.",
+        "Add cache_control to each deferred tool, so the API keeps its schema warm between searches.",
+        "Set defer_loading to true on the 57 rare tools, keep the three common tools non-deferred, and add the tool search tool.",
+        "Set defer_loading to true on all 60 tools, so every request starts with a search step."
+      ],
+      "correct": [2],
+      "rationale": "Tool search loads a tool only when a search finds it, so rare definitions cost no tokens until then. The common tools stay non-deferred, so they need no search step.",
+      "trap": "Setting defer_loading on all 60 tools looks like the cheapest setup, but every common call then needs a search round trip.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool"
+    },
+    {
+      "id": "D3.8-2",
+      "select": 1,
+      "stem": "An SDK agent uses 12 MCP tools in a small context window. The team wants tool search to start only when definitions reach a set share of the window. Which setting meets the constraint?",
+      "options": [
+        "Set alwaysLoad to 10 percent, so each server activates tool search once its tools reach that share.",
+        "Set ENABLE_TOOL_SEARCH to auto, so tools load upfront until definitions reach 10 percent of the window.",
+        "Set ENABLE_TOOL_SEARCH to false, so every tool definition loads on every turn.",
+        "Write a ranking service that selects tool definitions before each SDK call, on top of the default settings."
+      ],
+      "correct": [1],
+      "rationale": "The auto value loads tools upfront until definitions reach 10 percent of the context window. Tool search then starts, so the threshold rule meets the constraint without extra code.",
+      "trap": "The alwaysLoad setting sounds like a threshold, but it only loads the tools of one server upfront.",
+      "source": "https://code.claude.com/docs/en/agent-sdk/tool-search"
+    },
+    {
+      "id": "D3.8-3",
+      "select": 2,
+      "stem": "A team writes a domain agent with 1,500 lines of guidance. Each request must carry only short metadata until a task needs the details. Which two designs meet this constraint?",
+      "options": [
+        "Keep the skill name and description in the system prompt, and read the reference files only when a task needs them.",
+        "Enable network access in the skill sandbox, so the model fetches reference pages from a URL on demand.",
+        "Paste all 1,500 lines into the system prompt, so the model never needs a second read.",
+        "Keep SKILL.md under 500 lines, and move detailed sections into separate files that each task reads when relevant."
+      ],
+      "correct": [0, 3],
+      "rationale": "Only the skill name and description load at startup, and reference files load only when a task reads them. A SKILL.md body under 500 lines keeps the loaded part small.",
+      "trap": "Network access in the skill sandbox looks like a way to fetch files on demand, but skills on the API run with no network access.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices"
+    }
+  ]
+}

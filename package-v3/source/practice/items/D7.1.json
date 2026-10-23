@@ -1,0 +1,57 @@
+{
+  "unit": "D7.1",
+  "items": [
+    {
+      "id": "D7.1-1",
+      "select": 1,
+      "stem": "A team wants the agent to never read files in a secrets folder, in every clone. A note in CLAUDE.md asks the agent to avoid that folder. The block must hold even when the model ignores the note. Which change meets the constraint?",
+      "options": [
+        "Deploy the deny rule in managed settings, and add a sandbox on every developer machine.",
+        "Add the deny rule to the personal local settings of the team lead only.",
+        "Add a Read deny rule for the secrets folder in the committed settings file.",
+        "Add a PostToolUse hook that blocks reads of the secrets folder."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "A deny rule in the committed settings file reaches every clone after a pull. The rule blocks the read before the tool runs, so the result does not depend on the model.",
+      "trap": "A PostToolUse hook that blocks reads looks like enforcement, but that hook runs only after the tool call succeeds.",
+      "source": "https://code.claude.com/docs/en/permissions"
+    },
+    {
+      "id": "D7.1-2",
+      "select": 1,
+      "stem": "A team wants a research subagent that only reads files. The subagent must not receive any write tool. Which setup meets the constraint?",
+      "options": [
+        "Set the tools field to Read and Grep, and add a second reviewer subagent for each folder.",
+        "Create the subagent without a tools field, and add a CLAUDE.md line that forbids edits.",
+        "Set the model field to read-only, which blocks write tools for the subagent.",
+        "Set the subagent tools field to Read and Grep only."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "The tools field limits the tools that a subagent can use. Read and Grep cannot write files, so the role stays read-only.",
+      "trap": "A CLAUDE.md line that forbids edits looks like a restriction, but a subagent without a tools field inherits every tool.",
+      "source": "https://code.claude.com/docs/en/sub-agents"
+    },
+    {
+      "id": "D7.1-3",
+      "select": 2,
+      "stem": "A team needs one enforced rule on every clone. One developer also needs a personal exception that does not weaken the team rule. Select two actions that meet both needs.",
+      "options": [
+        "Commit the team deny rule in the shared settings file.",
+        "Put the team deny rule in the user settings file of each developer.",
+        "Put a personal allow rule for one extra command in the local settings file, which stays out of git.",
+        "Put the team deny rule in CLAUDE.md, which Claude Code enforces as a permission."
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "rationale": "The shared settings file applies to every clone after a pull. The local file stays out of git, and a deny rule from any scope still applies.",
+      "trap": "A personal settings file looks flexible, but it cannot enforce the rule across the team.",
+      "source": "https://code.claude.com/docs/en/settings"
+    }
+  ]
+}

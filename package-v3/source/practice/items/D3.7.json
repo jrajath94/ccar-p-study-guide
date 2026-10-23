@@ -1,0 +1,57 @@
+{
+  "unit": "D3.7",
+  "items": [
+    {
+      "id": "D3.7-1",
+      "select": 1,
+      "stem": "One backend service calls an internal billing API from a single host. No other host needs these tools, and the team wants no extra protocol layer.",
+      "options": [
+        "Register the billing API as a stdio server in Claude Code for the backend.",
+        "Call the billing API directly from the backend code with its own client.",
+        "Wrap the billing API in an MCP server, and let the backend connect as its client.",
+        "Put a CLI wrapper around the API, and parse its text output in the backend."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "One consumer on one host needs no shared protocol, so direct calls meet the need with the least machinery (Inference).",
+      "trap": "An MCP server looks like the standard integration, but it adds a protocol layer that a single host does not need (Inference).",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"
+    },
+    {
+      "id": "D3.7-2",
+      "select": 1,
+      "stem": "Four hosts written in different languages need the same ticket lookup tools. The team wants one tool schema, and each host connects as a client.",
+      "options": [
+        "Write a separate client library for each host that calls the service.",
+        "Use the MCP connector with a stdio server on each host.",
+        "Build one MCP server that exposes the ticket tools, and let each host connect.",
+        "Build one MCP server with tools, resources, and prompts, and let each host connect."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "One server holds one tool schema, and each host connects to it as a client. The team maintains one definition for all hosts (Inference).",
+      "trap": "A client library for each host looks flexible, but each copy becomes a second schema to maintain (Inference).",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"
+    },
+    {
+      "id": "D3.7-3",
+      "select": 2,
+      "stem": "A Claude Code team must block one claude.ai connector tool before Claude sees it. The same team must also add an internal service that runs over HTTP. Which two changes meet both constraints?",
+      "options": [
+        "Add the risky connector tool with an allow rule, so it runs without a prompt.",
+        "Add the internal service with claude mcp add and the http transport.",
+        "Set the idle timeout to zero, so the risky tool stays hidden.",
+        "Set the organization control for that connector tool to blocked."
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "rationale": "The http transport adds a remote server by URL. A blocked control removes the connector tool from the list before Claude sees it.",
+      "trap": "An allow rule looks like a control, but it lets the tool run without a prompt.",
+      "source": "https://code.claude.com/docs/en/mcp"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "unit": "D1.5",
+  "items": [
+    {
+      "id": "D1.5-1",
+      "select": 1,
+      "stem": "A team must score 150,000 document requests overnight with batch pricing. No request needs an answer at once, and each request is under 1 KB. Each batch must stay within the documented limits. Which plan meets the constraint?",
+      "options": [
+        "Send all 150,000 requests in one batch, since a batch can hold them all.",
+        "Send the 150,000 requests one at a time through the synchronous Messages API overnight.",
+        "Split the job into two batches, each under 100,000 requests, and collect both result sets.",
+        "Set the batch expiry to 29 days so all 150,000 requests finish in time."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "A batch holds up to 100,000 requests or 256 MB, whichever limit comes first. Two batches of 75,000 requests of 1 KB each stay under both limits and keep batch pricing.",
+      "trap": "One batch for everything looks simplest, but a batch holds at most 100,000 requests or 256 MB.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+    },
+    {
+      "id": "D1.5-2",
+      "select": 1,
+      "stem": "A contract pipeline extracts party names first, then computes the fee from those names. A wrong name in step one would change the fee in step two. The team must stop a wrong name before step two runs. Which design meets the constraint?",
+      "options": [
+        "Run the name step and the fee step in parallel, so both finish sooner.",
+        "Check the party names in code after the fee step, and route each fee to a reviewer.",
+        "Turn on compaction, which removes wrong party names from earlier turns.",
+        "Check the party names in code before the fee step, and stop the chain at a failed check."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "The fee step depends on the name step, so a code check between the steps catches a wrong name at its source. A stop at the failed check keeps the wrong name out of step two.",
+      "trap": "Compaction looks like a cleanup step, but it writes a summary of older turns and does not validate values.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/compaction"
+    },
+    {
+      "id": "D1.5-3",
+      "select": 2,
+      "stem": "A team has 80,000 review texts for overnight scoring. A live widget scores one text while a user types. The team must keep each path on the right API. Which two options meet the constraint?",
+      "options": [
+        "Send the live widget requests through a batch, so each score costs less.",
+        "Split the overnight texts into batches of 256 requests, since a batch holds 256 requests.",
+        "Send the overnight texts as one Message Batch, since the batch holds up to 100,000 requests.",
+        "Send the live widget requests through the synchronous Messages API, one call per text."
+      ],
+      "correct": [
+        2,
+        3
+      ],
+      "rationale": "A batch holds up to 100,000 requests or 256 MB, and its results come after processing. A live widget needs each answer while the user types, so it uses the synchronous API.",
+      "trap": "The number 256 looks like a request count, but it is the 256 MB size limit of a batch.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+    }
+  ]
+}
