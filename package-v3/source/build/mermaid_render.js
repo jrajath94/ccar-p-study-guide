@@ -13,6 +13,9 @@ const fs = require('fs');
     const tv0 = theme === 'dark'
       ? { background:'#000000', primaryColor:'#000000', primaryTextColor:'#f2f2f2', primaryBorderColor:'#d0d0d0', lineColor:'#d0d0d0', secondaryColor:'#000000', tertiaryColor:'#000000', textColor:'#f2f2f2', edgeLabelBackground:'#000000', mainBkg:'#000000', nodeBorder:'#d0d0d0' }
       : { background:'#ffffff', primaryColor:'#ffffff', primaryTextColor:'#2b2b2b', primaryBorderColor:'#4a4a4a', lineColor:'#4a4a4a', secondaryColor:'#ffffff', tertiaryColor:'#ffffff', textColor:'#2b2b2b', edgeLabelBackground:'#ffffff', mainBkg:'#ffffff', nodeBorder:'#4a4a4a' };
+    // Mind map section colors. Values match MM_VARS in crash.py.
+    const cs = theme === 'dark' ? ['#141414', '#f2f2f2'] : ['#f1f1f1', '#1c1c1c'];
+    for (let i = 0; i < 12; i++) { tv0['cScale' + i] = cs[0]; tv0['cScaleLabel' + i] = cs[1]; }
     const tv = Object.assign({}, tv0, tvx);
     mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: tv, securityLevel: 'strict',
       fontFamily: 'Inter, sans-serif', flowchart: { htmlLabels: false, curve: 'basis', nodeSpacing: 22, rankSpacing: 28, diagramPadding: 4, wrappingWidth: 140 } });

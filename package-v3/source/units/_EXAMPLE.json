@@ -1,0 +1,99 @@
+{
+  "id": "D2.5",
+  "domain": "D2",
+  "title": "Reuse and prompt caching",
+  "task_statement": "Apply prompt reuse and caching to cut cost and latency. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Prompt caching",
+      "first_principle": "Pay full price for a stable prefix once, then read it at a fraction of the price while it stays identical.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app", "group": "client"},
+          {"id": "prefix", "label": "Stable prefix: tools, system, documents", "group": "client"},
+          {"id": "api", "label": "Messages API", "group": "claude"},
+          {"id": "cache", "label": "Prompt cache, isolated per workspace", "group": "data"},
+          {"id": "model", "label": "Claude model", "group": "claude"},
+          {"id": "usage", "label": "Usage fields in the response", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "prefix", "label": "build request"},
+          {"from": "prefix", "to": "api", "label": "cache_control on last stable block"},
+          {"from": "api", "to": "cache", "label": "look up prefix hash"},
+          {"from": "cache", "to": "model", "label": "hit: read, miss: write"},
+          {"from": "model", "to": "usage", "label": "cache read and write token counts"}
+        ]
+      },
+      "steps": [
+        "Put stable content first: tools, then system, then messages.",
+        "Add cache_control to the last block that stays the same across requests.",
+        "The API computes a hash of the prefix up to that breakpoint.",
+        "On a hit, the API reads the cached prefix and processes only the new tokens.",
+        "On a miss, the API writes the prefix to the cache for later requests.",
+        "Each cache read refreshes the lifetime at no extra cost.",
+        "Check cache_read_input_tokens and cache_creation_input_tokens to confirm hits."
+      ],
+      "pros": [
+        "Cuts input cost for repeated prefixes.",
+        "Cuts processing time for long repeated prefixes.",
+        "Needs no extra infrastructure. The API manages the cache."
+      ],
+      "cons": [
+        "A cache write costs more than a normal input token.",
+        "Any change at or before the breakpoint causes a miss.",
+        "Prompts below the minimum length are not cached, and the API returns no error."
+      ],
+      "use_when": [
+        "Many requests share a long system prompt, tool set, or document.",
+        "A multi-turn conversation grows and reuses its history.",
+        "Requests arrive often enough to hit the cache inside the TTL."
+      ],
+      "do_not_use_when": [
+        "The prefix changes on every request, for example a timestamp at the top.",
+        "The prompt is shorter than the minimum cacheable length for the model.",
+        "Requests arrive less often than the TTL and the 1-hour write price exceeds the saving."
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Cache the stable prefix with the default 5-minute TTL.", "combination": "Add a 1-hour TTL for traffic with gaps longer than 5 minutes."},
+        {"family": "latency", "choice": "Cache long documents that many requests read.", "combination": "Combine with streaming to show the first tokens early."},
+        {"family": "isolation", "choice": "Use separate workspaces for tenants that must not share a cache.", "combination": ""},
+        {"family": "scale", "choice": "Use up to 4 breakpoints to cache sections that change at different rates.", "combination": "Add a second breakpoint when a conversation grows 20 or more blocks past the last write."},
+        {"family": "operations", "choice": "Track cache read and write token counts per request.", "combination": "Alert when the read count drops to zero after a prompt change."}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "Bedrock keeps organization-level cache isolation. The AWS Bedrock documentation sets the per-model minimums and usage-field names.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Cache isolation is at organization level, not workspace level.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"},
+        {"service": "Claude Platform on AWS", "text": "Cache isolation is at workspace level, the same as the Claude API.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"},
+        {"service": "Microsoft Foundry", "text": "Cache isolation is at workspace level, the same as the Claude API.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"}
+      ],
+      "exam_tie": "D2.5. Expect a scenario with a large repeated prefix and a cost or latency limit. The credited answer moves the stable content first and caches it. (Inference)",
+      "trap": "A custom response cache in front of the API looks cheaper, but it returns stale answers and adds a component the scenario does not need.",
+      "decision_rule": "Put the breakpoint on the last block whose prefix is identical across the requests that must share the cache.",
+      "exam_tip": "If both cache token counts are zero, the prompt was below the minimum or the prefix changed.",
+      "key_facts": [
+        {"text": "The default cache lifetime is 5 minutes.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching", "label": "Fact"},
+        {"text": "A 5-minute cache write costs 1.25 times the base input price.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching", "label": "Fact"},
+        {"text": "A 1-hour cache write costs 2 times the base input price.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching", "label": "Fact"},
+        {"text": "A cache read costs 0.1 times the base input price for most models.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching", "label": "Fact"},
+        {"text": "A request can define up to 4 cache breakpoints.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching", "label": "Fact"},
+        {"text": "The lookback window checks at most 20 block positions per breakpoint.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Bedrock per-model minimum cacheable length. The Claude docs point to the AWS docs. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Same long prefix on many calls?} -->|No| X[Do not cache]\n  A -->|Yes| B{Prefix above model minimum?}\n  B -->|No| Y[Grow prefix or do not cache]\n  B -->|Yes| C{Calls arrive within 5 minutes?}\n  C -->|Yes| D[5-minute TTL]\n  C -->|No| E{Saving above 2x write price?}\n  E -->|Yes| F[1-hour TTL]\n  E -->|No| X",
+  "cheatsheet": "flowchart LR\n  P[Stable prefix first] --> B[Breakpoint on last stable block]\n  B --> T{TTL}\n  T --> T5[5 min: 1.25x write]\n  T --> T1[1 hour: 2x write]\n  B --> R[Read: 0.1x]\n  B --> M[Max 4 breakpoints]\n  B --> L[Lookback 20 blocks]",
+  "patterns": [
+    {"wording": "reduce cost for a long prompt that repeats on every request", "answer_type": "prompt caching on the stable prefix", "rule": "Cache what repeats. Move variable content after the breakpoint.", "traps": ["Smaller model that fails the quality floor", "Custom response cache"]},
+    {"wording": "cache hit rate drops to zero after a prompt change", "answer_type": "prefix order or breakpoint position fix", "rule": "Find the block that changes and move it after the breakpoint.", "traps": ["Longer TTL", "More breakpoints on the same variable block"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for prompt caching: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+  ]
+}
