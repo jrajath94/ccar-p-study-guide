@@ -2,7 +2,7 @@
 """STE and source lint for unit JSON files. Usage: lint.py FILE [FILE...]"""
 import json, re, sys, os, glob
 
-DOCS = '/home/claude/work/docs/pages'
+DOCS = os.path.join(os.environ.get('CCAR_WORK', '/home/claude/work'), 'docs', 'pages')
 BANNED = ['delve','leverage','unlock','robust','seamless','nuanced','pivotal','landscape','realm',
  'tapestry','underscore','harness','foster','groundbreaking','cutting-edge','game-changing','holistic',
  'multifaceted','it is important to note',"in today's world",'when it comes to','at its core',

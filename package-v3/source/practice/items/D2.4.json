@@ -25,7 +25,7 @@
       "options": [
         "Add the clear_tool_uses strategy with the context-management beta header.",
         "Start a separate summary request on every turn, then send that summary.",
-        "Clear all tool results on every turn, including the most recent ones.",
+        "Clear all tool results on every turn, even the most recent ones.",
         "Use the token counting endpoint to delete old turns from the history."
       ],
       "correct": [

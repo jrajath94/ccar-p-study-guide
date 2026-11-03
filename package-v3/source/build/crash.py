@@ -2,12 +2,13 @@
 Diagrams: a schematic (SVG), a steps flowchart, and Mermaid mind maps (used in place of markmap, so the PDF builds offline).
 Kept apart from build_all.py so the other outputs do not change."""
 import base64, json, os, re
+from pathlib import Path
 from common import *
 from render import legend_html, topic_index_html, page, ul
 
 TXT = "'Charis SIL', Charis, Georgia, serif"
 UI = "Inter, 'Inter Display', system-ui, -apple-system, 'Segoe UI', sans-serif"
-FONT_DIR = '/home/claude/ccar-p-study-guide/assets/fonts'
+FONT_DIR = str(Path(__file__).resolve().parents[3] / 'assets' / 'fonts')
 PRACTICE = f'{WORK}/practice/items'
 LETTERS = 'ABCD'
 ARCH_NOTE = ('Box line style: heavy line is a Claude service, thin line is your system, '

@@ -39,10 +39,10 @@
         "Set a session budget when the session is created, so new requests stop at the cap.",
         "Set the budget after the bill arrives, so the total can be corrected.",
         "Set a workspace spend limit of the same amount on the Default Workspace.",
-        "Read usage.list_cost on the session object, which holds the running list cost."
+        "Read usage.list_cost on the session object, which holds the list cost to date."
       ],
       "correct": [0, 3],
-      "rationale": "A session budget is set when the session is created, and it stops new model requests at the cap. The platform prices the session continuously, and usage.list_cost on the session object holds that running total.",
+      "rationale": "A session budget is set when the session is created, and it stops new model requests at the cap. The platform prices the session continuously, and usage.list_cost on the session object holds that total to date.",
       "trap": "A workspace spend limit looks like the same control, but the Default Workspace cannot have a spend limit.",
       "source": "https://platform.claude.com/docs/en/managed-agents/budgets"
     }

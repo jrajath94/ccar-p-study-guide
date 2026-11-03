@@ -7,7 +7,7 @@ from render import *
 OUT = sys.argv[1]
 os.makedirs(OUT, exist_ok=True)
 TITLE = 'Claude Certified Architect, Professional. Practice test (original items)'
-src_dir = '/home/claude/work/practice/items'
+src_dir = os.path.join(os.environ.get('CCAR_WORK', '/home/claude/work'), 'practice', 'items')
 units = {u['id']: (d, u) for d, u in load_units()}
 sets = []
 for dom, u in load_units():

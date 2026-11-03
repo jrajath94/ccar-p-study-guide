@@ -1,0 +1,8 @@
+# Python and Node caches
+__pycache__/
+*.pyc
+node_modules/
+package-v3/source/build/cache/
+
+# macOS
+.DS_Store

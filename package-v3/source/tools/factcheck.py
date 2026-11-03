@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check that each number in a key fact appears in its cited docs page. Usage: factcheck.py FILES"""
 import json, re, sys, os
-DOCS = '/home/claude/work/docs/pages'
+DOCS = os.path.join(os.environ.get('CCAR_WORK', '/home/claude/work'), 'docs', 'pages')
 def page(u):
     u = u.split('#')[0].rstrip('/')
     f = os.path.join(DOCS, u.replace('https://', '').replace('/', '__') + '.md')

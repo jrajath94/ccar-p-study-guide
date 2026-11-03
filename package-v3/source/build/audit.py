@@ -1,6 +1,6 @@
 """Output E (audit) and the text checks. Usage: python3 audit.py OUTDIR [PRACTICE_TEXT_DIR]"""
 import sys, glob, json, re, os, html as H
-sys.path.insert(0, '/home/claude/work/tools')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'tools'))
 from common import *
 from lint import BANNED, CONTR
 
@@ -57,12 +57,12 @@ def overlap_check():
 def practice_section():
     """Coverage counts and practice-set status. Counts only. No item text, no item IDs from the exams."""
     from collections import Counter
-    m = json.load(open('/home/claude/work/practice/map.json'))
+    m = json.load(open(os.path.join(WORK, 'practice', 'map.json')))
     c = Counter(r['unit'] for r in m if r['unit'])
     rows = []
     for dom, u in units:
         rows.append(f'- {u["id"]} {u["title"]}: {c.get(u["id"], 0)} mapped items')
-    n_items = sum(len(json.load(open(f))['items']) for f in glob.glob('/home/claude/work/practice/items/*.json'))
+    n_items = sum(len(json.load(open(f))['items']) for f in glob.glob(os.path.join(WORK, 'practice', 'items', '*.json')))
     L = ['## Practice items and coverage', '',
          f'Practice exam files supplied: 11 (six full, five unofficial). They hold {len(m)} items in total: 378 in the full exams (63 each) and 300 in the unofficial exams (60 each). The spec expected six files of 75. The counts differ.',
          'Mapping method: keyword counts against each unit. The map is approximate. It was not reviewed item by item. Each unit has at least one mapped item.',

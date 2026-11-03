@@ -9,7 +9,7 @@
         "Remove 40 tools from the agent, so the list fits the prompt.",
         "Set cache_control on every deferred tool, so their schemas stay cached.",
         "Add tool search, defer the rarely used tools, and keep the three common tools non-deferred.",
-        "Add tool search, and set defer_loading to true on every tool, including the tool search tool."
+        "Add tool search, and set defer_loading to true on every tool, the tool search tool too."
       ],
       "correct": [
         2

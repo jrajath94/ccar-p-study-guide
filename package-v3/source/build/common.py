@@ -1,7 +1,7 @@
 """Shared helpers: unit loading, architecture SVG, Mermaid rendering, sources, PDF metadata."""
 import hashlib, html, json, os, re, subprocess, glob
 
-WORK = '/home/claude/work'
+WORK = os.environ.get('CCAR_WORK', '/home/claude/work')
 BUILD = f'{WORK}/build'
 CACHE = f'{BUILD}/cache'
 os.makedirs(CACHE, exist_ok=True)
