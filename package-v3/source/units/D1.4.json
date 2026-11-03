@@ -1,0 +1,390 @@
+{
+  "id": "D1.4",
+  "domain": "D1",
+  "title": "Multi-agent orchestration",
+  "task_statement": "Design multi-agent work with clear handoffs, isolated context, and a merge step owned by one agent. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Subagent delegation",
+      "first_principle": "Each subagent keeps its own conversation history, and the lead agent receives only the subagent's reported results.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "user",
+            "label": "User task",
+            "group": "client"
+          },
+          {
+            "id": "lead",
+            "label": "Lead agent in primary thread",
+            "group": "claude"
+          },
+          {
+            "id": "sub1",
+            "label": "Subagent thread one",
+            "group": "claude"
+          },
+          {
+            "id": "sub2",
+            "label": "Subagent thread two",
+            "group": "claude"
+          },
+          {
+            "id": "shared",
+            "label": "Shared sandbox and files",
+            "group": "data"
+          },
+          {
+            "id": "merge",
+            "label": "Lead merges results",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "user",
+            "to": "lead",
+            "label": "task"
+          },
+          {
+            "from": "lead",
+            "to": "sub1",
+            "label": "delegate scoped task"
+          },
+          {
+            "from": "lead",
+            "to": "sub2",
+            "label": "delegate scoped task"
+          },
+          {
+            "from": "sub1",
+            "to": "shared",
+            "label": "file access"
+          },
+          {
+            "from": "sub2",
+            "to": "shared",
+            "label": "file access"
+          },
+          {
+            "from": "sub1",
+            "to": "lead",
+            "label": "final report"
+          },
+          {
+            "from": "sub2",
+            "to": "lead",
+            "label": "final report"
+          },
+          {
+            "from": "lead",
+            "to": "merge",
+            "label": "combine"
+          }
+        ]
+      },
+      "steps": [
+        "List each subagent that the lead agent can call in the multiagent block.",
+        "Give each subagent a system prompt and tools for one scope.",
+        "The lead agent delegates a bounded task to each subagent.",
+        "Each subagent works in its own session thread.",
+        "The lead agent reads each subagent report and merges the results.",
+        "Send a follow-up message to a subagent when its report needs more work."
+      ],
+      "pros": [
+        "Subagents work with isolated context, so their histories do not mix.",
+        "Specialist prompts and tool sets keep each subagent focused.",
+        "A subagent thread stays available for follow-up messages."
+      ],
+      "cons": [
+        "Delegation is one level deep.",
+        "A session can have at most 25 child threads at a time, idle ones included.",
+        "Every agent in a run uses tokens, so cost rises with each subagent."
+      ],
+      "use_when": [
+        "The work splits into well-scoped tasks that feed one goal.",
+        "Specialists need different system prompts or tools.",
+        "The lead agent must check in with a subagent after its report."
+      ],
+      "do_not_use_when": [
+        "Each subtask needs the result of the previous subtask. (Inference)",
+        "One agent with all tools completes the task inside the latency limit. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "latency",
+          "choice": "Parallelize independent subtasks.",
+          "combination": "Compare the total latency with one agent run before you add subagents. (Inference)"
+        },
+        {
+          "family": "cost",
+          "choice": "Set a session budget that caps the spend of all child threads.",
+          "combination": ""
+        },
+        {
+          "family": "governance",
+          "choice": "List the allowed subagents in the predefined_agents list of subagents.",
+          "combination": "Set inline_agents to disabled, because inline agents are on by default."
+        },
+        {
+          "family": "operations",
+          "choice": "Read each thread through the session event stream.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The page lists multiagent orchestration among the Managed Agents features available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "All",
+          "text": "Multiagent orchestration is in beta. Availability on the other platforms, and quotas, are Not in source.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration"
+        }
+      ],
+      "exam_tie": "D1.4. Expect independent specialist work with a deadline. The credited answer uses a lead agent, scoped subagents, and a merge step. (Inference)",
+      "trap": "Three agents with no lead and no merge. Each agent returns output, and no one owns one coherent result. (Inference)",
+      "decision_rule": "Delegate only independent, well-scoped work, and keep one lead agent that owns the merge.",
+      "exam_tip": "If the stem needs one coherent result, pick the option with a named lead and a merge step. (Inference)",
+      "key_facts": [
+        {
+          "text": "Delegation is one level deep, and a session can have at most 25 child threads at a time.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        },
+        {
+          "text": "All subagents share the sandbox, the filesystem, and the vault credentials, and each has its own conversation history.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        },
+        {
+          "text": "In the Agent SDK, only the final message of a subagent returns to the parent.",
+          "url": "https://code.claude.com/docs/en/agent-sdk/subagents",
+          "label": "Fact"
+        },
+        {
+          "text": "Multiagent orchestration has beta status with the beta header managed-agents-2026-04-01.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        },
+        {
+          "text": "Inline agents are on by default. To allow only listed agents, set inline_agents to disabled.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Timeout for a subagent: Not in source.",
+        "Concurrency limit for Agent SDK subagents: Not in source.",
+        "Rule for subagent outputs that differ: Not in source. (Inference: general practice)",
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Dynamic workflow runs",
+      "first_principle": "Claude writes a program that calls many agents in phases and combines their results without the lead agent in each step.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "lead",
+            "label": "Lead session agent",
+            "group": "claude"
+          },
+          {
+            "id": "wf",
+            "label": "Workflow program with phases",
+            "group": "control"
+          },
+          {
+            "id": "a1",
+            "label": "Workflow agent one",
+            "group": "claude"
+          },
+          {
+            "id": "a2",
+            "label": "Workflow agent two",
+            "group": "claude"
+          },
+          {
+            "id": "res",
+            "label": "Combined results",
+            "group": "data"
+          },
+          {
+            "id": "ui",
+            "label": "Run progress for the user",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "lead",
+            "to": "wf",
+            "label": "writes program"
+          },
+          {
+            "from": "wf",
+            "to": "a1",
+            "label": "phase one"
+          },
+          {
+            "from": "wf",
+            "to": "a2",
+            "label": "phase one"
+          },
+          {
+            "from": "a1",
+            "to": "res",
+            "label": "output"
+          },
+          {
+            "from": "a2",
+            "to": "res",
+            "label": "output"
+          },
+          {
+            "from": "res",
+            "to": "ui",
+            "label": "run status"
+          }
+        ]
+      },
+      "steps": [
+        "Tell the agent in its system prompt when to use a workflow run.",
+        "The agent writes a workflow with phases and the agents for each phase.",
+        "The server runs the workflow in the background as one workflow run.",
+        "Context and results pass from one agent to the next in code.",
+        "Check the run by its phases, and read each thread while the run is active."
+      ],
+      "pros": [
+        "The main session stays free to talk with the user.",
+        "Runs suit work that has many pieces that can run in parallel.",
+        "Phases give named progress points for each run."
+      ],
+      "cons": [
+        "You cannot send follow-up messages to a run's threads.",
+        "The server archives each run thread by the end of its run.",
+        "Each agent in a run uses tokens, so each run needs a budget."
+      ],
+      "use_when": [
+        "The work has many pieces that run in parallel.",
+        "A long task should finish sooner through parallel phases.",
+        "Audits, migrations, deep research, and cross-checks fit a run."
+      ],
+      "do_not_use_when": [
+        "The lead agent must send follow-up instructions to each worker during the work.",
+        "The task has one judgment step and no parallel pieces. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Set a session budget before each run.",
+          "combination": "Set the budget for the whole session, because runs count toward it. (Inference)"
+        },
+        {
+          "family": "operations",
+          "choice": "Read thread output while the run is active.",
+          "combination": "The server archives each thread at the end of its run."
+        },
+        {
+          "family": "governance",
+          "choice": "List the allowed agents in the predefined_agents list of workflows, and disable inline_agents.",
+          "combination": "Pin each listed agent to a version number."
+        },
+        {
+          "family": "latency",
+          "choice": "Use a run for long work that should complete sooner.",
+          "combination": "Split the run into phases with parallel agents in each phase."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The page lists multiagent orchestration among the Managed Agents features available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "All",
+          "text": "Multiagent orchestration is in beta. Availability on the other platforms, and quotas, are Not in source.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration"
+        }
+      ],
+      "exam_tie": "D1.4. Expect a large parallel job with a progress need. The credited answer uses a workflow run with phases and a session budget. (Inference)",
+      "trap": "A chat with each agent in turn. The sequence removes the parallel work that the run could split. (Inference)",
+      "decision_rule": "Use a workflow run for many-piece parallel work, and cap its spend with a session budget.",
+      "exam_tip": "If the stem asks for a follow-up to each worker, pick subagents, not a workflow run. (Inference)",
+      "key_facts": [
+        {
+          "text": "With dynamic workflows, Claude writes a program that orchestrates agents without Claude's direct involvement.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        },
+        {
+          "text": "The agent cannot send follow-up messages to a run's threads.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        },
+        {
+          "text": "The server archives each workflow run thread by the end of its run.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        },
+        {
+          "text": "Audits, migrations, deep research, and cross-checks are example workflow run uses.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Maximum number of phases in a workflow run: Not in source.",
+        "Maximum number of agents in a workflow run: Not in source.",
+        "Console steps: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Work splits into independent pieces?} -->|No| B[Single agent with tools]\n  A -->|Yes| C{Follow-ups or listed specialists needed?}\n  C -->|Yes| E[Lead agent with subagents]\n  C -->|No| D[Workflow run with session budget]\n  E --> F[Lead owns the merge]\n  D --> G[Follow the run by phases]",
+  "cheatsheet": "flowchart LR\n  L[Lead agent] --> S[Subagents]\n  L --> W[Workflow run]\n  S --> M[Merge by lead]\n  W --> P[Phases]\n  L --> B[Session budget]\n  S --> R[Scoped tools]\n  S --> T[Max 25 child threads]",
+  "patterns": [
+    {
+      "wording": "independent specialist work with one deadline",
+      "answer_type": "lead agent with scoped subagents and a merge",
+      "rule": "Split on independent seams. Keep one lead that owns the merge.",
+      "traps": [
+        "Three agents with no merge",
+        "One agent in sequence for independent tracks"
+      ]
+    },
+    {
+      "wording": "many parallel pieces and a progress need",
+      "answer_type": "workflow run with phases and a budget",
+      "rule": "Use a workflow run. Cap spend with a session budget.",
+      "traps": [
+        "Chat with each agent in turn",
+        "Run with no budget"
+      ]
+    },
+    {
+      "wording": "entangled steps that share one context that changes over time",
+      "answer_type": "single agent",
+      "rule": "Keep one agent when each step needs the previous result.",
+      "traps": [
+        "Subagents for each step",
+        "Parallel workers that each need the full history"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Team roles such as reviewer or coordinator as official terms: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+    "https://platform.claude.com/docs/en/managed-agents/budgets",
+    "https://code.claude.com/docs/en/agent-sdk/subagents",
+    "https://platform.claude.com/docs/en/managed-agents/overview",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+  ]
+}

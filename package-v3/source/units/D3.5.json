@@ -1,0 +1,251 @@
+{
+  "id": "D3.5",
+  "domain": "D3",
+  "title": "The RAG pipeline",
+  "task_statement": "Build a retrieval pipeline with named stages and citations that trace each claim to a source. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Search results with citations",
+      "first_principle": "Pass retrieved text as search result blocks so Claude attaches a source and title to each cited claim.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app", "group": "client"},
+          {"id": "retriever", "label": "Retriever step in your code", "group": "client"},
+          {"id": "index", "label": "Your index of chunks", "group": "data"},
+          {"id": "api", "label": "Messages API request", "group": "claude"},
+          {"id": "model", "label": "Claude model", "group": "claude"},
+          {"id": "cit", "label": "Citation blocks in the response", "group": "control"}
+        ],
+        "edges": [
+          {"from": "app", "to": "retriever", "label": "user question"},
+          {"from": "retriever", "to": "index", "label": "lookup"},
+          {"from": "index", "to": "retriever", "label": "chunks with source and title"},
+          {"from": "retriever", "to": "api", "label": "search_result blocks with citations enabled"},
+          {"from": "api", "to": "model", "label": "content blocks"},
+          {"from": "model", "to": "cit", "label": "text with citation ranges"}
+        ]
+      },
+      "steps": [
+        "Retrieve candidate chunks from your index before the model call.",
+        "Wrap each chunk in a search_result block with a source and a title.",
+        "Set citations to enabled on every search result in the request.",
+        "Claude writes the answer and attaches citation blocks to the cited text.",
+        "Each citation names a search_result_index and a block range.",
+        "Check the citations array before you show the answer to a user. (Inference)"
+      ],
+      "pros": [
+        "Citations link each claim to a source and title that you supply.",
+        "The cited_text field does not count toward output tokens.",
+        "Search results work in tool results and in top-level user message content."
+      ],
+      "cons": [
+        "Citations and structured outputs cannot combine in one request.",
+        "All search results in one request must use the same citations setting.",
+        "Search result content holds text blocks only, with no images."
+      ],
+      "use_when": [
+        "Answers must name the source document for each claim.",
+        "Your app retrieves text at runtime from a knowledge base.",
+        "The retrieved text is ready before the model call starts."
+      ],
+      "do_not_use_when": [
+        "The output must follow a strict JSON schema, because citations conflict with structured outputs.",
+        "The source content is image only, because search results hold text.",
+        "The answer needs no source attribution."
+      ],
+      "constraints": [
+        {"family": "cost", "choice": "Expect a slight input token increase when citations are enabled.", "combination": "Put cache_control on the search result blocks to reuse the source text."},
+        {"family": "governance", "choice": "Use a source value that your access policy can audit, such as a URL or an internal identifier.", "combination": "Use the same source value for every chunk from one document. (Inference)"},
+        {"family": "scale", "choice": "Pass several search results in one request, each with its own title.", "combination": "Limit the number of results to the ones the answer needs. (Inference)"},
+        {"family": "operations", "choice": "Log the search_result_index and block indices for each citation.", "combination": "Alert when a grounded answer has an empty citations array. (Inference)"}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source. The search results page names no native platform service.", "url": ""}
+      ],
+      "exam_tie": "D3.5. Expect a scenario where answers need source names. The credited answer passes retrieved text as search results with citations enabled. (Inference)",
+      "trap": "A prompt that asks the model to list sources in plain text looks simple. The names are not tied to retrieved blocks, so you cannot check them. (Inference)",
+      "decision_rule": "Return retrieved text as search result blocks when the answer needs verifiable source attribution.",
+      "exam_tip": "If the scenario requires cited claims, choose search result blocks with citations enabled.",
+      "key_facts": [
+        {"text": "Citations are disabled by default for search results.", "url": "https://platform.claude.com/docs/en/build-with-claude/search-results", "label": "Fact"},
+        {"text": "All search results in a request must use the same citations setting.", "url": "https://platform.claude.com/docs/en/build-with-claude/search-results", "label": "Fact"},
+        {"text": "Claude cites whole content blocks, not substrings within a block.", "url": "https://platform.claude.com/docs/en/build-with-claude/search-results", "label": "Fact"},
+        {"text": "All active models support search results with citations, except Claude Haiku 3.", "url": "https://platform.claude.com/docs/en/build-with-claude/search-results", "label": "Fact"},
+        {"text": "Citations combined with structured outputs return a 400 error.", "url": "https://platform.claude.com/docs/en/build-with-claude/citations", "label": "Fact"},
+        {"text": "Citations work with prompt caching and batch processing.", "url": "https://platform.claude.com/docs/en/build-with-claude/citations", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Maximum number of search results per request: Not in source.",
+        "Recommended chunk size in tokens for search results: Not in source.",
+        "Contextual retrieval technique: Not in source. The mirror has no page for it."
+      ]
+    },
+    {
+      "name": "Embeddings and reranking models",
+      "first_principle": "Convert text to vectors for similarity search, then reorder a short list with a reranker.",
+      "architecture": {
+        "nodes": [
+          {"id": "docs", "label": "Source document chunks", "group": "client"},
+          {"id": "embed", "label": "Voyage AI embedding model", "group": "cloud"},
+          {"id": "vec", "label": "Vector index", "group": "data"},
+          {"id": "query", "label": "User query", "group": "client"},
+          {"id": "rerank", "label": "Voyage AI reranker", "group": "cloud"},
+          {"id": "claude", "label": "Claude model with top passages", "group": "claude"}
+        ],
+        "edges": [
+          {"from": "docs", "to": "embed", "label": "input_type document"},
+          {"from": "embed", "to": "vec", "label": "store vectors"},
+          {"from": "query", "to": "embed", "label": "input_type query"},
+          {"from": "vec", "to": "rerank", "label": "top candidates"},
+          {"from": "rerank", "to": "claude", "label": "passages in relevance order"}
+        ]
+      },
+      "steps": [
+        "Embed each document chunk with input_type set to document.",
+        "Embed the user query with input_type set to query.",
+        "Run a nearest neighbor search over the stored vectors.",
+        "Send the top candidates and the query to a reranker.",
+        "Keep the highest ranked passages for the model context."
+      ],
+      "pros": [
+        "Embeddings measure semantic similarity between query and document text.",
+        "Voyage AI offers general, multilingual, code, legal, and finance models.",
+        "Rerankers return documents ranked by relevance to the query."
+      ],
+      "cons": [
+        "Anthropic does not offer its own embedding model, so you add a second vendor.",
+        "Vectors must be embedded again when the embedding model changes. (Inference)",
+        "A reranker adds a second model call and extra latency. (Inference)"
+      ],
+      "use_when": [
+        "Queries paraphrase the document text.",
+        "The corpus needs a domain model, such as a legal or code model.",
+        "The answer is in the candidate list, but the ranking is weak. (Inference)"
+      ],
+      "do_not_use_when": [
+        "Queries contain only exact codes or identifiers, where keyword match fits better. (Inference)",
+        "Your procurement policy allows no second vendor. (Inference)",
+        "The whole corpus fits in the context window without a pipeline. (Inference)"
+      ],
+      "constraints": [
+        {"family": "quota", "choice": "Keep each input within the model context length, such as 32,000 tokens for voyage-4 or 16,000 for voyage-law-2.", "combination": "Set enable_auto_chunking to true with voyage-context-4 to accept up to 120,000 tokens."},
+        {"family": "cost", "choice": "Use voyage-4-lite when latency and cost bind.", "combination": "Use int8 or binary output to cut vector storage by 4x or 32x."},
+        {"family": "data location", "choice": "Use an Atlas model API key scoped to a geography, which uses that geography endpoint.", "combination": ""},
+        {"family": "scale", "choice": "Request a smaller output dimension, such as 256 or 512, to shrink vectors.", "combination": "Truncate stored vectors to the leading dimensions and normalize them again."},
+        {"family": "operations", "choice": "Set input_type on every retrieval embedding call.", "combination": "Do not omit input_type or set it to None."}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source. Voyage AI models also appear on AWS Marketplace, which is a vendor channel, not a native service.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings"}
+      ],
+      "exam_tie": "D3.5. Expect a scenario with a retrieval gap. The credited answer names the stage that fails and changes only that stage. (Inference)",
+      "trap": "An Anthropic embedding model looks like the default choice. Anthropic does not offer one, so the design needs an embeddings vendor.",
+      "decision_rule": "Add a reranker when the answer appears in the candidates but ranks low. (Inference)",
+      "exam_tip": "If the answer is absent from the candidates, fix retrieval before you add a reranker. (Inference)",
+      "key_facts": [
+        {"text": "Anthropic does not offer its own embedding model.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "voyage-4 has a context length of 32,000 tokens and a default dimension of 1024.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "voyage-context-4 accepts up to 120,000 tokens when enable_auto_chunking is true.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "Use input_type query or document for retrieval tasks, such as RAG.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "Voyage AI embeddings are normalized to length 1.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "rerank-3 has a context length of 32,000 tokens and is recommended for most applications.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "Int8 quantization reduces embedding storage by 4x compared with float.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Number of candidates to pass to the reranker: Not in source.",
+        "Chunk size in tokens for embedding inputs: Not in source.",
+        "Voyage AI prices: Not in source. The embeddings page points to MongoDB pricing pages.",
+        "Native platform support for Voyage AI embeddings on Amazon Bedrock: Not in source."
+      ]
+    },
+    {
+      "name": "Chunk granularity for citations",
+      "first_principle": "Choose the document type whose chunk boundaries match the citation granularity you need.",
+      "architecture": {
+        "nodes": [
+          {"id": "src", "label": "Source document", "group": "client"},
+          {"id": "chunker", "label": "Your chunker at headings and tables", "group": "client"},
+          {"id": "plain", "label": "Plain text document", "group": "claude"},
+          {"id": "custom", "label": "Custom content document", "group": "claude"},
+          {"id": "cite", "label": "Citation in the response", "group": "control"}
+        ],
+        "edges": [
+          {"from": "src", "to": "chunker", "label": "split at structure"},
+          {"from": "chunker", "to": "plain", "label": "sentence chunking by Claude"},
+          {"from": "chunker", "to": "custom", "label": "your blocks as is"},
+          {"from": "plain", "to": "cite", "label": "character indices"},
+          {"from": "custom", "to": "cite", "label": "block indices"}
+        ]
+      },
+      "steps": [
+        "Split the source at headings, sections, and table boundaries. (Inference)",
+        "Send each chunk as a plain text document when sentence citations are enough.",
+        "Send each chunk as custom content when you need your own block boundaries.",
+        "Plain text documents chunk into sentences and cite character indices.",
+        "Custom content documents keep your blocks and cite block indices.",
+        "Confirm that each table stays in one chunk before you index it. (Inference)"
+      ],
+      "pros": [
+        "Plain text documents need no custom block logic.",
+        "Custom content gives finer control for lists and transcripts.",
+        "Citations keep source and title for each document."
+      ],
+      "cons": [
+        "Automatic sentence chunking ignores your heading and table boundaries. (Inference)",
+        "Custom content requires you to define each block boundary.",
+        "A claim split across two blocks produces a wider citation range. (Inference)"
+      ],
+      "use_when": [
+        "Each retrieved chunk is a separate document with its own source.",
+        "Citations must point to specific sentences in long passages.",
+        "Lists or transcripts need citations at block level."
+      ],
+      "do_not_use_when": [
+        "The output must follow a strict JSON schema, because citations conflict with structured outputs.",
+        "Whole documents fit in context and no chunk boundary is needed. (Inference)"
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Use plain text documents for simple prose with the least preparation.", "combination": ""},
+        {"family": "cost", "choice": "Cited text does not count toward output tokens.", "combination": "Expect a small input token increase for chunking and citation prompts."},
+        {"family": "scale", "choice": "Use custom content for lists, transcripts, and special layouts.", "combination": "Keep each block small enough to cite on its own. (Inference)"},
+        {"family": "governance", "choice": "Keep the source and title on each document for audit.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source. The citations page names no native platform service for chunking.", "url": "https://platform.claude.com/docs/en/build-with-claude/citations"}
+      ],
+      "exam_tie": "D3.5. Expect a scenario with split tables or lists in citations. The credited answer changes the chunk boundary, not the citation setting. (Inference)",
+      "trap": "Plain text documents look simpler, but automatic sentence chunking ignores table boundaries. (Inference)",
+      "decision_rule": "Use custom content when your own chunk boundaries must become the citation boundaries.",
+      "exam_tip": "If the scenario names split tables, fix the chunker before you change citation settings. (Inference)",
+      "key_facts": [
+        {"text": "Plain text documents are chunked into sentences for citations.", "url": "https://platform.claude.com/docs/en/build-with-claude/citations", "label": "Fact"},
+        {"text": "Plain text citations use 0-indexed character indices with exclusive end indices.", "url": "https://platform.claude.com/docs/en/build-with-claude/citations", "label": "Fact"},
+        {"text": "Custom content documents use your content blocks as is, with no further chunking.", "url": "https://platform.claude.com/docs/en/build-with-claude/citations", "label": "Fact"},
+        {"text": "To cite specific sentences from RAG chunks, put each RAG chunk into a plain text document.", "url": "https://platform.claude.com/docs/en/build-with-claude/citations", "label": "Fact"},
+        {"text": "Search result citations use block indices, and a text block is the minimal citable unit.", "url": "https://platform.claude.com/docs/en/build-with-claude/search-results", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Recommended chunk size in tokens: Not in source.",
+        "Recommended chunk overlap: Not in source.",
+        "Chunk-level citation support for images in PDFs: Not in source. The citations page says images are not supported."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Answer needs source attribution?} -->|No| X[Plain prompt with no citations]\n  A -->|Yes| B{Output must match a strict JSON schema?}\n  B -->|Yes| C[Separate citation step from schema step]\n  B -->|No| D{Retrieved text split across blocks?}\n  D -->|Yes| E[Re-chunk at document structure]\n  D -->|No| F[Search result blocks with citations enabled]",
+  "cheatsheet": "flowchart LR\n  Q[Query] --> E[Embed with input_type query]\n  E --> N[Nearest neighbor search]\n  N --> R[Rerank top candidates]\n  R --> S[Search result blocks]\n  S --> C[Citations enabled]\n  C --> A[Answer with cited spans]",
+  "patterns": [
+    {"wording": "answer must name the source of each claim", "answer_type": "search result blocks with citations enabled", "rule": "Pass retrieved text as search results and enable citations.", "traps": ["A prompt that asks for sources in plain text", "Citations combined with a strict JSON schema"]},
+    {"wording": "answer cites the wrong section after a table", "answer_type": "chunker fix at document structure", "rule": "Fix the chunker first, then re-index. Do not swap the model.", "traps": ["Larger embedding model", "Larger generation model"]},
+    {"wording": "relevant passage is in the candidates but ranks low", "answer_type": "reranking stage", "rule": "Add a reranker that reorders the candidate list.", "traps": ["Larger generation model", "Smaller chunk size without a rerank step"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for the RAG pipeline: Not in source.",
+    "Hybrid keyword and semantic search design steps: Not in source.",
+    "Recall and precision targets for a retrieval stage: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/search-results",
+    "https://platform.claude.com/docs/en/build-with-claude/citations",
+    "https://platform.claude.com/docs/en/build-with-claude/embeddings"
+  ]
+}

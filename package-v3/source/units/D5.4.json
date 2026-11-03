@@ -1,0 +1,621 @@
+{
+  "id": "D5.4",
+  "domain": "D5",
+  "title": "Regulatory compliance and data controls",
+  "task_statement": "Map each compliance requirement to a retention, residency, key, or audit control with an owner and evidence. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Retention limits and zero data retention",
+      "first_principle": "The retention arrangement decides how long Anthropic keeps prompts and responses, so it is a design input and not a policy note.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "zdr",
+            "label": "ZDR setting per organization",
+            "group": "control"
+          },
+          {
+            "id": "store",
+            "label": "Feature data kept if needed",
+            "group": "data"
+          },
+          {
+            "id": "console",
+            "label": "Console playground, outside ZDR",
+            "group": "client"
+          },
+          {
+            "id": "audit",
+            "label": "Compliance API activity feed",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "request with ZDR-enabled key"
+          },
+          {
+            "from": "api",
+            "to": "zdr",
+            "label": "checked per organization"
+          },
+          {
+            "from": "zdr",
+            "to": "store",
+            "label": "no storage at rest after response"
+          },
+          {
+            "from": "app",
+            "to": "console",
+            "label": "not covered"
+          },
+          {
+            "from": "api",
+            "to": "audit",
+            "label": "activity events recorded"
+          }
+        ]
+      },
+      "steps": [
+        "Enable ZDR for each organization that handles the regulated data.",
+        "Send Messages API calls only with keys from a ZDR-enabled organization.",
+        "Check the feature eligibility table before you use a feature with ZDR.",
+        "Keep regulated data out of the Console playground, because ZDR does not cover it.",
+        "Set the retention period for claude.ai chats in the organization settings.",
+        "Use HIPAA readiness for protected health information, but not on Claude Platform on AWS or Microsoft Foundry."
+      ],
+      "pros": [
+        "Under ZDR, Anthropic does not store prompts or responses at rest after the response returns.",
+        "Uses one setting per organization, which is simple to audit.",
+        "Lists the features that ZDR does not cover."
+      ],
+      "cons": [
+        "ZDR does not cover the Console, Managed Agents session history, or consumer products.",
+        "Under ZDR, the API does not block features that are not eligible, so one call can step outside ZDR.",
+        "Covered Models require 30-day retention and are not available under ZDR unless Anthropic authorizes them."
+      ],
+      "use_when": [
+        "Prompts contain regulated or confidential data that must not persist.",
+        "The workload uses only features that the eligibility table covers.",
+        "A contract names ZDR as the arrangement for the data."
+      ],
+      "do_not_use_when": [
+        "The workload needs Managed Agents session history or the Console playground.",
+        "The workload needs a feature that the eligibility table does not cover. Choose another architecture."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Enable ZDR per organization and confirm the enablement with the account team.",
+          "combination": "Check the feature eligibility table before you enable a new feature."
+        },
+        {
+          "family": "isolation",
+          "choice": "Keep ZDR traffic on keys from the ZDR organization only.",
+          "combination": "Deploy the forceLoginMethod and forceLoginOrgUUID managed settings to require the ZDR organization for Claude Code."
+        },
+        {
+          "family": "data location",
+          "choice": "Pick a retention period that matches the contract or regulation that applies.",
+          "combination": "Use the shortest period that the feature allows. (Inference)"
+        },
+        {
+          "family": "operations",
+          "choice": "Expect the Compliance API to skip local sessions under ZDR.",
+          "combination": "Record the ZDR decision in the audit file. (Inference)"
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Follows the first-party API retention policy. ZDR is available on request. HIPAA readiness is not available.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Follows the first-party API retention policy. ZDR is available on request.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "The cloud provider is the data processor, and Amazon Bedrock data protection governs retention.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "The cloud provider is the data processor, and Google Cloud governs data handling.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Anthropic is the data processor, and the Anthropic retention page applies. HIPAA readiness is not available.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention"
+        }
+      ],
+      "exam_tie": "D5.4. Expect a scenario where data must not persist after the response. The credited answer enables ZDR for the right organization and checks feature coverage. (Inference)",
+      "trap": "A team believes ZDR covers every product in the account. The Console, Managed Agents, and claude.ai chat sit outside ZDR.",
+      "decision_rule": "Enable ZDR per organization, and confirm feature coverage before regulated data reaches the API.",
+      "exam_tip": "If the scenario names protected health information, check HIPAA readiness before you choose ZDR.",
+      "key_facts": [
+        {
+          "text": "Under ZDR, Anthropic does not store prompts or responses at rest after the response returns.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "ZDR is enabled per organization, and each new organization needs its own enablement.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "ZDR does not cover any Claude Console usage. The playground is one example.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "Covered Models require 30-day data retention and are not available under ZDR unless Anthropic authorizes them.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "The Compliance API does not capture local sessions for which ZDR is in effect.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "Chat on claude.ai and Cowork sessions are outside Claude Code ZDR.",
+          "url": "https://code.claude.com/docs/en/zero-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "Under ZDR, the API does not block features that are not ZDR eligible. Their own retention policy then applies.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        },
+        {
+          "text": "HIPAA readiness is not available on Claude Platform on AWS or Microsoft Foundry.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Timeline from ZDR request to enablement. Not in source.",
+        "ZDR enablement steps for Microsoft Foundry. Not in source."
+      ]
+    },
+    {
+      "name": "Data residency with inference geo and workspace geo",
+      "first_principle": "The request sets where inference runs, and the workspace sets where stored data lives, so each setting controls a different location.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "req",
+            "label": "Request with inference_geo",
+            "group": "client"
+          },
+          {
+            "id": "allow",
+            "label": "Workspace allowed geos",
+            "group": "control"
+          },
+          {
+            "id": "infer",
+            "label": "Inference in set geo",
+            "group": "claude"
+          },
+          {
+            "id": "wsgeo",
+            "label": "Workspace geo for data at rest",
+            "group": "data"
+          },
+          {
+            "id": "usage",
+            "label": "usage.inference_geo in response",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "req",
+            "label": "build request"
+          },
+          {
+            "from": "req",
+            "to": "allow",
+            "label": "checked against list"
+          },
+          {
+            "from": "allow",
+            "to": "infer",
+            "label": "allowed geo"
+          },
+          {
+            "from": "infer",
+            "to": "usage",
+            "label": "reports where inference ran"
+          },
+          {
+            "from": "wsgeo",
+            "to": "infer",
+            "label": "fixed at workspace creation"
+          }
+        ]
+      },
+      "steps": [
+        "Set inference_geo to us on each request that must run in the United States.",
+        "Set default_inference_geo and allowed_inference_geos on the workspace for all of its keys.",
+        "Create a workspace with US workspace geo when stored data must stay in the United States.",
+        "Read usage.inference_geo in each response to confirm where inference ran.",
+        "Expect an error when a request names a geo that the workspace does not allow."
+      ],
+      "pros": [
+        "Sets residency on each request, so each call states its location.",
+        "Confirms the location in each response.",
+        "Blocks requests with a geo outside the workspace list."
+      ],
+      "cons": [
+        "US-only inference costs more than global inference.",
+        "Workspace geo cannot change after the workspace exists.",
+        "Rate limits are shared across all geos."
+      ],
+      "use_when": [
+        "A contract or regulation requires US-only inference.",
+        "Stored data must stay in one geography.",
+        "Several teams need one residency rule that the workspace enforces."
+      ],
+      "do_not_use_when": [
+        "The workload accepts global routing, so the price premium adds no value.",
+        "The model is earlier than the 4.6 generation, because the inference_geo parameter returns an error there."
+      ],
+      "constraints": [
+        {
+          "family": "data location",
+          "choice": "Set inference_geo to us on each request.",
+          "combination": "Set allowed_inference_geos to us on the workspace."
+        },
+        {
+          "family": "cost",
+          "choice": "Budget for the US-only price multiplier on all token categories.",
+          "combination": "Include cache writes and cache reads in the same budget."
+        },
+        {
+          "family": "quota",
+          "choice": "Plan rate limits with the knowledge that they are shared across all geos.",
+          "combination": "Set workspace rate limits for each model."
+        },
+        {
+          "family": "governance",
+          "choice": "Set the residency rule in workspace settings, so application code cannot skip it.",
+          "combination": "Use the Admin API data_residency field for automation."
+        },
+        {
+          "family": "operations",
+          "choice": "Log usage.inference_geo for each response.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Workspace geo is not configurable. The workspace AWS region does not pin inference, so set inference_geo on each request.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "The endpoint or inference profile sets the inference region. Regional endpoints carry a 10 percent premium.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Requests can go to global, US, EU, or one named region.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Every workspace allows all inference geos and defaults to global. Set inference_geo to us on each request for US-only inference.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "The Data Zone region scope creates a US Data Zone Standard deployment that keeps inference in the United States.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"
+        }
+      ],
+      "exam_tie": "D5.4. Expect a scenario where inference must run in one country. The credited answer sets the geo on each request and restricts the workspace. (Inference)",
+      "trap": "A region setting on the application server. The inference_geo setting controls where inference runs, not where the app runs.",
+      "decision_rule": "Set inference_geo on each request, and set allowed_inference_geos on the workspace.",
+      "exam_tip": "If the response shows the global geo for a US-only need, the request lacked the setting.",
+      "key_facts": [
+        {
+          "text": "The inference_geo parameter accepts global or us.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "label": "Fact"
+        },
+        {
+          "text": "US-only inference is priced at 1.1 times the standard rate across all token categories.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "label": "Fact"
+        },
+        {
+          "text": "Workspace geo is set at creation and cannot change afterward.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "label": "Fact"
+        },
+        {
+          "text": "A request that names a geo outside allowed_inference_geos returns an error.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "label": "Fact"
+        },
+        {
+          "text": "The inference_geo parameter returns a 400 error on Claude models before the 4.6 generation.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "label": "Fact"
+        },
+        {
+          "text": "Rate limits are shared across all geos.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "label": "Fact"
+        },
+        {
+          "text": "Workspace geo is not configurable on Claude Platform on AWS or on Claude Models on Google Cloud (Anthropic managed).",
+          "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Latency difference between US and global routing. Not in source."
+      ]
+    },
+    {
+      "name": "Customer-managed keys and audit evidence",
+      "first_principle": "A customer key limits who can read new stored data, and the activity feed gives evidence of who accessed what.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "kms",
+            "label": "Customer KMS key",
+            "group": "control"
+          },
+          {
+            "id": "ws",
+            "label": "New workspace data under key",
+            "group": "data"
+          },
+          {
+            "id": "anth",
+            "label": "Anthropic-managed key for other data",
+            "group": "claude"
+          },
+          {
+            "id": "feed",
+            "label": "Activity Feed",
+            "group": "control"
+          },
+          {
+            "id": "cap",
+            "label": "Compliance API scoped key",
+            "group": "control"
+          },
+          {
+            "id": "store",
+            "label": "Your audit store",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "kms",
+            "to": "ws",
+            "label": "wraps data keys for new writes"
+          },
+          {
+            "from": "anth",
+            "to": "feed",
+            "label": "audit logs stay under Anthropic key"
+          },
+          {
+            "from": "feed",
+            "to": "cap",
+            "label": "read with read scope"
+          },
+          {
+            "from": "cap",
+            "to": "store",
+            "label": "export events"
+          }
+        ]
+      },
+      "steps": [
+        "Provision a key in the KMS of the platform, such as AWS KMS, Google Cloud KMS, or Azure Key Vault.",
+        "Attach the key to a new workspace before the workspace receives requests, because a later key can take up to a day.",
+        "Expect the key to protect data written after it takes effect, not earlier data.",
+        "Grant key access only to the Anthropic identifier that the setup guide names.",
+        "Create a Compliance Access Key with only the scopes that each reader needs.",
+        "Export Activity Feed events to your audit store on a schedule. (Inference)"
+      ],
+      "pros": [
+        "Keeps key rotation, audit, and revocation under customer control.",
+        "Records key operations in the cloud provider audit logs.",
+        "Keeps the Activity Feed under the Anthropic key, so audit records survive a key revocation."
+      ],
+      "cons": [
+        "CMEK cannot be undone once it is on, and a key loss can cause permanent data loss.",
+        "Console playground is disabled on Claude Platform, and chat search is disabled on Claude Enterprise.",
+        "Earlier data is not re-encrypted under the customer key."
+      ],
+      "use_when": [
+        "Policy requires customer-controlled encryption keys.",
+        "The organization must be able to cut access to stored data through the key.",
+        "Audit needs a record of who read which records."
+      ],
+      "do_not_use_when": [
+        "The team has no process to protect keys from loss.",
+        "The feature set needs chat search or Claude Code on the web on Claude Enterprise."
+      ],
+      "constraints": [
+        {
+          "family": "data location",
+          "choice": "Use a key in a US region for CMEK, except on Claude Platform on AWS.",
+          "combination": "Use an AWS KMS key in the same account and region as the workspace on Claude Platform on AWS."
+        },
+        {
+          "family": "governance",
+          "choice": "Grant key access only to the verified Anthropic identifier.",
+          "combination": "Use a key policy, and not an IP allow list, on Claude Platform on AWS."
+        },
+        {
+          "family": "isolation",
+          "choice": "Use separate Compliance Access Keys for reads and deletes.",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Track CMEK configuration events in the Activity Feed.",
+          "combination": "Track key wrap and unwrap events in the cloud provider audit logs."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "CMEK uses AWS KMS keys only. The key policy must grant an AWS service principal.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/cmek-claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "CMEK is available with Google Cloud KMS keys for the Anthropic organization that setup creates.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Not in source. The Bedrock page names no CMEK setting for Claude.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        }
+      ],
+      "exam_tie": "D5.4. Expect a scenario that asks for customer control over stored data and proof of access. The credited answer combines a CMEK plan, scoped keys, and the Activity Feed. (Inference)",
+      "trap": "A team believes CMEK re-encrypts old data. It protects data written after the key takes effect.",
+      "decision_rule": "Use CMEK for control of new writes, and use the Compliance API for audit evidence.",
+      "exam_tip": "If the scenario asks about data written before the key took effect, state that Anthropic keys still protect that data.",
+      "key_facts": [
+        {
+          "text": "CMEK protects data written after the key takes effect.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/cmek",
+          "label": "Fact"
+        },
+        {
+          "text": "CMEK cannot be undone once it is on, and Anthropic keeps no copy of the customer key.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/cmek",
+          "label": "Fact"
+        },
+        {
+          "text": "CMEK is available in US regions only, except on Claude Platform on AWS.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/cmek",
+          "label": "Fact"
+        },
+        {
+          "text": "The Activity Feed retains events for 6 years.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/compliance-activity-feed",
+          "label": "Fact"
+        },
+        {
+          "text": "Activities are queryable within 1 minute of their creation.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/compliance-activity-feed",
+          "label": "Fact"
+        },
+        {
+          "text": "A Compliance Access Key with read:compliance_user_data can read every chat, file, project, and session transcript in every linked organization.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/compliance-api-access",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Key rotation schedule that Anthropic applies to CMEK keys. Not in source.",
+        "CMEK support for Amazon Bedrock. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Regulated data in scope?} -->|No| X[Standard retention policy]\n  A -->|Yes| B{Data must not persist?}\n  B -->|Yes| C[Enable ZDR per organization]\n  B -->|No| D[Set retention period and HIPAA readiness for PHI]\n  C --> E{Stay in one country?}\n  D --> E\n  E -->|Yes| F[Set inference_geo us and workspace allowed geos]\n  E -->|No| G[Global routing]\n  F --> H{Customer controls keys?}\n  G --> H\n  H -->|Yes| I[CMEK on a new workspace and Activity Feed evidence]\n  H -->|No| J[Compliance API evidence only]",
+  "cheatsheet": "flowchart LR\n  Z[ZDR per organization] --> C[Console not covered]\n  R[inference_geo us] --> M[Higher US-only price]\n  W[Workspace geo at creation] --> F[Fixed after creation]\n  K[CMEK on new writes] --> P[Permanent once enabled]\n  L[Activity Feed retained for years] --> Q[Scoped Compliance key]",
+  "patterns": [
+    {
+      "wording": "regulated data must not persist after the response",
+      "answer_type": "ZDR on a ZDR-enabled organization with covered features",
+      "rule": "Enable ZDR per organization. Check feature coverage before you send data.",
+      "traps": [
+        "Privacy notice in the app",
+        "Encryption alone"
+      ]
+    },
+    {
+      "wording": "inference must run in one country",
+      "answer_type": "per-request geo plus workspace allowed geos",
+      "rule": "Set the geo on each request and restrict the workspace to that geo.",
+      "traps": [
+        "Region of the application server",
+        "Global default with a policy document"
+      ]
+    },
+    {
+      "wording": "the customer must control the keys and prove access",
+      "answer_type": "CMEK on a new workspace plus Compliance API evidence",
+      "rule": "Attach the key before the first request. Read the Activity Feed with a scoped key.",
+      "traps": [
+        "A team believes CMEK re-encrypts old data",
+        "Admin API key to export chat content"
+      ]
+    }
+  ],
+  "console_steps": [
+    {
+      "step": "Open the Data retention page in the Claude Console to enable HIPAA readiness or review retention.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+      "screenshot": null
+    },
+    {
+      "step": "Open the Workspaces page and create a workspace that shows the Workspace geo field.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/data-residency",
+      "screenshot": null
+    },
+    {
+      "step": "Attach the CMEK key to a new workspace in the Claude Console.",
+      "url": "https://platform.claude.com/docs/en/manage-claude/cmek",
+      "screenshot": null
+    }
+  ],
+  "not_in_source": [
+    "Console steps for ZDR enablement by the account team: Not in source.",
+    "EU AI Act and GDPR article-level duties for this workload. Not in source.",
+    "FedRAMP control baselines for this workload. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/manage-claude/api-and-data-retention",
+    "https://platform.claude.com/docs/en/manage-claude/data-residency",
+    "https://platform.claude.com/docs/en/manage-claude/cmek",
+    "https://platform.claude.com/docs/en/manage-claude/cmek-claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/manage-claude/compliance-activity-feed",
+    "https://platform.claude.com/docs/en/manage-claude/compliance-api-access",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://code.claude.com/docs/en/zero-data-retention"
+  ]
+}

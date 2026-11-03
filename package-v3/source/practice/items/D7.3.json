@@ -1,0 +1,50 @@
+{
+  "unit": "D7.3",
+  "items": [
+    {
+      "id": "D7.3-1",
+      "select": 1,
+      "stem": "A hook in the shared settings file does not run after edits. The team must find out whether the hook is loaded. The check must not change any file. Which action meets the constraint?",
+      "options": [
+        "Run /hooks, then start with claude --debug, and export the metrics to a collector.",
+        "Run /hooks in the current session to see the hook configuration.",
+        "Add a CLAUDE.md line that asks Claude to run the hook after each edit.",
+        "Run /context to list each hook match and its exit code."
+      ],
+      "correct": [1],
+      "rationale": "The /hooks command shows the hook configurations in the current session. The command only reads configuration, so no file changes.",
+      "trap": "A CLAUDE.md line that asks for the hook looks like a fix, but a guidance note never starts a hook.",
+      "source": "https://code.claude.com/docs/en/commands"
+    },
+    {
+      "id": "D7.3-2",
+      "select": 1,
+      "stem": "Cost rose after a prompt change in the sessions of one team. The team must find the cause before it changes the model. The first step must use per-session data. Which action meets the constraint?",
+      "options": [
+        "Switch to a smaller model at once, since a smaller model lowers the cost of each session.",
+        "Check claude_code.session.count to see the cost of each prompt.",
+        "Run /usage in each affected session to read its cost.",
+        "Export OpenTelemetry metrics to a team collector, and build a cost dashboard before any session is checked."
+      ],
+      "correct": [2],
+      "rationale": "The /usage command shows the cost of the current session. Per-session cost identifies the affected sessions before any model change.",
+      "trap": "A smaller model looks like the fastest cost fix, but it may miss the cause and can lower answer quality.",
+      "source": "https://code.claude.com/docs/en/costs"
+    },
+    {
+      "id": "D7.3-3",
+      "select": 2,
+      "stem": "An agent edit must be undone. Some changes came from a Bash command that changed files Claude never edited. The undo must cover both kinds of change. Select two actions that meet the constraint.",
+      "options": [
+        "Use /rewind to undo the tracked Claude edits from the recent checkpoints.",
+        "Press Esc twice to rewind the Bash-only file change, since rewind covers every change.",
+        "Set cleanupPeriodDays to 90 to restore snapshots that were already deleted.",
+        "Use version control to revert the files that only the Bash command changed."
+      ],
+      "correct": [0, 3],
+      "rationale": "Rewind restores file edits that Claude tracked, within the checkpoints that the session keeps. Files that only a Bash command changed are not tracked, so version control reverts them.",
+      "trap": "A double Esc press looks like a full undo, but rewind does not track Bash changes to files that Claude never edited.",
+      "source": "https://code.claude.com/docs/en/checkpointing"
+    }
+  ]
+}

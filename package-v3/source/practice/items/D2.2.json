@@ -1,0 +1,57 @@
+{
+  "unit": "D2.2",
+  "items": [
+    {
+      "id": "D2.2-1",
+      "select": 1,
+      "stem": "A support assistant must never show one customer's order data to another customer. The rule must hold for every user input. Which change meets the constraint?",
+      "options": [
+        "Add a stricter rule to the system prompt that forbids cross-customer data.",
+        "Filter order records in code by the signed-in customer ID before each call.",
+        "Send all order records, and ask the model to show only the signed-in customer's records.",
+        "Set an output schema that lists only the customer ID field."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "Code checks ownership for every input before the model receives any record. A system prompt is guidance, so it cannot enforce access alone (Inference).",
+      "trap": "A stricter system prompt rule looks like access control, but it is guidance that code must enforce (Inference).",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks"
+    },
+    {
+      "id": "D2.2-2",
+      "select": 1,
+      "stem": "A billing service parses each model reply into database fields. The team needs one fixed JSON shape, with no retry loop for shape errors. Which change meets the constraint?",
+      "options": [
+        "Ask in the prompt for JSON only, then parse the text with a pattern match.",
+        "Let the model write prose, then split each paragraph into fields in code.",
+        "Send a JSON schema in output_config format, then check the stop reason before parsing.",
+        "Send a JSON schema in the prompt text, then retry the call when the shape fails to parse."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "The schema in output_config format constrains the reply shape, so a retry loop is not needed in most cases. Code still checks the stop reason before it parses the text.",
+      "trap": "A prompt that asks for JSON only looks equal to a schema, but nothing constrains the text.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
+    },
+    {
+      "id": "D2.2-3",
+      "select": 2,
+      "stem": "A shared assistant sends one system prompt with every request, and the cache must keep its stable text. The team must also tie each saved answer to one prompt version. Which two changes meet both constraints?",
+      "options": [
+        "Insert the tenant name into the system prompt on each request.",
+        "Keep the stable instructions in one system block, stored in version control.",
+        "Turn on automatic prompt version history in the Claude Console.",
+        "Log the prompt version with each saved answer."
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "rationale": "One stable system block keeps the cached prefix identical across requests. A version label on each saved answer ties it to one prompt (Inference).",
+      "trap": "A tenant name in the system prompt looks like personalization, but a change to the system content invalidates the system and messages caches.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching"
+    }
+  ]
+}

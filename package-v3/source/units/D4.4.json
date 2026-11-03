@@ -1,0 +1,175 @@
+{
+  "id": "D4.4",
+  "domain": "D4",
+  "title": "Diagnosis at the correct layer",
+  "task_statement": "Name the faulty layer with evidence before you change a prompt, model, or tool. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Cache miss diagnosis",
+      "first_principle": "The earliest divergence in a request explains the miss, so find that divergence before any other fix.",
+      "architecture": {
+        "nodes": [
+          {"id": "prev", "label": "Previous response id", "group": "data"},
+          {"id": "curr", "label": "Current request with diagnostics object", "group": "client"},
+          {"id": "api", "label": "Messages API fingerprint comparison", "group": "claude"},
+          {"id": "reason", "label": "cache_miss_reason type", "group": "control"},
+          {"id": "fix", "label": "Fix at the changed block", "group": "client"},
+          {"id": "usage", "label": "Cache read token count", "group": "data"}
+        ],
+        "edges": [
+          {"from": "prev", "to": "curr", "label": "previous_message_id"},
+          {"from": "curr", "to": "api", "label": "send request"},
+          {"from": "api", "to": "reason", "label": "earliest divergence only"},
+          {"from": "reason", "to": "fix", "label": "name the changed layer"},
+          {"from": "fix", "to": "usage", "label": "confirm on next request"}
+        ]
+      },
+      "steps": [
+        "Include the diagnostics object on every turn of the conversation.",
+        "Set diagnostics.previous_message_id to the id of the previous response.",
+        "Read cache_miss_reason in the response when the cache read count drops.",
+        "Match the reason type to the layer that changed: model, system, tools, or messages.",
+        "Fix the earliest divergence first, because later reasons can hide behind it.",
+        "Confirm the fix with the cache read token count on the next request."
+      ],
+      "pros": [
+        "The response names the type of change that broke the cached prefix.",
+        "The four changed types estimate the input tokens after the divergence point.",
+        "Diagnostics do not block or fail the request."
+      ],
+      "cons": [
+        "Diagnostics are available on the Claude API only.",
+        "Fingerprints expire after a short period, so compare close requests.",
+        "A comparison works only within the same organization and workspace."
+      ],
+      "use_when": [
+        "The cache hit rate drops after a prompt or tool change.",
+        "Cache read tokens stay at zero for a prefix that repeats.",
+        "A team must find which layer changed the cached prefix."
+      ],
+      "do_not_use_when": [
+        "The workload runs on Amazon Bedrock or Claude Models on Google Cloud (Google managed).",
+        "The cause sits outside the request, such as a provider update. (Inference)",
+        "The team needs only a total cost figure, which the usage fields already give."
+      ],
+      "constraints": [
+        {"family": "operations", "choice": "Include the diagnostics object on every turn.", "combination": "Log cache_miss_reason next to the usage fields."},
+        {"family": "cost", "choice": "Fix a cache miss before you change the cache duration. (Inference)", "combination": "Compare the 5-minute and 1-hour write prices after the fix."},
+        {"family": "latency", "choice": "Restore the cached prefix so that requests read cached tokens. (Inference)", "combination": ""},
+        {"family": "isolation", "choice": "Compare requests only within the same organization and workspace.", "combination": ""},
+        {"family": "governance", "choice": "Rely on fingerprints that hold hashes and token counts, not prompt text.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "Cache diagnostics is not available on Amazon Bedrock.", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Cache diagnostics is not available on this platform.", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics"}
+      ],
+      "exam_tie": "D4.4. Expect a scenario where cache reads drop after an edit, and an option proposes a bigger model. The credited answer finds the changed block first. (Inference)",
+      "trap": "A bigger model tier to recover a lower hit rate. The tier change adds cost, and the prefix still changes on every request.",
+      "decision_rule": "Find the earliest changed block in the prefix, and move the variable content after the breakpoint.",
+      "exam_tip": "Zero cache read and zero cache write counts point to a prompt below the minimum cacheable length, not to a model choice.",
+      "key_facts": [
+        {"text": "The response reports only the earliest divergence, so the team fixes that one first.", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics", "label": "Fact"},
+        {"text": "The four changed types carry an estimate of the input tokens after the divergence point.", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics", "label": "Fact"},
+        {"text": "The model_changed type applies when a router, an A/B test, or a fallback selects a different model.", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics", "label": "Fact"},
+        {"text": "Fingerprints contain only hashes and token-count estimates, never raw prompt content.", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics", "label": "Fact"},
+        {"text": "Diagnostics is not available on Amazon Bedrock or Claude Models on Google Cloud (Google managed).", "url": "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics", "label": "Fact"},
+        {"text": "Prompts below the minimum length are processed without caching, and no error is returned.", "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Exact fingerprint retention period. Not in source. The docs say only a short period."
+      ]
+    },
+    {
+      "name": "Grounding and consistency checks",
+      "first_principle": "An unsupported claim is easier to catch when the answer must point to its source text.",
+      "architecture": {
+        "nodes": [
+          {"id": "prompt", "label": "Prompt with source text", "group": "client"},
+          {"id": "resp", "label": "Claude answer with quotes", "group": "claude"},
+          {"id": "quotes", "label": "Quotes and citations", "group": "data"},
+          {"id": "samples", "label": "Extra samples of the same prompt", "group": "claude"},
+          {"id": "check", "label": "Consistency and citation check", "group": "control"},
+          {"id": "out", "label": "Accept, flag, or I do not know", "group": "client"}
+        ],
+        "edges": [
+          {"from": "prompt", "to": "resp", "label": "allow I do not know"},
+          {"from": "resp", "to": "quotes", "label": "cite source text"},
+          {"from": "prompt", "to": "samples", "label": "same prompt again"},
+          {"from": "quotes", "to": "check", "label": "verify each claim"},
+          {"from": "samples", "to": "check", "label": "compare answers"},
+          {"from": "check", "to": "out", "label": "result"}
+        ]
+      },
+      "steps": [
+        "Give Claude explicit permission to say that it does not know.",
+        "Ask Claude to extract word-for-word quotes before the main task on long documents.",
+        "Ask Claude to cite a quote for each claim, and to retract a claim that has no quote.",
+        "Run the same prompt several times and compare the answers for inconsistencies.",
+        "Review the summarized thinking when an answer looks wrong.",
+        "Ask Claude to verify each earlier claim in a follow-up prompt."
+      ],
+      "pros": [
+        "Citations give a reviewer a check that needs no second model call. (Inference)",
+        "The docs say inconsistencies across outputs could indicate hallucinations.",
+        "The docs say the I do not know option can drastically reduce false information."
+      ],
+      "cons": [
+        "Several runs multiply cost and latency. (Inference)",
+        "Summarized thinking shows a summary, not every reasoning step. (Inference)",
+        "Quote extraction adds tokens before the main task. (Inference)"
+      ],
+      "use_when": [
+        "Answers cite facts or figures that users rely on.",
+        "Answers vary across runs for the same question.",
+        "The source document is long and the answer must match it."
+      ],
+      "do_not_use_when": [
+        "The latency limit leaves no room for extra calls. (Inference)",
+        "The task is creative and has no source text to check against. (Inference)"
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Run extra samples only for answers that need a check. (Inference)", "combination": "Stream the first answer so that users see text early. (Inference)"},
+        {"family": "cost", "choice": "Fix the number of samples for each check. (Inference)", "combination": "Cache the shared source prefix across samples. (Inference)"},
+        {"family": "operations", "choice": "Track the disagreement rate between samples for each task type. (Inference)", "combination": ""},
+        {"family": "governance", "choice": "Keep flagged answers and their quotes for audit. (Inference)", "combination": ""},
+        {"family": "scale", "choice": "Use retrieval to ground answers in the right source passages.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source.", "url": ""}
+      ],
+      "exam_tie": "D4.4. Expect a scenario with a plausible but unsupported answer and a request for more capacity. The credited answer adds grounding checks before any capacity change. (Inference)",
+      "trap": "A stronger model added to fix invented facts. The model can still invent facts without a check that ties each claim to a source.",
+      "decision_rule": "Require a quote or citation for each claim, and allow the model to say that it does not know.",
+      "exam_tip": "Answers that change across runs for the same input signal a possible hallucination that a check can catch.",
+      "key_facts": [
+        {"text": "The docs say to allow Claude to say that it does not know, which can drastically reduce false information.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations", "label": "Fact"},
+        {"text": "The docs say to ask for word-for-word quotes first on documents longer than 20k tokens.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations", "label": "Fact"},
+        {"text": "The docs suggest best-of-N verification, with the same prompt sent several times.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations", "label": "Fact"},
+        {"text": "The docs suggest chain-of-thought verification with thinking set to display summarized.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations", "label": "Fact"},
+        {"text": "The docs suggest use of retrieval for contextual consistency.", "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "The accuracy gain from best-of-N checks on any given task. Not in source.",
+        "The number of samples that a consistency check needs. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Quality dropped after a change?} -->|No| X[Keep monitoring]\n  A -->|Yes| B{Cache reads dropped?}\n  B -->|Yes| C[Read cache miss reason]\n  C --> D[Fix the earliest divergence]\n  B -->|No| E{Answer has a checkable source?}\n  E -->|Yes| F[Require quotes and citations]\n  E -->|No| G[Run samples and compare them]",
+  "cheatsheet": "flowchart LR\n  S[Symptom] --> E[Evidence per layer]\n  E --> H[Hypotheses]\n  H --> T[Split test]\n  T --> F[Smallest fix]\n  F --> R[Regression check]\n  E --> C[cache_miss_reason]\n  E --> Q[Quotes and citations]",
+  "patterns": [
+    {"wording": "an answer states a figure that no source supports", "answer_type": "grounding check with quotes and citations", "rule": "Ask for quotes first, then require a citation for each claim.", "traps": ["Use a larger model tier", "Add tools without a grounding step"]},
+    {"wording": "quality drops after a prompt edit while the model stays the same", "answer_type": "layer-by-layer diagnosis with a split test", "rule": "Name the changed layer first, then test the suspects one at a time.", "traps": ["Upgrade the model tier", "Edit several layers at once"]},
+    {"wording": "cache reads fall to zero after a template edit", "answer_type": "earliest divergence fix", "rule": "Read cache_miss_reason, fix the earliest divergence, and confirm with cache read counts.", "traps": ["Raise the cache TTL", "Add breakpoints on the changed block"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Diagnosis workflow in the Claude Console: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics",
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency"
+  ]
+}

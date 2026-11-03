@@ -1,0 +1,50 @@
+{
+  "unit": "D1.6",
+  "items": [
+    {
+      "id": "D1.6-1",
+      "select": 1,
+      "stem": "A summary request on Claude Haiku 5.5 uses 3,000 input tokens and 800 output tokens. The prompt is under 100,000 tokens. The team needs the cost per request from published prices. Which method meets the constraint?",
+      "options": [
+        "Multiply all 3,800 tokens by the input price per million tokens.",
+        "Multiply each token count by its own rate, divide by one million, and add the two results.",
+        "Multiply each token count by its own rate, then write each result to a cost ledger with a dashboard.",
+        "Price all input tokens at the cache hit rate, because the prompt is reused."
+      ],
+      "correct": [1],
+      "rationale": "Haiku 5.5 has separate base rates for input and output, both per million tokens. Here the input costs 0.0003 dollars and the output costs 0.0004 dollars, for 0.0007 dollars in total.",
+      "trap": "A cache hit rate looks like a cheap input price, but it applies only to tokens that the cache actually returns.",
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "id": "D1.6-2",
+      "select": 1,
+      "stem": "A team wants to book savings from a cheaper model tier. The cheaper tier passes 91 percent of the eval set, and the agreed threshold is 95 percent. The constraint: keep a value claim only while the quality threshold holds. Which action meets the constraint?",
+      "options": [
+        "Book the savings now, and tune the threshold after the next quarter.",
+        "Set a session budget on the cheaper tier, which proves the savings hold.",
+        "Hold the savings claim until the cheaper tier passes the threshold on the same eval set.",
+        "Book the savings now, and rebuild the eval set with 10,000 cases before any re-test."
+      ],
+      "correct": [2],
+      "rationale": "The claim needs the cheaper tier to pass the agreed threshold on the same eval set. A session budget caps spend, but it does not measure quality.",
+      "trap": "The early savings claim looks like progress, but the cheaper tier fails the agreed threshold today.",
+      "source": "https://platform.claude.com/docs/en/managed-agents/budgets"
+    },
+    {
+      "id": "D1.6-3",
+      "select": 2,
+      "stem": "A long agent run follows fixed steps, and no user waits for it. Finance caps the spend for the run. The team needs a budget that stops new requests at the cap and shows spend during the run. Which two options meet the constraint?",
+      "options": [
+        "Set a session budget when the session is created, so new requests stop at the cap.",
+        "Set the budget after the bill arrives, so the total can be corrected.",
+        "Set a workspace spend limit of the same amount on the Default Workspace.",
+        "Read usage.list_cost on the session object, which holds the list cost to date."
+      ],
+      "correct": [0, 3],
+      "rationale": "A session budget is set when the session is created, and it stops new model requests at the cap. The platform prices the session continuously, and usage.list_cost on the session object holds that total to date.",
+      "trap": "A workspace spend limit looks like the same control, but the Default Workspace cannot have a spend limit.",
+      "source": "https://platform.claude.com/docs/en/managed-agents/budgets"
+    }
+  ]
+}

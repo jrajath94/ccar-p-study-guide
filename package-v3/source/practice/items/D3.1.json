@@ -1,0 +1,57 @@
+{
+  "unit": "D3.1",
+  "items": [
+    {
+      "id": "D3.1-1",
+      "select": 1,
+      "stem": "An invoice agent has 60 tools from several MCP servers. Most requests use three tools. The team must cut the tool schema tokens sent per call, and every tool must stay available.",
+      "options": [
+        "Remove 40 tools from the agent, so the list fits the prompt.",
+        "Set cache_control on every deferred tool, so their schemas stay cached.",
+        "Add tool search, defer the rarely used tools, and keep the three common tools non-deferred.",
+        "Add tool search, and set defer_loading to true on every tool, the tool search tool too."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "Tool search keeps deferred definitions out of the first prompt, so frequent tools stay in context. All 60 tools remain available to the agent.",
+      "trap": "Setting cache_control on deferred tools looks like a cost fix, but a deferred tool with cache_control returns a 400 error.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool"
+    },
+    {
+      "id": "D3.1-2",
+      "select": 1,
+      "stem": "Two lookup tools do the same job, and their descriptions are almost identical. The agent often picks the wrong one. The fix must remove the ambiguity from the tool list itself.",
+      "options": [
+        "Add a longer system prompt rule that names which lookup to use.",
+        "Merge the two lookups into one tool with an action parameter and a clear description.",
+        "Keep both lookups, and add a classifier model that routes each request first.",
+        "Set defer_loading to true on both lookup tools."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "One tool with one name leaves the model no near match to pick. The docs name tool description detail as the most important factor in tool performance.",
+      "trap": "A system prompt rule that names the right lookup looks like a fix, but two tools with the same job still split the choice.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools"
+    },
+    {
+      "id": "D3.1-3",
+      "select": 2,
+      "stem": "A finance agent runs a nightly report task in Claude Code. The task never calls a refund write tool, but a wrong refund fired last week. The team must block that tool and keep the report read tool.",
+      "options": [
+        "Add a deny rule for the refund write tool in the task's settings.",
+        "Keep the refund tool, and add audit logging of each call.",
+        "Turn on tool search, so the refund tool loads only when searched.",
+        "Remove the refund write tool from the task's tool list."
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "rationale": "A deny rule or a removed tool ends the permission, and a log entry does not. A deferred tool still loads when the model searches for it, so tool search does not block the call.",
+      "trap": "Tool search looks like a safety fix, but a deferred tool still loads when the model finds it.",
+      "source": "https://code.claude.com/docs/en/permissions"
+    }
+  ]
+}

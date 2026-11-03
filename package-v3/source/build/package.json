@@ -1,0 +1,10 @@
+{
+  "name": "ccar-p-study-build",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Renderer dependencies for the CCAR-P study package",
+  "dependencies": {
+    "mermaid": "10.9.1",
+    "playwright": "1.56.1"
+  }
+}

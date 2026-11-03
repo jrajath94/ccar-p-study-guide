@@ -1,0 +1,50 @@
+{
+  "unit": "D4.1",
+  "items": [
+    {
+      "id": "D4.1-1",
+      "select": 1,
+      "stem": "A support bot team sees fluency rise 12 percent after a prompt change. Resolution rate stays flat. The release decision needs one primary metric with a threshold set before tuning starts.",
+      "options": [
+        "Set the threshold in the Console evaluation tool, which computes the primary metric for you.",
+        "Resolution rate on the held-out set, with a threshold and an owner set before the next run.",
+        "Fluency score as the primary metric, with no threshold, because the grader scores it automatically.",
+        "Fifteen dashboard metrics, each with its own threshold, reviewed before the primary metric is chosen."
+      ],
+      "correct": [1],
+      "rationale": "Resolution rate measures the goal directly, so it can decide the release. A threshold and an owner set before tuning give the number a fixed bar. (Inference)",
+      "trap": "A fluency score that rose 12 percent looks like a win, but it does not measure the goal and has no threshold.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests"
+    },
+    {
+      "id": "D4.1-2",
+      "select": 1,
+      "stem": "A team moved to a cheaper model, and monthly spend fell. Completed tasks fell more. The team needs a daily report of value per task for each model version.",
+      "options": [
+        "Compare total monthly spend only, because finance reads the bill and the bill fell.",
+        "Read the Cost API in one-minute buckets for each task, since minute buckets show spend per task.",
+        "Build a warehouse pipeline that joins every token count with task outcomes in real time.",
+        "Daily spend divided by completed tasks gives value per task, so compare that value for each model and prompt version."
+      ],
+      "correct": [3],
+      "rationale": "The Cost API reports spend in USD by daily bucket, which fits a daily report. The per-task value then compares versions on the same unit of value.",
+      "trap": "One-minute Cost API buckets look right for per-task spend, but the Cost API supports only daily buckets.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+    },
+    {
+      "id": "D4.1-3",
+      "select": 2,
+      "stem": "A dashboard must show cost and latency for a streaming chat feature. It must also show the quality threshold for the same release. Which two items meet these constraints?",
+      "options": [
+        "Read time to first token from the Usage API, which reports latency for each bucket.",
+        "Measure time to first token for streaming calls, and baseline latency for other calls.",
+        "Track 20 latency percentiles for every route, each with its own alert owner.",
+        "Show cost per completed task beside the quality threshold, with daily totals from the Usage and Cost API."
+      ],
+      "correct": [1, 3],
+      "rationale": "Time to first token matters most for streaming, and baseline latency covers the full response of other calls. Cost per completed task sits beside the threshold, so both show in one view.",
+      "trap": "A latency read from the Usage API looks right, but the Usage API reports token counts and not response times.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency"
+    }
+  ]
+}

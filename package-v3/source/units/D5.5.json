@@ -1,0 +1,541 @@
+{
+  "id": "D5.5",
+  "domain": "D5",
+  "title": "Responsible AI",
+  "task_statement": "Apply responsible AI duties to the system, with per-group evaluation and documented evidence. (Inference: repo lesson and general practice, not in the official mirror)",
+  "components": [
+    {
+      "name": "Content moderation with Claude",
+      "first_principle": "Claude classifies user content against a written policy and labeled examples, so the policy text is the control.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "user",
+            "label": "User content",
+            "group": "client"
+          },
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "policy",
+            "label": "Written policy and labeled examples",
+            "group": "data"
+          },
+          {
+            "id": "claude",
+            "label": "Claude classifier call",
+            "group": "claude"
+          },
+          {
+            "id": "verdict",
+            "label": "Schema-constrained verdict",
+            "group": "control"
+          },
+          {
+            "id": "human",
+            "label": "Human review for uncertain items",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "user",
+            "to": "app",
+            "label": "submitted text"
+          },
+          {
+            "from": "app",
+            "to": "claude",
+            "label": "content with policy"
+          },
+          {
+            "from": "policy",
+            "to": "claude",
+            "label": "examples and categories"
+          },
+          {
+            "from": "claude",
+            "to": "verdict",
+            "label": "JSON schema output"
+          },
+          {
+            "from": "verdict",
+            "to": "human",
+            "label": "uncertain or refused items"
+          }
+        ]
+      },
+      "steps": [
+        "Collect examples of content to flag and content to allow.",
+        "Include edge cases in the examples, because edge cases test the policy.",
+        "Write the moderation categories from the examples.",
+        "Send each item with the policy and the categories to Claude.",
+        "Constrain the response to a schema, so the verdict is a parseable value.",
+        "Route uncertain or refused items to a person. (Inference)"
+      ],
+      "pros": [
+        "Handles semantic meaning and many languages without a separate model for each language.",
+        "Policy changes need prompt changes, not relabeled training data.",
+        "Gives a written reason that a reviewer can read."
+      ],
+      "cons": [
+        "Built-in safety behavior can flag content that your own policy allows.",
+        "A refusal can leave the verdict empty, so the flow needs a fallback path.",
+        "Results depend on the policy text and the examples. (Inference)"
+      ],
+      "use_when": [
+        "User-generated text needs fast moderation decisions.",
+        "The moderation policy changes often.",
+        "One process must cover several languages."
+      ],
+      "do_not_use_when": [
+        "The rule is a fixed pattern, such as a blocked word list. A rule is cheaper. (Inference)",
+        "A person must make every decision for legal reasons. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "skill",
+          "choice": "Write the policy with examples that include edge cases.",
+          "combination": "Test the examples again before each policy change. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Keep the policy text under version control with a review date. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "cost",
+          "choice": "Use a smaller model such as Claude Haiku 5.5 for moderation when cost matters.",
+          "combination": "Use a larger model for appeals. (Inference)"
+        },
+        {
+          "family": "operations",
+          "choice": "Track flagged and refused items as a metric.",
+          "combination": "Review repeat offenders before you throttle or ban an account."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source. The moderation guide names no cloud platform for this workflow.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D5.5. Expect a scenario about user content, a policy that changes often, and several languages. The credited answer uses a written policy with examples and a structured verdict. (Inference)",
+      "trap": "A custom classifier looks cheaper, but each policy change then needs new labels and code. (Inference)",
+      "decision_rule": "Put the moderation policy and examples in the prompt, and constrain the verdict with a schema.",
+      "exam_tip": "If the scenario says the policy changes often, choose a prompt-defined policy over a retrained model.",
+      "key_facts": [
+        {
+          "text": "Claude can classify content in various languages without separate models.",
+          "url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/content-moderation",
+          "label": "Fact"
+        },
+        {
+          "text": "Built-in safety behavior can lead Claude to moderate content that is dangerous under the Usage Policy, whatever the prompt says.",
+          "url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/content-moderation",
+          "label": "Fact"
+        },
+        {
+          "text": "The guide says to create examples of content to flag and content to allow before you build.",
+          "url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/content-moderation",
+          "label": "Fact"
+        },
+        {
+          "text": "The harmlessness screen example uses a JSON schema to constrain the response to a boolean.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "The mitigation guide says to consider throttling users who repeatedly trigger refusals.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "The moderation guide names Claude Haiku 5.5 as a cost-effective choice for large volumes.",
+          "url": "https://platform.claude.com/docs/en/about-claude/use-case-guides/content-moderation",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Moderation accuracy or false positive rate. Not in source.",
+        "Accuracy by language for moderation. Not in source."
+      ]
+    },
+    {
+      "name": "Safety classifiers and refusal handling",
+      "first_principle": "A refusal is a normal response with a stop reason, so the application reads the stop reason and handles the refusal in code.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "user",
+            "label": "End user",
+            "group": "client"
+          },
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "cls",
+            "label": "Safety classifiers",
+            "group": "control"
+          },
+          {
+            "id": "ref",
+            "label": "stop_reason refusal with stop_details",
+            "group": "control"
+          },
+          {
+            "id": "fb",
+            "label": "Fallback model, beta",
+            "group": "cloud"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "request"
+          },
+          {
+            "from": "api",
+            "to": "cls",
+            "label": "classifiers check output"
+          },
+          {
+            "from": "cls",
+            "to": "ref",
+            "label": "decline with category"
+          },
+          {
+            "from": "ref",
+            "to": "app",
+            "label": "app reads stop reason"
+          },
+          {
+            "from": "ref",
+            "to": "fb",
+            "label": "retry if fallbacks is default"
+          },
+          {
+            "from": "app",
+            "to": "user",
+            "label": "explain or rephrase"
+          }
+        ]
+      },
+      "steps": [
+        "Read stop_reason on every response, also on streamed responses.",
+        "Treat a refusal stop reason as a normal response, not as an error.",
+        "Read stop_details.category to learn which policy area declined the request.",
+        "Set fallbacks to default, in beta, to retry a declined request on a fallback model.",
+        "Tell the user that the request was declined, and do not resend it unchanged. (Inference)",
+        "Log each refusal with its category and request ID, so repeat cases can be reviewed."
+      ],
+      "pros": [
+        "Makes a declined request visible in application code.",
+        "Lets the application choose a fallback path.",
+        "Shows the policy category in logs and reviews."
+      ],
+      "cons": [
+        "Server-side fallback is in beta, and Claude Haiku 5.5 does not support it.",
+        "A fallback model can change answer quality. (Inference)",
+        "Classifiers can decline a legitimate request. (Inference)"
+      ],
+      "use_when": [
+        "The product sends user text that may trip a classifier.",
+        "The product needs a retry path without an error page.",
+        "A team needs counts of declines by category."
+      ],
+      "do_not_use_when": [
+        "The application ignores stop reasons and treats every output as final.",
+        "The retry must run on a model with a different data location. Check the platform terms first. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Log stop_details.category with the request ID.",
+          "combination": "Alert when one category rises sharply. (Inference)"
+        },
+        {
+          "family": "latency",
+          "choice": "Use the server-side fallback to avoid a second client round trip.",
+          "combination": "Use the SDK middleware for client-side fallback on platforms without server-side fallback."
+        },
+        {
+          "family": "governance",
+          "choice": "Throttle or ban a user only after repeated refusals of one kind.",
+          "combination": "Keep a review step before any ban. (Inference)"
+        },
+        {
+          "family": "skill",
+          "choice": "Read the stop reason in every streaming handler.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "The server-side fallback beta is available on this platform, as on the Claude API.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback"
+        }
+      ],
+      "exam_tie": "D5.5. Expect a scenario where a refused request breaks the flow. The credited answer reads the stop reason and handles the refusal in code. (Inference)",
+      "trap": "A refusal treated as an HTTP error and retried unchanged. A refusal returns a normal response with a stop reason.",
+      "decision_rule": "Read stop_reason on every response, and handle refusal as a normal outcome.",
+      "exam_tip": "If a response has stop_reason refusal, do not parse it as an error.",
+      "key_facts": [
+        {
+          "text": "A declined request returns a normal response with stop_reason refusal, not an error.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+          "label": "Fact"
+        },
+        {
+          "text": "The stop_details.category field names the policy area that declined the request.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+          "label": "Fact"
+        },
+        {
+          "text": "Streaming responses return stop_reason refusal when streaming classifiers intervene.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals",
+          "label": "Fact"
+        },
+        {
+          "text": "Setting fallbacks to default retries a declined request on a fallback model, in beta.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Fable 5.1, Claude Fable 5, Claude Opus 5.5, Claude Opus 5, Claude Sonnet 5.5, and Claude Haiku 5.5 include these classifiers.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 has neither server-side fallback nor fallback credit, so use the SDK middleware or a manual retry.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+          "label": "Fact"
+        },
+        {
+          "text": "Server-side fallback is in beta on the Claude API and on Claude Models on Google Cloud (Anthropic managed).",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Refusal rate for any category. Not in source.",
+        "Fallback model choice for each refusal category. Not in source."
+      ]
+    },
+    {
+      "name": "Model documentation, transparency, and per-group evaluation",
+      "first_principle": "Published model documentation gives context, and the team adds its own per-group evidence for its own users.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "card",
+            "label": "Model system card",
+            "group": "data"
+          },
+          {
+            "id": "policy",
+            "label": "Usage Policy",
+            "group": "control"
+          },
+          {
+            "id": "trust",
+            "label": "Trust Center and transparency hub",
+            "group": "control"
+          },
+          {
+            "id": "team",
+            "label": "Your team",
+            "group": "client"
+          },
+          {
+            "id": "eval",
+            "label": "Your evaluation set by group",
+            "group": "client"
+          },
+          {
+            "id": "owner",
+            "label": "Named owner and evidence record",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "card",
+            "to": "team",
+            "label": "tested behaviors"
+          },
+          {
+            "from": "policy",
+            "to": "team",
+            "label": "allowed uses"
+          },
+          {
+            "from": "trust",
+            "to": "team",
+            "label": "security material"
+          },
+          {
+            "from": "team",
+            "to": "eval",
+            "label": "build per-group set"
+          },
+          {
+            "from": "eval",
+            "to": "owner",
+            "label": "results by group"
+          }
+        ]
+      },
+      "steps": [
+        "Read the system card for the model that the product uses.",
+        "Read the Usage Policy before you build the product.",
+        "Check the Trust Center for security and trust material.",
+        "Evaluate the outputs by group, and do not use an aggregate alone. (Inference)",
+        "Set a floor for each group and hold the release until each group meets its floor. (Inference)",
+        "Name an owner for each decision class and record the evidence. (Inference)"
+      ],
+      "pros": [
+        "Gives published test context for each model.",
+        "Points to the Usage Policy that governs use.",
+        "Separates vendor evidence from your own evidence."
+      ],
+      "cons": [
+        "System cards do not test your user population. (Inference)",
+        "An aggregate score can hide a weak group. (Inference)",
+        "Evaluation by group needs group labels, which many products lack. (Inference)"
+      ],
+      "use_when": [
+        "A product team must document the model that it uses.",
+        "A review asks for model evidence.",
+        "The team plans a model change."
+      ],
+      "do_not_use_when": [
+        "The question is about your own product outputs. Use your own evaluation.",
+        "A sandbox test that never reaches users."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Keep the system card link and the model ID in the release record.",
+          "combination": "Require a new review when the model ID changes."
+        },
+        {
+          "family": "skill",
+          "choice": "Have a reviewer read the Usage Policy before launch.",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Check the model deprecation page on a schedule.",
+          "combination": "Plan a tested move before the retirement date."
+        },
+        {
+          "family": "scale",
+          "choice": "Use one evaluation set per user group that matters for the product. (Inference)",
+          "combination": "Set a floor for each group. (Inference)"
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source. The resources page lists model cards without a platform-specific term.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D5.5. Expect a scenario that asks for evidence of responsible use. The credited answer cites the system card and the Usage Policy, then adds the team's own per-group evaluation. (Inference)",
+      "trap": "A team cites the model card as proof that the product is fair. The card describes model tests, not the product's users. (Inference)",
+      "decision_rule": "Cite the system card for the model, and add a per-group evaluation for the product.",
+      "exam_tip": "If the answer relies only on vendor documentation, add the team's own evaluation.",
+      "key_facts": [
+        {
+          "text": "Anthropic publishes system cards with detailed documentation for Claude models.",
+          "url": "https://platform.claude.com/docs/en/resources/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "The resources page links system cards for Claude Haiku 5.5, Claude Sonnet 5.5, and Claude Opus 5.5.",
+          "url": "https://platform.claude.com/docs/en/resources/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Code usage is subject to the Anthropic Usage Policy.",
+          "url": "https://code.claude.com/docs/en/legal-and-compliance",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic points customers to its Trust Center and Transparency Hub for trust and safety information.",
+          "url": "https://code.claude.com/docs/en/legal-and-compliance",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic runs its security program through a HackerOne form for vulnerability reports.",
+          "url": "https://code.claude.com/docs/en/legal-and-compliance",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Bias, fairness, or subgroup metrics for any Claude model. Not in source.",
+        "Explainability methods for model decisions. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{User content or model output?} -->|User content| B{Policy changes often?}\n  A -->|Model output| C[Read stop reason on each response]\n  B -->|Yes| D[Prompt policy with examples and schema verdict]\n  B -->|No| E[Stable policy file with the same design]\n  D --> F{Results differ by group?}\n  E --> F\n  C --> F\n  F -->|Yes| G[Per group floor and upstream fix before release]\n  F -->|No| H[Document evidence and name an owner]",
+  "cheatsheet": "flowchart LR\n  P[Written policy] --> E[Labeled examples]\n  E --> V[Schema verdict]\n  S[stop_reason refusal] --> D[Normal result path]\n  D --> F[stop_details category]\n  M[System card] --> O[Own evaluation]\n  O --> G[Per group floor]",
+  "patterns": [
+    {
+      "wording": "a content policy changes often and covers several languages",
+      "answer_type": "prompt-defined policy with examples and a schema verdict",
+      "rule": "Keep the policy in the prompt with examples. Constrain the verdict to a schema.",
+      "traps": [
+        "Custom classifier retrained for each change",
+        "Keyword list only"
+      ]
+    },
+    {
+      "wording": "a classifier declines the request and the flow breaks",
+      "answer_type": "stop-reason handling with fallback",
+      "rule": "Read stop_reason on every response. Handle refusal as a normal outcome.",
+      "traps": [
+        "Treat refusal as a server error and resend the same request",
+        "Remove the built-in safety classifiers from the product"
+      ]
+    },
+    {
+      "wording": "an overall score looks good but one group performs poorly",
+      "answer_type": "per-group evaluation with a floor",
+      "rule": "Check each group against its own floor before release. (Inference)",
+      "traps": [
+        "Average score only",
+        "Generated reasons that the trace does not support"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for moderation, refusals, and group evaluation: Not in source.",
+    "EU AI Act duties for responsible AI practice. Not in source.",
+    "Bias and fairness regulations that apply to this workload. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/about-claude/use-case-guides/content-moderation",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/handle-streaming-refusals",
+    "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback",
+    "https://platform.claude.com/docs/en/resources/overview",
+    "https://code.claude.com/docs/en/legal-and-compliance"
+  ]
+}

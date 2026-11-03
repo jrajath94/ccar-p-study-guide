@@ -1,0 +1,526 @@
+{
+  "id": "D7.1",
+  "domain": "D7",
+  "title": "Team configuration for Claude Code",
+  "task_statement": "Configure Claude Code for a team with committed settings, enforced rules, and guidance files. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Shared settings and scopes",
+      "first_principle": "One committed settings file gives every clone the same permissions and hooks, and personal files hold the exceptions.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "managed",
+            "label": "Managed settings from the organization",
+            "group": "control"
+          },
+          {
+            "id": "shared",
+            "label": "Committed .claude/settings.json",
+            "group": "data"
+          },
+          {
+            "id": "local",
+            "label": "Personal .claude/settings.local.json",
+            "group": "client"
+          },
+          {
+            "id": "user",
+            "label": "User settings in home folder",
+            "group": "client"
+          },
+          {
+            "id": "session",
+            "label": "Claude Code session",
+            "group": "claude"
+          }
+        ],
+        "edges": [
+          {
+            "from": "managed",
+            "to": "session",
+            "label": "highest precedence"
+          },
+          {
+            "from": "local",
+            "to": "session",
+            "label": "personal overrides"
+          },
+          {
+            "from": "shared",
+            "to": "session",
+            "label": "team permissions and hooks"
+          },
+          {
+            "from": "user",
+            "to": "session",
+            "label": "lowest precedence"
+          }
+        ]
+      },
+      "steps": [
+        "Commit the shared settings file at .claude/settings.json in the repository.",
+        "Claude Code reads the user, shared project, project local, command line, and managed settings.",
+        "A key set at a higher level overrides the same key set at a lower level.",
+        "Managed settings take precedence over every other source.",
+        "Put personal exceptions in .claude/settings.local.json, which stays out of git.",
+        "Run /status to see which settings sources loaded for the session."
+      ],
+      "pros": [
+        "Every clone receives the same permission rules and hooks after the commit.",
+        "Personal overrides need no commit and no change to the team file.",
+        "Managed settings apply on every machine that the organization deploys them to."
+      ],
+      "cons": [
+        "A settings change reaches teammates only after the commit and a pull.",
+        "Settings files are strict JSON, so a comment or a trailing comma causes a Settings Error.",
+        "Some keys never take effect from a repository file, so a committed key can be ignored."
+      ],
+      "use_when": [
+        "A team shares one repository and needs the same permission rules on every clone.",
+        "One developer needs an exception without a change to the team file."
+      ],
+      "do_not_use_when": [
+        "A single session needs a temporary change, so the command line flag fits better.",
+        "The rule must hold on every machine, and a committed file cannot enforce it on machines that skip the commit."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Commit .claude/settings.json with deny rules for secret reads and destructive commands.",
+          "combination": "Add managed settings when the organization must enforce a rule on every developer machine."
+        },
+        {
+          "family": "operations",
+          "choice": "Put hooks that lint or test each edit in the shared settings file.",
+          "combination": "Review each committed hook command like code, because a hook runs a shell command. (Inference)"
+        },
+        {
+          "family": "isolation",
+          "choice": "Keep personal overrides in .claude/settings.local.json.",
+          "combination": ""
+        },
+        {
+          "family": "data location",
+          "choice": "Keep credentials out of committed settings files. (Inference)",
+          "combination": "Put a personal workspace key in the env block of the user settings file on one machine."
+        },
+        {
+          "family": "skill",
+          "choice": "Commit team skills in .claude/skills/ so every clone loads them.",
+          "combination": "Use nested skill folders for code in a subdirectory of a monorepo."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "The Bedrock setup wizard saves its result to the env block of the user settings file, not the shared project file.",
+          "url": "https://code.claude.com/docs/en/amazon-bedrock"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Foundry has no setup wizard, so environment variables are the only configuration path.",
+          "url": "https://code.claude.com/docs/en/microsoft-foundry"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "A workspace API key takes precedence over SigV4 credentials, and the user settings env block can hold it on one machine.",
+          "url": "https://code.claude.com/docs/en/claude-platform-on-aws"
+        }
+      ],
+      "exam_tie": "D7.1. Expect a scenario where a team needs a control that holds on every clone. The credited answer uses permissions, hooks, or managed settings in a file that the team shares. (Inference)",
+      "trap": "A CLAUDE.md note that asks the agent not to read secret files. The docs call CLAUDE.md context, not enforced configuration, so only a deny rule blocks the read.",
+      "decision_rule": "Use a permission rule or a hook for a control, and use CLAUDE.md for a convention.",
+      "exam_tip": "If the scenario needs a block, choose a deny rule, a PreToolUse hook, or managed settings.",
+      "key_facts": [
+        {
+          "text": "Claude Code reads settings from four files: user, shared project, project local, and managed.",
+          "url": "https://code.claude.com/docs/en/settings",
+          "label": "Fact"
+        },
+        {
+          "text": "Settings precedence runs from managed settings down to user settings, with the command line between managed and project local.",
+          "url": "https://code.claude.com/docs/en/settings",
+          "label": "Fact"
+        },
+        {
+          "text": "Permission rules evaluate in this order: deny, then ask, then allow.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "A deny rule in any settings scope blocks a call that another scope allows.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "A PreToolUse hook that exits with code 2 blocks the tool call before permission rules run.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "The default timeout for a command hook is 600 seconds.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "Keep each CLAUDE.md file under 200 lines.",
+          "url": "https://code.claude.com/docs/en/memory",
+          "label": "Fact"
+        },
+        {
+          "text": "On Linux and WSL, the managed settings file is at /etc/claude-code/managed-settings.json.",
+          "url": "https://code.claude.com/docs/en/managed-settings",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Organization plan tier needed for managed settings: Not in source.",
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Permission rules and hooks",
+      "first_principle": "Permission rules and hooks decide a tool call in code, so the result does not depend on what the model chooses.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "model",
+            "label": "Model requests a tool call",
+            "group": "claude"
+          },
+          {
+            "id": "hook",
+            "label": "PreToolUse hook",
+            "group": "control"
+          },
+          {
+            "id": "rules",
+            "label": "Deny, ask, and allow rules",
+            "group": "control"
+          },
+          {
+            "id": "tool",
+            "label": "Tool runs",
+            "group": "client"
+          },
+          {
+            "id": "post",
+            "label": "PostToolUse hook runs lint or tests",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "model",
+            "to": "hook",
+            "label": "tool call"
+          },
+          {
+            "from": "hook",
+            "to": "rules",
+            "label": "exit code 2 blocks here"
+          },
+          {
+            "from": "rules",
+            "to": "tool",
+            "label": "allow proceeds"
+          },
+          {
+            "from": "tool",
+            "to": "post",
+            "label": "after a successful edit"
+          }
+        ]
+      },
+      "steps": [
+        "The model requests a tool call, such as an edit or a shell command.",
+        "PreToolUse hooks run before the permission prompt.",
+        "Claude Code evaluates deny rules first, then ask rules, then allow rules.",
+        "A deny rule for the call blocks it, even when a hook returns allow.",
+        "A PostToolUse hook runs after the tool call succeeds, for example to lint the edited file."
+      ],
+      "pros": [
+        "A deny rule holds even when the model wants to run the blocked command.",
+        "A hook runs the same check on every machine that has the committed file.",
+        "Rules name the tool, so the team can review them in one file. (Inference)"
+      ],
+      "cons": [
+        "A Bash rule matches the command text, so another form of the same program can pass.",
+        "A command hook runs shell code, so a bad hook can change files on every clone. (Inference)",
+        "A stalled PreToolUse hook does not block a call by default."
+      ],
+      "use_when": [
+        "A destructive command must never run in any session in the repository.",
+        "Every edit must trigger a lint or test command."
+      ],
+      "do_not_use_when": [
+        "The rule is a style preference, so CLAUDE.md is the better place.",
+        "The control must cover every process on the machine, so a sandbox is the better layer."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Deny secret file reads with Read rules in the shared settings file.",
+          "combination": "Add the same rule to managed settings when the organization requires it on every machine."
+        },
+        {
+          "family": "operations",
+          "choice": "Use a PostToolUse hook with an Edit or Write matcher for lint.",
+          "combination": "Use a PreToolUse hook with onFailure set to block when a failed check must stop the call."
+        },
+        {
+          "family": "scale",
+          "choice": "Use one deny rule for a path pattern instead of one rule per file.",
+          "combination": "Use an ask rule for the gray cases that need a person to decide."
+        },
+        {
+          "family": "isolation",
+          "choice": "Restrict subagent tools with the tools field in the agent file.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D7.1. Expect a scenario that asks how to block a tool or run a check on every edit. The credited answer uses a deny rule or a hook, not a prompt instruction. (Inference)",
+      "trap": "A PreToolUse hook that returns allow, which looks like approval. A deny rule still blocks the call, so the hook does not override the team policy.",
+      "decision_rule": "Use a deny rule to block a tool and a hook to run a check at a lifecycle event.",
+      "exam_tip": "If the stem says the model must not run a command, choose the deny rule over a note in the memory file.",
+      "key_facts": [
+        {
+          "text": "Permission rules evaluate in this order: deny, then ask, then allow.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "A PreToolUse hook decision does not bypass a deny rule.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "A PreToolUse hook that exits with code 2 blocks the tool call before permission rules run.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "The default timeout for a command hook is 600 seconds.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "Read and Edit deny rules apply to built-in file tools and to file commands that Bash recognizes.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "The sandbox adds OS-level enforcement that Read rules alone do not give.",
+          "url": "https://code.claude.com/docs/en/permissions",
+          "label": "Fact"
+        },
+        {
+          "text": "On PreToolUse, a timed-out command hook does not block the tool call unless onFailure is set to block.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "CLAUDE.md and subagent guidance",
+      "first_principle": "Guidance files shape how the model works, and they cannot stop a tool call.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "memory",
+            "label": "CLAUDE.md files",
+            "group": "data"
+          },
+          {
+            "id": "agent",
+            "label": "Subagent file with tools list",
+            "group": "client"
+          },
+          {
+            "id": "session",
+            "label": "Claude Code session",
+            "group": "claude"
+          },
+          {
+            "id": "rules",
+            "label": "Permission rules",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "memory",
+            "to": "session",
+            "label": "loaded as context"
+          },
+          {
+            "from": "agent",
+            "to": "session",
+            "label": "delegated task"
+          },
+          {
+            "from": "session",
+            "to": "rules",
+            "label": "every tool call"
+          }
+        ]
+      },
+      "steps": [
+        "Claude Code loads CLAUDE.md files from the current directory and its parents at launch.",
+        "Claude reads the CLAUDE.md content and tries to follow it.",
+        "A subagent file sets a tools field that limits the tools the subagent can use.",
+        "Permission rules still decide every tool call the subagent makes.",
+        "Move a control that must hold into a permission rule or a hook."
+      ],
+      "pros": [
+        "CLAUDE.md is fast to write and shapes style and conventions.",
+        "A subagent with a read-only tools list cannot write files.",
+        "Team files are committed, so every clone gets the same guidance."
+      ],
+      "cons": [
+        "A CLAUDE.md line gives no guarantee of compliance, especially for vague instructions.",
+        "A long CLAUDE.md file uses more context and reduces adherence.",
+        "Plugin subagents do not support the hooks, mcpServers, or permissionMode fields."
+      ],
+      "use_when": [
+        "The team wants a style convention that the model follows across sessions.",
+        "A research task needs a subagent that only reads files."
+      ],
+      "do_not_use_when": [
+        "The rule must block an action, because a note cannot stop a tool call.",
+        "The guidance applies to one folder only and a path-scoped rule file fits better."
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Use CLAUDE.md for behavior guidance and settings for enforcement.",
+          "combination": "Deploy a managed CLAUDE.md file when every user needs the same guidance."
+        },
+        {
+          "family": "scale",
+          "choice": "Split long guidance into files under .claude/rules/.",
+          "combination": "Add a paths field to a rule file so it loads only for files that match."
+        },
+        {
+          "family": "skill",
+          "choice": "Put a repeatable workflow in a skill folder under .claude/skills/.",
+          "combination": "Use the skill description so the model loads the skill when the task matches."
+        },
+        {
+          "family": "isolation",
+          "choice": "Give a research subagent only the Read and Grep tools.",
+          "combination": "Name the subagent in the agents folder so the team can invoke it by name."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D7.1. Expect a scenario that mixes a convention with a security need. The credited answer keeps the convention in CLAUDE.md and moves the security need to settings. (Inference)",
+      "trap": "A bigger model with a long CLAUDE.md file, expected to enforce a secret rule. Adherence to guidance is not a lock, so the rule belongs in permissions.",
+      "decision_rule": "Write a convention in CLAUDE.md, and write a required block in a permission rule.",
+      "exam_tip": "If an answer relies on the model to follow a note for safety, reject it and look for a deny rule.",
+      "key_facts": [
+        {
+          "text": "Claude treats CLAUDE.md files as context, not enforced configuration.",
+          "url": "https://code.claude.com/docs/en/memory",
+          "label": "Fact"
+        },
+        {
+          "text": "Keep each CLAUDE.md file under 200 lines.",
+          "url": "https://code.claude.com/docs/en/memory",
+          "label": "Fact"
+        },
+        {
+          "text": "A subagent without a tools field inherits every tool available to subagents.",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "label": "Fact"
+        },
+        {
+          "text": "Managed subagent definitions take precedence over project and user subagents with the same name.",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "label": "Fact"
+        },
+        {
+          "text": "Plugin subagents do not support the hooks, mcpServers, or permissionMode frontmatter fields.",
+          "url": "https://code.claude.com/docs/en/sub-agents",
+          "label": "Fact"
+        },
+        {
+          "text": "Project skills load from .claude/skills/ and commit with the repository.",
+          "url": "https://code.claude.com/docs/en/skills",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Must the rule hold even if the model disagrees?} -->|No| G[Convention in CLAUDE.md]\n  A -->|Yes| B{Is the control a tool permission?}\n  B -->|Yes| C[Deny or ask rule in settings]\n  B -->|No| D[Hook at a lifecycle event]\n  C --> E{Must every developer machine enforce it?}\n  E -->|Yes| F[Managed settings]\n  E -->|No| H[Committed shared settings file]\n  D --> H",
+  "cheatsheet": "flowchart LR\n  M[Managed file] --> P[Permission check]\n  S[Shared file in repo] --> P\n  L[Local file] --> P\n  S --> K[Hooks]\n  P --> X[Deny beats allow]\n  G[CLAUDE.md] --> Z[Guidance only]\n  T[Subagent tools list] --> Y[Read only]",
+  "patterns": [
+    {
+      "wording": "stop the agent from opening secret files on every clone",
+      "answer_type": "deny rules in the shared settings file",
+      "rule": "Put the deny rule in the team file. A note in CLAUDE.md does not block a read.",
+      "traps": [
+        "A CLAUDE.md note that asks the agent not to read secrets",
+        "A deny rule in one developer local file only"
+      ]
+    },
+    {
+      "wording": "one developer needs an exception to the team permissions",
+      "answer_type": "local settings override",
+      "rule": "Put the personal exception in the local file. A deny rule from any scope still applies.",
+      "traps": [
+        "A change to the committed shared file for one person",
+        "A user-level allow rule that expects to override a project deny"
+      ]
+    },
+    {
+      "wording": "every edit must run the lint command",
+      "answer_type": "PostToolUse hook in the shared settings file",
+      "rule": "Use a hook for a step that must run after each edit.",
+      "traps": [
+        "A CLAUDE.md line that asks the model to run lint",
+        "A PreToolUse hook used for a step that runs after the edit"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for team configuration: Not in source.",
+    "Organization plan tier needed for managed settings: Not in source."
+  ],
+  "sources": [
+    "https://code.claude.com/docs/en/settings",
+    "https://code.claude.com/docs/en/settings-reference",
+    "https://code.claude.com/docs/en/settings-example",
+    "https://code.claude.com/docs/en/permissions",
+    "https://code.claude.com/docs/en/memory",
+    "https://code.claude.com/docs/en/hooks",
+    "https://code.claude.com/docs/en/hooks-guide",
+    "https://code.claude.com/docs/en/managed-settings",
+    "https://code.claude.com/docs/en/sub-agents",
+    "https://code.claude.com/docs/en/skills",
+    "https://code.claude.com/docs/en/mcp",
+    "https://code.claude.com/docs/en/amazon-bedrock",
+    "https://code.claude.com/docs/en/microsoft-foundry",
+    "https://code.claude.com/docs/en/claude-platform-on-aws"
+  ]
+}

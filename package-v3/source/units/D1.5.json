@@ -1,0 +1,387 @@
+{
+  "id": "D1.5",
+  "domain": "D1",
+  "title": "Task decomposition",
+  "task_statement": "Split a large task into bounded pieces, merge the results, and check the merged result in code. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Fan-out with a merge step",
+      "first_principle": "Independent pieces run in parallel, and each piece gets a bounded input and a fixed output format. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "src",
+            "label": "Source documents",
+            "group": "data"
+          },
+          {
+            "id": "split",
+            "label": "Splitter in code",
+            "group": "control"
+          },
+          {
+            "id": "p1",
+            "label": "Model call for piece one",
+            "group": "claude"
+          },
+          {
+            "id": "p2",
+            "label": "Model call for piece two",
+            "group": "claude"
+          },
+          {
+            "id": "merge",
+            "label": "Merge and totals check in code",
+            "group": "control"
+          },
+          {
+            "id": "out",
+            "label": "Validated report",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "src",
+            "to": "split",
+            "label": "divide by section"
+          },
+          {
+            "from": "split",
+            "to": "p1",
+            "label": "piece one"
+          },
+          {
+            "from": "split",
+            "to": "p2",
+            "label": "piece two"
+          },
+          {
+            "from": "p1",
+            "to": "merge",
+            "label": "result one"
+          },
+          {
+            "from": "p2",
+            "to": "merge",
+            "label": "result two"
+          },
+          {
+            "from": "merge",
+            "to": "out",
+            "label": "checked output"
+          }
+        ]
+      },
+      "steps": [
+        "Divide the source at natural section boundaries.",
+        "Send each piece to Claude with its own instructions and a size limit.",
+        "Run independent calls in parallel, or send them as a batch when no answer is needed at once.",
+        "Collect each piece result in one fixed output format.",
+        "Merge the results in code, and check the totals or the citations."
+      ],
+      "pros": [
+        "Each piece gets focused context. (Inference)",
+        "A failed piece can run again alone. (Inference)",
+        "Batch processing lowers the token cost for work that can wait."
+      ],
+      "cons": [
+        "The merge is one more failure point. (Inference)",
+        "Pieces cannot see each other's context unless you pass it. (Inference)",
+        "Batch results can take up to 24 hours."
+      ],
+      "use_when": [
+        "The pieces are independent, and each piece needs full attention. (Inference)",
+        "Each number in the output must cite its source. (Inference)",
+        "The work is large and does not need an answer right away."
+      ],
+      "do_not_use_when": [
+        "One bounded call with one focus can finish the task. (Inference)",
+        "Each step needs the full result of the step before it. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Send the pieces that need no immediate answer through the Message Batches API.",
+          "combination": "Keep interactive pieces on the synchronous API. (Inference)"
+        },
+        {
+          "family": "scale",
+          "choice": "Keep each batch under 100,000 requests and 256 MB.",
+          "combination": "Split a larger job into several batches."
+        },
+        {
+          "family": "latency",
+          "choice": "Parallelize the pieces when the deadline is short.",
+          "combination": "Batch the pieces that can wait up to 24 hours."
+        },
+        {
+          "family": "operations",
+          "choice": "Store the piece ID with each result. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source for platform-specific batch limits.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D1.5. Expect a long input with independent sections and a traceability need. The credited answer uses fan-out, limits per piece, and a merge check in code. (Inference)",
+      "trap": "One large call over the whole input. Long inputs weaken focus on the middle parts, and one error fails the whole run. (Inference)",
+      "decision_rule": "Split at independent seams, and check the merged result in code.",
+      "exam_tip": "If the stem asks for a check on every number, pick the option with a code check after the merge. (Inference)",
+      "key_facts": [
+        {
+          "text": "A batch holds up to 100,000 Message requests or 256 MB, whichever is reached first.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+          "label": "Fact"
+        },
+        {
+          "text": "Most batches finish within 1 hour.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+          "label": "Fact"
+        },
+        {
+          "text": "Batch results are available for 29 days after creation.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+          "label": "Fact"
+        },
+        {
+          "text": "Batch processing gives a 50 percent discount on input and output tokens.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Citation format for each piece: Not in source. (Inference: repo lesson uses a citation field)",
+        "Piece size limit in tokens: Not in source.",
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Chain and context control",
+      "first_principle": "Ordered steps pass each output to the next step, so a check between steps keeps an early error out of later steps. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "s1",
+            "label": "Step one model call",
+            "group": "claude"
+          },
+          {
+            "id": "o1",
+            "label": "Step one output",
+            "group": "data"
+          },
+          {
+            "id": "check",
+            "label": "Check between steps in code",
+            "group": "control"
+          },
+          {
+            "id": "s2",
+            "label": "Step two model call",
+            "group": "claude"
+          },
+          {
+            "id": "comp",
+            "label": "Server-side compaction of older turns",
+            "group": "cloud"
+          },
+          {
+            "id": "final",
+            "label": "Final output",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "s1",
+            "to": "o1",
+            "label": "output"
+          },
+          {
+            "from": "o1",
+            "to": "check",
+            "label": "validate"
+          },
+          {
+            "from": "check",
+            "to": "s2",
+            "label": "next input"
+          },
+          {
+            "from": "s2",
+            "to": "comp",
+            "label": "long history"
+          },
+          {
+            "from": "comp",
+            "to": "s2",
+            "label": "summary replaces older turns"
+          },
+          {
+            "from": "s2",
+            "to": "final",
+            "label": "result"
+          }
+        ]
+      },
+      "steps": [
+        "Order the steps that depend on the output of an earlier step.",
+        "Check each step output in code before the next step starts.",
+        "Pass only the fields that the next step needs.",
+        "Use compaction when the conversation history nears the context window limit.",
+        "Stop the chain at the first failed check, and run that step again alone."
+      ],
+      "pros": [
+        "A check between steps localizes an error. (Inference)",
+        "Compaction keeps a long task inside the context window without summary code of your own.",
+        "Each step gets a small, specific input. (Inference)"
+      ],
+      "cons": [
+        "Errors compound across steps when no check runs. (Inference)",
+        "Latency adds up across sequential steps. (Inference)",
+        "Compaction is in beta, and on-demand compaction is the preferred form."
+      ],
+      "use_when": [
+        "Step B needs the result of step A.",
+        "A long agent task must stay inside the context window."
+      ],
+      "do_not_use_when": [
+        "The steps are independent and can run in parallel. (Inference)",
+        "One short task fits in one call. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "latency",
+          "choice": "Chain only the steps that need the previous output.",
+          "combination": "Run independent steps in parallel. (Inference)"
+        },
+        {
+          "family": "scale",
+          "choice": "Use on-demand compaction where it is available.",
+          "combination": "Use compaction at a token threshold only when on-demand compaction does not fit. (Inference)"
+        },
+        {
+          "family": "skill",
+          "choice": "Write each step with one job and a fixed output format. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Log each step input and check result. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Compaction on demand and compaction at a token threshold are both in beta.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Compaction on demand and compaction at a token threshold are both in beta.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Compaction on demand and compaction at a token threshold are both in beta.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand"
+        },
+        {
+          "service": "Amazon Bedrock",
+          "text": "Compaction at a token threshold is in beta. Compaction on demand is not in its platform list.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-threshold"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D1.5. Expect ordered work where an early error would spread. The credited answer chains the steps and checks each output before the next step. (Inference)",
+      "trap": "A chain with no check between steps. The first wrong output becomes the input for every later step. (Inference)",
+      "decision_rule": "Chain only the steps that need the previous output, and check each output before the next step.",
+      "exam_tip": "If the stem names an ordered dependency, pick the chain with a check between steps. (Inference)",
+      "key_facts": [
+        {
+          "text": "Compaction replaces older turns with a summary that Claude writes on the server.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction",
+          "label": "Fact"
+        },
+        {
+          "text": "Compaction on demand covers more common use cases, and both compaction forms are in beta.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction",
+          "label": "Fact"
+        },
+        {
+          "text": "Response quality degrades as a conversation grows.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction",
+          "label": "Fact"
+        },
+        {
+          "text": "The API does not prescribe an execution order for tool calls in one turn.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use",
+          "label": "Fact"
+        },
+        {
+          "text": "A threshold compaction trigger must be at least 50,000 input tokens, and the default trigger is 150,000.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/compaction-threshold",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Compaction availability on Claude Models on Google Cloud (Anthropic managed): Not in source.",
+        "Console steps: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Pieces depend on each other?} -->|Yes| B[Chain with check between steps]\n  A -->|No| C{Answer needed right away?}\n  C -->|Yes| D[Parallel calls with merge check]\n  C -->|No| E[Message Batches API with merge check]\n  B --> F[Compact history if it grows]",
+  "cheatsheet": "flowchart LR\n  T[Large task] --> S[Split at seams]\n  S --> P[Parallel pieces]\n  S --> C[Ordered chain]\n  P --> M[Merge in code]\n  C --> K[Check each step]\n  M --> V[Totals and citations]\n  C --> Q[Compaction]\n  P --> B[Batch when no rush]",
+  "patterns": [
+    {
+      "wording": "a long input with independent sections and a traceability need",
+      "answer_type": "fan-out with citations and a merge check",
+      "rule": "Split at section seams. Check the merged totals in code.",
+      "traps": [
+        "One large call",
+        "Chain of unrelated sections"
+      ]
+    },
+    {
+      "wording": "steps that depend on earlier output",
+      "answer_type": "chain with a check between steps",
+      "rule": "Chain only dependent steps. Check each output before the next call.",
+      "traps": [
+        "Parallel calls for dependent steps",
+        "Chain with no check"
+      ]
+    },
+    {
+      "wording": "bulk work with no answer needed at once",
+      "answer_type": "batch processing",
+      "rule": "Use the Message Batches API for bulk work that can wait.",
+      "traps": [
+        "Synchronous calls for a large backlog",
+        "Batch for an interactive user request"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Repo lesson limits of 12 department updates or 30 meetings as official figures: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/build-with-claude/compaction",
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use",
+    "https://platform.claude.com/docs/en/build-with-claude/compaction-on-demand",
+    "https://platform.claude.com/docs/en/build-with-claude/compaction-threshold"
+  ]
+}

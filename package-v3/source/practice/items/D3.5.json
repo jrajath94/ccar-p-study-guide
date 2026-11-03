@@ -1,0 +1,57 @@
+{
+  "unit": "D3.5",
+  "items": [
+    {
+      "id": "D3.5-1",
+      "select": 1,
+      "stem": "A support answer must name the source of each claim. The response must stay free text, with no JSON schema. Which change meets both constraints?",
+      "options": [
+        "Ask the model in the prompt to list sources after each claim.",
+        "Pass each chunk as a search result block with source and title, and enable citations.",
+        "Pass each chunk as search results with citations disabled, and add a reranker before the call.",
+        "Enable structured outputs with a source field for each claim."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "Each citation links a claim to a search result block that carries your source and title. Citations are disabled by default, so the request must enable them.",
+      "trap": "A prompt that asks for sources looks equivalent, but the names are not tied to retrieved blocks, so you cannot check them (Inference).",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/search-results"
+    },
+    {
+      "id": "D3.5-2",
+      "select": 1,
+      "stem": "A policy document has tables split across chunks, and answers cite the wrong row. Each citation must point to one table row.",
+      "options": [
+        "Keep sentence chunking, and switch to a larger generation model.",
+        "Send each table as a plain text document, and switch to the largest embedding model.",
+        "Build one custom content block per table row, sent as a custom content document.",
+        "Turn on contextual retrieval, so the table rows group automatically."
+      ],
+      "correct": [
+        2
+      ],
+      "rationale": "Custom content documents keep your blocks as they are, with no further chunking. Each row block can then be cited on its own.",
+      "trap": "Contextual retrieval looks like a table fix, but the docs do not describe it.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/citations"
+    },
+    {
+      "id": "D3.5-3",
+      "select": 2,
+      "stem": "The right passage appears in the candidate list, but it ranks low. The answer model needs that passage among the top passages. Which two changes meet the ranking constraint?",
+      "options": [
+        "Switch to a larger generation model, with the same candidate list.",
+        "Add a reranker that reorders the candidate list for the query.",
+        "Set input_type to None on the query embedding, so ranking uses raw similarity.",
+        "Send only the top reranked passages to the answer model."
+      ],
+      "correct": [
+        1,
+        3
+      ],
+      "rationale": "A reranker returns candidates in relevance order for the query. The top reranked passages then reach the answer model.",
+      "trap": "A larger generation model looks like the fix, but it does not change the candidate order (Inference).",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/embeddings"
+    }
+  ]
+}

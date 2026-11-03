@@ -1,0 +1,50 @@
+{
+  "unit": "D2.1",
+  "items": [
+    {
+      "id": "D2.1-1",
+      "select": 1,
+      "stem": "A ticket router classifies five million tickets each month. Claude Haiku 5.5 clears the measured quality floor on the team's test set. The constraint: use the lowest-cost tier that clears the floor. Which choice meets the constraint?",
+      "options": [
+        "Route every ticket to claude-haiku-5-5, the lowest tier that clears the floor.",
+        "Route every ticket to Claude Haiku 4.5, which costs less per million tokens than Haiku 5.5.",
+        "Route every ticket to Claude Fable 5.1, the top tier, for the highest safety margin.",
+        "Set effort to max on Claude Haiku 5.5, which moves its price to the Sonnet tier."
+      ],
+      "correct": [0],
+      "rationale": "The lowest tier that clears the measured floor has the lowest price for the work. Haiku 5.5 costs 0.10 dollars per million input tokens for prompts up to 100,000 tokens.",
+      "trap": "Fable 5.1 for every ticket looks safest, but it adds cost that the measured floor does not require.",
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "id": "D2.1-2",
+      "select": 1,
+      "stem": "A code assistant runs on Claude Haiku 5.5. It misses the quality floor on about 8 percent of requests at the default effort. The team must keep the same model and raise quality with the least change. Which change meets the constraint?",
+      "options": [
+        "Move all traffic to Claude Fable 5.1, which clears the floor on every request.",
+        "Raise effort to high only for the requests that miss the floor, and keep the medium default for the rest.",
+        "Set a thinking budget_tokens value of 20,000 on Haiku 5.5 to raise thinking depth.",
+        "Set effort to xhigh on every request and rebuild the eval set with extra checks."
+      ],
+      "correct": [1],
+      "rationale": "Effort is set per request on the same model, so only the requests that miss the floor get more effort. Haiku 5.5 supports high effort, and its default is medium.",
+      "trap": "A thinking budget looks like a direct depth control, but budget_tokens returns a 400 error on Haiku 5.5.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/effort"
+    },
+    {
+      "id": "D2.1-3",
+      "select": 2,
+      "stem": "A team runs one extraction task on Claude Haiku 5.5. Most requests clear the quality floor at the default effort. The constraint: keep cost and latency low while the quality floor holds. Which two options meet the constraint?",
+      "options": [
+        "Send all traffic to Claude Opus 5.5, so every request clears the floor.",
+        "Keep Haiku 5.5 for all traffic, and set low effort for simple requests.",
+        "Set a thinking budget_tokens value on Haiku 5.5 to cut output tokens.",
+        "Escalate only the requests that miss the floor to Claude Sonnet 5.5."
+      ],
+      "correct": [1, 3],
+      "rationale": "Haiku 5.5 is the lowest-priced current model in this set and handles most requests. Low effort reduces thinking on simple requests, and escalation sends only the misses to a higher tier.",
+      "trap": "Opus 5.5 for all traffic looks like a safe floor, but it raises cost for requests that Haiku 5.5 already clears.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/effort"
+    }
+  ]
+}

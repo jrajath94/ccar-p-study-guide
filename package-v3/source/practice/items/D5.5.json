@@ -1,0 +1,50 @@
+{
+  "unit": "D5.5",
+  "items": [
+    {
+      "id": "D5.5-1",
+      "select": 1,
+      "stem": "A marketplace moderates listings in six languages. The rules change every month. The team must update the rules without new labeled training data. Which design meets the constraint?",
+      "options": [
+        "Retrain a custom classifier for each language after every rule change.",
+        "Use the built-in safety classifiers as the marketplace rules.",
+        "Put the written rules and edge-case examples in the prompt, and constrain the verdict with a JSON schema.",
+        "Put the written rules in the prompt, and have a person approve every verdict before a listing goes live."
+      ],
+      "correct": [2],
+      "rationale": "The written rules and examples in the prompt are the control, so a rule change needs an edit to text, not new training data. A JSON schema keeps each verdict parseable.",
+      "trap": "A custom classifier for each language looks rigorous, but each rule change then needs new labels and a new training cycle.",
+      "source": "https://platform.claude.com/docs/en/about-claude/use-case-guides/content-moderation"
+    },
+    {
+      "id": "D5.5-2",
+      "select": 1,
+      "stem": "A compliance dashboard must count declined requests by policy area. The team cannot change the model. Which method meets the constraint?",
+      "options": [
+        "HTTP error responses look like the standard count, since each declined request returns an error status code.",
+        "Read stop_reason on each response, and count the stop_details category when stop_reason is refusal.",
+        "Read the category value from the usage field, which lists the policy area of each call.",
+        "Log every full prompt, response, and header for each call, then sort the logs by policy area."
+      ],
+      "correct": [1],
+      "rationale": "A decline arrives as a regular response with the stop reason refusal, not as an error. The stop_details category names the policy area, so the count needs no error parsing.",
+      "trap": "HTTP error responses look like the standard count, but a decline returns a normal response with a stop reason.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback"
+    },
+    {
+      "id": "D5.5-3",
+      "select": 2,
+      "stem": "A release review asks for evidence that the product works for each user group. The review also asks which model the product uses. Select two actions that meet both requests.",
+      "options": [
+        "Build an evaluation set with a group label for each user group, and set a floor for each group.",
+        "Cite the model system card as the fairness result for product users.",
+        "Request subgroup fairness metrics that Anthropic publishes for each Claude model.",
+        "Record the model system card link and the exact model ID in the release record."
+      ],
+      "correct": [0, 3],
+      "rationale": "The per-group evaluation tests the product on its own users, and a floor blocks a release that fails one group. (Inference) The system card and the exact model ID document the model that the product uses.",
+      "trap": "A system card cited as fairness evidence looks sufficient, but the card describes model tests, not the product users.",
+      "source": "https://platform.claude.com/docs/en/resources/overview"
+    }
+  ]
+}

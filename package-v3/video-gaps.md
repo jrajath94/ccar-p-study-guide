@@ -1,0 +1,236 @@
+# Video gaps
+
+The video covers the curriculum units only. It contains no practice question text.
+
+The items below are not in the official docs. The video must not state them as fact.
+
+- F1 Token cost model. Per-model Google Cloud list prices for Claude models. The docs link to Google Cloud pricing pages. Not in source.
+- F1 Token cost model. Monthly spend for any sample workload. Not in source.
+- F1 Spend caps and usage tiers. Alert threshold percentages for workspace spend. The docs say alerts exist, but they name no values. Not in source.
+- F1 Spend caps and usage tiers. Delay between a cap notice and the email delivery. Not in source.
+- F1 Acceptance thresholds for model output. A default accuracy target for model output. Not in source.
+- F1 Acceptance thresholds for model output. A default size for an evaluation set. Not in source.
+- F2 Context window. Accuracy loss percentage at a given token count. Not in source.
+- F2 Context window. Token count for text in a language other than English. Not in source.
+- F2 Model tier choice. A quality score that separates the tiers for one task. Not in source.
+- F2 Tool call loop. Maximum number of tool calls per turn. Not in source.
+- F3 Error classes and retry. Default backoff delay in seconds for the SDK. Not in source.
+- F3 Error classes and retry. Whether a 529 error uses a different retry limit than a 500 error. Not in source.
+- F3 Timeouts and long requests. Idle connection timeout value for each network. Not in source.
+- F3 Timeouts and long requests. Exact wait time for one batch request. Not in source.
+- F3 Streaming events and errors. Maximum number of ping events in a stream. Not in source.
+- F4 API keys and workspace scope. Key rotation interval that Anthropic recommends. Not in source.
+- F4 API keys and workspace scope. Maximum number of keys for each workspace. Not in source.
+- F4 Workload identity federation. Time that the Console keeps authentication history. Not in source.
+- F4 Data retention and encryption. Retention period for Console usage data. The docs say the Console is outside ZDR and name no period. Not in source.
+- D1.1 Use-case fit and lane choice. Haiku 5.5 access on Amazon Bedrock: Not in source.
+- D1.1 Use-case fit and lane choice. Timeouts and quotas for each native service beyond the rate limit notes above: Not in source.
+- D1.1 Use-case fit and lane choice. Repo tier names Fast, Balanced, and Capable with input prices of 1, 2, and 4 dollars per million tokens: Not in source.
+- D1.1 Use-case fit and lane choice. Console steps: Not in source.
+- D1.1 Success criteria and evals. Pass rate threshold for any product: Not in source.
+- D1.1 Success criteria and evals. Repo toy holdout size of 500 invoices: Not in source.
+- D1.1 Success criteria and evals. Console steps: Not in source.
+- D1.2 Request loop with state in the application. Default timeout for Messages API calls: Not in source.
+- D1.2 Request loop with state in the application. Latency budget for each stage: Not in source.
+- D1.2 Request loop with state in the application. Console steps: Not in source.
+- D1.2 Verification and output gates. Share of schema-compliant outputs that pass a value check in production: Not in source.
+- D1.2 Verification and output gates. Latency added by each gate: Not in source.
+- D1.2 Verification and output gates. Console steps: Not in source.
+- D1.3 Tool-use loop in application code. Tool count limit for a single request: Not in source.
+- D1.3 Tool-use loop in application code. Console steps: Not in source.
+- D1.3 Agent loop with model-planned steps. Official names for workflow, orchestrator-workers, or routing patterns: Not in source.
+- D1.3 Agent loop with model-planned steps. Seven-axis scoring for pattern choice: Not in source. The repo lesson uses it as general practice. (Inference)
+- D1.3 Agent loop with model-planned steps. Cost ratio of an agent run to a workflow run: Not in source.
+- D1.3 Agent loop with model-planned steps. Console steps: Not in source.
+- D1.4 Subagent delegation. Timeout for a subagent: Not in source.
+- D1.4 Subagent delegation. Concurrency limit for Agent SDK subagents: Not in source.
+- D1.4 Subagent delegation. Rule for subagent outputs that differ: Not in source. (Inference: general practice)
+- D1.4 Subagent delegation. Console steps: Not in source.
+- D1.4 Dynamic workflow runs. Maximum number of phases in a workflow run: Not in source.
+- D1.4 Dynamic workflow runs. Maximum number of agents in a workflow run: Not in source.
+- D1.4 Dynamic workflow runs. Console steps: Not in source.
+- D1.5 Fan-out with a merge step. Citation format for each piece: Not in source. (Inference: repo lesson uses a citation field)
+- D1.5 Fan-out with a merge step. Piece size limit in tokens: Not in source.
+- D1.5 Fan-out with a merge step. Console steps: Not in source.
+- D1.5 Chain and context control. Compaction availability on Claude Models on Google Cloud (Anthropic managed): Not in source.
+- D1.5 Chain and context control. Console steps: Not in source.
+- D1.6 Unit cost from published prices. Repo tier names Fast, Balanced, and Capable with prices of 1, 2, and 4 dollars per million tokens: Not in source.
+- D1.6 Unit cost from published prices. Output length for a typical request: Not in source.
+- D1.6 Unit cost from published prices. Console steps: Not in source.
+- D1.6 Value guards for quality and spend. Incident cost per error and wage rate per hour: Not in source.
+- D1.6 Value guards for quality and spend. Official value equation for AI business cases: Not in source. The repo lesson uses it as general practice. (Inference)
+- D1.6 Value guards for quality and spend. Console steps: Not in source.
+- D2.1 Model tier selection. Accuracy target for any task or tier: Not in source.
+- D2.1 Model tier selection. Confidence check design for a routing setup: Not in source.
+- D2.1 Model tier selection. Latency values in seconds for each tier: Not in source.
+- D2.1 Effort and adaptive thinking. Token savings percentage for each effort level: Not in source.
+- D2.1 Effort and adaptive thinking. Per-message effort on Microsoft Foundry and Claude Platform on AWS: Not in source.
+- D2.2 System prompt with role, scope, and rules. Block rate for a jailbreak screen: Not in source.
+- D2.2 System prompt with role, scope, and rules. Console steps for system prompts: Not in source.
+- D2.2 Structured outputs as the output contract. Platform-specific structured output limits beyond the shared page: Not in source.
+- D2.3 Few-shot examples in multishot prompts. Accuracy gain for a specific example count: Not in source.
+- D2.3 Few-shot examples in multishot prompts. Console steps for examples: Not in source.
+- D2.3 Adaptive thinking and manual chain of thought. Thinking budget in tokens for Claude Haiku 5.5: Not in source.
+- D2.3 Prefill replacement. Console steps for prefill migration: Not in source.
+- D2.4 Context window and token counting. Accuracy percentage of the token count estimate: Not in source.
+- D2.4 Context window and token counting. Console steps for token counting: Not in source.
+- D2.4 Compaction of older turns. Summary length in tokens: Not in source.
+- D2.4 Compaction of older turns. Console steps for compaction: Not in source.
+- D2.4 Compaction of older turns. Compaction on demand on Amazon Bedrock: Not in source.
+- D2.4 Context editing by rule. Platform support for context editing beyond the Claude API: Not in source.
+- D2.4 Context editing by rule. Console steps for context editing: Not in source.
+- D2.5 Prompt caching. Bedrock per-model minimum cacheable length. The Claude docs point to the AWS docs. Not in source.
+- D2.5 Automatic caching versus explicit breakpoints. Console steps for automatic caching: Not in source.
+- D2.5 Automatic caching versus explicit breakpoints. Per-platform TTL prices beyond the pricing table: Not in source.
+- D2.5 Prompt reuse with templates. A built-in prompt template feature in the Claude Console: Not in source.
+- D2.5 Prompt reuse with templates. Limits on the number of stored template versions: Not in source.
+- D2.5 Prompt reuse with templates. Console steps for prompt templates: Not in source.
+- D3.1 Tool surface scope. Tool count at which accuracy falls on Microsoft Foundry or Claude Models on Google Cloud. Not in source.
+- D3.1 Tool surface scope. Token count per tool definition for a typical tool. Not in source.
+- D3.1 Tool search with deferred tools. Latency added by each search. Not in source.
+- D3.1 Tool search with deferred tools. Tool search support on Microsoft Foundry. Not in source.
+- D3.1 Tool definition quality. Exact accuracy gain from a merged tool. Not in source.
+- D3.1 Tool definition quality. Token count per description word. Not in source.
+- D3.2 Per-user delegation to MCP servers. The MCP audience check through RFC 8707 and the token passthrough ban. Not in source.
+- D3.2 Per-user delegation to MCP servers. Dynamic client registration status in the MCP authorization profile. Not in source.
+- D3.2 Per-user delegation to MCP servers. Revocation delay for a token that a server cached. Not in source.
+- D3.2 Workspace and API key boundary. Role limits for workspace admins on Claude Platform on AWS beyond the listed exceptions. Not in source.
+- D3.2 Cloud platform identity. Microsoft Foundry token lifetime for Entra ID tokens. Not in source.
+- D3.2 Cloud platform identity. Google managed IAM role names beyond the predict permission. Not in source.
+- D3.3 Model and effort choice for latency. Ablation receipts for accuracy per stage. The docs do not set this method. (Inference)
+- D3.3 Model and effort choice for latency. Fast mode latency gain on time to first token. Not in source.
+- D3.3 Streaming for perceived latency. Concurrent stream limit per workspace. Not in source.
+- D3.3 Streaming for perceived latency. Streaming support details on Microsoft Foundry. Not in source.
+- D3.3 Batch processing and service tiers for throughput. Amazon Bedrock batch inference details outside the Claude Messages path. Not in source.
+- D3.3 Batch processing and service tiers for throughput. Batch throughput in requests per second. Not in source.
+- D3.4 Request tracing with OpenTelemetry. Retention period for traces in each partner platform. Not in source.
+- D3.4 Request tracing with OpenTelemetry. Span delivery latency in seconds. Not in source.
+- D3.4 Usage, cost, and rate limit reports. Usage report retention period beyond the documented windows. Not in source.
+- D3.4 Usage, cost, and rate limit reports. Replacement headers for Anthropic rate limit values on Microsoft Foundry. Not in source.
+- D3.4 Claude Code and agent session telemetry. Telemetry backend retention and cost in dollars. Not in source.
+- D3.4 Claude Code and agent session telemetry. Claude Code telemetry on Claude Platform on AWS. Not in source.
+- D3.5 Search results with citations. Maximum number of search results per request: Not in source.
+- D3.5 Search results with citations. Recommended chunk size in tokens for search results: Not in source.
+- D3.5 Search results with citations. Contextual retrieval technique: Not in source. The mirror has no page for it.
+- D3.5 Embeddings and reranking models. Number of candidates to pass to the reranker: Not in source.
+- D3.5 Embeddings and reranking models. Chunk size in tokens for embedding inputs: Not in source.
+- D3.5 Embeddings and reranking models. Voyage AI prices: Not in source. The embeddings page points to MongoDB pricing pages.
+- D3.5 Embeddings and reranking models. Native platform support for Voyage AI embeddings on Amazon Bedrock: Not in source.
+- D3.5 Chunk granularity for citations. Recommended chunk size in tokens: Not in source.
+- D3.5 Chunk granularity for citations. Recommended chunk overlap: Not in source.
+- D3.5 Chunk granularity for citations. Chunk-level citation support for images in PDFs: Not in source. The citations page says images are not supported.
+- D3.6 Hybrid keyword and semantic retrieval. Keyword index design, tokenizer, and scoring formula: Not in source.
+- D3.6 Hybrid keyword and semantic retrieval. Rank fusion formula: Not in source.
+- D3.6 Hybrid keyword and semantic retrieval. Precision and recall targets for a retrieval stage: Not in source.
+- D3.6 Reranking candidates. Number of top k candidates to keep: Not in source.
+- D3.6 Reranking candidates. Rerank latency in milliseconds: Not in source.
+- D3.6 Reranking candidates. Rerank price per call: Not in source. The embeddings page points to MongoDB pricing.
+- D3.6 Live state through a tool call. Index refresh interval for a typical deployment: Not in source.
+- D3.6 Live state through a tool call. Latency budget for a tool call: Not in source.
+- D3.6 Live state through a tool call. Amazon Bedrock support for the MCP connector: Not in source.
+- D3.6 Live state through a tool call. Claude Models on Google Cloud support for the MCP connector: Not in source.
+- D3.7 MCP connector in the Messages API. Maximum number of MCP servers in one request: Not in source.
+- D3.7 MCP connector in the Messages API. Connector timeout values: Not in source.
+- D3.7 MCP connector in the Messages API. Amazon Bedrock support for the MCP connector: Not in source.
+- D3.7 MCP connector in the Messages API. Claude Models on Google Cloud support for the MCP connector: Not in source.
+- D3.7 MCP connector in the Messages API. Console steps for MCP connector setup: Not in source.
+- D3.7 Claude Code MCP servers. Maximum timeout value for a server entry: Not in source.
+- D3.7 Claude Code MCP servers. Maximum number of servers per developer machine: Not in source.
+- D3.7 Claude Code MCP servers. Console steps for Claude Code MCP setup: Not in source.
+- D3.8 Tool search tool in the Messages API. Token cost per tool definition in your app: Not in source.
+- D3.8 Tool search tool in the Messages API. Exact latency added by one search: Not in source.
+- D3.8 Tool search tool in the Messages API. Google Cloud support details for tool search: Not in source.
+- D3.8 Tool search tool in the Messages API. Console steps for tool search: Not in source.
+- D3.8 Agent SDK tool search. Exact point at which the SDK compacts messages in long sessions: Not in source.
+- D3.8 Agent SDK tool search. Native platform name for Google Cloud's Agent Platform in the exam service list: Not in source.
+- D3.8 Agent SDK tool search. Console steps for Agent SDK tool search: Not in source.
+- D3.8 Agent Skills progressive disclosure. Amazon Bedrock support for Agent Skills: Not in source.
+- D3.8 Agent Skills progressive disclosure. Maximum number of skills per workspace: Not in source.
+- D3.8 Agent Skills progressive disclosure. Console steps for Agent Skills: Not in source.
+- D4.1 Success criteria and primary metric. Numeric thresholds for task success in a production system. Not in source.
+- D4.1 Success criteria and primary metric. Steps for the evaluation tool in the Claude Console. Not in source.
+- D4.1 Cost and latency metrics. Latency targets for any model or effort level. Not in source.
+- D4.1 Cost and latency metrics. Console steps for cost monitoring beyond the Usage and Cost pages. Not in source.
+- D4.2 Evaluation dataset design. A target share of edge cases in an eval set. Not in source.
+- D4.2 Evaluation dataset design. Rates of disagreement between human labelers. Not in source.
+- D4.2 Graders for evaluations. A numeric agreement rate that makes an LLM grader reliable. Not in source.
+- D4.2 Graders for evaluations. Grader model choice for a specific task. Not in source.
+- D4.3 A/B test design. A formula or minimum sample size for an A/B test. Not in source.
+- D4.3 A/B test design. A statistical significance level that the docs recommend. Not in source.
+- D4.3 Iteration by model and effort. A general claim that newer models always cost less per task. Not in source.
+- D4.3 Iteration by model and effort. The effort level that fits a given workload. Not in source.
+- D4.4 Cache miss diagnosis. Exact fingerprint retention period. Not in source. The docs say only a short period.
+- D4.4 Grounding and consistency checks. The accuracy gain from best-of-N checks on any given task. Not in source.
+- D4.4 Grounding and consistency checks. The number of samples that a consistency check needs. Not in source.
+- D4.5 Batch processing for work that can wait. Batch pricing for each model on Amazon Bedrock. Not in source.
+- D4.5 Batch processing for work that can wait. Queue wait time for a batch of a given size. Not in source.
+- D4.5 Model tier and effort choice. Latency figures per tier on the same workload. Not in source.
+- D4.5 Model tier and effort choice. A quality floor value for any workload. Not in source.
+- D4.6 Usage and cost monitoring. Alert threshold values for cost per completed task. Not in source.
+- D4.6 Usage and cost monitoring. Usage and Cost API availability on Amazon Bedrock or Microsoft Foundry. Not in source.
+- D4.6 Traces and telemetry. Trace retention periods for any observability platform. Not in source.
+- D4.6 Traces and telemetry. Maximum content size default for each provider. Not in source.
+- D4.6 Model version lock and drift. Frequency of infrastructure updates. Not in source.
+- D4.6 Model version lock and drift. Notice period for each model retirement. Not in source.
+- D5.1 Input validation and untrusted-content handling. Accuracy rate of the screen or of the built-in classifiers. Not in source.
+- D5.1 Input validation and untrusted-content handling. Latency that one screen call adds. Not in source.
+- D5.1 Deterministic tool authorization gate. Cloud platform setting that enforces a Managed Agents permission policy outside the API. Not in source.
+- D5.1 Sandbox boundary for shell commands. Sandbox settings on Claude Platform on AWS or Amazon Bedrock. Not in source.
+- D5.1 Sandbox boundary for shell commands. Performance cost of the sandbox on each command. Not in source.
+- D5.2 Hallucination control with grounded quotes. Hallucination rate for any Claude model. Not in source.
+- D5.2 Hallucination control with grounded quotes. Token cost of quote extraction. Not in source.
+- D5.2 Cost exhaustion limits. Alert threshold values that the Console offers by default. Not in source.
+- D5.2 Fixed model IDs and retirement. Retirement dates for Amazon Bedrock and Google managed models. Not in source.
+- D5.2 Fixed model IDs and retirement. Supply-chain controls for third-party packages in the application. Not in source.
+- D5.3 Pre-action approval for irreversible actions. Reviewer headcount or shift length. Not in source.
+- D5.3 Pre-action approval for irreversible actions. Typical latency of one approval round trip. Not in source.
+- D5.3 Post-action review and monitoring. Sample rate for the offline reviewer. Not in source.
+- D5.3 Post-action review and monitoring. Rollback procedure for any specific tool. Not in source.
+- D5.3 Hook-based approval point in Claude Code. Approval service integration pattern for a custom hook. Not in source.
+- D5.3 Hook-based approval point in Claude Code. Hook process cost per call. Not in source.
+- D5.4 Retention limits and zero data retention. Timeline from ZDR request to enablement. Not in source.
+- D5.4 Retention limits and zero data retention. ZDR enablement steps for Microsoft Foundry. Not in source.
+- D5.4 Data residency with inference geo and workspace geo. Latency difference between US and global routing. Not in source.
+- D5.4 Customer-managed keys and audit evidence. Key rotation schedule that Anthropic applies to CMEK keys. Not in source.
+- D5.4 Customer-managed keys and audit evidence. CMEK support for Amazon Bedrock. Not in source.
+- D5.5 Content moderation with Claude. Moderation accuracy or false positive rate. Not in source.
+- D5.5 Content moderation with Claude. Accuracy by language for moderation. Not in source.
+- D5.5 Safety classifiers and refusal handling. Refusal rate for any category. Not in source.
+- D5.5 Safety classifiers and refusal handling. Fallback model choice for each refusal category. Not in source.
+- D5.5 Model documentation, transparency, and per-group evaluation. Bias, fairness, or subgroup metrics for any Claude model. Not in source.
+- D5.5 Model documentation, transparency, and per-group evaluation. Explainability methods for model decisions. Not in source.
+- D6.1 Success criteria and evaluation sets. Cloud platform steps for requirement discovery. The docs do not cover them. Not in source.
+- D6.1 Success criteria and evaluation sets. Question grid for discovery interviews. General practice, not in the docs. Not in source.
+- D6.1 Discovery question grid. Dimension list and grid layout. General practice, not in the docs. Not in source.
+- D6.2 Model pricing and cost per task. Price of a model on a platform absent from the pricing page. Not in source.
+- D6.2 Model pricing and cost per task. Cost per completed task for your own workload. Measure it on your traffic. Not in source.
+- D6.2 Cost per task measurement. Quality score threshold for each workload. Set it for each use case. Not in source.
+- D6.2 Five-field trade-off record. Five-field record format. General practice, not in the docs. Not in source.
+- D6.3 Usage and Cost API reads. Usage and cost endpoints on Amazon Bedrock. Not in source.
+- D6.3 Usage and Cost API reads. Dashboard refresh interval for your team. Not in source.
+- D6.3 Workspace spend and rate limits. Default requests per minute on Amazon Bedrock. Not in source.
+- D6.3 Workspace spend and rate limits. Exact Start tier rate limit values for Claude Platform on AWS. Not in source.
+- D6.3 Feedback contract with review triggers. Error budget formula and default allowance. General practice, not in the docs. Not in source.
+- D6.3 Feedback contract with review triggers. Breach consequence for a vendor contract. Not in source.
+- D6.4 Architecture decision record. Architecture decision record template or required fields. General practice, not in the docs. Not in source.
+- D6.4 Architecture decision record. Anthropic guidance on architecture decision records. Not in source.
+- D6.4 Model ID in decision records. Endpoint type effect on model behavior for Amazon Bedrock. Not in source.
+- D6.5 Lifecycle phase gates. Gate names and number of phases. General practice, not in the docs. Not in source.
+- D6.5 Model lifecycle states and retirement. Exact Amazon Bedrock retirement dates. The deprecations page points to the Bedrock model tables. Not in source.
+- D6.5 Model lifecycle states and retirement. Retirement date for a model after its tentative date. Not in source.
+- D6.5 Workspaces per environment. Workspace limits on platforms other than the Claude API. Not in source.
+- D6.5 Workspaces per environment. Promotion process from staging to production. Not in source.
+- D7.1 Shared settings and scopes. Organization plan tier needed for managed settings: Not in source.
+- D7.1 Shared settings and scopes. Console steps: Not in source.
+- D7.1 Permission rules and hooks. Console steps: Not in source.
+- D7.1 CLAUDE.md and subagent guidance. Console steps: Not in source.
+- D7.2 Headless runs. Console steps: Not in source.
+- D7.2 Headless runs. Quota or rate limit for scripted runs: Not in source.
+- D7.2 GitHub Actions workflows. Run count or minutes billed for GitHub Actions: Not in source.
+- D7.2 GitHub Actions workflows. Console steps: Not in source.
+- D7.2 Subagent roles for review and exploration. Console steps: Not in source.
+- D7.2 Subagent roles for review and exploration. Token limit for a subagent: Not in source.
+- D7.3 Diagnostic commands. Console steps: Not in source.
+- D7.3 Usage, cost, and telemetry. Console steps: Not in source.
+- D7.3 Usage, cost, and telemetry. Per-developer attribution on Bedrock, Foundry, or Google Cloud without a gateway: Not in source.
+- D7.3 Rewind and file snapshots. Console steps: Not in source.

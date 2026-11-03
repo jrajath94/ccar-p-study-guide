@@ -1,0 +1,50 @@
+{
+  "unit": "F1",
+  "items": [
+    {
+      "id": "F1-1",
+      "select": 1,
+      "stem": "A team plans a new workload on Claude Haiku 5.5. Each request has input tokens and output tokens, and each token class has its own rate. The team needs a monthly figure before launch and must build no new service. Which approach meets the constraint?",
+      "options": [
+        "Multiply the input tokens by the input rate and ignore the output tokens.",
+        "Build a usage service that writes each request and its usage to a database.",
+        "Multiply each token class by its own rate, add the classes, then scale by request volume and days.",
+        "Enable a workspace spend limit and report the limit as the monthly figure."
+      ],
+      "correct": [2],
+      "rationale": "Each token class has its own rate per million tokens, so the cost of one request is the sum of its classes. Scaling that cost by request volume and days gives the monthly figure without a new service.",
+      "trap": "The input-only estimate looks simple, but output tokens bill at their own rate, so it understates the bill.",
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    {
+      "id": "F1-2",
+      "select": 1,
+      "stem": "A finance owner wants a hard monthly stop on the spend of one team. The team's API keys currently sit in the Default Workspace. Which change meets the constraint?",
+      "options": [
+        "Set a spend limit on the Default Workspace that holds the team's keys.",
+        "Raise the rate limits for the team's model, which also caps its monthly spend.",
+        "Turn on usage reports, which stop requests when spend passes the budget.",
+        "Create a workspace for the team, create new keys there, and set its spend limit."
+      ],
+      "correct": [3],
+      "rationale": "The Default Workspace cannot have a spend limit. A separate workspace with its own spend limit stops that team's requests at the limit. Rate limits control requests per minute, not monthly spend.",
+      "trap": "Usage reports look like budget control, but a report alone does not stop usage.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/workspaces"
+    },
+    {
+      "id": "F1-3",
+      "select": 2,
+      "stem": "A team runs two Claude Haiku 5.5 workloads. Nightly reports can wait up to 24 hours, and a live chat feature needs answers at once. The team must forecast each workload at its correct rate. Which two statements meet the constraint?",
+      "options": [
+        "Price both workloads at the batch rate, which keeps one simple forecast.",
+        "Price the nightly reports at the batch rate, which is 50 percent below the base price.",
+        "Price the live chat at the cache hit rate, because chat prompts repeat.",
+        "Price the live chat at the base input and output rates per million tokens."
+      ],
+      "correct": [1, 3],
+      "rationale": "Batch pricing is 50 percent off and applies to work that can wait. Live chat needs answers at once, so it stays on the standard base rates.",
+      "trap": "Cache hit pricing looks like a discount for repeated chat prompts, but it applies only to the cached tokens, not the whole workload.",
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing"
+    }
+  ]
+}

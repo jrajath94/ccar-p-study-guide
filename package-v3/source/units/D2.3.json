@@ -1,0 +1,542 @@
+{
+  "id": "D2.3",
+  "domain": "D2",
+  "title": "Prompt techniques",
+  "task_statement": "Pick the simplest prompt technique that clears a measured accuracy bar. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Few-shot examples in multishot prompts",
+      "first_principle": "Examples show the output pattern, so Claude copies the format, tone, and structure they show.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "ex",
+            "label": "Examples in example tags",
+            "group": "client"
+          },
+          {
+            "id": "rules",
+            "label": "Instructions and input in tags",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          },
+          {
+            "id": "out",
+            "label": "Answer in the shown format",
+            "group": "control"
+          },
+          {
+            "id": "eval",
+            "label": "Eval results decide the example set",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "ex",
+            "label": "3 to 5 examples"
+          },
+          {
+            "from": "app",
+            "to": "rules",
+            "label": "instructions and input"
+          },
+          {
+            "from": "ex",
+            "to": "api",
+            "label": "steer the pattern"
+          },
+          {
+            "from": "rules",
+            "to": "api",
+            "label": "task"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "request"
+          },
+          {
+            "from": "model",
+            "to": "out",
+            "label": "same format"
+          },
+          {
+            "from": "eval",
+            "to": "ex",
+            "label": "keep examples that help"
+          }
+        ]
+      },
+      "steps": [
+        "Write 3 to 5 examples that mirror the real input and output.",
+        "Include edge cases, and vary the examples so Claude does not copy one pattern.",
+        "Wrap each example in example tags, and group the examples in examples tags.",
+        "Keep the instructions and the task in their own tags.",
+        "Place long documents above the query, instructions, and examples.",
+        "Measure accuracy with and without the examples in your evals.",
+        "Remove each example that does not change the eval result."
+      ],
+      "pros": [
+        "Examples improve accuracy and consistency when they mirror the use case.",
+        "Examples change the prompt only, not the model.",
+        "Worked examples shape how Claude approaches similar problems with thinking on."
+      ],
+      "cons": [
+        "Each example adds input tokens to every request.",
+        "Examples that do not match the real input can teach the wrong pattern.",
+        "A narrow example set can make the output rigid (Inference)."
+      ],
+      "use_when": [
+        "The output needs a fixed format, tone, or structure.",
+        "The task has edge cases that instructions describe poorly."
+      ],
+      "do_not_use_when": [
+        "The zero-shot eval already passes the bar.",
+        "The examples would expose private data that the prompt must not reveal."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Use 3 to 5 examples, which the docs call best results.",
+          "combination": "Cache the example block when many requests share it."
+        },
+        {
+          "family": "latency",
+          "choice": "Keep the example set short to reduce input tokens per call.",
+          "combination": "Cache the stable example block, so later calls read it from the cache."
+        },
+        {
+          "family": "operations",
+          "choice": "Run the evals again after each example change.",
+          "combination": ""
+        },
+        {
+          "family": "governance",
+          "choice": "Store each example set with the template version it supports.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D2.3. Expect a scenario that asks which technique to try first against a measured accuracy bar. (Inference)",
+      "trap": "More examples look like more guidance, but a set that lacks variety teaches an unintended pattern.",
+      "decision_rule": "Add 3 to 5 diverse examples in example tags, then measure the result before you add more.",
+      "exam_tip": "When examples fail, check that they mirror the real input before you add more examples.",
+      "key_facts": [
+        {
+          "text": "Include 3 to 5 examples for best results.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Wrap examples in example tags, and wrap multiple examples in examples tags.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Examples steer output format, tone, and structure.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Multishot examples work with thinking when each example shows a problem, a method, and an answer.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Examples should mirror the actual use case and vary enough to avoid unintended patterns.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Queries at the end of a long prompt can improve response quality by up to 30 percent in tests.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Accuracy gain for a specific example count: Not in source.",
+        "Console steps for examples: Not in source."
+      ]
+    },
+    {
+      "name": "Adaptive thinking and manual chain of thought",
+      "first_principle": "Adaptive thinking gives the model room to reason, so manual step prompts are a fallback when thinking is off.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "cfg",
+            "label": "Thinking field and effort level",
+            "group": "control"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          },
+          {
+            "id": "think",
+            "label": "Adaptive thinking blocks",
+            "group": "claude"
+          },
+          {
+            "id": "tags",
+            "label": "Final answer in answer tags",
+            "group": "control"
+          },
+          {
+            "id": "step",
+            "label": "Manual step prompt, thinking off",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "cfg",
+            "label": "send request"
+          },
+          {
+            "from": "cfg",
+            "to": "model",
+            "label": "thinking mode"
+          },
+          {
+            "from": "model",
+            "to": "think",
+            "label": "reasons first"
+          },
+          {
+            "from": "model",
+            "to": "tags",
+            "label": "answer extracted by code"
+          },
+          {
+            "from": "cfg",
+            "to": "step",
+            "label": "thinking off path"
+          },
+          {
+            "from": "step",
+            "to": "model",
+            "label": "reasoning request"
+          }
+        ]
+      },
+      "steps": [
+        "Omit the thinking field on Claude Haiku 5.5 to use adaptive thinking.",
+        "Set the effort level to steer how much the model thinks.",
+        "Prefer general instructions over hand-written step plans.",
+        "When thinking is off, ask for reasoning before the answer.",
+        "Put the final answer in answer tags so code can extract it.",
+        "Leave room in max_tokens for thinking blocks."
+      ],
+      "pros": [
+        "Adaptive thinking decides the depth for each request.",
+        "Answer tags let code extract the final answer.",
+        "On Claude Haiku 5.5, thinking blocks stay preserved by default."
+      ],
+      "cons": [
+        "Thinking can be turned off on Claude Haiku 5.5 only at high effort or below.",
+        "Thinking tokens count toward the context window.",
+        "On Claude Fable 5.1, Claude Opus 5.5, and Claude Sonnet 5.5, a prompt that asks for written reasoning in thinking tags may be declined."
+      ],
+      "use_when": [
+        "A hard task needs reasoning before a short answer.",
+        "Code extracts the answer from tags after the model reasons."
+      ],
+      "do_not_use_when": [
+        "A simple lookup passes the eval bar without reasoning.",
+        "The request forces tool use with manual extended thinking, which returns an error."
+      ],
+      "constraints": [
+        {
+          "family": "latency",
+          "choice": "Use lower effort when the reasoning step is not needed.",
+          "combination": "For forced tool use, check the model first, because Claude Opus 5.5, Claude Sonnet 5.5, and Claude Fable 5.1 reject it."
+        },
+        {
+          "family": "cost",
+          "choice": "Lower effort reduces thinking tokens.",
+          "combination": "Raise effort only for the subset that misses the floor."
+        },
+        {
+          "family": "scale",
+          "choice": "Use adaptive thinking across multistep tool workflows.",
+          "combination": "Preserve thinking blocks when you send tool results back."
+        },
+        {
+          "family": "operations",
+          "choice": "Log the thinking and output token counts from the usage fields.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D2.3. Expect a scenario that asks whether explicit reasoning helps before a larger technique. (Inference)",
+      "trap": "A step-by-step plan in every prompt looks thorough, but adaptive thinking often reasons better without one.",
+      "decision_rule": "Use adaptive thinking first. Use a manual step prompt only when thinking is off.",
+      "exam_tip": "On Claude Haiku 5.5, a budget_tokens setting returns a 400 error, so use the effort level instead.",
+      "key_facts": [
+        {
+          "text": "Claude Haiku 5.5 uses adaptive thinking, and a budget_tokens setting returns a 400 error.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/thinking",
+          "label": "Fact"
+        },
+        {
+          "text": "On Claude Haiku 5.5, thinking can be turned off only at high effort or below.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/thinking",
+          "label": "Fact"
+        },
+        {
+          "text": "Forced tool use works with adaptive thinking. Claude Opus 5.5, Claude Sonnet 5.5, Claude Fable 5.1, and Claude Mythos 5.1 reject it with a 400 error.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/thinking",
+          "label": "Fact"
+        },
+        {
+          "text": "Thinking tokens count toward the context window limit.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+          "label": "Fact"
+        },
+        {
+          "text": "The default effort for Claude Haiku 5.5 is medium.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/effort",
+          "label": "Fact"
+        },
+        {
+          "text": "A prompt such as think thoroughly often produces better reasoning than a hand-written step-by-step plan.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Thinking budget in tokens for Claude Haiku 5.5: Not in source."
+      ]
+    },
+    {
+      "name": "Prefill replacement",
+      "first_principle": "Claude 4.6 and later reject a prefilled final turn, so each prefill goal moves into the prompt or a schema.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "pre",
+            "label": "Prefill on the final assistant turn",
+            "group": "data"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "err",
+            "label": "400 error on 4.6 and later",
+            "group": "control"
+          },
+          {
+            "id": "fix",
+            "label": "Instructions in system or user turn",
+            "group": "client"
+          },
+          {
+            "id": "schema",
+            "label": "Structured outputs or a tool schema",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "pre",
+            "label": "old request"
+          },
+          {
+            "from": "pre",
+            "to": "api",
+            "label": "send request"
+          },
+          {
+            "from": "api",
+            "to": "err",
+            "label": "rejected"
+          },
+          {
+            "from": "err",
+            "to": "fix",
+            "label": "move the goal to instructions"
+          },
+          {
+            "from": "err",
+            "to": "schema",
+            "label": "constrain the shape"
+          }
+        ]
+      },
+      "steps": [
+        "Find each prefill in your requests, and write down the goal it serves.",
+        "Remove the prefill from the final assistant turn on Claude 4.6 and later.",
+        "Ask for the format in the system prompt, such as a direct answer without preamble.",
+        "Use structured outputs to constrain the response shape.",
+        "Use a tool with an enum field, or structured outputs, for classification.",
+        "Move any continuation text into the user message with the interrupted response."
+      ],
+      "pros": [
+        "Structured outputs and tools enforce the shape without a prefill.",
+        "Instructions in the user message avoid the 400 error.",
+        "Earlier models still accept a prefill on the final assistant turn."
+      ],
+      "cons": [
+        "A preamble can still appear, so strip it in code if it slips through.",
+        "A continuation needs the interrupted text in the user message.",
+        "The migration changes prompts, parsers, and retry logic in your code (Inference).",
+        "On Claude Opus 5.5 and Claude Sonnet 5.5, forced tool use returns a 400 error, so a classification tool needs tool_choice auto."
+      ],
+      "use_when": [
+        "The call targets Claude 4.6 or a later model.",
+        "The prefill only forced a format or removed a preamble."
+      ],
+      "do_not_use_when": [
+        "The target model is earlier than Claude 4.6 and the prefill passes your evals.",
+        "The migration would change behavior that your evals already approve."
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Run the evals again after you remove each prefill.",
+          "combination": ""
+        },
+        {
+          "family": "cost",
+          "choice": "Structured outputs add format instructions and input tokens.",
+          "combination": "Use tags in the prompt when the required shape is simple."
+        },
+        {
+          "family": "governance",
+          "choice": "Record which prefills you removed and why.",
+          "combination": ""
+        },
+        {
+          "family": "scale",
+          "choice": "Apply the same migration to every endpoint that sends a prefill.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D2.3. Expect a scenario where a prefill returns a 400 error on a newer model. (Inference)",
+      "trap": "A repeat of the same prefill, unchanged, looks like a small fix, but the 400 error repeats on Claude 4.6 and later.",
+      "decision_rule": "On Claude 4.6 and later, replace each prefill with instructions, structured outputs, or a tool.",
+      "exam_tip": "A 400 error on a final assistant turn points to a prefill, so remove it before you change other settings.",
+      "key_facts": [
+        {
+          "text": "Claude 4.6 and later models reject a prefilled final assistant turn with a 400 error.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Earlier models continue to support prefills on the final assistant turn.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "On earlier models, you cannot prefill the assistant response while thinking is on.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/thinking",
+          "label": "Fact"
+        },
+        {
+          "text": "Assistant messages added elsewhere in the conversation are not affected.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Structured outputs constrain Claude responses to a schema.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Opus 5.5, Claude Sonnet 5.5, Claude Fable 5.1, and Claude Mythos 5.1 reject forced tool use. Use tool_choice auto with strict tool use or structured outputs.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/thinking",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Console steps for prefill migration: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Zero-shot passes the eval bar?} -->|Yes| B[Stop at zero-shot]\n  A -->|No| C{Output format wrong?}\n  C -->|Yes| D[Add structured outputs or tags]\n  C -->|No| E{Reasoning needed?}\n  E -->|Yes| F[Use adaptive thinking]\n  E -->|No| G[Add 3 to 5 diverse examples]\n  G --> H{Eval bar passed?}\n  H -->|No| I[Climb one rung and run evals again]",
+  "cheatsheet": "flowchart LR\n  Z[Zero-shot] --> E[3 to 5 examples]\n  E --> T[Adaptive thinking]\n  T --> S[Structured outputs]\n  E --> R[Run evals again]\n  P[Prefill on 4.6 or later] --> X[400 error]\n  X --> F[Instructions or tools]",
+  "patterns": [
+    {
+      "wording": "accuracy falls short of the bar on a classification task",
+      "answer_type": "examples before a larger change",
+      "rule": "Add a few diverse examples, then run the evals before a larger change.",
+      "traps": [
+        "Custom model training first",
+        "Reasoning added to every call"
+      ]
+    },
+    {
+      "wording": "a prefill returns a 400 error on the newest models",
+      "answer_type": "instructions, structured outputs, or a tool in place of the prefill",
+      "rule": "Move each prefill goal into the request. Do not send a prefilled final turn.",
+      "traps": [
+        "Retrying the same request",
+        "Thinking turned off as a fix"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+    "https://platform.claude.com/docs/en/build-with-claude/thinking",
+    "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview",
+    "https://platform.claude.com/docs/en/build-with-claude/effort",
+    "https://platform.claude.com/docs/en/build-with-claude/context-windows"
+  ]
+}

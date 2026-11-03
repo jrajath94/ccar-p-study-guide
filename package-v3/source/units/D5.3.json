@@ -1,0 +1,536 @@
+{
+  "id": "D5.3",
+  "domain": "D5",
+  "title": "Human-in-the-loop validation",
+  "task_statement": "Place human approval and review where the stakes require it, with full decision context. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Pre-action approval for irreversible actions",
+      "first_principle": "A person approves an action before it runs when the action cannot be undone.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "agent",
+            "label": "Agent proposes action",
+            "group": "claude"
+          },
+          {
+            "id": "session",
+            "label": "Managed Agents session paused for approval",
+            "group": "cloud"
+          },
+          {
+            "id": "context",
+            "label": "Arguments, policy, and sources",
+            "group": "data"
+          },
+          {
+            "id": "human",
+            "label": "Reviewer decision",
+            "group": "client"
+          },
+          {
+            "id": "tool",
+            "label": "Tool runs after approval",
+            "group": "cloud"
+          },
+          {
+            "id": "log",
+            "label": "Decision record",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "agent",
+            "to": "session",
+            "label": "always_ask policy"
+          },
+          {
+            "from": "session",
+            "to": "context",
+            "label": "requires_action stop reason"
+          },
+          {
+            "from": "context",
+            "to": "human",
+            "label": "full decision context"
+          },
+          {
+            "from": "human",
+            "to": "tool",
+            "label": "approve"
+          },
+          {
+            "from": "human",
+            "to": "log",
+            "label": "record decision"
+          }
+        ]
+      },
+      "steps": [
+        "Set the permission policy to always_ask for each tool that moves money or changes data.",
+        "The session pauses with stop_reason requires_action and waits for a user.tool_confirmation event.",
+        "Show the reviewer the tool arguments, the policy, and the sources. (Inference)",
+        "The reviewer sends allow or deny for each blocked tool call.",
+        "The tool runs only after an approval.",
+        "Record the decision, the reviewer, and the arguments. (Inference)"
+      ],
+      "pros": [
+        "Stops an irreversible action before it runs.",
+        "Uses a native pause in Managed Agents, so the session waits for the answer.",
+        "Gives an audit point for each decision."
+      ],
+      "cons": [
+        "Reviewer latency slows each action that waits for an answer.",
+        "A tired reviewer can approve a call without a real look at the context. (Inference)",
+        "A review without context is not a real check. (Inference)"
+      ],
+      "use_when": [
+        "An action moves money, deletes data, or changes access.",
+        "The action cannot be reversed.",
+        "A policy names a person as the approver. (Inference)"
+      ],
+      "do_not_use_when": [
+        "The action is read-only and public.",
+        "Volume is high and each action is reversible. Use sampled review instead. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Require approval for each action that cannot be undone.",
+          "combination": "Name the approver role in the policy record. (Inference)"
+        },
+        {
+          "family": "latency",
+          "choice": "Accept the pause for irreversible actions only.",
+          "combination": "Use post-action review for reversible actions."
+        },
+        {
+          "family": "operations",
+          "choice": "Subscribe to the session.status_idled webhook.",
+          "combination": "List idle sessions on a schedule, because a webhook delivery can be missed."
+        },
+        {
+          "family": "scale",
+          "choice": "Set always_ask only on the tools that need approval.",
+          "combination": "Set always_allow on read-only tools."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source. The permission policy pages name no cloud platform for this control.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D5.3. Expect a scenario where an action is irreversible and costly. The credited answer places approval before the tool runs. (Inference)",
+      "trap": "Approval on every action, even at high volume, which stalls the queue. The stakes decide the review shape.",
+      "decision_rule": "Use pre-action approval when the action cannot be undone.",
+      "exam_tip": "If the scenario gives a volume and a cost per review, compare the review load before you choose a shape.",
+      "key_facts": [
+        {
+          "text": "The always_ask policy pauses the session until you answer the approval request.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+          "label": "Fact"
+        },
+        {
+          "text": "The agent toolset defaults to always_allow, and MCP toolsets default to always_ask.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+          "label": "Fact"
+        },
+        {
+          "text": "Manual mode asks before most actions that edit files, run shell commands, or reach the network.",
+          "url": "https://code.claude.com/docs/en/permission-modes",
+          "label": "Fact"
+        },
+        {
+          "text": "A session whose stop_reason type is requires_action needs your answer.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-monitoring",
+          "label": "Fact"
+        },
+        {
+          "text": "Under the auto policy, a call that the server denies cannot be overridden by a user.tool_confirmation event.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Reviewer headcount or shift length. Not in source.",
+        "Typical latency of one approval round trip. Not in source."
+      ]
+    },
+    {
+      "name": "Post-action review and monitoring",
+      "first_principle": "A reviewer checks what ran after the fact, and a tested rollback path undoes a reversible action.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "agent",
+            "label": "Agent runs tools",
+            "group": "claude"
+          },
+          {
+            "id": "events",
+            "label": "Session events",
+            "group": "data"
+          },
+          {
+            "id": "hooks",
+            "label": "Webhooks to your system",
+            "group": "control"
+          },
+          {
+            "id": "sampler",
+            "label": "Offline reviewer job",
+            "group": "control"
+          },
+          {
+            "id": "human",
+            "label": "Human reviewer",
+            "group": "client"
+          },
+          {
+            "id": "undo",
+            "label": "Rollback procedure",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "agent",
+            "to": "events",
+            "label": "events written"
+          },
+          {
+            "from": "events",
+            "to": "hooks",
+            "label": "session.status_idled"
+          },
+          {
+            "from": "events",
+            "to": "sampler",
+            "label": "read each transcript"
+          },
+          {
+            "from": "sampler",
+            "to": "human",
+            "label": "flag behavior"
+          },
+          {
+            "from": "human",
+            "to": "undo",
+            "label": "reverse reversible action"
+          }
+        ]
+      },
+      "steps": [
+        "Subscribe to webhooks for sessions that go idle or reach a budget.",
+        "Verify the signature on each webhook delivery.",
+        "List idle sessions on a schedule, because a delivery can be missed.",
+        "Run an offline reviewer job that reads each session's events.",
+        "Send each flagged action to a human reviewer.",
+        "Undo the action with a rollback procedure that you tested before the run. (Inference)"
+      ],
+      "pros": [
+        "Covers reversible actions at a low review cost.",
+        "Finds behavior beyond the granted tools with an offline job.",
+        "Reports idle and budget events through webhooks."
+      ],
+      "cons": [
+        "Post-action review does not stop the first action.",
+        "A rollback that does not work turns the review into a report. (Inference)",
+        "Webhook deliveries can be missed."
+      ],
+      "use_when": [
+        "The action is reversible and the rollback is tested.",
+        "Sampling finds problems across many sessions.",
+        "An audit needs a record of what the agent did."
+      ],
+      "do_not_use_when": [
+        "The action moves money or deletes data with no undo.",
+        "One error would cause harm before a sample reaches a reviewer."
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Watch session.budget_reached and session.status_terminated webhooks.",
+          "combination": "List sessions on a schedule to catch missed webhooks."
+        },
+        {
+          "family": "governance",
+          "choice": "Keep session events for the period that your audit requires.",
+          "combination": "Copy session events to your own logs before you delete a session."
+        },
+        {
+          "family": "scale",
+          "choice": "Sample sessions at a random rate for the offline review.",
+          "combination": "Raise the sample rate after errors appear. (Inference)"
+        },
+        {
+          "family": "isolation",
+          "choice": "Give the reviewer job read access to events only.",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Claude in Amazon Bedrock emits logs to CloudWatch and CloudTrail. Anthropic recommends a 30-day rolling retention of activity logs.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "The Admin API offers telemetry destination endpoints on this platform.",
+          "url": "https://platform.claude.com/docs/en/manage-claude/admin-api"
+        }
+      ],
+      "exam_tie": "D5.3. Expect a scenario with many reversible actions. The credited answer samples or reviews after the action, with a rollback path. (Inference)",
+      "trap": "Post-action review presented as protection for an irreversible action. The review runs after the harm.",
+      "decision_rule": "Review reversible actions after they run, and keep a tested undo path.",
+      "exam_tip": "If the scenario says the action cannot be undone, choose pre-action approval.",
+      "key_facts": [
+        {
+          "text": "The session.status_idled webhook fires each time a session goes idle.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-monitoring",
+          "label": "Fact"
+        },
+        {
+          "text": "The session.budget_reached and session.status_terminated webhooks report budget and termination events.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-monitoring",
+          "label": "Fact"
+        },
+        {
+          "text": "A webhook delivery can be missed, so also list sessions on a schedule and check the idle ones.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-monitoring",
+          "label": "Fact"
+        },
+        {
+          "text": "Each agent.tool_use event carries evaluated_permission, which shows whether the server allowed, denied, or paused a call.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+          "label": "Fact"
+        },
+        {
+          "text": "Anthropic recommends a rolling retention of at least 30 days for Amazon Bedrock activity logs.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Sample rate for the offline reviewer. Not in source.",
+        "Rollback procedure for any specific tool. Not in source."
+      ]
+    },
+    {
+      "name": "Hook-based approval point in Claude Code",
+      "first_principle": "A PreToolUse hook runs code before a tool call, so a team can add a custom check that the rules cannot express.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "claude",
+            "label": "Claude proposes tool call",
+            "group": "claude"
+          },
+          {
+            "id": "hook",
+            "label": "PreToolUse hook script",
+            "group": "control"
+          },
+          {
+            "id": "ext",
+            "label": "Team check or approval service",
+            "group": "client"
+          },
+          {
+            "id": "tool",
+            "label": "Tool executes",
+            "group": "cloud"
+          },
+          {
+            "id": "stop",
+            "label": "Call prevented",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "claude",
+            "to": "hook",
+            "label": "tool input as JSON on stdin"
+          },
+          {
+            "from": "hook",
+            "to": "ext",
+            "label": "custom check"
+          },
+          {
+            "from": "hook",
+            "to": "tool",
+            "label": "exit 0, no decision"
+          },
+          {
+            "from": "hook",
+            "to": "stop",
+            "label": "exit 2 blocks"
+          }
+        ]
+      },
+      "steps": [
+        "Claude Code sends the tool input as JSON on stdin to the hook.",
+        "The hook checks the command or the arguments against your policy.",
+        "The hook exits with code 2, or returns permissionDecision deny in JSON, to prevent the tool call.",
+        "The hook exits with code 0 when it has no decision, so the normal permission flow applies.",
+        "An exit code 2 block holds, even when the JSON output says allow.",
+        "Hook scripts run outside the sandbox, so restrict their own permissions. (Inference)"
+      ],
+      "pros": [
+        "Adds a custom check that a permission rule cannot express.",
+        "Stops a call with exit code 2 before the tool runs.",
+        "Matches only the tools that a matcher selects."
+      ],
+      "cons": [
+        "Each hook adds process time to each call that its matcher selects. (Inference)",
+        "Hook scripts run outside the sandbox and need their own review.",
+        "A script bug can block legitimate work. (Inference)"
+      ],
+      "use_when": [
+        "A team needs a custom check that a rule cannot express.",
+        "The check must run on each tool call that a matcher selects.",
+        "A blocked call must stop before the tool runs."
+      ],
+      "do_not_use_when": [
+        "A plain allow rule or deny rule covers the case.",
+        "A person must decide in real time. Use pre-action approval in the session instead. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "governance",
+          "choice": "Set hooks in managed policy settings, because user and project settings cannot remove them.",
+          "combination": "Set allowManagedHooksOnly to block user, project, and plugin hooks."
+        },
+        {
+          "family": "operations",
+          "choice": "Log each hook decision with the tool name and the arguments.",
+          "combination": "Alert when blocked calls increase. (Inference)"
+        },
+        {
+          "family": "isolation",
+          "choice": "Give the hook process only the credentials that its check needs.",
+          "combination": ""
+        },
+        {
+          "family": "scale",
+          "choice": "Use a matcher so the hook runs only on the tools that need the check.",
+          "combination": "Set a timeout on each command hook."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source. The hooks reference names no cloud platform for this control.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D5.3. Expect a scenario that needs a custom approval step. The credited answer uses a PreToolUse hook that exits with code 2. (Inference)",
+      "trap": "A hook that prints a plain warning and exits 0 blocks nothing. To block, exit with code 2 or return permissionDecision deny in JSON.",
+      "decision_rule": "Block in a PreToolUse hook with exit code 2, or with permissionDecision deny, when a custom check fails.",
+      "exam_tip": "If a hook prints a plain warning and exits 0, expect the call to continue.",
+      "key_facts": [
+        {
+          "text": "PreToolUse runs before a tool call and can block it.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "A PreToolUse hook that exits with code 2 prevents the tool call.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "A permissionDecision of allow does not let an action through after an exit code 2 block.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "Exit code 0 with no JSON decision means the normal permission flow applies.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "The default timeout for a command hook is 600 seconds.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "Hooks from settings files also run inside subagents.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "On PreToolUse, a hook that times out does not block the tool call unless onFailure is set to block.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        },
+        {
+          "text": "User, project, and local settings add hooks but cannot remove managed hooks.",
+          "url": "https://code.claude.com/docs/en/hooks",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Approval service integration pattern for a custom hook. Not in source.",
+        "Hook process cost per call. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Can the action be undone?} -->|No| B[Pre-action approval with full context]\n  A -->|Yes| C{Volume high?}\n  C -->|Yes| D[Sampled post-action review]\n  C -->|No| E[Review every reversible action after it runs]\n  B --> F{Custom check needed?}\n  D --> F\n  E --> F\n  F -->|Yes| G[PreToolUse hook with exit code 2]\n  F -->|No| H[Permission policy only]",
+  "cheatsheet": "flowchart LR\n  I[Irreversible] --> A[Pre-action approval]\n  A --> C[Full context to reviewer]\n  R[Reversible] --> S[Post-action review]\n  S --> U[Tested rollback]\n  V[High volume] --> M[Random sample]\n  W[Webhook on idle] --> L[Scheduled session list]\n  K[Custom check] --> H[Hook exit code 2]",
+  "patterns": [
+    {
+      "wording": "an action removes records and cannot be undone",
+      "answer_type": "pre-action approval with full context",
+      "rule": "Hold the action until a reviewer approves. Show the arguments and the policy.",
+      "traps": [
+        "Post-action sampling only",
+        "Approval on every low-risk action"
+      ]
+    },
+    {
+      "wording": "a high-volume reversible workflow needs oversight",
+      "answer_type": "sampled or post-action review with rollback",
+      "rule": "Review a random sample after the action. Keep a tested undo path.",
+      "traps": [
+        "Manual review of every action",
+        "No review at all"
+      ]
+    },
+    {
+      "wording": "a team needs a check that a permission rule cannot express",
+      "answer_type": "PreToolUse hook that exits with code 2",
+      "rule": "Exit with code 2, or return permissionDecision deny, in the hook when the check fails.",
+      "traps": [
+        "Plain text warning with exit 0",
+        "Longer system prompt reminder"
+      ]
+    }
+  ],
+  "console_steps": [
+    {
+      "step": "Open the session in the Claude Console session viewer to see what the agent did.",
+      "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-monitoring",
+      "screenshot": null
+    }
+  ],
+  "not_in_source": [
+    "Console steps for approval queues and offline review: Not in source.",
+    "EU AI Act human oversight duties. Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+    "https://platform.claude.com/docs/en/managed-agents/secure-deployment-monitoring",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/manage-claude/admin-api",
+    "https://code.claude.com/docs/en/permission-modes",
+    "https://code.claude.com/docs/en/hooks"
+  ]
+}

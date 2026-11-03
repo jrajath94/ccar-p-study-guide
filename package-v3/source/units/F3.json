@@ -1,0 +1,254 @@
+{
+  "id": "F3",
+  "domain": "F",
+  "title": "Software and distributed systems",
+  "task_statement": "Design model calls as remote calls with timeouts, retries, error handling, and streams. (Inference: task wording from repo lesson 7-1A, not from the exam guide)",
+  "components": [
+    {
+      "name": "Error classes and retry",
+      "first_principle": "Each error type tells the caller whether a retry can help.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your app with SDK client", "group": "client"},
+          {"id": "api", "label": "Messages API", "group": "claude"},
+          {"id": "err", "label": "HTTP status and error type", "group": "control"},
+          {"id": "retry", "label": "Retry with backoff", "group": "control"},
+          {"id": "fix", "label": "Fix the request or key", "group": "client"},
+          {"id": "log", "label": "Log with request-id", "group": "data"}
+        ],
+        "edges": [
+          {"from": "app", "to": "api", "label": "send request"},
+          {"from": "api", "to": "err", "label": "return status and type"},
+          {"from": "err", "to": "retry", "label": "429, 500, or 529"},
+          {"from": "err", "to": "fix", "label": "400 or 401"},
+          {"from": "retry", "to": "api", "label": "resend after delay"},
+          {"from": "fix", "to": "log", "label": "record request-id"}
+        ]
+      },
+      "steps": [
+        "The API returns an HTTP status code and an error type for each failure.",
+        "A 400 invalid_request_error means the request needs a fix, so a retry does not help.",
+        "A 401 authentication_error means the key needs a fix, so a retry does not help.",
+        "A 429 rate_limit_error can succeed after a wait.",
+        "A 500 api_error or a 529 overloaded_error is a transient 5xx failure, so a retry with backoff can help.",
+        "Read the retry-after header and wait that many seconds before the next attempt.",
+        "Record the request-id from each failed response."
+      ],
+      "pros": [
+        "Typed errors separate faults that need a fix from faults that clear with time.",
+        "The official SDK retries transient failures with backoff by default.",
+        "The request ID links an error to the server-side record."
+      ],
+      "cons": [
+        "A spend-cap 429 does not clear with a retry.",
+        "Retries add load when the service is already under stress.",
+        "An error can arrive inside a 200 stream after the status line."
+      ],
+      "use_when": [
+        "A call fails with 429, 500, or 529 and the request is valid.",
+        "A service calls the API and needs a bounded retry policy."
+      ],
+      "do_not_use_when": [
+        "The error is a 400 invalid_request_error. Fix the request first.",
+        "The 429 has no retry-after header and comes from a spend cap."
+      ],
+      "constraints": [
+        {"family": "operations", "choice": "Log the request ID and error type for each failure.", "combination": "Alert when 529 errors rise above a set rate. (Inference)"},
+        {"family": "quota", "choice": "Honor the retry-after header on 429 responses.", "combination": "Request a tier increase when 429 retries stay high."},
+        {"family": "latency", "choice": "Set a fixed number of retries for each request.", "combination": "Stop retries when the user time budget ends. (Inference)"},
+        {"family": "scale", "choice": "Increase traffic in steps to avoid acceleration limits.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "The default quota is in input tokens per minute. AWS enforces requests per minute.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
+        {"service": "Claude Platform on AWS", "text": "Each response carries an AWS request ID and an Anthropic request ID.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Google Cloud manages rate limits and quotas for this platform.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"},
+        {"service": "Microsoft Foundry", "text": "Foundry does not send Anthropic rate limit headers, so back off on the 429 status.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"}
+      ],
+      "exam_tie": "F3. Expect a stem that shows a call that fails. The credited answer matches the error class to a fix in the caller. (Inference)",
+      "trap": "A prompt that says try again looks like a retry policy, but the model cannot resend the request or read a retry-after header.",
+      "decision_rule": "Retry 429 and 5xx errors with a limit and backoff. Fix 400 and 401 errors first.",
+      "exam_tip": "A 429 with retry-after means wait. A 429 with no retry-after header points to a spend cap.",
+      "key_facts": [
+        {"text": "The official SDK retries connection errors, rate limits, and 5xx errors twice by default.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "When a rate limit response has a retry-after header, wait that many seconds before retrying.", "url": "https://platform.claude.com/docs/en/api/rate-limits", "label": "Fact"},
+        {"text": "A 500 api_error means an unexpected internal error, and the docs say to retry with exponential backoff.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "A 529 overloaded_error means the API is temporarily overloaded.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "Every API response includes a request-id header.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "The Messages API accepts a request up to 32 MB.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "A 413 request_too_large error means the request exceeds the size limit.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Default backoff delay in seconds for the SDK. Not in source.",
+        "Whether a 529 error uses a different retry limit than a 500 error. Not in source."
+      ]
+    },
+    {
+      "name": "Timeouts and long requests",
+      "first_principle": "A request that runs too long can lose its connection, so long work uses a stream or a batch.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your client with timeout", "group": "client"},
+          {"id": "net", "label": "Network with idle connection drops", "group": "cloud"},
+          {"id": "stream", "label": "Streaming Messages request", "group": "claude"},
+          {"id": "batch", "label": "Message Batch job", "group": "claude"},
+          {"id": "poll", "label": "Poll processing_status", "group": "control"},
+          {"id": "res", "label": "Results kept for 29 days", "group": "data"}
+        ],
+        "edges": [
+          {"from": "app", "to": "stream", "label": "read events"},
+          {"from": "net", "to": "stream", "label": "idle drops risk"},
+          {"from": "app", "to": "batch", "label": "create batch"},
+          {"from": "batch", "to": "poll", "label": "check status"},
+          {"from": "poll", "to": "res", "label": "download when ended"}
+        ]
+      },
+      "steps": [
+        "Use streaming for a long response, so your app reads events as they arrive.",
+        "The SDK checks that a Messages request that does not stream is not expected to pass a 10-minute timeout.",
+        "Set a TCP keep-alive on direct integrations to reduce idle drops.",
+        "Create a Message Batch for work that the user does not wait for.",
+        "Poll the batch until processing_status is ended.",
+        "Download the results within 29 days of creation."
+      ],
+      "pros": [
+        "Streaming lets your app process events as they arrive.",
+        "Batches let the caller poll for results instead of one open connection.",
+        "The SDK can return the complete message from a stream."
+      ],
+      "cons": [
+        "A stream can fail mid-response, so the app must handle partial output.",
+        "Batches expire if processing does not finish within 24 hours.",
+        "Batch wait times vary, and most batches finish within 1 hour."
+      ],
+      "use_when": [
+        "The response can run for many minutes and the user reads it as it arrives.",
+        "A job has many requests that can wait up to a day."
+      ],
+      "do_not_use_when": [
+        "The user waits for a short answer. A standard request works.",
+        "The result must arrive in seconds. A batch is the wrong choice."
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Stream long responses that users read.", "combination": "Use batches when the user does not wait."},
+        {"family": "cost", "choice": "Use batches for work that can wait, because batch requests cost 50 percent less.", "combination": ""},
+        {"family": "quota", "choice": "Keep Messages API requests under 32 MB.", "combination": "Use the Batch API for payloads up to 256 MB."},
+        {"family": "operations", "choice": "Track processing_status and the expiry time of each batch.", "combination": "Store the results before the 29-day window ends."}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "Bedrock streams over standard server-sent events on its Messages API endpoint.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
+        {"service": "Claude Platform on AWS", "text": "Batch operations are CloudTrail data events, so they need explicit logging setup.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Microsoft Foundry", "text": "Entra ID tokens typically expire after 1 hour, so long jobs need a token refresh.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Timeout values and batch wait times on this platform: Not in source.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"}
+      ],
+      "exam_tie": "F3. Expect a long job and a user who either waits or does not wait. The credited answer picks streaming or a batch by who waits. (Inference)",
+      "trap": "A longer client timeout looks like the fix for long calls, but idle connections can drop on some networks no matter the timeout.",
+      "decision_rule": "Stream when the user waits, and batch when the caller can poll later.",
+      "exam_tip": "A Messages request that does not stream and may run over 10 minutes needs streaming or a batch.",
+      "key_facts": [
+        {"text": "The SDK validates that Messages requests that do not stream are not expected to exceed a 10-minute timeout.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "Some networks drop idle connections after a variable period.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "Most batches complete within 1 hour.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Batches expire if processing does not complete within 24 hours.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "Batch results are available for 29 days after creation.", "url": "https://platform.claude.com/docs/en/build-with-claude/batch-processing", "label": "Fact"},
+        {"text": "The Messages API accepts a request up to 32 MB.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "The Batch API accepts a request up to 256 MB.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Idle connection timeout value for each network. Not in source.",
+        "Exact wait time for one batch request. Not in source."
+      ]
+    },
+    {
+      "name": "Streaming events and errors",
+      "first_principle": "A stream sends typed events after a 200 status, so an error can arrive inside the stream.",
+      "architecture": {
+        "nodes": [
+          {"id": "app", "label": "Your event handler", "group": "client"},
+          {"id": "api", "label": "Messages API", "group": "claude"},
+          {"id": "ev", "label": "Server-sent event stream", "group": "data"},
+          {"id": "acc", "label": "Assemble content blocks", "group": "control"},
+          {"id": "err", "label": "Error event", "group": "control"},
+          {"id": "fin", "label": "Final message", "group": "data"}
+        ],
+        "edges": [
+          {"from": "app", "to": "api", "label": "request stream"},
+          {"from": "api", "to": "ev", "label": "send events"},
+          {"from": "ev", "to": "acc", "label": "apply delta events"},
+          {"from": "ev", "to": "err", "label": "overloaded_error event"},
+          {"from": "acc", "to": "fin", "label": "assemble message"}
+        ]
+      },
+      "steps": [
+        "The API sends server-sent events after a 200 status.",
+        "Ping events can appear at any point in the stream.",
+        "Delta events add partial content to a content block.",
+        "An error event can arrive in the stream, for example an overloaded_error.",
+        "Handle error events in the same loop that handles content events.",
+        "The SDK can assemble the complete message from the stream.",
+        "For Claude 4.5 models and earlier, an interrupted stream can resume from the point where it stopped."
+      ],
+      "pros": [
+        "Partial output reaches the user early.",
+        "The SDK returns a complete message when the app needs no events.",
+        "An overloaded_error in a stream uses the same type name as HTTP 529."
+      ],
+      "cons": [
+        "Error handling must cover failures that arrive after the status line.",
+        "Partial text can show before the stream ends.",
+        "Resume is documented only for Claude 4.5 models and earlier."
+      ],
+      "use_when": [
+        "The user reads output while the model writes it.",
+        "The app acts on partial tool input before the response ends."
+      ],
+      "do_not_use_when": [
+        "A background job needs only the final message.",
+        "The client cannot parse server-sent events."
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Stream long responses to show the first tokens early.", "combination": "Use the SDK helper when the app needs no events."},
+        {"family": "operations", "choice": "Log each error event type and the request ID.", "combination": "Send a new request on newer models, because resume is documented only for Claude 4.5 and earlier. (Inference)"},
+        {"family": "governance", "choice": "Treat streamed text as unverified until the final message arrives. (Inference)", "combination": ""},
+        {"family": "skill", "choice": "Handle each event type in code.", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "The Messages API endpoint uses standard server-sent events, unlike the InvokeModel integration.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"}
+      ],
+      "exam_tie": "F3. Expect an option that treats a stream as one full response. The credited answer handles error events and partial text. (Inference)",
+      "trap": "Only the HTTP status code looks sufficient, but a stream can fail after the 200 status.",
+      "decision_rule": "Handle error events inside the stream loop. Do not rely on the HTTP status check alone.",
+      "exam_tip": "An overloaded_error event inside a stream corresponds to HTTP 529 in a call that does not stream.",
+      "key_facts": [
+        {"text": "An error can occur after the API returns a 200 response during a server-sent event stream.", "url": "https://platform.claude.com/docs/en/api/errors", "label": "Fact"},
+        {"text": "An overloaded_error in a stream would normally correspond to HTTP 529.", "url": "https://platform.claude.com/docs/en/build-with-claude/streaming", "label": "Fact"},
+        {"text": "Event streams can include any number of ping events.", "url": "https://platform.claude.com/docs/en/build-with-claude/streaming", "label": "Fact"},
+        {"text": "Resume of an interrupted stream is documented for Claude 4.5 models and earlier.", "url": "https://platform.claude.com/docs/en/build-with-claude/streaming", "label": "Fact"},
+        {"text": "The Bedrock Messages API endpoint uses standard SSE streaming.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Maximum number of ping events in a stream. Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Call failed?} -->|No| B[Read the stream or result]\n  A -->|Yes| C{Status 400 or 401?}\n  C -->|Yes| D[Fix request or key first]\n  C -->|No| E{Retry-after header present?}\n  E -->|Yes| F[Wait and retry within a limit]\n  E -->|No| G{Spend cap message?}\n  G -->|Yes| H[Raise limit or tier and do not retry]\n  G -->|No| I[Backoff retry and log request ID]",
+  "cheatsheet": "flowchart LR\n  S[Status code] --> T{Transient?}\n  T -->|Yes| B[Backoff with limit]\n  T -->|No| F[Fix request]\n  L[Long job] --> M{User waits?}\n  M -->|Yes| ST[Stream]\n  M -->|No| BA[Batch and poll]\n  ST --> E[Handle error events]",
+  "patterns": [
+    {"wording": "a call fails with a server error and the request is valid", "answer_type": "bounded retry with backoff in caller code", "rule": "Retry transient errors with a limit. Fix invalid requests first.", "traps": ["Prompt asks the model to retry", "Retry loop with no limit"]},
+    {"wording": "a long job that no user waits for", "answer_type": "batch with polling", "rule": "Create a batch and poll processing_status until it is ended.", "traps": ["Longer client timeout", "Thousands of synchronous calls in a loop"]},
+    {"wording": "partial output appears, then the call fails", "answer_type": "stream event handling", "rule": "Handle error events inside the stream loop.", "traps": ["Check only the HTTP status", "Restart the job without the request ID"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/api/errors",
+    "https://platform.claude.com/docs/en/api/rate-limits",
+    "https://platform.claude.com/docs/en/build-with-claude/streaming",
+    "https://platform.claude.com/docs/en/build-with-claude/batch-processing",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/google-managed"
+  ]
+}

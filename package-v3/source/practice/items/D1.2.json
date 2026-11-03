@@ -1,0 +1,57 @@
+{
+  "unit": "D1.2",
+  "items": [
+    {
+      "id": "D1.2-1",
+      "select": 1,
+      "stem": "A support chatbot answers each message on its own, so follow-up answers ignore earlier turns. The model must stay the same. Which change meets the constraint?",
+      "options": [
+        "Assume the Messages API keeps earlier turns and reuses them on each call.",
+        "Switch to a larger model tier, which keeps earlier turns in memory.",
+        "Store turns in a graph database with embeddings, and send only the newest message with each call.",
+        "Store the conversation history in the app and send the full history with each request."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "The Messages API is stateless, so the app sends the full conversation history with each request. The model stays the same, and each answer can use the earlier turns.",
+      "trap": "Server-side memory looks like the simplest fix, but the Messages API keeps no turns between calls.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/working-with-messages"
+    },
+    {
+      "id": "D1.2-2",
+      "select": 1,
+      "stem": "A benefits app sends a claim draft to a claims system that needs a fixed object shape. Each claim value must match the source record. The check must run in code and add no model call. Which design meets the constraint?",
+      "options": [
+        "Ask the model in the prompt to check its own draft before it returns.",
+        "Request structured outputs, then compare each claim with the source record in code.",
+        "Enable strict tool use so the claim values match the source records.",
+        "Request structured outputs, then send each draft back to the model to compare with the source record."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "Structured outputs constrain the response to the schema. A code check then compares each value with its source record, and no model call runs in the check.",
+      "trap": "Strict tool use looks like a value check, but it validates only tool names and inputs against the schema.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
+    },
+    {
+      "id": "D1.2-3",
+      "select": 2,
+      "stem": "A pipeline returns wrong totals for some reports. No log shows which stage produces the wrong value. The team must find the stage that breaks before it changes the model. Which two actions meet the constraint?",
+      "options": [
+        "Log the stage name and the token counts for each model call.",
+        "Switch to a larger model tier and compare the totals on the next run.",
+        "Log each stop reason with a count for each request.",
+        "Enable prompt caching, which records the stage that produced each wrong total."
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "rationale": "A log line with the stage name ties each model call to its stage (Inference). Stop reasons show how each call ended, such as a stop at max_tokens. Together they locate the stage that breaks before any model change.",
+      "trap": "A larger model tier looks like a quick fix, but it hides the stage that breaks and raises cost.",
+      "source": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works"
+    }
+  ]
+}

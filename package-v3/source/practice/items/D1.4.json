@@ -1,0 +1,50 @@
+{
+  "unit": "D1.4",
+  "items": [
+    {
+      "id": "D1.4-1",
+      "select": 1,
+      "stem": "A lead agent reviews three separate code areas. Each area needs its own system prompt and tools. The team needs one merged report that one agent owns. Which design meets the constraint?",
+      "options": [
+        "The lead agent delegates each area to a subagent with its own prompt and tools, then merges the subagent reports.",
+        "Three peer agents write separate reports to a shared folder, and the user merges them by hand.",
+        "The subagents share one conversation history, so the lead reads every turn of each subagent.",
+        "One agent reviews all three areas with one system prompt and one tool set."
+      ],
+      "correct": [0],
+      "rationale": "Each subagent works with its own prompt, tools, and conversation history. The lead agent receives the subagent's final report and owns the merge.",
+      "trap": "Shared history looks like a way to give the lead full context, but each subagent keeps its own conversation history.",
+      "source": "https://code.claude.com/docs/en/agent-sdk/subagents"
+    },
+    {
+      "id": "D1.4-2",
+      "select": 1,
+      "stem": "A team must review 900 repositories in parallel and show progress while the work runs. The lead must not send follow-up messages to each worker during the run. Which design meets the constraint?",
+      "options": [
+        "Chat with each subagent in turn, and send follow-up messages until each one finishes.",
+        "Start one workflow run that reads the repositories in parallel, with one session budget for the whole session.",
+        "Start a workflow run for each repository, each with a session budget of its own.",
+        "Start one workflow run, and have the lead send each worker a follow-up message about its progress."
+      ],
+      "correct": [1],
+      "rationale": "A workflow run reads the items in parallel and combines the findings. Runs count toward the session budget, so one session budget covers all runs.",
+      "trap": "Separate budgets for each run look like tighter control, but runs count toward one session budget.",
+      "source": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration"
+    },
+    {
+      "id": "D1.4-3",
+      "select": 2,
+      "stem": "Three steps edit one shared report. Each step needs the result of the step before it. The team wants one coherent report. Which two options meet the constraint?",
+      "options": [
+        "Run the three steps as parallel subagents, each with the full report in its prompt.",
+        "Keep the three steps in one agent, so each step sees the earlier result.",
+        "Enable the shared sandbox so each subagent sees the earlier conversation history.",
+        "Run the steps in order in one thread, and check each step result before the next one starts."
+      ],
+      "correct": [1, 3],
+      "rationale": "One thread keeps each earlier result in its history, so later steps see it. The fixed order and the check after each step keep one coherent report.",
+      "trap": "A shared sandbox looks like shared context, but each subagent still keeps its own conversation history.",
+      "source": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration"
+    }
+  ]
+}

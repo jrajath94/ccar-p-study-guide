@@ -18,8 +18,8 @@ Rebuilt from the CCAR-P Mastery Engine v1.0 prompt. Zero previous knowledge assu
 | `crash-course.pdf` | Print version: 10/14/18pt type scale, 0.5in margins, clickable TOC with page numbers |
 | `question-bank.html` | 477 original practice questions (25 per domain + 50 mixed), 52 counterfactual drills, 4 full 63-item mocks, diagnostic answer key. Every item independently audited: 489 pass, 4 fixed, 0 rejected |
 | `question-bank.pdf` | Print version of the question bank |
-| `v2-build/` | Build fragments, stage reports, audit logs, print stylesheet, assembly scripts |
-| `archive/2026-10-06-v1/` | The previous crash course version, archived untouched |
+| `v2-build/` | Build fragments, stage reports, audit logs, print stylesheet, assembly scripts. Not committed to this repository |
+| `archive/2026-10-06-v1/` | The previous crash course version, archived untouched. Not committed to this repository |
 
 The v1 domain pages (01–09, prereq-claude-fundamentals) remain as reference. The v2 crash course replaces only the crash-course page.
 
@@ -39,9 +39,20 @@ The v1 domain pages (01–09, prereq-claude-fundamentals) remain as reference. T
 | `08-question-bank.html` | 106 practice questions (29 easy / 49 medium / 28 hard) + exam-day strategy |
 | `09-system-design-guide.html` | 8 end-to-end reference designs with trade-off math |
 | `crash-course.html` | Last-mile review. All 7 domains, must-memorize numbers, 25 trap patterns, 25 quick questions |
-| `EXAM-BLUEPRINT.md` | Verified exam facts, 7 domains + weights + official objectives, CCAR-P vs CCAR-F, how they ask |
+| `EXAM-BLUEPRINT.md` | Verified exam facts, 7 domains + weights + official objectives, CCAR-P vs CCAR-F, how they ask. Not committed to this repository |
 
 Every volume is a single self-contained HTML file (works offline, no external dependencies). Each concept is taught from zero: what it is, why it exists, how it works under the hood, concrete numbers, common misunderstandings, diagrams with walkthroughs, and an exam-relevance line.
+
+## Study package and memory aids
+
+| Path | What it is |
+|---|---|
+| `memory-aids/exam-map.html` | Exam-wide memory sheet: ten rules, a map of all 42 sections, constraint family totals, filterable section and numbers tables |
+| `memory-aids/chapters/` | One page per chapter (F, D1 to D7) with a concept map and a card for each section |
+| `memory-aids/print/` | White A4 PDFs of the exam map and each chapter |
+| `package-v3/` | Study package sources: 42 unit files, original practice items, build scripts, and rebuilt outputs. Sample chapter v2 is in `package-v3/sample/` |
+
+See `memory-aids/README.md` and `package-v3/` for build steps.
 
 ## How the exam asks
 

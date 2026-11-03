@@ -1,0 +1,400 @@
+{
+  "id": "D2.2",
+  "domain": "D2",
+  "title": "System prompts, templates, and guardrails",
+  "task_statement": "Apply system prompts, output contracts, and guardrails that keep instructions apart from data. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "System prompt with role, scope, and rules",
+      "first_principle": "The system prompt sets the role, scope, and rules, while your code enforces access (Inference).",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app",
+            "group": "client"
+          },
+          {
+            "id": "sys",
+            "label": "System prompt: role, scope, output rules",
+            "group": "client"
+          },
+          {
+            "id": "screen",
+            "label": "Input screen in code",
+            "group": "control"
+          },
+          {
+            "id": "api",
+            "label": "Messages API top-level system field",
+            "group": "claude"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          },
+          {
+            "id": "data",
+            "label": "Untrusted tool results and documents",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "screen",
+            "label": "check user input"
+          },
+          {
+            "from": "app",
+            "to": "sys",
+            "label": "build system text"
+          },
+          {
+            "from": "sys",
+            "to": "api",
+            "label": "system field"
+          },
+          {
+            "from": "data",
+            "to": "api",
+            "label": "tool_result blocks only"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "full request"
+          }
+        ]
+      },
+      "steps": [
+        "Write the role, scope, and output rules in the top-level system field.",
+        "Tell Claude that tool results and documents are untrusted data.",
+        "Place untrusted content only in tool_result blocks, not in the system field.",
+        "Screen user input with a lightweight model such as Claude Haiku 5.5 before the main request.",
+        "Check the response in code before you show it or act on it.",
+        "Test each system prompt change with the evaluation set before release."
+      ],
+      "pros": [
+        "A clear role focuses tone and behavior, even in a single sentence.",
+        "Untrusted content kept in tool results limits indirect prompt injection.",
+        "The system field keeps stable rules apart from user turns."
+      ],
+      "cons": [
+        "A system prompt is guidance, so it does not enforce access on its own (Inference).",
+        "A long system prompt adds input tokens to every request.",
+        "An edit to the system content invalidates the system and message cache levels."
+      ],
+      "use_when": [
+        "Every request needs the same role, scope, and output rules.",
+        "One assistant serves many users with one set of rules."
+      ],
+      "do_not_use_when": [
+        "A rule must hold for every input. Enforce it in code instead (Inference).",
+        "The rule changes per request, for example with user identity or permissions."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Keep stable instructions in one system block so the cache can hold them.",
+          "combination": "On supported models, append a role system message to messages instead of an edit to the top-level system field."
+        },
+        {
+          "family": "operations",
+          "choice": "Test each system prompt change with the evaluation set before release.",
+          "combination": "Roll back to the previous version when the evals drop."
+        },
+        {
+          "family": "governance",
+          "choice": "Keep system prompts in version control with a named version.",
+          "combination": "Record the version with each logged response (Inference)."
+        },
+        {
+          "family": "isolation",
+          "choice": "Put tenant-specific access rules in code, not in the shared system prompt (Inference).",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D2.2. Expect a scenario that separates guidance in the system prompt from enforcement in code. (Inference)",
+      "trap": "A rule in the system prompt looks like access control, but it is guidance that code must enforce (Inference).",
+      "decision_rule": "Put role and output rules in the system prompt. Put access rules in code.",
+      "exam_tip": "When a scenario needs a hard limit, choose code enforcement over a longer system prompt.",
+      "key_facts": [
+        {
+          "text": "A single sentence that sets a role changes Claude behavior and tone.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+          "label": "Fact"
+        },
+        {
+          "text": "Tell Claude in the system prompt that tool content is untrusted data that must not override the system prompt.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "Untrusted content belongs in tool_result blocks, not in system prompts or plain user text blocks.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "A lightweight model such as Claude Haiku 5.5 can pre-screen user input before the main conversation.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "An edit to the tool definitions invalidates the entire prompt cache.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "An edit to the system content invalidates the system and message cache levels.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        },
+        {
+          "text": "A stop_reason refusal from the Claude Haiku 5.5 screen counts as a harmful verdict.",
+          "url": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+          "label": "Fact"
+        },
+        {
+          "text": "On Claude Haiku 5.5, Claude Sonnet 5.5, and Claude Opus 5.5, a role system message in messages keeps the system and message caches.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Block rate for a jailbreak screen: Not in source.",
+        "Console steps for system prompts: Not in source."
+      ]
+    },
+    {
+      "name": "Structured outputs as the output contract",
+      "first_principle": "Structured outputs constrain the response to a JSON schema, so parsing errors leave the code path.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your app with the schema",
+            "group": "client"
+          },
+          {
+            "id": "fmt",
+            "label": "Schema in output_config format",
+            "group": "control"
+          },
+          {
+            "id": "api",
+            "label": "Messages API",
+            "group": "claude"
+          },
+          {
+            "id": "model",
+            "label": "Claude model with constrained decoding",
+            "group": "claude"
+          },
+          {
+            "id": "json",
+            "label": "Valid JSON in the text block",
+            "group": "data"
+          },
+          {
+            "id": "ref",
+            "label": "Refusal stop reason",
+            "group": "control"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "fmt",
+            "label": "define schema"
+          },
+          {
+            "from": "fmt",
+            "to": "api",
+            "label": "type json_schema"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "constrained decoding"
+          },
+          {
+            "from": "model",
+            "to": "json",
+            "label": "schema-matched JSON"
+          },
+          {
+            "from": "model",
+            "to": "ref",
+            "label": "safety refusal"
+          }
+        ]
+      },
+      "steps": [
+        "Define the output schema as JSON schema or as a type in your language.",
+        "Send the schema in the output_config format field with type json_schema.",
+        "Read the JSON from the text content block of the response.",
+        "Check the stop reason for refusal or max_tokens before you parse the text.",
+        "Validate business rules in code after you parse the fields."
+      ],
+      "pros": [
+        "The response is valid JSON that matches the schema in most cases.",
+        "The docs state that schema violations need no retries in most cases.",
+        "Required fields and field types are guaranteed."
+      ],
+      "cons": [
+        "The schema must use the supported JSON Schema subset.",
+        "An edit to output_config.format invalidates the prompt cache for that thread.",
+        "The first request with a new schema adds latency while the grammar compiles."
+      ],
+      "use_when": [
+        "Downstream code parses the response into fields.",
+        "A pipeline needs a fixed JSON shape for every response."
+      ],
+      "do_not_use_when": [
+        "A person reads free prose and no code parses the answer.",
+        "The schema uses a constraint that the JSON Schema limits reject.",
+        "The request needs citations, because citations with output_config.format return a 400 error."
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Keep the schema small to limit the added input tokens.",
+          "combination": "Keep the format stable so the prompt cache survives."
+        },
+        {
+          "family": "latency",
+          "choice": "Use the schema instead of a retry loop for shape errors. Keep the schema stable, because a compiled grammar stays cached for 24 hours from last use.",
+          "combination": "Add a business-rule check in code after parsing."
+        },
+        {
+          "family": "operations",
+          "choice": "Log the stop reason for each response, and count refusals.",
+          "combination": "Alert on a rise in refusals after a prompt change (Inference)."
+        },
+        {
+          "family": "governance",
+          "choice": "Version each schema with the application code.",
+          "combination": ""
+        },
+        {
+          "family": "scale",
+          "choice": "Keep strict schemas within 20 strict tools, 24 optional parameters, and 16 union-type parameters per request.",
+          "combination": "Split many strict tools across separate requests or subagents."
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "Structured outputs are generally available on Bedrock.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Structured outputs are generally available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Structured outputs are generally available on this platform.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Structured outputs are generally available on Foundry.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs"
+        }
+      ],
+      "exam_tie": "D2.2. Expect a scenario that asks for a fixed output shape for downstream code. (Inference)",
+      "trap": "A prompt that asks for JSON only looks equal to a schema, but nothing constrains the text, so it can still break parsing.",
+      "decision_rule": "Use structured outputs when code parses the answer. Use prose when a person reads it.",
+      "exam_tip": "Check stop_reason for refusal or max_tokens before you parse, because both can return output that does not match the schema.",
+      "key_facts": [
+        {
+          "text": "Structured outputs send the schema in output_config.format with type json_schema.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "An edit to output_config.format invalidates the prompt cache for that conversation thread.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "A refusal returns stop_reason refusal.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "Strict tool use with strict set to true guarantees schema validation on tool inputs.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "A refusal or a max_tokens stop can return output that does not match the schema.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "The explicit limits are 20 strict tools, 24 optional parameters, and 16 union-type parameters per request.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "Citations and a message prefill are incompatible with JSON outputs.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        },
+        {
+          "text": "Compiled grammars stay cached for 24 hours from last use.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Platform-specific structured output limits beyond the shared page: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Does code parse the answer?} -->|Yes| B[Use structured outputs]\n  A -->|No| C{Does a rule need a hard limit?}\n  C -->|Yes| D[Enforce the rule in code]\n  C -->|No| E[Put the rule in the system prompt]\n  B --> F{Input from tools or users?}\n  D --> F\n  E --> F\n  F -->|Yes| G[Keep untrusted content in tool results]",
+  "cheatsheet": "flowchart LR\n  S[Role and rules in system field] --> U[Untrusted data in tool results]\n  S --> O[Schema in output_config format]\n  O --> R[Check stop reason for refusal]\n  S --> C[Hard limits in code]\n  U --> V[Screen input with Haiku 5.5]",
+  "patterns": [
+    {
+      "wording": "user text must not change a rule",
+      "answer_type": "code enforcement with guidance in the system prompt",
+      "rule": "Enforce access in code. Use the system prompt for guidance only.",
+      "traps": [
+        "A rule that appears only in the system prompt",
+        "A longer system prompt as a lock"
+      ]
+    },
+    {
+      "wording": "downstream code must parse the answer into fields",
+      "answer_type": "structured outputs with a schema",
+      "rule": "Send the schema in output_config format. Check the stop reason before you parse.",
+      "traps": [
+        "A prompt that asks for JSON only",
+        "Pattern cleanup of prose"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices",
+    "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks",
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+    "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+    "https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview"
+  ]
+}

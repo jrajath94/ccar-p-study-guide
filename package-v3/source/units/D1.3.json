@@ -1,0 +1,373 @@
+{
+  "id": "D1.3",
+  "domain": "D1",
+  "title": "Architectural pattern selection",
+  "task_statement": "Select the least autonomous pattern that meets the task constraints. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Tool-use loop in application code",
+      "first_principle": "The model asks for a tool call, and the application runs the tool and returns the result.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "app",
+            "label": "Your application loop",
+            "group": "client"
+          },
+          {
+            "id": "api",
+            "label": "Messages API request with tools",
+            "group": "claude"
+          },
+          {
+            "id": "model",
+            "label": "Claude model",
+            "group": "claude"
+          },
+          {
+            "id": "stop",
+            "label": "stop_reason check in code",
+            "group": "control"
+          },
+          {
+            "id": "tool",
+            "label": "Your tool code",
+            "group": "data"
+          },
+          {
+            "id": "out",
+            "label": "Final answer",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "app",
+            "to": "api",
+            "label": "send history and tools"
+          },
+          {
+            "from": "api",
+            "to": "model",
+            "label": "run turn"
+          },
+          {
+            "from": "model",
+            "to": "stop",
+            "label": "response"
+          },
+          {
+            "from": "stop",
+            "to": "tool",
+            "label": "tool_use block"
+          },
+          {
+            "from": "tool",
+            "to": "app",
+            "label": "tool_result block"
+          },
+          {
+            "from": "stop",
+            "to": "out",
+            "label": "end_turn"
+          }
+        ]
+      },
+      "steps": [
+        "Define each tool with a name, a description, and an input schema.",
+        "Send the request with the tools array and the user message.",
+        "Read stop_reason, and run each requested tool in code when it is tool_use.",
+        "Return each result in a tool_result block on the next request.",
+        "Exit the loop on end_turn, and handle any other stop reason in code."
+      ],
+      "pros": [
+        "Your code runs every tool, so your code controls each side effect.",
+        "A tool schema enforces the shape of each input.",
+        "Fixed steps stay in code, not in a model plan. (Inference)"
+      ],
+      "cons": [
+        "Every tool call is at least one extra round trip.",
+        "The loop needs stop reason handling in code. (Inference)",
+        "The model chooses tools, so each tool description must be precise. (Inference)"
+      ],
+      "use_when": [
+        "The model needs fresh or external data from a tool.",
+        "The task needs one judgment and one side effect in your system. (Inference)",
+        "A tool input must follow a schema."
+      ],
+      "do_not_use_when": [
+        "The model can answer from training alone.",
+        "A tool call would add more delay than the answer needs. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "latency",
+          "choice": "Keep the loop short, with one round trip for each tool call.",
+          "combination": "Run independent, read-only tools in parallel."
+        },
+        {
+          "family": "cost",
+          "choice": "Count one model call for each loop turn. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "isolation",
+          "choice": "Scope each tool to the data the task needs. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "operations",
+          "choice": "Log each tool name, its input, and the size of its result. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Not in source for platform-specific tool limits.",
+          "url": ""
+        }
+      ],
+      "exam_tie": "D1.3. Expect a task with one judgment step and a side effect. The credited answer keeps the steps in application code and calls the model at the judgment step. (Inference)",
+      "trap": "A full agent for one judgment step. The agent adds planning overhead that the task does not need. (Inference)",
+      "decision_rule": "Use a tool-use loop when the steps are known, and the model only chooses tools.",
+      "exam_tip": "If the stem names one tool call and a fixed sequence, pick application code over an agent. (Inference)",
+      "key_facts": [
+        {
+          "text": "Tool use does not fit when the model can answer from training alone.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+          "label": "Fact"
+        },
+        {
+          "text": "Every tool call is at least one extra round trip.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+          "label": "Fact"
+        },
+        {
+          "text": "Independent, read-only tool operations are usually safe to run in parallel for lower latency.",
+          "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Tool count limit for a single request: Not in source.",
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Agent loop with model-planned steps",
+      "first_principle": "An agent plans its own steps and calls tools until the task is complete or a limit stops the run.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "goal",
+            "label": "Task goal",
+            "group": "client"
+          },
+          {
+            "id": "agent",
+            "label": "Agent plans next step",
+            "group": "claude"
+          },
+          {
+            "id": "tools",
+            "label": "Files and commands",
+            "group": "data"
+          },
+          {
+            "id": "result",
+            "label": "Observed tool results",
+            "group": "control"
+          },
+          {
+            "id": "budget",
+            "label": "Session budget cap",
+            "group": "control"
+          },
+          {
+            "id": "done",
+            "label": "Final result",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "goal",
+            "to": "agent",
+            "label": "task"
+          },
+          {
+            "from": "agent",
+            "to": "tools",
+            "label": "tool call"
+          },
+          {
+            "from": "tools",
+            "to": "result",
+            "label": "output"
+          },
+          {
+            "from": "result",
+            "to": "agent",
+            "label": "next plan"
+          },
+          {
+            "from": "agent",
+            "to": "budget",
+            "label": "spend check"
+          },
+          {
+            "from": "agent",
+            "to": "done",
+            "label": "task complete"
+          }
+        ]
+      },
+      "steps": [
+        "Give the agent a goal and the tools it can use.",
+        "The agent chooses the next tool call from the goal and the results so far.",
+        "The agent runtime or your application runs each tool and returns the result.",
+        "The loop continues until the agent stops or a limit applies.",
+        "Set a session budget so that the session pauses when its list cost reaches the cap."
+      ],
+      "pros": [
+        "The agent handles steps that are unknown before the run starts.",
+        "The agent can change its plan when a tool result changes the picture.",
+        "The Agent SDK gives an agent built-in tools, an agent loop, and context management."
+      ],
+      "cons": [
+        "Each run can take a different path. (Inference)",
+        "Every agent in a run uses tokens, so cost rises with the run length.",
+        "Traces show a plan that the team did not write. (Inference)"
+      ],
+      "use_when": [
+        "The steps depend on results that cannot be listed in advance.",
+        "The task is open research with unknown sources and steps. (Inference)",
+        "A person checks the result before any side effect happens. (Inference)"
+      ],
+      "do_not_use_when": [
+        "The steps are fixed, and a rule covers every case. (Inference)",
+        "The error cost is high, and no check can verify each step. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Set a session budget that caps the spend of the run.",
+          "combination": "Set a lower budget for runs with fixed steps. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Limit the agent to the tools and agents that you list.",
+          "combination": "Use Managed Agents permission policies to make server-executed tools wait for approval."
+        },
+        {
+          "family": "operations",
+          "choice": "Review the run traces and the session events after each run. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "skill",
+          "choice": "Write the system prompt with clear rules for when to stop. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Managed Agents is available. A session can run without user events for up to 6 hours, then needs reauthentication.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Managed Agents is available, and the roles/claude.user role covers Managed Agents resources.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "All",
+          "text": "Managed Agents is in beta with the beta header managed-agents-2026-04-01. Availability on Amazon Bedrock, Google managed, and Microsoft Foundry: Not in source.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/overview"
+        }
+      ],
+      "exam_tie": "D1.3. Expect a task whose steps are unknown until the run starts. The credited answer uses an agent loop with a spend cap and a tool list. (Inference)",
+      "trap": "An agent loop for a task with fixed steps. The agent makes more model calls and varies from run to run with no gain. (Inference)",
+      "decision_rule": "Choose the least autonomous pattern that covers every step the task needs.",
+      "exam_tip": "If the steps are known in advance, pick code with a model call at the judgment step, not an agent. (Inference)",
+      "key_facts": [
+        {
+          "text": "An agent is an application that plans its own steps and calls tools to complete a task.",
+          "url": "https://code.claude.com/docs/en/agent-sdk/overview",
+          "label": "Fact"
+        },
+        {
+          "text": "Every agent in a run uses tokens, so a session budget caps the session spend, runs included.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+          "label": "Fact"
+        },
+        {
+          "text": "A session budget stops new model requests when the list cost reaches the budget.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/budgets",
+          "label": "Fact"
+        },
+        {
+          "text": "On Claude Platform on AWS, a Managed Agents session runs without user events for up to 6 hours before it needs reauthentication.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Official names for workflow, orchestrator-workers, or routing patterns: Not in source.",
+        "Seven-axis scoring for pattern choice: Not in source. The repo lesson uses it as general practice. (Inference)",
+        "Cost ratio of an agent run to a workflow run: Not in source.",
+        "Console steps: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Steps known before the run?} -->|Yes| B{One judgment needed?}\n  A -->|No| C[Agent loop with spend cap]\n  B -->|No| D[Code with no model call]\n  B -->|Yes| E[Tool-use loop in application code]\n  E --> F{Many independent parts?}\n  F -->|Yes| G[Split into parallel pieces]\n  F -->|No| H[Keep one tool-use loop]",
+  "cheatsheet": "flowchart LR\n  T[Task] --> S{Steps known}\n  S -->|Yes| C[Code path]\n  C --> J{Judgment step}\n  J -->|Yes| L[Model call with tools]\n  S -->|No| A[Agent loop]\n  A --> B[Spend cap]\n  A --> R[Tool list]",
+  "patterns": [
+    {
+      "wording": "a fixed task with steps known in advance",
+      "answer_type": "code with a model call at the judgment step",
+      "rule": "Keep the steps in code. Call the model only where judgment is needed.",
+      "traps": [
+        "Agent loop for every task",
+        "Model plan for a fixed sequence"
+      ]
+    },
+    {
+      "wording": "steps unknown until the run starts",
+      "answer_type": "agent loop with a spend cap",
+      "rule": "Use an agent loop when the plan depends on results. Add a budget.",
+      "traps": [
+        "Fixed code path that cannot adapt",
+        "Agent with no budget and no tool list"
+      ]
+    },
+    {
+      "wording": "one judgment step with a side effect",
+      "answer_type": "tool-use loop in application code",
+      "rule": "Define one tool set. Run each tool in your code.",
+      "traps": [
+        "Full agent for one judgment step",
+        "Side effect with no tool result check"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Official pattern taxonomy in the mirror: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use",
+    "https://code.claude.com/docs/en/agent-sdk/overview",
+    "https://code.claude.com/docs/en/agent-sdk/agent-loop",
+    "https://platform.claude.com/docs/en/managed-agents/overview",
+    "https://platform.claude.com/docs/en/managed-agents/multiagent-orchestration",
+    "https://platform.claude.com/docs/en/managed-agents/budgets",
+    "https://platform.claude.com/docs/en/managed-agents/permission-policies",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+  ]
+}

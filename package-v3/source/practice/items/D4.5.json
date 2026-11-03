@@ -1,0 +1,57 @@
+{
+  "unit": "D4.5",
+  "items": [
+    {
+      "id": "D4.5-1",
+      "select": 1,
+      "stem": "A nightly job scores 40,000 eval cases. No user waits for the result. The team wants the lowest token price, and every call that a user sees must stay synchronous.",
+      "options": [
+        "Stream the nightly job, so its first results arrive sooner at the same token price.",
+        "Move the nightly job to batch processing, and keep user-facing calls synchronous.",
+        "Raise the rate limit for the nightly job, so each call returns in one pass.",
+        "Build a custom queue service with retries, dashboards, and a priority lane for the nightly job."
+      ],
+      "correct": [
+        1
+      ],
+      "rationale": "The Message Batches API gives 50 percent off each token for work that can wait. Synchronous calls stay on the Messages API, so users keep fast answers.",
+      "trap": "Streaming the nightly job looks like a speed fix, but the job still pays the synchronous token price.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+    },
+    {
+      "id": "D4.5-2",
+      "select": 1,
+      "stem": "A chat feature must meet a response time target. Easy and hard requests arrive on the same route. The quality floor is known for each request type. The team must cut cost only where the floor still holds.",
+      "options": [
+        "Route all traffic to the fastest tier at low effort, since it has the lowest latency for every request.",
+        "Train a learned router that scores each request, retrains weekly, and logs every routing decision.",
+        "Turn on the faster-mode flag for the stronger tier, which cuts latency and leaves the output as is.",
+        "Route easy request types to the faster tier at low effort, after each type clears the floor on the eval set."
+      ],
+      "correct": [
+        3
+      ],
+      "rationale": "A cheaper route saves cost only where it clears the quality floor. The faster tier at low effort then serves the easy types and keeps the floor.",
+      "trap": "Routing all traffic to the fastest tier looks like the simplest latency fix, but hard requests then miss the quality floor.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency"
+    },
+    {
+      "id": "D4.5-3",
+      "select": 2,
+      "stem": "An unattended grader run has 150,000 requests. No user waits for the results. The run must fit the batch limits, and the team must read every result within the result availability period. Which two actions meet these constraints?",
+      "options": [
+        "Split the 150,000 requests into at least two batches, each within 100,000 requests and 256 MB.",
+        "Set a priority option that returns the batch within five minutes, which the Batch API offers.",
+        "Read each batch result within 29 days of batch creation, while the results are still available.",
+        "Move the run to a dedicated workspace with its own rate limits, and add a second model for every row."
+      ],
+      "correct": [
+        0,
+        2
+      ],
+      "rationale": "A batch holds up to 100,000 requests or 256 MB, whichever limit comes first. Results stay downloadable for 29 days after creation.",
+      "trap": "A priority option for five-minute results sounds useful, but the docs do not describe one for batches.",
+      "source": "https://platform.claude.com/docs/en/build-with-claude/batch-processing"
+    }
+  ]
+}

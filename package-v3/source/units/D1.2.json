@@ -1,0 +1,185 @@
+{
+  "id": "D1.2",
+  "domain": "D1",
+  "title": "End-to-end architecture",
+  "task_statement": "Design a Claude application with named stages, trust boundaries, state in the application, and a trace for each stage. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Request loop with state in the application",
+      "first_principle": "No state persists between Messages API calls. The application resends the conversation on each call and checks each stop reason.",
+      "architecture": {
+        "nodes": [
+          {"id": "user", "label": "User message", "group": "client"},
+          {"id": "app", "label": "Application state and history", "group": "client"},
+          {"id": "api", "label": "Messages API", "group": "claude"},
+          {"id": "model", "label": "Claude model with tools", "group": "claude"},
+          {"id": "tools", "label": "Your tools and data", "group": "data"},
+          {"id": "trace", "label": "Trace record per stage", "group": "control"}
+        ],
+        "edges": [
+          {"from": "user", "to": "app", "label": "new message"},
+          {"from": "app", "to": "api", "label": "full history"},
+          {"from": "api", "to": "model", "label": "run turn"},
+          {"from": "model", "to": "app", "label": "stop_reason and blocks"},
+          {"from": "app", "to": "tools", "label": "run tool_use"},
+          {"from": "tools", "to": "app", "label": "tool_result"},
+          {"from": "app", "to": "trace", "label": "log stage"}
+        ]
+      },
+      "steps": [
+        "Send the full conversation history with each Messages API request.",
+        "Read the stop_reason field before you accept the response.",
+        "Run each requested tool in your code and return a tool_result block.",
+        "Repeat the request while stop_reason is tool_use.",
+        "Handle max_tokens, refusal, and pause_turn as separate outcomes.",
+        "Log the stage name and the token counts for each call."
+      ],
+      "pros": [
+        "The request carries its full state, so a run can be replayed from stored inputs. (Inference)",
+        "The stop reasons give a documented exit condition for the loop.",
+        "The application controls each retry and each fallback. (Inference)"
+      ],
+      "cons": [
+        "The application sends more tokens as the history grows. (Inference)",
+        "The team owns the state store and its failure modes. (Inference)",
+        "Each stop reason needs a handler, or the loop fails without a clear cause. (Inference)"
+      ],
+      "use_when": [
+        "A multi-turn conversation needs context from earlier turns.",
+        "A tool call must return to your code before the next model turn.",
+        "The team needs to replay a run from stored inputs. (Inference)"
+      ],
+      "do_not_use_when": [
+        "One prompt and one answer need no history and no tools. (Inference)",
+        "A managed session already stores the state, and the team accepts its controls. (Inference)"
+      ],
+      "constraints": [
+        {"family": "operations", "choice": "Log each stop reason with a count per request. (Inference)", "combination": "Alert when the counts for max_tokens or refusal rise. (Inference)"},
+        {"family": "latency", "choice": "Stream the response when the user waits for the first tokens.", "combination": "Use fine-grained tool streaming when the tool input must appear early."},
+        {"family": "scale", "choice": "Use the Message Batches API for bulk work that does not need an immediate answer.", "combination": ""},
+        {"family": "isolation", "choice": "Keep each conversation state scoped to one user or tenant. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "Amazon Bedrock", "text": "Claude in Amazon Bedrock serves the Messages API at /anthropic/v1/messages on AWS-managed infrastructure.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"},
+        {"service": "Claude Platform on AWS", "text": "Anthropic is the data processor for inference inputs and outputs. Workspace content includes prompts, outputs, files, and batches.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws"},
+        {"service": "Claude Models on Google Cloud (Google managed)", "text": "Google operates Claude models as part of Google Cloud's Agent Platform.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/overview"},
+        {"service": "Claude Models on Google Cloud (Anthropic managed)", "text": "Anthropic operates the Claude API, reached through your Google Cloud project.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"},
+        {"service": "Microsoft Foundry", "text": "Claude is available with the hosting options Hosted on Azure and Hosted on Anthropic.", "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry"}
+      ],
+      "exam_tie": "D1.2. Expect a stem with a failure that no stage can explain. The credited answer adds a trace for each stage and a named gate. (Inference)",
+      "trap": "A larger model or a longer prompt for a failure that no trace locates. The change treats a symptom and hides the stage that breaks. (Inference)",
+      "decision_rule": "Keep the history, the retries, and the stop reason handling in application code.",
+      "exam_tip": "If a stem shows a failure with no known stage, pick the option that adds a trace per stage. (Inference)",
+      "key_facts": [
+        {"text": "The Messages API is stateless, so you always send the full conversational history.", "url": "https://platform.claude.com/docs/en/build-with-claude/working-with-messages", "label": "Fact"},
+        {"text": "The tool-use loop exits on end_turn, max_tokens, stop_sequence, or refusal.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works", "label": "Fact"},
+        {"text": "A pause_turn stop reason means the work is not complete, and you send the conversation again.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works", "label": "Fact"},
+        {"text": "The Agent SDK exports traces, metrics, and events with OpenTelemetry.", "url": "https://code.claude.com/docs/en/agent-sdk/observability", "label": "Fact"},
+        {"text": "The docs state that model behavior is not a security control.", "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-risks", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Default timeout for Messages API calls: Not in source.",
+        "Latency budget for each stage: Not in source.",
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Verification and output gates",
+      "first_principle": "A check in code compares the draft with the source and the schema before the answer leaves the system. (Inference)",
+      "architecture": {
+        "nodes": [
+          {"id": "draft", "label": "Model draft in structured form", "group": "claude"},
+          {"id": "schema", "label": "Schema check in code", "group": "control"},
+          {"id": "source", "label": "System of record", "group": "data"},
+          {"id": "verify", "label": "Claim check against source", "group": "control"},
+          {"id": "guard", "label": "Output guard for restricted content", "group": "control"},
+          {"id": "hold", "label": "Hold queue for review", "group": "control"},
+          {"id": "ship", "label": "Accepted answer to user", "group": "client"}
+        ],
+        "edges": [
+          {"from": "draft", "to": "schema", "label": "structured output"},
+          {"from": "schema", "to": "verify", "label": "valid object"},
+          {"from": "source", "to": "verify", "label": "source records"},
+          {"from": "verify", "to": "guard", "label": "pass"},
+          {"from": "verify", "to": "hold", "label": "fail"},
+          {"from": "guard", "to": "ship", "label": "clean"}
+        ]
+      },
+      "steps": [
+        "Request structured outputs when the answer must match a schema.",
+        "Check the parsed output against the schema in code.",
+        "Compare each factual claim with the source record in code.",
+        "Run an output guard that blocks restricted content.",
+        "Send each failed draft to a hold queue, not to the user.",
+        "Log the check result for each draft."
+      ],
+      "pros": [
+        "Structured outputs guarantee schema-compliant responses.",
+        "A hold queue stops a wrong draft before it reaches the user. (Inference)",
+        "Code checks add no model tokens. (Inference)"
+      ],
+      "cons": [
+        "Schema compliance does not show that the values are correct. (Inference)",
+        "Strict checks reject correct answers that fall outside the rule set. (Inference)",
+        "Each gate adds latency and one more failure point. (Inference)"
+      ],
+      "use_when": [
+        "A wrong value triggers a payment, a data change, or an action that a patient sees. (Inference)",
+        "A downstream system needs an object with a fixed schema.",
+        "Each claim in the output must trace to a source document. (Inference)"
+      ],
+      "do_not_use_when": [
+        "The output is free text with no downstream system and low risk. (Inference)",
+        "No source record exists to compare against. (Inference)"
+      ],
+      "constraints": [
+        {"family": "data location", "choice": "Use the inference_geo parameter where data residency rules apply.", "combination": "On Claude Platform on AWS, requests with inference_geo on Claude Haiku 4.5 return a 400 error."},
+        {"family": "governance", "choice": "Route each failed draft to a named reviewer. (Inference)", "combination": ""},
+        {"family": "operations", "choice": "Track the rate of failed checks for each stage. (Inference)", "combination": "Alert when the rate rises after a prompt change. (Inference)"},
+        {"family": "scale", "choice": "Run checks in code, so that only the model call adds token cost. (Inference)", "combination": ""}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source for platform-specific schema support.", "url": ""}
+      ],
+      "exam_tie": "D1.2. Expect a stem with a financial or safety-critical output. The credited answer places a deterministic check between the draft and the user. (Inference)",
+      "trap": "A prompt that asks the model to check its own draft. The check shares the failure mode of the draft, so it gives no independent control. (Inference)",
+      "decision_rule": "Use a check in code for each output whose error costs money, safety, or trust.",
+      "exam_tip": "If a stem names a schema, pick structured outputs, and add a code check for the values. (Inference)",
+      "key_facts": [
+        {"text": "Structured outputs guarantee schema-compliant responses, because the model output is limited to the schema.","url": "https://platform.claude.com/docs/en/build-with-claude/structured-outputs", "label": "Fact"},
+        {"text": "Strict tool use guarantees schema validation on tool names and inputs.", "url": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/strict-tool-use", "label": "Fact"},
+        {"text": "The docs state that Claude is inherently resilient to prompt injection, but model behavior is not a security control.", "url": "https://platform.claude.com/docs/en/managed-agents/secure-deployment-risks", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Share of schema-compliant outputs that pass a value check in production: Not in source.",
+        "Latency added by each gate: Not in source.",
+        "Console steps: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Output reaches a user or system?} -->|No| X[Single call may be enough]\n  A -->|Yes| B{Error cost high?}\n  B -->|No| C[Trace each stage and sample]\n  B -->|Yes| D{Schema needed?}\n  D -->|Yes| E[Structured outputs plus code check]\n  D -->|No| F[Code check on each claim]\n  E --> G[Hold queue for failures]\n  F --> G",
+  "cheatsheet": "flowchart LR\n  U[User input] --> V[Validate in code]\n  V --> S[Application state]\n  S --> M[Messages API call]\n  M --> R{stop_reason}\n  R -->|tool_use| T[Run tools]\n  T --> S\n  R -->|end_turn| K[Check output in code]\n  K --> O[Answer or hold]",
+  "patterns": [
+    {"wording": "a failure with no known stage", "answer_type": "per-stage trace before a model change", "rule": "Instrument each stage and find the stage that breaks before you change the model.", "traps": ["Larger model tier", "More human reviewers on every output"]},
+    {"wording": "output must be right for a downstream system", "answer_type": "schema plus code check", "rule": "Use structured outputs and a code check on the values.", "traps": ["Prompt that asks for valid JSON only", "Model that checks its own draft"]},
+    {"wording": "the conversation must continue across turns", "answer_type": "application state with full history", "rule": "The application holds the history and sends it with each call.", "traps": ["Assumed server-side memory between calls", "History kept only in one browser tab"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Seven named gates as an official pattern: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/working-with-messages",
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works",
+    "https://platform.claude.com/docs/en/build-with-claude/structured-outputs",
+    "https://platform.claude.com/docs/en/agents-and-tools/tool-use/strict-tool-use",
+    "https://platform.claude.com/docs/en/managed-agents/secure-deployment-risks",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/overview",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://code.claude.com/docs/en/agent-sdk/observability"
+  ]
+}

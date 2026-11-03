@@ -1,0 +1,385 @@
+{
+  "id": "D1.6",
+  "domain": "D1",
+  "title": "Business-value alignment",
+  "task_statement": "Price a Claude solution with baseline cost, new cost, and error cost, and set guards on quality and spend. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Unit cost from published prices",
+      "first_principle": "The cost of one request follows from its token counts and the published price per million tokens.",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "req",
+            "label": "Request with prompt and expected output",
+            "group": "client"
+          },
+          {
+            "id": "count",
+            "label": "Token count before send",
+            "group": "control"
+          },
+          {
+            "id": "price",
+            "label": "Published price per million tokens",
+            "group": "data"
+          },
+          {
+            "id": "model",
+            "label": "Claude model call",
+            "group": "claude"
+          },
+          {
+            "id": "usage",
+            "label": "Usage fields in the response",
+            "group": "control"
+          },
+          {
+            "id": "ledger",
+            "label": "Cost ledger by use case",
+            "group": "data"
+          }
+        ],
+        "edges": [
+          {
+            "from": "req",
+            "to": "count",
+            "label": "estimate tokens"
+          },
+          {
+            "from": "count",
+            "to": "price",
+            "label": "tokens times rate"
+          },
+          {
+            "from": "req",
+            "to": "model",
+            "label": "send request"
+          },
+          {
+            "from": "model",
+            "to": "usage",
+            "label": "token counts"
+          },
+          {
+            "from": "usage",
+            "to": "ledger",
+            "label": "actual cost"
+          },
+          {
+            "from": "price",
+            "to": "ledger",
+            "label": "rate table"
+          }
+        ]
+      },
+      "steps": [
+        "Use the token count endpoint to measure the input tokens of a typical request.",
+        "Multiply the input tokens by the input price per million tokens.",
+        "Multiply the output tokens by the output price per million tokens.",
+        "Apply the batch discount when the work can wait.",
+        "Compare the usage fields in responses with the estimate."
+      ],
+      "pros": [
+        "The unit cost follows directly from published prices.",
+        "Batch processing halves the token cost for work that can wait.",
+        "Cache hits cost a fraction of the base input price."
+      ],
+      "cons": [
+        "Prices change with the model and with the prompt length.",
+        "Output length can differ from the estimate. (Inference)",
+        "Token counts vary with the input content. (Inference)"
+      ],
+      "use_when": [
+        "A business case needs a cost per request.",
+        "The team compares two models on cost per task."
+      ],
+      "do_not_use_when": [
+        "The team has no volume estimate, so no annual figure can follow. (Inference)",
+        "The estimate uses a price from a source other than the published price table. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "cost",
+          "choice": "Start with Claude Haiku 5.5, which the docs list for the lowest latency and price.",
+          "combination": "Compare a larger model only when evals show a gap in quality."
+        },
+        {
+          "family": "scale",
+          "choice": "On Claude Haiku 5.5, keep prompts at or under 100,000 tokens when price is the main concern.",
+          "combination": "Use prompt caching for a long, stable prefix. (Inference)"
+        },
+        {
+          "family": "quota",
+          "choice": "Check the platform rate limits before you size the volume.",
+          "combination": "Request a higher quota only after you measure the peak load. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Name the owner who signs the cost estimate. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "Amazon Bedrock",
+          "text": "The default quota is 2 million input tokens per minute. You can request up to 5 million input tokens per minute without more Anthropic approval.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock"
+        },
+        {
+          "service": "Claude Platform on AWS",
+          "text": "Billing runs through AWS Marketplace in Claude Consumption Units at 0.01 dollars per unit. Anthropic manages rate limits.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Google managed)",
+          "text": "Google Cloud bills the usage as Agent Platform usage. Google Cloud manages rate limits.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/overview"
+        },
+        {
+          "service": "Claude Models on Google Cloud (Anthropic managed)",
+          "text": "Google Cloud Marketplace bills the usage. Anthropic manages rate limits.",
+          "url": "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed"
+        },
+        {
+          "service": "Microsoft Foundry",
+          "text": "Billing runs through the Azure Marketplace in Claude Consumption Units at 0.01 dollars per unit.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing"
+        }
+      ],
+      "exam_tie": "D1.6. Expect a business case with several terms. The credited answer prices each term with a number and names the owner of the estimate. (Inference)",
+      "trap": "A savings claim with one term, such as labor saved, and no build or run cost. The total looks positive and leaves out cost. (Inference)",
+      "decision_rule": "Price the unit cost from the published rates, then multiply it by the expected volume.",
+      "exam_tip": "If the stem gives no price, write Not in source and state the price as an assumption. (Inference)",
+      "key_facts": [
+        {
+          "text": "Claude Haiku 5.5 base input price is 0.10 dollars per million tokens for prompts up to 100,000 tokens.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 output price is 0.50 dollars per million tokens for prompts up to 100,000 tokens.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Claude Haiku 5.5 cache hits cost 0.01 dollars per million tokens.",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Fact"
+        },
+        {
+          "text": "Toy: 2 million input tokens cost 0.20 dollars at the Haiku 5.5 base input price of 0.10 dollars per million. (Inference)",
+          "url": "https://platform.claude.com/docs/en/about-claude/pricing",
+          "label": "Inference"
+        }
+      ],
+      "not_in_source": [
+        "Repo tier names Fast, Balanced, and Capable with prices of 1, 2, and 4 dollars per million tokens: Not in source.",
+        "Output length for a typical request: Not in source.",
+        "Console steps: Not in source."
+      ]
+    },
+    {
+      "name": "Value guards for quality and spend",
+      "first_principle": "A value claim holds only while its quality threshold and its spend cap still hold. (Inference)",
+      "architecture": {
+        "nodes": [
+          {
+            "id": "value",
+            "label": "Net value estimate",
+            "group": "control"
+          },
+          {
+            "id": "evals",
+            "label": "Eval set and pass rate",
+            "group": "data"
+          },
+          {
+            "id": "quality",
+            "label": "Quality threshold check",
+            "group": "control"
+          },
+          {
+            "id": "spend",
+            "label": "Spend per session",
+            "group": "data"
+          },
+          {
+            "id": "budget",
+            "label": "Session budget cap",
+            "group": "control"
+          },
+          {
+            "id": "owner",
+            "label": "Owner sign-off",
+            "group": "client"
+          }
+        ],
+        "edges": [
+          {
+            "from": "evals",
+            "to": "quality",
+            "label": "pass rate"
+          },
+          {
+            "from": "quality",
+            "to": "value",
+            "label": "guard"
+          },
+          {
+            "from": "spend",
+            "to": "budget",
+            "label": "list cost"
+          },
+          {
+            "from": "budget",
+            "to": "value",
+            "label": "cap"
+          },
+          {
+            "from": "value",
+            "to": "owner",
+            "label": "figures"
+          },
+          {
+            "from": "quality",
+            "to": "owner",
+            "label": "fail blocks sign-off"
+          }
+        ]
+      },
+      "steps": [
+        "Set a quality threshold on the eval set before you price the change.",
+        "Set a spend ceiling for each run or session.",
+        "Configure a session budget so that the platform stops new model requests at the cap, and the session pauses.",
+        "Record the pass rate and the spend with each release.",
+        "Re-sign the value estimate when the volume or the error mix changes."
+      ],
+      "pros": [
+        "The guards stop a cost cut that lowers quality. (Inference)",
+        "A session budget caps spend for the session, runs included.",
+        "The owner signs figures that come from measured results. (Inference)"
+      ],
+      "cons": [
+        "The threshold needs an eval set that matches real traffic. (Inference)",
+        "A budget pauses the session at the cap, so the task waits until you raise or remove the budget.",
+        "Thresholds need review as the models change. (Inference)"
+      ],
+      "use_when": [
+        "Finance asks for the return on a model change.",
+        "A quality failure has a financial cost. (Inference)"
+      ],
+      "do_not_use_when": [
+        "A prototype runs with no users and no spend. (Inference)",
+        "No eval set exists, so no pass rate can be measured. (Inference)"
+      ],
+      "constraints": [
+        {
+          "family": "operations",
+          "choice": "Track the list cost and token usage of each session.",
+          "combination": ""
+        },
+        {
+          "family": "cost",
+          "choice": "Set a session budget before each long run.",
+          "combination": "Set a lower budget for runs with fixed steps. (Inference)"
+        },
+        {
+          "family": "governance",
+          "choice": "Name one owner for each threshold. (Inference)",
+          "combination": ""
+        },
+        {
+          "family": "quota",
+          "choice": "Check the platform rate limits before a volume increase. (Inference)",
+          "combination": ""
+        }
+      ],
+      "native_services": [
+        {
+          "service": "All",
+          "text": "Session budgets are a Managed Agents feature in beta. Budget support on each native platform: Not in source.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/budgets"
+        }
+      ],
+      "exam_tie": "D1.6. Expect a value question where a cut in one term hides a quality loss. The credited answer keeps a quality threshold next to the value math. (Inference)",
+      "trap": "A latency cut that breaks the quality threshold. The number looks like value, but the error cost moves in the other direction. (Inference)",
+      "decision_rule": "Keep each value claim only while its quality threshold and its spend cap hold.",
+      "exam_tip": "If a stem reports a speed gain, check the quality threshold before you count the gain as value. (Inference)",
+      "key_facts": [
+        {
+          "text": "A session budget is an optional hard spend ceiling that you set when you create a session.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/budgets",
+          "label": "Fact"
+        },
+        {
+          "text": "The platform prices session consumption at public list rates.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/budgets",
+          "label": "Fact"
+        },
+        {
+          "text": "The platform stops new model requests once the session list cost reaches the budget.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/budgets",
+          "label": "Fact"
+        },
+        {
+          "text": "A session at its budget pauses and goes idle, and a change or removal of the budget resumes the work.",
+          "url": "https://platform.claude.com/docs/en/managed-agents/budgets",
+          "label": "Fact"
+        }
+      ],
+      "not_in_source": [
+        "Incident cost per error and wage rate per hour: Not in source.",
+        "Official value equation for AI business cases: Not in source. The repo lesson uses it as general practice. (Inference)",
+        "Console steps: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Quality threshold met on eval set?} -->|No| X[Do not ship the change]\n  A -->|Yes| B{Spend under session cap?}\n  B -->|No| C[Cut tokens per task or volume]\n  B -->|Yes| D{Net value positive with all terms?}\n  D -->|No| X\n  D -->|Yes| E[Owner signs the estimate]",
+  "cheatsheet": "flowchart LR\n  B[Baseline cost] --> N[Net value]\n  W[New unit cost] --> N\n  E[Error cost avoided] --> N\n  BU[Build and run cost] --> N\n  N --> Q{Quality threshold}\n  Q -->|Pass| O[Owner signs]\n  Q -->|Fail| X[No sign-off]",
+  "patterns": [
+    {
+      "wording": "a savings claim with one term",
+      "answer_type": "all terms priced with numbers",
+      "rule": "Count the baseline, the new cost, the errors avoided, and the build and run cost.",
+      "traps": [
+        "Savings from labor alone",
+        "Adjectives such as faster or better with no figure"
+      ]
+    },
+    {
+      "wording": "a model change that lowers cost",
+      "answer_type": "cost change with a quality threshold",
+      "rule": "Keep the cost change only while the eval pass rate holds.",
+      "traps": [
+        "Cheapest model with no eval",
+        "Cost cut with no quality check"
+      ]
+    },
+    {
+      "wording": "a spend overrun risk on long agent runs",
+      "answer_type": "session budget cap",
+      "rule": "Set a session budget before the run starts.",
+      "traps": [
+        "Cap set after the bill arrives",
+        "Lower model tier as the only spend control"
+      ]
+    }
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps: Not in source.",
+    "Quality threshold value for any product: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/about-claude/pricing",
+    "https://platform.claude.com/docs/en/about-claude/models/choosing-a-model",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-amazon-bedrock",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-platform-on-aws",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/overview",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed",
+    "https://platform.claude.com/docs/en/build-with-claude/claude-in-microsoft-foundry",
+    "https://platform.claude.com/docs/en/managed-agents/budgets",
+    "https://platform.claude.com/docs/en/build-with-claude/token-counting"
+  ]
+}

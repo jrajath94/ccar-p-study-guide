@@ -1,0 +1,50 @@
+{
+  "unit": "D4.2",
+  "items": [
+    {
+      "id": "D4.2-1",
+      "select": 1,
+      "stem": "An eval set of 500 clean prompts scores 96 percent. Production users paste long documents and send empty messages, and failures rise. The set must predict production at a low daily cost.",
+      "options": [
+        "Add production samples with long, empty, and irrelevant inputs, and grade the checkable cases with code.",
+        "Have three reviewers grade every case by hand before each daily run, to catch subtle errors.",
+        "Enable the Console evaluation tool to build the production sample, then score the sample with code.",
+        "Add a versioned set with a dashboard per case type, plus production samples that include edge cases."
+      ],
+      "correct": [0],
+      "rationale": "Production samples expose failures that clean prompts hide. Code graders score checkable cases at low cost, so the daily run stays cheap.",
+      "trap": "A Console tool that builds the production sample sounds like a shortcut, but the docs describe no tool that samples production traffic.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests"
+    },
+    {
+      "id": "D4.2-2",
+      "select": 1,
+      "stem": "A nightly run grades 30,000 outputs. Most outputs need an exact match on one field, and a few need a judgment about tone. The team must avoid human graders, and each grader must be reliable.",
+      "options": [
+        "Send all 30,000 outputs to an LLM grader without a reliability test, to keep the setup simple.",
+        "Add a second LLM grader that cross-checks each tone verdict before the run ends.",
+        "Grade exact-match outputs with code, and grade tone with an LLM grader after a reliability test.",
+        "Use a grader setting that caches each verdict, so repeated nightly runs skip the scoring step."
+      ],
+      "correct": [2],
+      "rationale": "Code graders are the fastest and most reliable method for exact matches. An LLM grader handles tone only after a test confirms its reliability.",
+      "trap": "A grader setting that caches verdicts sounds like a cost fix, but the docs do not describe such a setting.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests"
+    },
+    {
+      "id": "D4.2-3",
+      "select": 2,
+      "stem": "A team builds an eval set for a chat assistant. The set must match real traffic and cover unusual input. The team must not hand-grade every case. Which two steps meet these constraints?",
+      "options": [
+        "Use a built-in Console sampler that labels ambiguous cases automatically.",
+        "Sample recent production traffic, so the cases match the real task mix.",
+        "Rebuild the set every hour from the live traffic log, so it never ages.",
+        "Add empty, long, and irrelevant inputs as edge cases, with expected answers that code can check."
+      ],
+      "correct": [1, 3],
+      "rationale": "Sampled production cases reflect the real task mix. Edge cases expose failures that clean samples hide, and code checks the expected answers.",
+      "trap": "An hourly rebuild of the set looks thorough, but the constraints do not need that upkeep.",
+      "source": "https://platform.claude.com/docs/en/test-and-evaluate/develop-tests"
+    }
+  ]
+}

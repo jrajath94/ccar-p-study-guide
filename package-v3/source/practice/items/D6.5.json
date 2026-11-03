@@ -1,0 +1,50 @@
+{
+  "unit": "D6.5",
+  "items": [
+    {
+      "id": "D6.5-1",
+      "select": 1,
+      "stem": "A release moves the client to API version 2026-10-21. Every request now fails with a 400 error, because the client sends a temperature value. The fix must remove the cause and pass a test gate before release. Which action meets the constraint?",
+      "options": [
+        "Keep the temperature value, and add a retry with backoff, since the error may clear.",
+        "Raise the workspace rate limit, so that the 400 errors clear.",
+        "Remove the temperature value, and also rewrite the prompts and logs before the test gate.",
+        "Remove the temperature value from each request, then run the test gate before release."
+      ],
+      "correct": [3],
+      "rationale": "The 400 error comes from a parameter that the new API version removes. The parameter removal fixes the cause, and the test gate confirms the release before traffic moves. (Inference)",
+      "trap": "A retry with backoff looks like a standard fix, but the parameter itself causes the 400 error on each request.",
+      "source": "https://platform.claude.com/docs/en/api/versioning"
+    },
+    {
+      "id": "D6.5-2",
+      "select": 1,
+      "stem": "A deprecation notice names a retirement date for a model that the production service calls. The notice names a replacement. The team must avoid an outage on the retirement date. Which action meets the constraint?",
+      "options": [
+        "Wait for the retirement date, then switch the model in one release.",
+        "Export usage by API key and model, test the named replacement, and move traffic before the date.",
+        "Move the whole product to a new cloud platform, and rewrite its prompts before the date.",
+        "Keep the retired model on a backup route, which still returns answers after the date."
+      ],
+      "correct": [1],
+      "rationale": "The usage export lists each API key and model, so the team finds every caller of the old model. The test and the move come before the date, because requests to a retired model fail.",
+      "trap": "A switch at the retirement date looks simple, but requests to a retired model fail after that date.",
+      "source": "https://platform.claude.com/docs/en/about-claude/model-deprecations"
+    },
+    {
+      "id": "D6.5-3",
+      "select": 2,
+      "stem": "A team runs development and production traffic in one shared workspace. The team needs separate rate limits and separate cost reports for each environment. Select two changes that meet both requests.",
+      "options": [
+        "Create a production workspace, and scope the production API key to it.",
+        "Rename the Default Workspace to production, since the Default Workspace can be renamed.",
+        "Create a development workspace, and set lower rate limits on it than on production.",
+        "Keep one workspace, and add an environment label to each API key name."
+      ],
+      "correct": [0, 2],
+      "rationale": "Each request runs in exactly one workspace, so each environment needs its own workspace for keys, limits, and reports. The Default Workspace cannot be renamed, so the team creates new workspaces instead.",
+      "trap": "A rename of the Default Workspace looks like the quickest split, but that workspace cannot be renamed.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/workspaces"
+    }
+  ]
+}

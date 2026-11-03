@@ -1,0 +1,245 @@
+{
+  "id": "D3.6",
+  "domain": "D3",
+  "title": "Retrieval strategies",
+  "task_statement": "Choose a retrieval strategy for each query shape, and route live state to a tool. (Inference: wording from secondary sources)",
+  "components": [
+    {
+      "name": "Hybrid keyword and semantic retrieval",
+      "first_principle": "Pick the matcher that fits the query shape, and merge the candidates from both matchers.",
+      "architecture": {
+        "nodes": [
+          {"id": "query", "label": "User query", "group": "client"},
+          {"id": "filter", "label": "Metadata filter for source, date, and access", "group": "control"},
+          {"id": "kw", "label": "Keyword index for exact terms", "group": "data"},
+          {"id": "sem", "label": "Vector index for meaning", "group": "data"},
+          {"id": "fuse", "label": "Rank fusion of both lists", "group": "control"},
+          {"id": "cand", "label": "Merged candidate list", "group": "client"}
+        ],
+        "edges": [
+          {"from": "query", "to": "filter", "label": "question"},
+          {"from": "filter", "to": "kw", "label": "allowed documents only"},
+          {"from": "filter", "to": "sem", "label": "allowed documents only"},
+          {"from": "kw", "to": "fuse", "label": "ranked list"},
+          {"from": "sem", "to": "fuse", "label": "ranked list"},
+          {"from": "fuse", "to": "cand", "label": "one merged list"}
+        ]
+      },
+      "steps": [
+        "Apply metadata filters to limit the pool to documents the user may read. (Inference)",
+        "Score the pool with keyword match for codes, names, and identifiers.",
+        "Score the pool with embedding similarity for paraphrased questions.",
+        "Merge both ranked lists with rank fusion. (Inference)",
+        "Send the merged candidates to a reranker when the list is long. (Inference)"
+      ],
+      "pros": [
+        "Keyword match finds exact codes that a vector match can miss. (Inference)",
+        "Embedding similarity finds passages that use different words from the question. (Inference)",
+        "Metadata filters limit results to allowed documents. (Inference)"
+      ],
+      "cons": [
+        "Two indexes need two refresh paths. (Inference)",
+        "The merge step needs a fusion rule for two ranked lists. (Inference)",
+        "Official pages describe no hybrid search feature. Not in source."
+      ],
+      "use_when": [
+        "The corpus holds codes, SKUs, or names that a vector match misses. (Inference)",
+        "Users ask in plain words about text that uses exact identifiers. (Inference)",
+        "Access rules differ by user and must limit the candidate pool. (Inference)"
+      ],
+      "do_not_use_when": [
+        "All queries are exact codes, where keyword match alone fits. (Inference)",
+        "The corpus is small enough for full document context. (Inference)",
+        "The answer depends on live state, which needs a tool call instead. (Inference)"
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Run both matchers in parallel, then merge the results. (Inference)", "combination": "Add a reranker only when the merged list is long. (Inference)"},
+        {"family": "isolation", "choice": "Apply access filters before scoring, so users never see chunks they may not read. (Inference)", "combination": ""},
+        {"family": "cost", "choice": "Keep a second index only when query shapes need the second matcher. (Inference)", "combination": "Use int8 output for embeddings to cut vector storage by 4x."},
+        {"family": "operations", "choice": "Log which matcher produced each kept candidate. (Inference)", "combination": "Compare precision per matcher on a labeled set of questions. (Inference)"}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source. The retrieval pages name no native platform service for keyword search.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings"}
+      ],
+      "exam_tie": "D3.6. Expect a scenario with codes and paraphrases in the same corpus. The credited answer covers both matchers with a filter. (Inference)",
+      "trap": "A single semantic index looks sufficient. Exact codes often fail to match in vector space, so the codes go unfound. (Inference)",
+      "decision_rule": "Use keyword match for exact terms, semantic match for paraphrases, and filters for access. (Inference)",
+      "exam_tip": "If the scenario names both codes and paraphrases, choose hybrid retrieval. (Inference)",
+      "key_facts": [
+        {"text": "Embeddings measure semantic similarity between pieces of text.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "Voyage AI embeddings are normalized to length 1.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "Voyage AI embeddings are normalized, so cosine similarity is equivalent to dot-product similarity.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "Int8 embeddings cut storage by 4x compared with float.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "Binary quantization cuts embedding storage by 32x compared with float.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Keyword index design, tokenizer, and scoring formula: Not in source.",
+        "Rank fusion formula: Not in source.",
+        "Precision and recall targets for a retrieval stage: Not in source."
+      ]
+    },
+    {
+      "name": "Reranking candidates",
+      "first_principle": "A reranker scores a candidate list again and reorders it for the query.",
+      "architecture": {
+        "nodes": [
+          {"id": "query", "label": "User query", "group": "client"},
+          {"id": "index", "label": "Index returns top k candidates", "group": "data"},
+          {"id": "cand", "label": "Candidate list", "group": "data"},
+          {"id": "rerank", "label": "Voyage AI reranker", "group": "cloud"},
+          {"id": "top", "label": "Top passages", "group": "client"},
+          {"id": "claude", "label": "Claude model", "group": "claude"}
+        ],
+        "edges": [
+          {"from": "query", "to": "index", "label": "search"},
+          {"from": "index", "to": "cand", "label": "candidates"},
+          {"from": "cand", "to": "rerank", "label": "query and documents"},
+          {"from": "rerank", "to": "top", "label": "relevance order"},
+          {"from": "top", "to": "claude", "label": "context with citations"}
+        ]
+      },
+      "steps": [
+        "Retrieve a wide candidate list from the index.",
+        "Send the query and the candidate documents to the reranker.",
+        "The reranker returns the documents in relevance order.",
+        "Keep the highest ranked passages for the model context.",
+        "Check recall at the retrieval stage when the answer is absent. (Inference)"
+      ],
+      "pros": [
+        "Rerankers return documents ranked by relevance to the query.",
+        "rerank-3 is recommended for most applications.",
+        "rerank-3-lite is optimized for latency and cost."
+      ],
+      "cons": [
+        "A reranker adds a model call and extra latency. (Inference)",
+        "A reranker cannot return a document that retrieval did not return. (Inference)",
+        "Rerank pricing sits in MongoDB documentation, outside the Claude docs."
+      ],
+      "use_when": [
+        "The answer appears in the candidates, but the order is wrong. (Inference)",
+        "Answer quality depends on the top few passages. (Inference)"
+      ],
+      "do_not_use_when": [
+        "Recall is low, because a reranker only reorders the list. (Inference)",
+        "The candidate list is already short and ordered well. (Inference)"
+      ],
+      "constraints": [
+        {"family": "latency", "choice": "Use rerank-3-lite when latency and cost bind.", "combination": "Use rerank-3 when accuracy binds the decision."},
+        {"family": "quota", "choice": "Keep each query and document set under the 32,000 token context length.", "combination": ""},
+        {"family": "cost", "choice": "Rerank a shorter candidate list to cut calls and tokens. (Inference)", "combination": ""},
+        {"family": "operations", "choice": "Track which candidates move into the top passages.", "combination": "Compare the top passages with the cited passages in each answer. (Inference)"}
+      ],
+      "native_services": [
+        {"service": "All", "text": "Not in source. The embeddings page names a Voyage AI rerank call, not a native platform service.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings"}
+      ],
+      "exam_tie": "D3.6. Expect a scenario where the right passage exists but ranks low. The credited answer adds a reranking stage. (Inference)",
+      "trap": "A larger generation model looks like the fix for an absent answer. The answer was never in the candidate list, so no model can cite it. (Inference)",
+      "decision_rule": "Add a reranker when the answer appears in the candidates but ranks low. (Inference)",
+      "exam_tip": "If the answer is absent from the candidates, fix retrieval, not the reranker. (Inference)",
+      "key_facts": [
+        {"text": "Rerankers take a query and a list of documents and return them ranked by relevance.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "rerank-3 has a context length of 32,000 tokens.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "rerank-3-lite is optimized for latency and cost.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"},
+        {"text": "rerank-3 is the highest accuracy model in the listed rerankers.", "url": "https://platform.claude.com/docs/en/build-with-claude/embeddings", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Number of top k candidates to keep: Not in source.",
+        "Rerank latency in milliseconds: Not in source.",
+        "Rerank price per call: Not in source. The embeddings page points to MongoDB pricing."
+      ]
+    },
+    {
+      "name": "Live state through a tool call",
+      "first_principle": "Answer questions about current values with a tool call to the source system, not with an indexed snapshot.",
+      "architecture": {
+        "nodes": [
+          {"id": "user", "label": "User question", "group": "client"},
+          {"id": "router", "label": "Router by question type", "group": "control"},
+          {"id": "idx", "label": "Document index", "group": "data"},
+          {"id": "mcp", "label": "MCP server with read tool", "group": "cloud"},
+          {"id": "db", "label": "Live source system", "group": "data"},
+          {"id": "model", "label": "Claude model", "group": "claude"}
+        ],
+        "edges": [
+          {"from": "user", "to": "router", "label": "question"},
+          {"from": "router", "to": "idx", "label": "policy and document questions"},
+          {"from": "router", "to": "mcp", "label": "status and balance questions"},
+          {"from": "mcp", "to": "db", "label": "read current record"},
+          {"from": "db", "to": "mcp", "label": "current value"},
+          {"from": "mcp", "to": "model", "label": "tool result"},
+          {"from": "idx", "to": "model", "label": "retrieved passages"}
+        ]
+      },
+      "steps": [
+        "Classify each question as a document question or a live state question. (Inference)",
+        "Send live state questions to a tool that reads the source system.",
+        "Claude calls the tool when the request maps to the tool description.",
+        "Send document questions to the index and cite the passages.",
+        "Answer from the tool result, not from an older indexed copy. (Inference)"
+      ],
+      "pros": [
+        "A tool result reflects the source system at call time. (Inference)",
+        "Tool descriptions steer which tool Claude calls.",
+        "The index does not need a rebuild for each state change. (Inference)"
+      ],
+      "cons": [
+        "The tool needs authentication and a latency budget. (Inference)",
+        "A misrouted question still reads the old snapshot. (Inference)",
+        "The MCP connector requires a server reachable over HTTP."
+      ],
+      "use_when": [
+        "Answers change faster than the index refresh cycle. (Inference)",
+        "The source system exposes a read tool for the needed fields. (Inference)"
+      ],
+      "do_not_use_when": [
+        "The question concerns stable policy text. (Inference)",
+        "The source system has no read interface. (Inference)"
+      ],
+      "constraints": [
+        {"family": "governance", "choice": "Pass an OAuth bearer token for an authenticated MCP server.", "combination": "Use an allowlist so the model sees only read tools. (Inference)"},
+        {"family": "latency", "choice": "Each tool call adds a round trip. (Inference)", "combination": "Cache stable tool definitions, but never cache live values. (Inference)"},
+        {"family": "scale", "choice": "Use an allowlist to enable only the MCP tools that the route needs.", "combination": ""},
+        {"family": "operations", "choice": "Describe each tool with the words that users use for the question. (Inference)", "combination": "Monitor which tools Claude calls for each question type. (Inference)"}
+      ],
+      "native_services": [
+        {"service": "Claude Platform on AWS", "text": "The MCP connector is listed as beta on this platform.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"},
+        {"service": "Microsoft Foundry", "text": "The MCP connector is listed as beta on this platform.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"}
+      ],
+      "exam_tie": "D3.6. Expect a freshness scenario. The credited answer routes live state to a tool call and keeps documents on the index. (Inference)",
+      "trap": "A faster index refresh looks like the fix for stale values. The index still stores a snapshot, so the answer can lag. (Inference)",
+      "decision_rule": "Route questions about live values to a tool, and route document questions to the index. (Inference)",
+      "exam_tip": "If the scenario names a value that changes in minutes, choose the tool path. (Inference)",
+      "key_facts": [
+        {"text": "Claude calls MCP tools when the request maps to a tool's described capability.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "Only tool calls from the MCP specification are supported in the MCP connector.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "The MCP connector requires a server that is publicly exposed over HTTP.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "The MCP connector uses the mcp-client-2025-11-20 beta header.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "The MCP connector is not eligible for zero data retention.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"},
+        {"text": "Allowlists and denylists control which MCP tools are enabled.", "url": "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector", "label": "Fact"}
+      ],
+      "not_in_source": [
+        "Index refresh interval for a typical deployment: Not in source.",
+        "Latency budget for a tool call: Not in source.",
+        "Amazon Bedrock support for the MCP connector: Not in source.",
+        "Claude Models on Google Cloud support for the MCP connector: Not in source."
+      ]
+    }
+  ],
+  "decision_flow": "flowchart TD\n  A{Question about live state?} -->|Yes| B[Tool call to source system]\n  A -->|No| C{Query has exact codes or names?}\n  C -->|Yes| D[Keyword match in the mix]\n  C -->|No| E[Semantic match]\n  D --> F{Mixed query shapes?}\n  E --> F\n  F -->|Yes| G[Hybrid with rank fusion]\n  F -->|No| H[Single matcher]\n  G --> I[Rerank merged candidates]",
+  "cheatsheet": "flowchart LR\n  Q[Query] --> T{Live state}\n  T -->|Yes| TL[Tool call]\n  T -->|No| M{Code or name}\n  M -->|Yes| K[Keyword match]\n  M -->|No| S[Semantic match]\n  K --> F[Rank fusion]\n  S --> F\n  F --> RR[Rerank]",
+  "patterns": [
+    {"wording": "answer must reflect the current value of a record", "answer_type": "tool call to the source system", "rule": "Read live state from a tool. Do not answer from a snapshot.", "traps": ["Faster index refresh", "Larger model that reads the snapshot"]},
+    {"wording": "query contains an error code and also asks in plain words", "answer_type": "hybrid retrieval", "rule": "Use keyword and semantic matchers together, then merge the results.", "traps": ["Semantic index only", "Keyword index only"]},
+    {"wording": "relevant passage is retrieved but ranked low", "answer_type": "reranking stage", "rule": "Add a reranker that reorders the candidate list.", "traps": ["Larger generation model", "Wider index refresh"]}
+  ],
+  "console_steps": [],
+  "not_in_source": [
+    "Console steps for retrieval strategies: Not in source.",
+    "Hybrid search as a named product feature: Not in source.",
+    "Query router implementation details: Not in source."
+  ],
+  "sources": [
+    "https://platform.claude.com/docs/en/build-with-claude/embeddings",
+    "https://platform.claude.com/docs/en/agents-and-tools/mcp-connector"
+  ]
+}

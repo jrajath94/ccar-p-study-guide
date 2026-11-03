@@ -1,0 +1,50 @@
+{
+  "unit": "D6.3",
+  "items": [
+    {
+      "id": "D6.3-1",
+      "select": 1,
+      "stem": "A finance lead wants daily cost totals in USD for each team workspace. The script must use credentials that the usage and cost endpoints accept. Which setup meets the constraint?",
+      "options": [
+        "Call the usage and cost endpoints with the workspace API key that the script already holds.",
+        "Set the Cost API bucket to one minute to get finer daily totals.",
+        "Stream each response usage field into a warehouse, and rebuild the totals every hour.",
+        "Call the usage and cost endpoints with an Admin API key, and read the daily cost report by workspace."
+      ],
+      "correct": [3],
+      "rationale": "The usage and cost endpoints accept Admin API credentials only, so a workspace key fails. The Cost report gives daily totals in USD, and it can group them by workspace.",
+      "trap": "A workspace API key looks sufficient for a script, but the usage and cost endpoints do not accept workspace keys.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+    },
+    {
+      "id": "D6.3-2",
+      "select": 1,
+      "stem": "An on-call engineer must see a traffic spike within seconds. The team has a usage report and a cost report. The team cannot wait for a daily total. Which action meets the constraint?",
+      "options": [
+        "Poll the Usage and Cost API once per minute and alert on each new total.",
+        "Set a monthly spend alert on the workspace to catch a spike within seconds.",
+        "Read the usage fields in each live response, and log them as responses return.",
+        "Add a live response log, and also run a weekly cost review with finance."
+      ],
+      "correct": [2],
+      "rationale": "The aggregate reports typically lag each request by up to 5 minutes, so they are too slow for this check. Per-response usage fields report each call as it completes.",
+      "trap": "Polling the usage endpoints every minute looks fast, but the aggregate data can trail each request by up to 5 minutes.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/usage-cost-api"
+    },
+    {
+      "id": "D6.3-3",
+      "select": 2,
+      "stem": "A company runs one workspace for each team. The owner wants a monthly budget for each team and rate limits for each model. Select two settings that meet both requests.",
+      "options": [
+        "Set a monthly spend limit and alerts on each team workspace.",
+        "Set a per-minute spend limit on each workspace to cap traffic bursts.",
+        "Set rate limits per model on requests, input tokens, and output tokens per minute.",
+        "Put every team on the Default Workspace, and set one spend limit there."
+      ],
+      "correct": [0, 2],
+      "rationale": "A spend limit and its alerts apply to one workspace, so each team gets its own budget. Rate limits cap requests and tokens per minute for each model.",
+      "trap": "One spend limit on the Default Workspace looks like a shared budget, but that workspace accepts no spend limit.",
+      "source": "https://platform.claude.com/docs/en/manage-claude/workspaces"
+    }
+  ]
+}
